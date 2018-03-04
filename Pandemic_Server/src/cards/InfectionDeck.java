@@ -29,8 +29,7 @@ public class InfectionDeck {
 		return cardsInDeck.remove(cardsInDeck.size()-1);
 	}
 	
-	// Does not copy PlayerCard before adding
-	// Must add newCards to beginning of deck
+	// Add newCards to beginning of Deck
 	public void addPile(List<InfectionCard> newCards){
 		cardsInDeck.addAll(0, newCards);
 	}

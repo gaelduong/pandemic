@@ -6,6 +6,7 @@ public class Game {
 	private InfectionDiscardPile myInfectionDiscardPile;
 	private boolean resolvingEpidemic;
 	private int infectionRate;
+	private GameBoard myGameBoard;
 	
 	public void setResolvingEpidemic(boolean b){
 		resolvingEpidemic = b;
@@ -29,4 +30,7 @@ public class Game {
 		return myInfectionDiscardPile;
 	}
 	
+	public City getCityByName(GameManager.CityName cn){
+		return myGameBoard.getCityByName(cn);
+	}
 }
