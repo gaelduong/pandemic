@@ -1,4 +1,4 @@
-package cards;
+package pandemic;
 
 import java.util.ArrayList;
 
@@ -56,5 +56,44 @@ public class GameManager {
 		ArrayList<InfectionCard> cardsInPile = idp.getCards();
 		id.addPile(cardsInPile);
 		idp.clearPile();
+	}
+	
+	public void endTurn(){
+	// MUST BE MODIFIED TO HANDLE OTB CHALLENGES (i.e. Mutations, Bioterrorist win/lose)
+		currentGame.setGamePhase(Game.GamePhase.TurnPlayerCards);
+		Player p = currentGame.getCurrentPlayer();
+		p.setActionsTaken(0);
+		p.setOncePerTurnActionTaken(false);
+		PlayerDeck pd = currentGame.getPlayerDeck();
+		int numCardsRemaining = pd.getDeckSize();
+		if (numCardsRemaining < 2){
+			notifyAllPlayersGameLost();
+			currentGame.setGamePhase(Game.GamePhase.Completed);
+		}
+		else {
+			PlayerCard playerCard1 = pd.drawCard();
+			PlayerCard playerCard2 = pd.drawCard();
+			if (playerCard1 instanceof EpidemicCard){
+				((EpidemicCard) playerCard1).resolveEpidemic();
+			}
+			else {
+				// MUST HANDLE CHECKIGN IF PLAYER HAS TOO MANY CARDS
+				// SHOULD CHECKING BE DONE IN addToHand, OR SHOULD IT BE DONE FROM WHEREVER IT IS CALLED?
+				p.addToHand(playerCard1);
+			}
+			if (playerCard2 instanceof EpidemicCard){
+				((EpidemicCard) playerCard2).resolveEpidemic();
+			}
+			else {
+				// MUST HANDLE CHECKIGN IF PLAYER HAS TOO MANY CARDS
+				// SHOULD CHECKING BE DONE IN addToHand, OR SHOULD IT BE DONE FROM WHEREVER IT IS CALLED?
+				p.addToHand(playerCard2);
+			}
+			currentGame.setGamePhase(Game.GamePhase.TurnInfection);
+		}
+	}
+	
+	public void notifyAllPlayersGameLost(){
+		// TO FILL IN LATER
 	}
 }

@@ -1,6 +1,6 @@
-package cards;
+package pandemic;
 
-public class EpidemicCard implements PlayerCard{
+abstract class EpidemicCard implements PlayerCard{
 
 	protected GameManager myGameManager;
 	
@@ -30,4 +30,6 @@ public class EpidemicCard implements PlayerCard{
 		
 		myGameManager.setResolvingEpidemic(false);
 	}
+	
+	public abstract void resolveEpidemic();
 }

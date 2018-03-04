@@ -1,4 +1,4 @@
-package cards;
+package pandemic;
 
 public class CityInfectionCard implements InfectionCard{
 

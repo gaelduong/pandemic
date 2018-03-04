@@ -1,4 +1,4 @@
-package cards;
+package pandemic;
 
 import java.util.ArrayList;
 import java.util.Collections;
