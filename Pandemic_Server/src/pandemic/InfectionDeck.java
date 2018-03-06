@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class InfectionDeck {
+
 	
 	private ArrayList<InfectionCard> cardsInDeck;
 	

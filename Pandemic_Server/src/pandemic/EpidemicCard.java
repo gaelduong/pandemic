@@ -20,7 +20,7 @@ abstract class EpidemicCard implements PlayerCard{
 		// --> MUST CHANGE THIS TO HANDLE MUTATION CARDS <--
 		CityInfectionCard bottomInfectionCard = (CityInfectionCard) myGameManager.drawLastInfectionCard();
 		myGameManager.discardInfectionCard(bottomInfectionCard);
-		GameManager.CityName cityName = bottomInfectionCard.getCityName();
+		CityName cityName = bottomInfectionCard.getCityName();
 		City city = myGameManager.getCityByName(cityName);
 		myGameManager.infectCityForEpidemic(city);
 		

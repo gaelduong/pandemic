@@ -3,7 +3,8 @@ package pandemic;
 import java.util.ArrayList;
 
 public class Player {
-	
+
+
 	private int actionsTaken;
 	private boolean oncePerTurnActionTaken;
 	private ArrayList<PlayerCard> cardsInHand;

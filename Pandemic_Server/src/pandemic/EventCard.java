@@ -2,9 +2,9 @@ package pandemic;
 
 public class EventCard implements PlayerCard{
 	
-	private GameManager.EventCardName name;
+	private EventCardName name;
 	
-	public EventCard(GameManager.EventCardName pName){
+	public EventCard(EventCardName pName){
 		name = pName;
 	}
 }

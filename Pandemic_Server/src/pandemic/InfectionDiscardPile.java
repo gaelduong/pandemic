@@ -5,6 +5,7 @@ import java.util.Collections;
 
 public class InfectionDiscardPile {
 
+
 	private ArrayList<InfectionCard> cardsInPile;
 	
 	public InfectionDiscardPile(){
