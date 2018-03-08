@@ -37,7 +37,7 @@ class DyeImage
         JFrame f = new JFrame();
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        ImageIcon img = new ImageIcon(GUI.class.getResource("/pandemic/resources/blueC.png"));
+        /*ImageIcon img = new ImageIcon(GUI.class.getResource("/pandemic/resources/blueC.png"));
         Image image = img.getImage();
         JPanel panel = new JPanel(new GridLayout(1,0));
         panel.add(new JLabel(new ImageIcon(image)));
@@ -47,7 +47,7 @@ class DyeImage
         panel.add(new JLabel(new ImageIcon(dye(image, new Color(0,0,255,32)))));
         f.getContentPane().add(panel);
         f.pack();
-        f.setVisible(true);
+        f.setVisible(true);*/
     }
 
 
