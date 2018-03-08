@@ -5,7 +5,12 @@ import java.awt.image.*;
 import java.io.*;
 import javax.swing.*;
 import javax.imageio.*;
-
+/**
+ * 
+ * Purpose: "dye" the image, change from color A to color B, e.g used when epidemic occurs: map's color changes to green
+ * 
+ */
+//in progress
 class DyeImage
 {
     public static void main(String args[])
