@@ -24,14 +24,24 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+
+/**
+ * Purpose: Create GUI components + event listeners
+ * NOTES: All GUI components which might be used in other classes (e.g pawns,cards) will be declared as private fields 
+ * (For now, I'll make everything as fields, will figure out later which ones don't need to be a field)
+ * For clarity's sake, I declared and initialized them at the same time, in one line
+ * (Could also initialize them in constructor but let's keep it this way for now)
+ **/
+
+/**TO DO: 
+ * - Fix targets
+ * - Add cards to player's hand from playerDeck
+ * - Discard cards
+ * - Show infection cards => Infect cities
+ * 
+ **/
 public class GUI extends JFrame {
 	
-	/*NOTES: All GUI components which might be used (e.g pawns,cards) in other classes will be declared as private fields 
-	 * (For now, I'll make everything as fields, will figure out later which ones don't need to be a field)
-	 * For clarity's sake, I declared and initialized them at the same time, in one line
-	 * (Could also initialize them in constructor but let's keep it this way for now)
-	 * */
-
 	/*Content pane which contains all GUI components*/
 	private JPanel contentPane;
 	
@@ -400,7 +410,7 @@ public class GUI extends JFrame {
 		
 		Icon iconTarget = new ImageIcon(new ImageIcon(GUI.class.getResource(targetIconPath))
 				.getImage().getScaledInstance(40, 40,  Image.SCALE_SMOOTH));
-		/*
+		/* Hardcode this part
 		target.setVisible(false);
 		System.out.println(blueCity6.getX());
 		target.setBounds(blueCity6.getX()-5,blueCity6.getY()-5,40,40);
