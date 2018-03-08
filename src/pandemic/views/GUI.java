@@ -15,7 +15,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -23,7 +22,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
 
 /**
  * Purpose: Create GUI components + event listeners
@@ -38,13 +36,14 @@ import javax.swing.border.EmptyBorder;
  * - Add cards to player's hand from playerDeck
  * - Discard cards
  * - Show infection cards => Infect cities
- * 
+ * - Add/remove cubes
+ * - Draw lines
+ * -....
  **/
-public class GUI extends JFrame {
-	
+public class GUI extends JFrame 
+{
 	/*Content pane which contains all GUI components*/
 	private JPanel contentPane;
-	
 	
 	/*Pawn dimensions*/
 	private final int[] pawnDims = {30,40}; //{width,height}
@@ -52,7 +51,6 @@ public class GUI extends JFrame {
 	/*city size (width)*/
 	private final int citySize = 30;
 	
-
 	/*Cities - idea: store each city's position (x,y) in itself (label text) (no need to create a new list for positions)  */
 		//syntax: city = new JLabel(color,x,y)
 	private JLabel blueCity1 = new JLabel("b,566,139");
@@ -108,20 +106,18 @@ public class GUI extends JFrame {
 	private JLabel redCity12 = new JLabel("r,1138,495");
 	
 	/*cities contains all cities*/
-	private ArrayList<JLabel> cities 
-	= new ArrayList<JLabel>(Arrays.asList(
-			blueCity1,blueCity2,blueCity3,blueCity4,blueCity5,blueCity6,blueCity7,blueCity8,blueCity9,blueCity10,blueCity11,blueCity12,
-			yellowCity1,yellowCity2,yellowCity3,yellowCity4,yellowCity5,yellowCity6,yellowCity7,yellowCity8,yellowCity9,yellowCity10,yellowCity11,yellowCity12,
-			whiteCity1,whiteCity2,whiteCity3,whiteCity4,whiteCity5,whiteCity6,whiteCity7,whiteCity8,whiteCity9,whiteCity10,whiteCity11,whiteCity12,
-			redCity1,redCity2,redCity3,redCity4,redCity5,redCity6,redCity7,redCity8,redCity9,redCity10,redCity11,redCity12
-			));
+	private ArrayList<JLabel> cities = new ArrayList<JLabel>(Arrays.asList(
+		blueCity1,blueCity2,blueCity3,blueCity4,blueCity5,blueCity6,blueCity7,blueCity8,blueCity9,blueCity10,blueCity11,blueCity12,
+		yellowCity1,yellowCity2,yellowCity3,yellowCity4,yellowCity5,yellowCity6,yellowCity7,yellowCity8,yellowCity9,yellowCity10,yellowCity11,yellowCity12,
+		whiteCity1,whiteCity2,whiteCity3,whiteCity4,whiteCity5,whiteCity6,whiteCity7,whiteCity8,whiteCity9,whiteCity10,whiteCity11,whiteCity12,
+		redCity1,redCity2,redCity3,redCity4,redCity5,redCity6,redCity7,redCity8,redCity9,redCity10,redCity11,redCity12
+		));
 	
 	/*Pawns*/
 	private JLabel orangePawn = new JLabel();
 	private JLabel greenPawn = new JLabel();
 	private JLabel bluePawn = new JLabel();
 	private JLabel purplePawn = new JLabel();
-	
 	
 	/*PlayerDeck*/
 	private JLabel playerDeck = new JLabel(" Player Deck");;
@@ -168,8 +164,6 @@ public class GUI extends JFrame {
 	/*Instruction*/
 	private JLabel instruction;
 	
-	
-	
 	/*ICON/IMAGE PATHS (FINAL FIELDS)*/
 	//Including: MAP, pawn icons, city icons, card pics
 	
@@ -188,6 +182,15 @@ public class GUI extends JFrame {
 	private final String redCityIconPath = "/pandemic/resources/Cities/redCity.png";
 	private final String whiteCityIconPath = "/pandemic/resources/Cities/whiteCity.png";
 	
+	/*Top bar icons*/
+	private final String outbreakMeterCountIconPath = "/pandemic/resources/TopBar/outbreakSymbol.png";
+	private final String infectionRateIconPath = "/pandemic/resources/TopBar/infectionRateSymbol.png";
+	private final String instructionIconPath = "/pandemic/resources/TopBar/instructionSymbol.png";
+	private final String blueCubesRemPath = "/pandemic/resources/TopBar/blueRem.png";
+	private final String redCubesRemPath = "/pandemic/resources/TopBar/redRem.png";
+	private final String yellowCubesRemPath = "/pandemic/resources/TopBar/yellowRem.png";
+	private final String purpleCubesRemPath = "/pandemic/resources/TopBar/purpleRem.png";
+	
 	/*Target icon*/
 	private final String targetIconPath = "/pandemic/resources/target.png";
 	
@@ -202,17 +205,8 @@ public class GUI extends JFrame {
 			
 	/*Infection Discard Picture*/
 	private final String infectionDiscardPicPath = "/pandemic/resources/Deck_Discard/infectionDisCard.png";
-	
-	/*Top bar icons*/
-	private final String outbreakMeterCountIconPath = "/pandemic/resources/TopBar/outbreakSymbol.png";
-	private final String infectionRateIconPath = "/pandemic/resources/TopBar/infectionRateSymbol.png";
-	private final String instructionIconPath = "/pandemic/resources/TopBar/instructionSymbol.png";
-	private final String blueCubesRemPath = "/pandemic/resources/TopBar/blueRem.png";
-	private final String redCubesRemPath = "/pandemic/resources/TopBar/redRem.png";
-	private final String yellowCubesRemPath = "/pandemic/resources/TopBar/yellowRem.png";
-	private final String purpleCubesRemPath = "/pandemic/resources/TopBar/purpleRem.png";
 			
-
+	/////////Ignore these (for testing)////////////
 	private boolean driveSelected;
 	private boolean directFlightSelected;
 	private JLabel message;
@@ -221,29 +215,23 @@ public class GUI extends JFrame {
 	private JLabel target5 = new JLabel();
 	private JLabel target3 = new JLabel();
 	private JLabel target4 = new JLabel();
-
-	
 	private JLabel lblCard3;
+	
+	//========================================================================
+	//========================================================================
+	//========================================================================
+	//========================================================================
 	/*Constructor does 2 things: (1) setting up GUI components (2) create event listener for each component*/
-	public GUI() {
-
+	public GUI() 
+	{
 		/*This method is responsible for setting up GUI components*/
 		initComponents();
-		
-		/*This method is responsible for creating all the events*/
+		/*This method is responsible for creating all the event listeners*/
 		createEvents();
-		
 	}
-	
-	public JLabel getBluePawn()
+
+	private void initComponents() 
 	{
-		return this.bluePawn;
-	}
-	
-	
-	
-	private void initComponents() {
-		
 		/*------Set up JFrame and contentPane-----*/
 		setTitle("Pandemic");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -297,7 +285,6 @@ public class GUI extends JFrame {
 		btnShareKnowledge.setFont(new Font("Dialog", Font.PLAIN, 12));
 		contentPane.add(btnShareKnowledge);
 		
-		
 		/*-------Set up Actions remaining-------*/
 		
 		actionsRemaining.setBounds(19, 348, 131, 16);
@@ -326,7 +313,6 @@ public class GUI extends JFrame {
 				.getImage().getScaledInstance(100, 130, Image.SCALE_SMOOTH)));
 		infectionDiscard.setBounds(106, 185, 100, 130);
 		contentPane.add(infectionDiscard);
-		
 		
 		/*----------Set up top bar ----------*/
 		/* (cubes remaining,instruction,outbreak count, infection rate)*/
@@ -401,93 +387,75 @@ public class GUI extends JFrame {
 		topBar.add(outbreakMeterCount);
 		outbreakMeterCount.setOpaque(true);
 		
-
 		/*----------Set up pawns ----------*/
 		loadPawns();
 		
 		/*----------Set up cities ----------*/
 		loadCities();
 		
+		/*Ignore this - For testing/Hardcode this part
 		Icon iconTarget = new ImageIcon(new ImageIcon(GUI.class.getResource(targetIconPath))
 				.getImage().getScaledInstance(40, 40,  Image.SCALE_SMOOTH));
-		/* Hardcode this part
 		target.setVisible(false);
 		System.out.println(blueCity6.getX());
 		target.setBounds(blueCity6.getX()-5,blueCity6.getY()-5,40,40);
 		target.setIcon(iconTarget);
 		contentPane.add(target);
 		
-		
 		target2.setVisible(false);
 		target2.setBounds(blueCity3.getX()-5,blueCity3.getY()-5,40,40);
 		target2.setIcon(iconTarget);
 		contentPane.add(target2);
-		
 	
 		target3.setVisible(false);
 		target3.setBounds(redCity2.getX()-5,redCity2.getY()-5,40,40);
 		target3.setIcon(iconTarget);
 		contentPane.add(target3);
 		
-		
 		target4.setVisible(false);
 		target4.setBounds(blueCity2.getX()-5,blueCity2.getY()-5,40,40);
 		target4.setIcon(iconTarget);
 		contentPane.add(target4);
-		
 		
 		target5.setVisible(false);
 		target5.setBounds(yellowCity9.getX()-5,yellowCity9.getY()-5,40,40);
 		target5.setIcon(iconTarget);
 		contentPane.add(target5);
 		
-
-		
-
-	////
-		
-		/*JLabel lblCard = new JLabel("");
+		JLabel lblCard = new JLabel("");
 		lblCard.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/Miami.png")).getImage().getScaledInstance(90, 120, Image.SCALE_SMOOTH)));
 		lblCard.setBounds(535, 613, 90, 120);
 		
 		JLabel lblCard2 = new JLabel("");
 		lblCard2.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/Tokyo.png")).getImage().getScaledInstance(90, 120, Image.SCALE_SMOOTH)));
-		
 		lblCard2.setBounds(647, 613, 90, 120);
-		
 		
 		lblCard3 = new JLabel("");
 		lblCard3.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/Moscow.png")).getImage().getScaledInstance(90, 120, Image.SCALE_SMOOTH)));
 		lblCard3.setBounds(759, 613, 90, 120);
 	
-		
 		contentPane.add(lblCard);
 		contentPane.add(lblCard2);
 		contentPane.add(lblCard3);
 		*/
 		
-		
 		cardsContainer.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/cardsContainer.png")).getImage().getScaledInstance(609, 191, Image.SCALE_SMOOTH)));
-		
 		cardsContainer.setBounds(470, 580, 609, 191);
 		contentPane.add(cardsContainer);
-		
 		
 		/*----------Set up board map ----------*/
 		loadMap();
 		
-		//these are for window builder, ignore
+		//Ignore this-these are for window builder
 		/*createBlueCities();
 		createdWhiteCities();
 		createRedCities();
 		createYellowCities();*/
-
 	}
 
-	private void createEvents() {
-
+	private void createEvents() 
+	{
 		/*Create event listeners for each city*/
-		
 		for(JLabel city: cities)
 		{
 			/*Mouse entered, cursor change to pointer*/
@@ -552,7 +520,6 @@ public class GUI extends JFrame {
 			}
 		});
 		
-		
 		//Charter Flight button
 		btnCharterFlight.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -609,17 +576,16 @@ public class GUI extends JFrame {
 		return new int[]{Integer.parseInt(X),Integer.parseInt(Y)};
 	}
 
-	Icon blueCityIcon = new ImageIcon((new ImageIcon(GUI.class.getResource(blueCityIconPath)))
-			.getImage().getScaledInstance(citySize, citySize,  Image.SCALE_SMOOTH));
-	Icon redCityIcon = new ImageIcon((new ImageIcon(GUI.class.getResource(redCityIconPath)))
-			.getImage().getScaledInstance(citySize, citySize,  Image.SCALE_SMOOTH));
-	Icon yellowCityIcon = new ImageIcon((new ImageIcon(GUI.class.getResource(yellowCityIconPath)))
-			.getImage().getScaledInstance(citySize, citySize,  Image.SCALE_SMOOTH));
-	Icon whiteCityIcon = new ImageIcon((new ImageIcon(GUI.class.getResource(whiteCityIconPath)))
-			.getImage().getScaledInstance(citySize, citySize,  Image.SCALE_SMOOTH));
-	
 	private void loadCities()
 	{
+		Icon blueCityIcon = new ImageIcon((new ImageIcon(GUI.class.getResource(blueCityIconPath)))
+				.getImage().getScaledInstance(citySize, citySize,  Image.SCALE_SMOOTH));
+		Icon redCityIcon = new ImageIcon((new ImageIcon(GUI.class.getResource(redCityIconPath)))
+				.getImage().getScaledInstance(citySize, citySize,  Image.SCALE_SMOOTH));
+		Icon yellowCityIcon = new ImageIcon((new ImageIcon(GUI.class.getResource(yellowCityIconPath)))
+				.getImage().getScaledInstance(citySize, citySize,  Image.SCALE_SMOOTH));
+		Icon whiteCityIcon = new ImageIcon((new ImageIcon(GUI.class.getResource(whiteCityIconPath)))
+				.getImage().getScaledInstance(citySize, citySize,  Image.SCALE_SMOOTH));
 		for(JLabel city : cities)
 		{
 			int x = getCityPosition(city.getText())[0];
@@ -658,7 +624,6 @@ public class GUI extends JFrame {
 		purplePawn.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(purplePawnIconPath)).getImage().getScaledInstance(pawnDims[0], pawnDims[1], Image.SCALE_SMOOTH)));
 		purplePawn.setBounds(291, 292, pawnDims[0], pawnDims[1]);
 		contentPane.add(purplePawn);
-		
 	}
 	
 	private void loadMap()
@@ -669,316 +634,11 @@ public class GUI extends JFrame {
 				.getImage().getScaledInstance(980, 650,  Image.SCALE_SMOOTH)));
 		contentPane.add(map);
 	}
-	
-	//==============================================================================================
-	//==============================================================================================
-	//==============================================================================================
-	//==============================================================================================
-	//==============================================================================================
-	//==============================================================================================
-	//==============================================================================================
-	//IGNORE THIS
-	private void initializeCities() {/*
-	
-	System.out.println(cities.get(0));
-	cities.add(blueCity1);
-	cities.add(blueCity2);
-	cities.add(blueCity3);
-	cities.add(blueCity4);
-	cities.add(blueCity5);
-	cities.add(blueCity6);
-	cities.add(blueCity7);
-	cities.add(blueCity8);
-	cities.add(blueCity9);
-	cities.add(blueCity10);
-	cities.add(blueCity11);
-	cities.add(blueCity12);
-	cities.add(whiteCity1);
-	cities.add(whiteCity2);
-	cities.add(whiteCity3);
-	cities.add(whiteCity4);
-	cities.add(whiteCity5);
-	cities.add(whiteCity6);
-	cities.add(whiteCity7);
-	cities.add(whiteCity8);
-	cities.add(whiteCity9);
-	cities.add(whiteCity10);
-	cities.add(whiteCity11);
-	cities.add(whiteCity12);
-	cities.add(yellowCity1);
-	cities.add(yellowCity2);
-	cities.add(yellowCity3);
-	cities.add(yellowCity4);
-	cities.add(yellowCity5);
-	cities.add(yellowCity6);
-	cities.add(yellowCity7);
-	cities.add(yellowCity8);
-	cities.add(yellowCity9);
-	cities.add(yellowCity10);
-	cities.add(yellowCity11);
-	cities.add(yellowCity12);
-	cities.add(redCity1);
-	cities.add(redCity2);
-	cities.add(redCity3);
-	cities.add(redCity4);
-	cities.add(redCity5);
-	cities.add(redCity6);
-	cities.add(redCity7);
-	cities.add(redCity8);
-	cities.add(redCity9);
-	cities.add(redCity10);
-	cities.add(redCity11);
-	cities.add(redCity12);
 
-	
-}*/
-	
-
-	/*private void createBlueCities() {
-
-		
-		ImageIcon iconBlue = new ImageIcon(GUI.class.getResource("/pandemic/resources/" + blueCityIcon));
-		Image imageBlue = iconBlue.getImage();
-		//Image i = DyeImage.dye(img,new Color(255,0,0,32));
-		Image newImageBlue = imageBlue.getScaledInstance(citySize, citySize,  Image.SCALE_SMOOTH);
-		iconBlue = new ImageIcon(newImageBlue);
-
-		
-		
-		blueCity1.setBounds(566, 139, citySize, citySize);
-		blueCity1.setIcon(iconBlue);
-		contentPane.add(blueCity1);
-		
-		blueCity2.setBounds(716, 106, citySize, citySize);
-		blueCity2.setIcon(iconBlue);
-		contentPane.add(blueCity2);
-		
-		blueCity3.setBounds(393, 248, citySize, citySize);
-		blueCity3.setIcon(iconBlue);
-		contentPane.add(blueCity3);
-		
-		blueCity4.setBounds(435, 205, citySize, citySize);
-		blueCity4.setIcon(iconBlue);
-		contentPane.add(blueCity4);
-	
-		blueCity5.setBounds(230, 190, citySize, citySize);
-		blueCity5.setIcon(iconBlue);
-		contentPane.add(blueCity5);
-		
-		blueCity6.setBounds(306, 190, citySize, citySize);
-		blueCity6.setIcon(iconBlue);
-		contentPane.add(blueCity6);
-		
-		blueCity7.setBounds(328, 248, citySize, citySize);
-		blueCity7.setIcon(iconBlue);
-		contentPane.add(blueCity7);
-		
-		blueCity8.setBounds(376, 162, citySize, citySize);
-		blueCity8.setIcon(iconBlue);
-		contentPane.add(blueCity8);
-		
-		blueCity9.setBounds(544, 228, citySize, citySize);
-		blueCity9.setIcon(iconBlue);
-		contentPane.add(blueCity9);
-		
-		blueCity10.setBounds(630, 205, citySize, citySize);
-		blueCity10.setIcon(iconBlue);
-		contentPane.add(blueCity10);
-		
-		blueCity11.setBounds(688, 162, citySize, citySize);
-		blueCity11.setIcon(iconBlue);
-		contentPane.add(blueCity11);
-		
-		blueCity12.setBounds(642, 106, citySize, citySize);
-		blueCity12.setIcon(iconBlue);
-		contentPane.add(blueCity12);
-		
-	}
-
-	private void createRedCities() {
-		
-
-	
-		
-		ImageIcon iconRed = new ImageIcon(GUI.class.getResource("/pandemic/resources/RedCity.png"));
-		Image imageRed = iconRed.getImage();
-		//Image i = DyeImage.dye(img,new Color(255,0,0,32));
-		Image newImageRed = imageRed.getScaledInstance(citySize, citySize,  Image.SCALE_SMOOTH);
-		iconRed = new ImageIcon(newImageRed);
-		
-		
-		redCity1.setBounds(1125, 178, citySize, citySize);
-		redCity1.setIcon(iconRed);
-		contentPane.add(redCity1);
-		
-		redCity2.setBounds(963, 433, citySize, citySize);
-		redCity2.setIcon(iconRed);
-		contentPane.add(redCity2);
-		
-		redCity3.setBounds(1072, 125, citySize, citySize);
-		redCity3.setIcon(iconRed);
-		contentPane.add(redCity3);
-		
-		redCity4.setBounds(1115, 380, citySize, citySize);
-		redCity4.setIcon(iconRed);
-		contentPane.add(redCity4);
-	
-		redCity5.setBounds(1125, 248, citySize, citySize);
-		redCity5.setIcon(iconRed);
-		contentPane.add(redCity5);
-		
-		redCity6.setBounds(986, 136, citySize, citySize);
-		redCity6.setIcon(iconRed);
-		contentPane.add(redCity6);
-		
-		redCity7.setBounds(986, 270, citySize, citySize);
-		redCity7.setIcon(iconRed);
-		contentPane.add(redCity7);
-		
-		redCity8.setBounds(1059, 270, citySize, citySize);
-		redCity8.setIcon(iconRed);
-		contentPane.add(redCity8);
-		
-		redCity9.setBounds(986, 205, citySize, citySize);
-		redCity9.setIcon(iconRed);
-		contentPane.add(redCity9);
-		
-		redCity10.setBounds(934, 337, citySize, citySize);
-		redCity10.setIcon(iconRed);
-		contentPane.add(redCity10);
-		
-		redCity11.setBounds(1026, 380, citySize, citySize);
-		redCity11.setIcon(iconRed);
-		contentPane.add(redCity11);
-		
-		redCity12.setBounds(1138, 495, citySize, citySize);
-		redCity12.setIcon(iconRed);
-		contentPane.add(redCity12);
-		}
-		
-		
-		
-	private void createdWhiteCities() {
-
-		
-		ImageIcon iconWhite = new ImageIcon(GUI.class.getResource("/pandemic/resources/WhiteCity.png"));
-		Image imageWhite = iconWhite.getImage();
-		//Image i = DyeImage.dye(img,new Color(255,0,0,32));
-		Image newImageWhite = imageWhite.getScaledInstance(citySize, citySize,  Image.SCALE_SMOOTH);
-		iconWhite = new ImageIcon(newImageWhite);
-		
-		
-		whiteCity1.setBounds(880, 358, citySize, citySize);
-		whiteCity1.setIcon(iconWhite);
-		contentPane.add(whiteCity1);
-		
-		whiteCity2.setBounds(719, 258, citySize, citySize);
-		whiteCity2.setIcon(iconWhite);
-		contentPane.add(whiteCity2);
-		
-		whiteCity3.setBounds(880, 228, citySize, citySize);
-		whiteCity3.setIcon(iconWhite);
-		contentPane.add(whiteCity3);
-		
-		whiteCity4.setBounds(799, 205, citySize, citySize);
-		whiteCity4.setIcon(iconWhite);
-		contentPane.add(whiteCity4);
-	
-		whiteCity5.setBounds(838, 317, citySize, citySize);
-		whiteCity5.setIcon(iconWhite);
-		contentPane.add(whiteCity5);
-		
-		whiteCity6.setBounds(909, 295, citySize, citySize);
-		whiteCity6.setIcon(iconWhite);
-		contentPane.add(whiteCity6);
-		
-		whiteCity7.setBounds(838, 139, citySize, citySize);
-		whiteCity7.setIcon(iconWhite);
-		contentPane.add(whiteCity7);
-		
-		whiteCity8.setBounds(761, 295, citySize, citySize);
-		whiteCity8.setIcon(iconWhite);
-		contentPane.add(whiteCity8);
-		
-		whiteCity9.setBounds(818, 258, citySize, citySize);
-		whiteCity9.setIcon(iconWhite);
-		contentPane.add(whiteCity9);
-		
-		whiteCity10.setBounds(761, 162, citySize, citySize);
-		whiteCity10.setIcon(iconWhite);
-		contentPane.add(whiteCity10);
-		
-		whiteCity11.setBounds(698, 215, citySize, citySize);
-		whiteCity11.setIcon(iconWhite);
-		contentPane.add(whiteCity11);
-		
-		whiteCity12.setBounds(799, 106, citySize, citySize);
-		whiteCity12.setIcon(iconWhite);
-		contentPane.add(whiteCity12);
-
-		
-	}
-	
-	private void createYellowCities()
+	/*getter for each GUI component*/
+	public JLabel getBluePawn()
 	{
-
+		return this.bluePawn;
+	}
 	
-		
-		ImageIcon iconYellow = new ImageIcon(GUI.class.getResource("/pandemic/resources/YellowCity1.png"));
-		Image imageYellow = iconYellow.getImage();
-		//Image i = DyeImage.dye(img,new Color(255,0,0,32));
-		Image newImageYellow = imageYellow.getScaledInstance(citySize, citySize,  Image.SCALE_SMOOTH);
-		iconYellow = new ImageIcon(newImageYellow);
-		
-		
-		yellowCity1.setBounds(376, 548, citySize, citySize);
-		yellowCity1.setIcon(iconYellow);
-		contentPane.add(yellowCity1);
-		
-		yellowCity2.setBounds(716, 467, citySize, citySize);
-		yellowCity2.setIcon(iconYellow);
-		contentPane.add(yellowCity2);
-		
-		yellowCity3.setBounds(364, 467, citySize, citySize);
-		yellowCity3.setIcon(iconYellow);
-		contentPane.add(yellowCity3);
-		
-		yellowCity4.setBounds(508, 433, citySize, citySize);
-		yellowCity4.setIcon(iconYellow);
-		contentPane.add(yellowCity4);
-	
-		yellowCity5.setBounds(285, 317, citySize, citySize);
-		yellowCity5.setIcon(iconYellow);
-		contentPane.add(yellowCity5);
-		
-		yellowCity6.setBounds(352, 334, citySize, citySize);
-		yellowCity6.setIcon(iconYellow);
-		contentPane.add(yellowCity6);
-		
-		yellowCity7.setBounds(435, 334, citySize, citySize);
-		yellowCity7.setIcon(iconYellow);
-		contentPane.add(yellowCity7);
-		
-		yellowCity8.setBounds(393, 407, citySize, citySize);
-		yellowCity8.setIcon(iconYellow);
-		contentPane.add(yellowCity8);
-		
-		yellowCity9.setBounds(468, 509, citySize, citySize);
-		yellowCity9.setIcon(iconYellow);
-		contentPane.add(yellowCity9);
-		
-		yellowCity10.setBounds(605, 348, citySize, citySize);
-		yellowCity10.setIcon(iconYellow);
-		contentPane.add(yellowCity10);
-		
-		yellowCity11.setBounds(666, 392, citySize, citySize);
-		yellowCity11.setIcon(iconYellow);
-		contentPane.add(yellowCity11);
-		
-		yellowCity12.setBounds(716, 334, citySize, citySize);
-		yellowCity12.setIcon(iconYellow);
-		contentPane.add(yellowCity12);
-
-	}*/
-}
 }
