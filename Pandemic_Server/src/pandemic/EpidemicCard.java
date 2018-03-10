@@ -1,11 +1,11 @@
 package pandemic;
 
-abstract class EpidemicCard implements PlayerCard{
+abstract class EpidemicCard {
 
 	protected GameManager myGameManager;
 	
 	public EpidemicCard(GameManager gm){
-		myGameManager = gm;
+	    myGameManager = gm;
 	}
 	
 	protected void increaseInfectIntensify(){

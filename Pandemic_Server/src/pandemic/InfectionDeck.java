@@ -11,27 +11,39 @@ public class InfectionDeck {
 	
 	// Constructor creates empty deck
 	public InfectionDeck(){
-		cardsInDeck = new ArrayList<InfectionCard>();
+	    cardsInDeck = new ArrayList<InfectionCard>();
 	}
 	
 	public void addCard(InfectionCard pCard){
-		cardsInDeck.add(pCard);
+	    cardsInDeck.add(pCard);
 	}
 	
-	public void shuffle(){
-		Collections.shuffle(cardsInDeck);
+	public void shuffleDeck(){
+	    Collections.shuffle(cardsInDeck);
 	}
+
+	public int getDeckSize() {
+	    return cardsInDeck.size();
+    }
 	
 	public InfectionCard drawCard(){
-		return cardsInDeck.remove(0);
+        return !cardsInDeck.isEmpty() ? cardsInDeck.remove(0) : null;
 	}
 	
 	public InfectionCard drawLastCard(){
-		return cardsInDeck.remove(cardsInDeck.size()-1);
+        return !cardsInDeck.isEmpty() ? cardsInDeck.remove(cardsInDeck.size()-1) : null;
 	}
 	
 	// Add newCards to beginning of Deck
 	public void addPile(List<InfectionCard> newCards){
-		cardsInDeck.addAll(0, newCards);
+	    cardsInDeck.addAll(0, newCards);
 	}
+
+    public void printDeck() {
+        System.out.println("PRINTING OUT INFECTION DECK(size: " + getDeckSize()+ ")......");
+        cardsInDeck.forEach(card -> System.out.println("Card: " +
+                "    card type : " + card.getCardType() +
+                ", card name: " + card.getCardName()));
+        System.out.println("INFECTION DECK PRINTED.");
+    }
 }

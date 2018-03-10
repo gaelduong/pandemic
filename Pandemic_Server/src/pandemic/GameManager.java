@@ -4,36 +4,159 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.stream.Collectors;
 
 // GameManager won't stay in this package
 public class GameManager {
 
 	private HashMap<CityName, ArrayList<CityName>> neighborsDict;
 	private HashMap<Region, ArrayList<CityName>> regionsDict;
+	private HashMap<CityName, Region> nameToRegionDict;
+	private HashMap<Region, DiseaseType> regionToDiseaseTypeDict;
 	private LinkedList<Player> activePlayers;
 	private Player hostPlayer;
 	private Game currentGame;
+	private GameSettings gameSettings;
 
 	public GameManager(Player hostPlayer, int numOfPlayers, int numOfEpidemicCards, ChallengeKind challengeKind) {
-		GameSettings gameSettings = new GameSettings(numOfPlayers, numOfEpidemicCards, challengeKind);
+        gameSettings = new GameSettings(numOfPlayers, numOfEpidemicCards, challengeKind);
 		// Setup neighborsDict and regionsDict lookups
+        this.hostPlayer = hostPlayer;
+        activePlayers = new LinkedList<Player>();
+        activePlayers.add(hostPlayer);
 		setRegionsDict();
 		setNeighborsDict();
-		//REFACTOR BELOW INTO createNewGame()
-		// Call Game constructor which constructs GameBoard
-		currentGame = new Game(hostPlayer, gameSettings, this); // -> createNewGame()
-        // ..........TODO
+		setNameToRegionDict();
+		setRegionToDiseaseTypeDict();
+
+		//FOR TESTING:
+		createNewGame();
+		currentGame.getDiseaseByDiseaseType(DiseaseType.Blue).setCured(true);
+
+		//TESTING DRIVE/FERRY:
+		/*System.out.println("------------------GAME UNIT BEFORE drive/ferry----------------------");
+        currentGame.printGameUnits();
+		playDriveFerry(currentGame.getCityByName(CityName.Chicago));
+		currentGame.printGameBoard();
+        System.out.println("------------------GAME UNIT AFTER drive/ferry----------------------");
+		currentGame.printGameUnits();*/
+
+		// TESTING DIRECT FLIGHT:
+        /*PlayerCard mtl = currentGame.getPlayerDeck().getCard("Montreal");
+		currentGame.getCurrentPlayer().addToHand(mtl);
+        System.out.println("------------------GAME UNIT BEFORE direct flight----------------------");
+        currentGame.printGameUnits();
+        System.out.println("CityCard name: " + ((CityCard) mtl).getCityName());
+        playDirectFlight((CityCard) mtl);
+        currentGame.printGameBoard();
+        System.out.println("------------------GAME UNIT AFTER direct flight----------------------");
+        currentGame.printGameUnits();*/
+
+        // TESTING TREAT DISEASE:
+        System.out.println("------------------GAME UNIT BEFORE treat disease----------------------");
+        currentGame.printGameUnits();
+        playTreatDisease((DiseaseFlag) currentGame.getCityByName(CityName.Atlanta).getCityUnits().stream()
+                                                                                                 .filter(unit ->
+                                                                                                                    unit.getUnitType() == UnitType.DiseaseFlag)
+                                                                                                 .findAny().orElse(null));
+        currentGame.printGameBoard();
+        System.out.println("------------------GAME UNIT after treat disease----------------------");
+        currentGame.printGameUnits();
+
+
+
 	}
+
+	public void createNewGame() {
+        System.out.println("Creating new game for hostPlayer " + hostPlayer.getPlayerUserName() + " ......");
+	    currentGame = new Game(hostPlayer, gameSettings, this);
+	    currentGame.initializeGame();
+
+    }
+
+    public Player getHostPlayer() {
+	    return hostPlayer;
+    }
+
+    private void setRegionToDiseaseTypeDict() {
+	    regionToDiseaseTypeDict = new HashMap<Region, DiseaseType>() {
+            {
+                put(Region.Blue, DiseaseType.Blue);
+                put(Region.Black, DiseaseType.Black);
+                put(Region.Red, DiseaseType.Red);
+                put(Region.Yellow, DiseaseType.Yellow);
+            }
+        };
+    }
+    private void setNameToRegionDict() {
+	    nameToRegionDict = new HashMap<CityName, Region>() {
+            {
+                put(CityName.SanFrancisco, Region.Blue);
+                put(CityName.Chicago, Region.Blue);
+                put(CityName.Atlanta, Region.Blue);
+                put(CityName.Montreal, Region.Blue);
+                put(CityName.Washington, Region.Blue);
+                put(CityName.NewYork, Region.Blue);
+                put(CityName.London, Region.Blue);
+                put(CityName.Madrid, Region.Blue);
+                put(CityName.Paris, Region.Blue);
+                put(CityName.Essen, Region.Blue);
+                put(CityName.Milan, Region.Blue);
+                put(CityName.StPetersburg, Region.Blue);
+
+                put(CityName.LosAngeles, Region.Yellow);
+                put(CityName.MexicoCity, Region.Yellow);
+                put(CityName.Miami, Region.Yellow);
+                put(CityName.Bogota, Region.Yellow);
+                put(CityName.Lima, Region.Yellow);
+                put(CityName.Santiago, Region.Yellow);
+                put(CityName.BuenosAires, Region.Yellow);
+                put(CityName.SaoPaulo, Region.Yellow);
+                put(CityName.Lagos, Region.Yellow);
+                put(CityName.Kinshasa, Region.Yellow);
+                put(CityName.Johannesburg, Region.Yellow);
+                put(CityName.Khartoum, Region.Yellow);
+
+                put(CityName.Algiers, Region.Black);
+                put(CityName.Istanbul, Region.Black);
+                put(CityName.Cairo, Region.Black);
+                put(CityName.Moscow, Region.Black);
+                put(CityName.Baghdad, Region.Black);
+                put(CityName.Riyadh, Region.Black);
+                put(CityName.Tehran, Region.Black);
+                put(CityName.Karachi, Region.Black);
+                put(CityName.Mumbai, Region.Black);
+                put(CityName.Delhi, Region.Black);
+                put(CityName.Chennai, Region.Black);
+                put(CityName.Kolkata, Region.Black);
+
+                put(CityName.Bangkok, Region.Red);
+                put(CityName.Jakarta, Region.Red);
+                put(CityName.Beijing, Region.Red);
+                put(CityName.Shanghai, Region.Red);
+                put(CityName.HongKong, Region.Red);
+                put(CityName.HoChiMinhCity, Region.Red);
+                put(CityName.Seoul, Region.Red);
+                put(CityName.Taipei, Region.Red);
+                put(CityName.Manila, Region.Red);
+                put(CityName.Sydney, Region.Red);
+                put(CityName.Tokyo, Region.Red);
+                put(CityName.Osaka, Region.Red);
+            }
+        };
+    }
 
 	private void setNeighborsDict() {
       neighborsDict = new HashMap<CityName, ArrayList<CityName>>() {
         {
           put(CityName.SanFrancisco, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Chicago, CityName.Tokyo, CityName.Manila)
+                  Arrays.asList(CityName.Chicago, CityName.Tokyo, CityName.Manila,
+                                CityName.LosAngeles)
           ));
 
           put(CityName.LosAngeles, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Sydney, CityName.Chicago, CityName.MexicoCity)
+                  Arrays.asList(CityName.Sydney, CityName.Chicago, CityName.MexicoCity,
+                                CityName.SanFrancisco)
           ));
 
           put(CityName.MexicoCity, new ArrayList<CityName>(
@@ -284,29 +407,45 @@ public class GameManager {
         }
       };
     }
-	
+
+    public DiseaseType getDiseaseTypeByRegion(Region r) {
+	    return regionToDiseaseTypeDict.get(r);
+    }
+
+    public Region getRegionByCityName(CityName name) {
+	    return nameToRegionDict.get(name);
+    }
+
+    public ArrayList<CityName> getCityNamesByRegion(Region r) {
+	    return regionsDict.get(r);
+    }
+
+    public ArrayList<CityName> getCityNeighborNames(CityName name) {
+	    return neighborsDict.get(name);
+    }
+
 	public void setResolvingEpidemic(boolean b){
-		currentGame.setResolvingEpidemic(b);
+	    currentGame.setResolvingEpidemic(b);
 	}
 	
 	public int getInfectionRate(){
-		return currentGame.getInfectionRate();
+	    return currentGame.getInfectionRate();
 	}
 	
 	public void increaseInfectionRate(){
-		currentGame.increaseInfectionRate();
+	    currentGame.increaseInfectionRate();
 	}
 	
 	public InfectionCard drawLastInfectionCard(){
-		return currentGame.getInfectionDeck().drawLastCard();
+	    return currentGame.getInfectionDeck().drawLastCard();
 	}
 	
 	public void discardInfectionCard(InfectionCard ic){
-		currentGame.getInfectionDiscardPile().addCard(ic);
+	    currentGame.getInfectionDiscardPile().addCard(ic);
 	}
 	
 	public City getCityByName(CityName cn){
-		return currentGame.getCityByName(cn);
+	    return currentGame.getCityByName(cn);
 	}
 	
 	public void infectCityForEpidemic(City c){
@@ -366,4 +505,135 @@ public class GameManager {
 	public void notifyAllPlayersGameLost(){
 		// TO FILL IN LATER
 	}
+
+	// FOR THESE MIGHT NEED TO CHANGE INPUTS DEPENDING ON SERIALIZED OBJECT
+    // PASSED ACROSS NETWORK
+
+	//returns 0 upon success, 1 upon failure
+	public int playDriveFerry(City city) {
+	    Player currentPlayer = currentGame.getCurrentPlayer();
+	    Pawn currentPlayerPawn = currentPlayer.getPawn();
+        Role currentPlayerRole = currentPlayerPawn.getRole();
+        City currentPlayerCity = currentPlayerPawn.getLocation();
+
+	    if(currentPlayer.getActionsTaken() == 4) {
+	        currentPlayer.setActionsTaken(0);
+	        return 1;
+        }
+
+        if ((currentPlayerCity.getConnections().stream().filter(conn -> conn.getEnd1() == city || conn.getEnd2() == city)
+                                      .collect(Collectors.toList())).isEmpty()) {
+            return 1;
+        }
+
+        currentPlayerCity.getCityUnits().remove(currentPlayerPawn);
+	    city.getCityUnits().add(currentPlayerPawn);
+	    currentPlayerPawn.setLocation(city);
+
+        if(currentPlayerRole.getRoleType() == RoleType.Medic)
+            medicEnterCity(city);
+
+        // OTB EXTENSION----
+        /*if(currentPlayerRole.getRoleType() == RoleType.ContainmentSpecialist) {
+
+
+        }*/
+
+        currentPlayer.incrementActionTaken();
+        return 0;
+
+    }
+
+    //returns 0 upon success, 1 upon failure
+    public int playDirectFlight(CityCard card) {
+        Player currentPlayer = currentGame.getCurrentPlayer();
+        Pawn currentPlayerPawn = currentPlayer.getPawn();
+        Role currentPlayerRole = currentPlayerPawn.getRole();
+        City currentPlayerCity = currentPlayerPawn.getLocation();
+        City city = currentGame.getCityByName(card.getCityName());
+
+        if(currentPlayer.getActionsTaken() == 4) {
+            currentPlayer.setActionsTaken(0);
+            return 1;
+        }
+
+        if (!currentPlayer.isInHand(card)) {
+            return 1;
+        }
+
+        currentPlayerCity.getCityUnits().remove(currentPlayerPawn);
+        city.getCityUnits().add(currentPlayerPawn);
+        currentPlayerPawn.setLocation(city);
+
+        if(currentPlayerRole.getRoleType() == RoleType.Medic)
+            medicEnterCity(city);
+
+        // OTB EXTENSION----
+        /*if(currentPlayerRole.getRoleType() == RoleType.TroubleShooter) {
+
+
+        }*/
+
+        currentPlayer.incrementActionTaken();
+        // MUST DISCARD CARD AFTER PLAY?
+        return 0;
+    }
+
+    //returns 0 upon success, 1 upon failure
+    public int playTreatDisease(DiseaseFlag flag) {
+        Player currentPlayer = currentGame.getCurrentPlayer();
+        Pawn currentPlayerPawn = currentPlayer.getPawn();
+        Role currentPlayerRole = currentPlayerPawn.getRole();
+        City city = currentPlayerPawn.getLocation();
+        DiseaseType diseaseType = flag.getDiseaseType();
+        Disease disease = currentGame.getDiseaseByDiseaseType(diseaseType);
+        boolean cured = disease.isCured();
+
+        if(currentPlayer.getActionsTaken() == 4) {
+            currentPlayer.setActionsTaken(0);
+            return 1;
+        }
+
+        if(currentPlayerRole.getRoleType() == RoleType.Medic || cured) {
+            city.removeAllDiseaseFlags(diseaseType).forEach(unit -> currentGame.getDiseaseSupplyByDiseaseType(diseaseType).add((DiseaseFlag) unit));
+            if(currentPlayerRole.getRoleType() != RoleType.Medic)
+                currentPlayer.incrementActionTaken();
+        } else {
+            currentGame.getDiseaseSupplyByDiseaseType(diseaseType).add(city.removeOneDiseaseFlag(diseaseType));
+            currentPlayer.incrementActionTaken();
+        }
+
+        if(cured && currentGame.checkIfEradicated(diseaseType)) {
+            disease.setEradicated(true);
+        }
+
+        return 0;
+    }
+
+    private void medicEnterCity(City city) {
+	    for(DiseaseType d : DiseaseType.values()) {
+                if(d != DiseaseType.Purple) {
+                    Disease disease = currentGame.getDiseaseByDiseaseType(d);
+                    boolean cured = disease.isCured();
+                    if(city.getNumOfDiseaseFlagsPlaced(d) > 0 && cured) {
+                        city.removeAllDiseaseFlags(d).forEach(unit -> currentGame.getDiseaseSupplyByDiseaseType(d).add((DiseaseFlag) unit));
+                    }
+
+                    if(currentGame.checkIfEradicated(d) && cured) {
+                        disease.setEradicated(true);
+                    }
+                }
+	    }
+
+    }
+
+    //TODO:
+    public void playShareKnowledgeRequest(Player participant, CityCard c) {
+
+    }
+
+    public int playShareKnowledgeReply(ConsentRequiringAction a) {
+	    return 0;
+    }
+
 }
