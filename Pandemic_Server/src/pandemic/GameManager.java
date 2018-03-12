@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.stream.Collectors;
 
-// GameManager won't stay in this package
 public class GameManager {
 
 	private HashMap<CityName, ArrayList<CityName>> neighborsDict;
@@ -469,6 +468,7 @@ public class GameManager {
 	
 	public void endTurn(){
 	// MUST BE MODIFIED TO HANDLE OTB CHALLENGES (i.e. Mutations, Bioterrorist win/lose)
+		currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.ActionsCompleted);
 		currentGame.setGamePhase(GamePhase.TurnPlayerCards);
 		Player p = currentGame.getCurrentPlayer();
 		p.setActionsTaken(0);
@@ -486,20 +486,75 @@ public class GameManager {
 				((EpidemicCard) playerCard1).resolveEpidemic();
 			}
 			else {
-				// MUST HANDLE CHECKIGN IF PLAYER HAS TOO MANY CARDS
-				// SHOULD CHECKING BE DONE IN addToHand, OR SHOULD IT BE DONE FROM WHEREVER IT IS CALLED?
 				p.addToHand(playerCard1);
 			}
 			if (playerCard2 instanceof EpidemicCard){
 				((EpidemicCard) playerCard2).resolveEpidemic();
 			}
 			else {
-				// MUST HANDLE CHECKIGN IF PLAYER HAS TOO MANY CARDS
-				// SHOULD CHECKING BE DONE IN addToHand, OR SHOULD IT BE DONE FROM WHEREVER IT IS CALLED?
 				p.addToHand(playerCard2);
 			}
 			currentGame.setGamePhase(GamePhase.TurnInfection);
 		}
+			// CALL INFECTNEXTCITY HERE? SET NEXT PLAYER TO CURRENTPLAYER AND SET
+			// CURRENTPLAYERTURNSTATUS TO PLAYINGACTIONS??
+		
+		if (currentGame.getOneQuietNight()){
+			currentGame.setOneQuietNight(false);
+			// must set up next player's turn
+		}
+		else {
+			infectNextCity();
+		}
+		
+	}
+	
+	// Checks if Player has too many cards in hand. Must resolve issue if Player has
+	// too many cards.
+	public void checkHandSize(Player p){
+		int numCardsInHand = p.getHandSize();
+		// For OTB, must check if Player is Generalist
+		if (numCardsInHand > 7){
+			currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.PlayerDiscardingCards);
+			currentGame.setPlayerDiscardingCards(p);
+			promptDiscardCards(p);
+		}
+		else if (currentGame.getCurrentPlayerTurnStatus().equals(CurrentPlayerTurnStatus.PlayerDiscardingCards)){
+			// Player has already been prompted to discard a card/play event card and the player did it
+			currentGame.setPlayerDiscardingCards(null);
+			currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.PlayingActions);
+		}
+	}
+	
+	public Player getPlayerDiscardingCards(){
+		return currentGame.getPlayerDiscardingCards();
+	}
+	
+	public CurrentPlayerTurnStatus getCurrentPlayerTurnStatus(){
+		return currentGame.getCurrentPlayerTurnStatus();
+	}
+	
+	// returns 0 if successful, 1 if failed
+	// Removes card from player's hand and adds it to PlayerDiscardPile
+	public int discardPlayerCard(Player p, PlayerCard c){
+		// Must take a player as a parameter for when a non-current player has too
+		// many cards and must discard one
+		if (p.isInHand(c)){
+			p.discardCard(c);
+			PlayerDiscardPile pile = currentGame.getPlayerDiscardPile();
+			pile.addCard(c);
+			if (currentGame.getCurrentPlayerTurnStatus().equals(CurrentPlayerTurnStatus.PlayerDiscardingCards)){
+				checkHandSize(p);
+			}
+			return 0;
+		}
+		return 1;
+	}
+	
+	public void promptDiscardCards(Player p){
+		// TO DO
+		// MUST INFORM PLAYER P THAT THEY HAVE TOO MANY CARDS AND MUST SELECT ONE CARD
+		// TO DISCARD OR PLAY AN EVENT CARD
 	}
 	
 	public void notifyAllPlayersGameLost(){
@@ -627,13 +682,73 @@ public class GameManager {
 
     }
 
-    //TODO:
+    
     public void playShareKnowledgeRequest(Player participant, CityCard c) {
-
+    	ShareKnowledgeAction share = new ShareKnowledgeAction(participant, c);
+    	currentGame.setCurrentConsentRequiringAction(share);
+    	if (currentGame.getCurrentPlayer().isInHand(c)){
+    		promptGive(participant, c);
+    	}
+    	else {
+    		promptTake(participant, c);
+    	}
+    	// currentPlayer cannot play any actions until participant replies
+    	// Client must check currentPlayerTurnStatus before sending any actions
+    	currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.WaitingForReply);
+    	
+    }
+    
+    public void replyConsentRequest(Boolean b){
+    	if (b){
+    		notifyConsentRequestApproved();
+    		currentGame.getCurrentConsentRequiringAction().playAction();
+    	}
+    	else {
+    		notifyConsentRequestDenied();
+    	}
+    	currentGame.setCurrentConsentRequiringAction(null);
+    	currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.PlayingActions);
+    }
+    
+    
+    public Player getCurrentPlayer(){
+    	return currentGame.getCurrentPlayer();
+    }
+    
+    
+//    public int playShareKnowledgeReply(ConsentRequiringAction a) {
+//	    return 0;
+//    }
+    
+    // TO DO
+    // Prompts toPlayer for permission for currentPlayer to give card to toPlayer
+    public void promptGive(Player toPlayer, PlayerCard card){
+    	
+    }
+    
+    // TO DO
+    // Prompts fromPlayer for permission for currentPlayer to take card from fromPlayer
+    public void promptTake(Player fromPlayer, PlayerCard card){
+    	
+    }
+    
+    // TO DO (notifies currentPlayer)
+    // Do we want to also notify other players?
+    public void notifyConsentRequestApproved(){
+    	
+    }
+    
+    // TO DO (notifies currentPlayer)
+    public void notifyConsentRequestDenied(){
+    	
+    }
+    
+    // TO DO
+    public void infectNextCity(){
+    	
     }
 
-    public int playShareKnowledgeReply(ConsentRequiringAction a) {
-	    return 0;
+    public void setOneQuietNight(boolean b){
+    	currentGame.setOneQuietNight(b);
     }
-
 }

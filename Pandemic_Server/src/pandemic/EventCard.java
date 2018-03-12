@@ -1,9 +1,10 @@
 package pandemic;
 
-public class EventCard implements PlayerCard{
+public abstract class EventCard implements PlayerCard{
 	
-	private EventCardName name;
-	private CardType cardType;
+	protected GameManager gameManager;
+	protected EventCardName name;
+	protected CardType cardType;
 	
 	public EventCard(EventCardName pName){
 	    name = pName;
@@ -17,4 +18,6 @@ public class EventCard implements PlayerCard{
     public String getCardName() {
         return name.toString();
     }
+    
+    public abstract void playEventCard();
 }

@@ -40,6 +40,11 @@ public class Game {
   	private boolean resolvingEpidemic;
   	private int infectionRate;
 
+	private CurrentPlayerTurnStatus currentPlayerTurnStatus;
+	private ConsentRequiringAction currentConsentRequiringAction;
+	private Player playerDiscardingCards;
+	private boolean oneQuietNightActivated;
+  	
   	public Game(Player currentPlayer, GameSettings settings, GameManager gameManager) {
   	    this.currentPlayer = currentPlayer;
   	    this.settings = settings;
@@ -446,4 +451,40 @@ public class Game {
 	public void printGameBoard() {
   	    myGameBoard.printGameBoard();
     }
+	
+	public CurrentPlayerTurnStatus getCurrentPlayerTurnStatus(){
+		return currentPlayerTurnStatus;
+	}
+	
+	public void setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus status){
+		currentPlayerTurnStatus = status;
+	}
+	
+	public ConsentRequiringAction getCurrentConsentRequiringAction(){
+		return currentConsentRequiringAction;
+	}
+	
+	public void setCurrentConsentRequiringAction(ConsentRequiringAction action){
+		currentConsentRequiringAction = action;
+	}
+	
+	public PlayerDiscardPile getPlayerDiscardPile(){
+		return myPlayerDiscardPile;
+	}
+	
+	public Player getPlayerDiscardingCards(){
+		return playerDiscardingCards;
+	}
+	
+	public void setPlayerDiscardingCards(Player p){
+		playerDiscardingCards = p;
+	}
+	
+	public boolean getOneQuietNight(){
+		return oneQuietNightActivated;
+	}
+	
+	public void setOneQuietNight(boolean b){
+		oneQuietNightActivated = b;
+	}
 }
