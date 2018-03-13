@@ -12,15 +12,12 @@ import java.util.function.Supplier;
  * @author Russell Katz
  */
 public abstract class Server extends Thread {
-    private final Supplier<List<String>> ipWhiteList;   //TODO remove IP whitelist verification and implement SSL key verification (possible choice)
-
     private ServerSocket server;
     private SendMessage sendMessage;
 
-    public Server(int port, Supplier<List<String>> ipWhiteList) throws IOException {
+    public Server(int port) throws IOException {
         System.out.println("New server initialized!");
         this.server = new ServerSocket(port);
-        this.ipWhiteList = ipWhiteList;
         this.sendMessage = new SendMessage();
 
         this.start();
@@ -33,11 +30,6 @@ public abstract class Server extends Thread {
                 Socket client = server.accept();
                 final String data[] = client.getRemoteSocketAddress().toString().split(":");
                 final String hostAddress = client.getInetAddress().getHostAddress();
-
-                if (!ipWhiteList.get().contains(hostAddress)) {
-                    System.err.println("DENIED CONNECTION: " + hostAddress);
-                    continue;
-                }
 
                 System.out.println(hostAddress + " (PORT:" + data[1] + ") connected");
 
