@@ -70,4 +70,8 @@ public class Player {
     public RoleType getRoleType(){
     	return role.getRoleType();
     }
+
+	public ArrayList<PlayerCard> getCardsInHand() {
+		return cardsInHand;
+	}
 }

@@ -1,9 +1,10 @@
 package pandemic;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import javafx.util.Pair;
+import shared.GameState;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Game {
@@ -501,4 +502,21 @@ public class Game {
 	public void setCurrentPlayer(Player p){
 		currentPlayer = p;
 	}
+
+	//the ultimate functional programming test
+	public GameState generateCondensedGameState() {
+        final Map<RoleType, String> userMap
+                = gameManager.getActivePlayers().stream().collect(Collectors.toMap(Player::getRoleType, Player::getPlayerUserName));
+
+        final Map<RoleType, List<PlayerCard>> cardMap
+                = gameManager.getActivePlayers().stream().collect(Collectors.toMap(Player::getRoleType, Player::getCardsInHand));
+
+        final Map<RoleType, CityName> positionMap
+                = gameManager.getActivePlayers().stream().collect(Collectors.toMap(Player::getRoleType, p -> p.getPawn().getLocation().getName()));
+
+        final Map<CityName, List<Pair<DiseaseType,Integer>>> diseaseCubesMap
+                = myGameBoard.getCitiesOnBoard().stream().collect(Collectors.toMap(City::getName, City::getDiseaseFlags));
+
+	    return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, myInfectionDiscardPile, myPlayerDiscardPile);
+    }
 }

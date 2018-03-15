@@ -768,4 +768,8 @@ public class GameManager {
     public void setCurrentPlayer(Player p){
     	currentGame.setCurrentPlayer(p);
     }
+
+    public LinkedList<Player> getActivePlayers() {
+        return activePlayers;
+    }
 }

@@ -77,4 +77,7 @@ public class GameBoard {
         return flagsOnBoard.isEmpty();
     }
 
+    public ArrayList<City> getCitiesOnBoard() {
+        return citiesOnBoard;
+    }
 }
