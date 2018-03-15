@@ -12,6 +12,7 @@ import java.util.Map;
  */
 public class GameState {
 
+    private final Map<RoleType, String> userMap;
     private final Map<RoleType, List<PlayerCard>> cardMap;
     private final Map<RoleType, CityName> positionMap;
     private final Map<CityName, List<Pair<DiseaseType,Integer>>> diseaseCubesMap;
@@ -21,8 +22,9 @@ public class GameState {
     /**
      * The server will create this object! The client just receives it.
      */
-    public GameState(Map<RoleType, List<PlayerCard>> cardMap, Map<RoleType, CityName> positionMap, Map<CityName,
+    public GameState(Map<RoleType, String> userMap, Map<RoleType, List<PlayerCard>> cardMap, Map<RoleType, CityName> positionMap, Map<CityName,
             List<Pair<DiseaseType, Integer>>> diseaseCubesMap, InfectionDiscardPile infectionDiscardPile, PlayerDiscardPile playerDiscardPile) {
+        this.userMap = userMap;
         this.cardMap = cardMap;
         this.positionMap = positionMap;
         this.diseaseCubesMap = diseaseCubesMap;
@@ -49,6 +51,13 @@ public class GameState {
      */
     public Map<CityName, List<Pair<DiseaseType, Integer>>> getDiseaseCubesMap() {
         return diseaseCubesMap;
+    }
+
+    /**
+     * Maps players to their login username
+     */
+    public Map<RoleType, String> getUserMap() {
+        return userMap;
     }
 
     public InfectionDiscardPile getInfectionDiscardPile() {
