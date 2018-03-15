@@ -523,7 +523,7 @@ public class GameManager {
 			promptDiscardCards(p);
 		}
 		else if (currentGame.getCurrentPlayerTurnStatus().equals(CurrentPlayerTurnStatus.PlayerDiscardingCards)){
-			// Player has already been prompted to discard a card/play event card and the player did it
+			// Player has already been prompted to discard a card/play event card and the player did
 			currentGame.setPlayerDiscardingCards(null);
 			currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.PlayingActions);
 		}
@@ -540,8 +540,8 @@ public class GameManager {
 	// returns 0 if successful, 1 if failed
 	// Removes card from player's hand and adds it to PlayerDiscardPile
 	public int discardPlayerCard(Player p, PlayerCard c){
-		// Must take a player as a parameter for when a non-current player has too
-		// many cards and must discard one
+		// Must take a Player as a parameter because the currentPlayer is not the only
+		// Player who might discard a card (i.e. when another Player has too many cards)
 		if (p.isInHand(c)){
 			p.discardCard(c);
 			PlayerDiscardPile pile = currentGame.getPlayerDiscardPile();
@@ -685,7 +685,6 @@ public class GameManager {
 
     }
 
-    
     public void playShareKnowledgeRequest(Player participant, CityCard c) {
     	ShareKnowledgeAction share = new ShareKnowledgeAction(this, participant, c);
     	currentGame.setCurrentConsentRequiringAction(share);
@@ -697,8 +696,7 @@ public class GameManager {
     	}
     	// currentPlayer cannot play any actions until participant replies
     	// Client must check currentPlayerTurnStatus before sending any actions
-    	currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.WaitingForReply);
-    	
+    	currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.WaitingForReply);	
     }
     
     public void replyConsentRequest(Boolean b){
@@ -718,6 +716,9 @@ public class GameManager {
     	return currentGame.getCurrentPlayer();
     }
     
+    public void setCurrentPlayer(Player p){
+    	currentGame.setCurrentPlayer(p);
+    }
     
 //    public int playShareKnowledgeReply(ConsentRequiringAction a) {
 //	    return 0;
@@ -752,20 +753,15 @@ public class GameManager {
     
     // TO DO
     public void infectNextCity(){
-    	InfectionDeck deck = currentGame.getInfectionDeck();
-    	// MUST HANDLE MUTATION CARDS HERE FOR OTB
-    	CityInfectionCard card = (CityInfectionCard) deck.drawCard();
-    	City toInfect = currentGame.getCityByName(card.getCityName());
-    	currentGame.getInfectionDiscardPile().addCard(card);
-    	Disease d = toInfect.get
+//    	InfectionDeck deck = currentGame.getInfectionDeck();
+//    	// MUST HANDLE MUTATION CARDS HERE FOR OTB
+//    	CityInfectionCard card = (CityInfectionCard) deck.drawCard();
+//    	City toInfect = currentGame.getCityByName(card.getCityName());
+//    	currentGame.getInfectionDiscardPile().addCard(card);
+//    	Disease d = toInfect.get
     }
 
     public void setOneQuietNight(boolean b){
     	currentGame.setOneQuietNight(b);
-    }
-    
-    // TO TEST
-    public void setCurrentPlayer(Player p){
-    	currentGame.setCurrentPlayer(p);
     }
 }
