@@ -37,7 +37,7 @@ public class Player {
     }
 
     public int getHandSize(){
-    	return cardsInHand.size();
+	    return cardsInHand.size();
     }
     
     public void addToHand(PlayerCard pc){
@@ -45,7 +45,7 @@ public class Player {
 	}
 
 	public boolean isInHand(PlayerCard pc) {
-	    return cardsInHand.stream().filter(card -> card == pc).findAny().orElse(null) != null ? true : false;
+	    return cardsInHand.stream().anyMatch(pc::equals);
     }
 	
 	// Note: Does not add card too any discard pile

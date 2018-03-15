@@ -78,6 +78,6 @@ public class PlayerDeck {
 
     //FOR TESTING ////////////////////////////////////////////////
     public PlayerCard getCard(String cardName) {
-	    return cardsInDeck.stream().filter(card -> card.getCardName() == cardName).findAny().orElse(null);
+	    return cardsInDeck.stream().filter(card -> card.getCardName().equals(cardName)).findAny().orElse(null);
     }
 }
