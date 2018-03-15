@@ -1,6 +1,9 @@
 package pandemic;
 
-public enum RoleType {
+import java.io.Serializable;
+
+public enum RoleType implements Serializable {
+
     ContingencyPlanner, Dispatcher, Medic, OperationsExpert, QuarantineSpecialist,
     Researcher, Scientist
 }
