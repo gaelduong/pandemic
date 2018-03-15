@@ -26,7 +26,7 @@ public class MenuGUI extends Application {
 		main.setPrefSize(1024, 768);
 
 		InputStream iStream = Files.newInputStream(Paths
-				.get("C:\\Users\\G\\eclipse-workspace\\pandemic\\src\\pandemic\\resources\\MainMenu\\MainMenu.jpg"));
+				.get(".\\src\\pandemic\\resources\\MainMenu\\MainMenu.jpg"));
 		Image img = new Image(iStream);
 		iStream.close();
 
