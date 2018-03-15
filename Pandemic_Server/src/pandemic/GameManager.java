@@ -32,7 +32,7 @@ public class GameManager {
 		createNewGame();
 		currentGame.getDiseaseByDiseaseType(DiseaseType.Blue).setCured(true);
 		
-		// FOR TESTING SHAREKNOWLEGE:
+		//FOR TESTING SHAREKNOWLEGE:
 		currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.PlayingActions);
 		
 		//TESTING DRIVE/FERRY:
