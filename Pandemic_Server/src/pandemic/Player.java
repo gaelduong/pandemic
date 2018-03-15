@@ -17,6 +17,10 @@ public class Player {
 	    cardsInHand = new ArrayList<PlayerCard>();
     }
 
+	public void setGameManager(GameManager gm){
+		gameManager = gm;
+	}
+	
     public String getPlayerUserName() {
 	    return user.getUserName();
     }

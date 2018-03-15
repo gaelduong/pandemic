@@ -31,7 +31,10 @@ public class GameManager {
 		//FOR TESTING:
 		createNewGame();
 		currentGame.getDiseaseByDiseaseType(DiseaseType.Blue).setCured(true);
-
+		
+		// FOR TESTING SHAREKNOWLEGE:
+		currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.PlayingActions);
+		
 		//TESTING DRIVE/FERRY:
 		/*System.out.println("------------------GAME UNIT BEFORE drive/ferry----------------------");
         currentGame.printGameUnits();
@@ -468,7 +471,7 @@ public class GameManager {
 	
 	public void endTurn(){
 	// MUST BE MODIFIED TO HANDLE OTB CHALLENGES (i.e. Mutations, Bioterrorist win/lose)
-		currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.ActionsCompleted);
+	//	currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.ActionsCompleted);
 		currentGame.setGamePhase(GamePhase.TurnPlayerCards);
 		Player p = currentGame.getCurrentPlayer();
 		p.setActionsTaken(0);
@@ -684,7 +687,7 @@ public class GameManager {
 
     
     public void playShareKnowledgeRequest(Player participant, CityCard c) {
-    	ShareKnowledgeAction share = new ShareKnowledgeAction(participant, c);
+    	ShareKnowledgeAction share = new ShareKnowledgeAction(this, participant, c);
     	currentGame.setCurrentConsentRequiringAction(share);
     	if (currentGame.getCurrentPlayer().isInHand(c)){
     		promptGive(participant, c);
@@ -723,24 +726,28 @@ public class GameManager {
     // TO DO
     // Prompts toPlayer for permission for currentPlayer to give card to toPlayer
     public void promptGive(Player toPlayer, PlayerCard card){
-    	
+    	//TO TEST:
+    	System.out.println("Prompting give: " + card.getCardName());
     }
     
     // TO DO
     // Prompts fromPlayer for permission for currentPlayer to take card from fromPlayer
     public void promptTake(Player fromPlayer, PlayerCard card){
-    	
+    	System.out.println("Prompting take: " + card.getCardName());
+
     }
     
     // TO DO (notifies currentPlayer)
     // Do we want to also notify other players?
     public void notifyConsentRequestApproved(){
-    	
+    	// TO TEST:
+    	System.out.println("Notifying Player request approved");
     }
     
     // TO DO (notifies currentPlayer)
     public void notifyConsentRequestDenied(){
-    	
+    	// TO TEST:
+    	System.out.println("Notifying Player request Denied");
     }
     
     // TO DO
@@ -750,5 +757,10 @@ public class GameManager {
 
     public void setOneQuietNight(boolean b){
     	currentGame.setOneQuietNight(b);
+    }
+    
+    // TO TEST
+    public void setCurrentPlayer(Player p){
+    	currentGame.setCurrentPlayer(p);
     }
 }

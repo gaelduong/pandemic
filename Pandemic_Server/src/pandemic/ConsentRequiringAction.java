@@ -6,7 +6,8 @@ abstract class ConsentRequiringAction {
 	protected Player affectedPlayer;
 	protected PlayerCard associatedCard;
 	
-	public ConsentRequiringAction(Player player, PlayerCard card){
+	public ConsentRequiringAction(GameManager gm, Player player, PlayerCard card){
+		gameManager = gm;
 		affectedPlayer = player;
 		associatedCard = card;
 	}

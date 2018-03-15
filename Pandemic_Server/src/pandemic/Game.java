@@ -141,10 +141,19 @@ public class Game {
             myInfectionDeck.addCard(new CityInfectionCard(cName, cRegion));
         }
 
-        for(EventCardName eName : EventCardName.values()) {
+ /*       for(EventCardName eName : EventCardName.values()) {
             myPlayerDeck.addCard(new EventCard(eName));
         }
-
+*/
+        
+        // MC added this:
+        myPlayerDeck.addCard(new AirLiftEventCard());
+        myPlayerDeck.addCard(new ForecastEventCard());
+        myPlayerDeck.addCard(new GovernmentGrantEventCard());
+        myPlayerDeck.addCard(new OneQuietNightEventCard());
+        myPlayerDeck.addCard(new ResilientPopulationEventCard());
+        myPlayerDeck.shuffleDeck();
+        
         // - shuffling in Epidemic cards based on settings
         // MUST BE DONE AFTER ALL PLAYERS HAVE JOINED AND ALL HAVE BEEN DEALT PLAYERCARDS ACCORDING TO RULES
         List<PlayerCard> epidemicCards = new ArrayList<PlayerCard>();
@@ -486,5 +495,10 @@ public class Game {
 	
 	public void setOneQuietNight(boolean b){
 		oneQuietNightActivated = b;
+	}
+	
+	// TO TEST
+	public void setCurrentPlayer(Player p){
+		currentPlayer = p;
 	}
 }
