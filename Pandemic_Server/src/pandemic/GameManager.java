@@ -752,7 +752,11 @@ public class GameManager {
     
     // TO DO
     public void infectNextCity(){
-    	
+    	InfectionDeck deck = currentGame.getInfectionDeck();
+    	// MUST HANDLE MUTATION CARDS HERE FOR OTB
+    	CityInfectionCard card = (CityInfectionCard) deck.drawCard();
+    	City toInfect = currentGame.getCityByName(card.getCityName());
+    	currentGame.getInfectionDiscardPile().addCard(card);
     }
 
     public void setOneQuietNight(boolean b){

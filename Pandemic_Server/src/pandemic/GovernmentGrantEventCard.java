@@ -2,8 +2,8 @@ package pandemic;
 
 public class GovernmentGrantEventCard extends EventCard {
 
-	public GovernmentGrantEventCard(){
-		super(EventCardName.GovernmentGrant);
+	public GovernmentGrantEventCard(GameManager gm){
+		super(gm, EventCardName.GovernmentGrant);
 	}
 	
 	@Override

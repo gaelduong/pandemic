@@ -2,8 +2,8 @@ package pandemic;
 
 public class OneQuietNightEventCard extends EventCard {
 
-	public OneQuietNightEventCard(){
-		super(EventCardName.OneQuietNight);
+	public OneQuietNightEventCard(GameManager gm){
+		super(gm, EventCardName.OneQuietNight);
 	}
 	
 	@Override

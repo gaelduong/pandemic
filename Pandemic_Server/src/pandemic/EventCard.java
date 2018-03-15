@@ -6,8 +6,9 @@ public abstract class EventCard implements PlayerCard{
 	protected EventCardName name;
 	protected CardType cardType;
 	
-	public EventCard(EventCardName pName){
-	    name = pName;
+	public EventCard(GameManager gm, EventCardName pName){
+	    gameManager = gm;
+		name = pName;
 	    cardType = CardType.EventCard;
 	}
 

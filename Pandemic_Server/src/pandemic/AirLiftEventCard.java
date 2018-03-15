@@ -2,8 +2,8 @@ package pandemic;
 
 public class AirLiftEventCard extends EventCard {
 
-	public AirLiftEventCard(){
-		super(EventCardName.AirLift);
+	public AirLiftEventCard(GameManager gm){
+		super(gm, EventCardName.AirLift);
 	}
 	
 	@Override

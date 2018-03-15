@@ -2,8 +2,8 @@ package pandemic;
 
 public class ResilientPopulationEventCard extends EventCard {
 	
-	public ResilientPopulationEventCard(){
-		super(EventCardName.ResilientPopulation);
+	public ResilientPopulationEventCard(GameManager gm){
+		super(gm, EventCardName.ResilientPopulation);
 	}
 
 	@Override

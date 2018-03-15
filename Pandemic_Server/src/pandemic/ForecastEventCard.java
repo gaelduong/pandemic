@@ -2,8 +2,8 @@ package pandemic;
 
 public class ForecastEventCard extends EventCard{
 
-	public ForecastEventCard(){
-		super(EventCardName.Forecast);
+	public ForecastEventCard(GameManager gm){
+		super(gm, EventCardName.Forecast);
 	}
 	
 	@Override

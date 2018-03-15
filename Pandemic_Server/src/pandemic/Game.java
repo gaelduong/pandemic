@@ -147,12 +147,12 @@ public class Game {
 */
         
         // MC added this:
-        myPlayerDeck.addCard(new AirLiftEventCard());
-        myPlayerDeck.addCard(new ForecastEventCard());
-        myPlayerDeck.addCard(new GovernmentGrantEventCard());
-        myPlayerDeck.addCard(new OneQuietNightEventCard());
-        myPlayerDeck.addCard(new ResilientPopulationEventCard());
-        myPlayerDeck.shuffleDeck();
+        myPlayerDeck.addCard(new AirLiftEventCard(gameManager));
+        myPlayerDeck.addCard(new ForecastEventCard(gameManager));
+        myPlayerDeck.addCard(new GovernmentGrantEventCard(gameManager));
+        myPlayerDeck.addCard(new OneQuietNightEventCard(gameManager));
+        myPlayerDeck.addCard(new ResilientPopulationEventCard(gameManager));
+        //myPlayerDeck.shuffleDeck();
         
         // - shuffling in Epidemic cards based on settings
         // MUST BE DONE AFTER ALL PLAYERS HAVE JOINED AND ALL HAVE BEEN DEALT PLAYERCARDS ACCORDING TO RULES
