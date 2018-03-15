@@ -3,6 +3,7 @@ package server;
 import api.socketcomm.Server;
 import api.socketcomm.SocketBundle;
 import shared.Utils;
+import shared.request.UpdateRequest;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,7 +14,6 @@ public class PandemicServer extends Server {
 
     public PandemicServer(int port) throws IOException {
         super(port);
-
     }
 
     @Override
@@ -30,7 +30,10 @@ public class PandemicServer extends Server {
                 break;
 
             case SEND_UPDATE_REQUEST:
-                //TODO
+                final UpdateRequest updateRequest = (UpdateRequest)message.get(1);
+                if (updateRequest.isRequestValid())
+                    updateRequest.executeRequest();
+
                 break;
 
             case INITIATE_CONSENT_REQUIRING_MOVE:
