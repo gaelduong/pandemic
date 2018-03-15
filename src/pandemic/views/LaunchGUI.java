@@ -12,7 +12,7 @@ public class LaunchGUI {
 	public static void main(String[] args) {
 		Application.launch(MenuGUI.class, args);
 		//Application.launch(MyApp.class, args);
-	}
+	
 		/*
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -25,6 +25,7 @@ public class LaunchGUI {
 			}
 		});
 		*/
+}
 }
 
 

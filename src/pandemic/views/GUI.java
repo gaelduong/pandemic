@@ -201,10 +201,10 @@ public class GUI extends JFrame
 	private final String infectionDeckPicPath = "/pandemic/resources/Deck_Discard/infectionDeck.png";
 	
 	/*Player Discard Picture*/
-	private final String playerDiscardPicPath = "/pandemic/resources/Deck_Discard/playerDisCard.png";
+	private final String playerDiscardPicPath = "/pandemic/resources/Deck_Discard/playerDiscard.png";
 			
 	/*Infection Discard Picture*/
-	private final String infectionDiscardPicPath = "/pandemic/resources/Deck_Discard/infectionDisCard.png";
+	private final String infectionDiscardPicPath = "/pandemic/resources/Deck_Discard/infectionDiscard.png";
 			
 	/////////Ignore these (for testing)////////////
 	private boolean driveSelected;

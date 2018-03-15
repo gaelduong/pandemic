@@ -235,7 +235,7 @@ public class MenuLayout extends Parent {
         	
         	
         	// transition time
-        	getChildren().add(mainMenu);
+        	getChildren().add(createLobby);
 
             TranslateTransition tt = new TranslateTransition(Duration.seconds(0.25), createMenu);
             tt.setToX(createMenu.getTranslateX() + offset);
@@ -367,12 +367,48 @@ public class MenuLayout extends Parent {
         });
         
         
+        /********************************************************************* 
+         * ************Create Lobby Stuff ********************************** *
+         *********************************************************************/
+        
+        Label playerc1 = new Label("Player 1: You");
+        Label playerc2 = new Label("Player 2: waiting to connect");
+        Label playerc3 = new Label("Player 3: waiting to connect");
+        Label playerc4 = new Label("Player 4: waiting to connect");
+        
+        MenuButton btnCreateGameNow = new MenuButton("Start Game");
+        btnCreateGameNow.setOnMouseClicked(event -> {
+            
+        	// Actually start the game
+        	
+        });
+        
+        MenuButton btnCreateLobbyBack = new MenuButton("BACK");
+        btnCreateLobbyBack.setOnMouseClicked(event -> {
+            getChildren().add(mainMenu);
+
+            TranslateTransition tt = new TranslateTransition(Duration.seconds(0.25), createLobby);
+            tt.setToX(createLobby.getTranslateX() + offset);
+
+            TranslateTransition tt1 = new TranslateTransition(Duration.seconds(0.5), mainMenu);
+            tt1.setToX(createLobby.getTranslateX());
+
+            tt.play();
+            tt1.play();
+
+            tt.setOnFinished(evt -> {
+                getChildren().remove(createLobby);
+            });
+        });
+        
         
         mainMenu.getChildren().addAll(btnCreate, btnJoin, btnOptions, btnExit);
         optionsMenu.getChildren().addAll(btnSound, btnVideo, btnOptionsBack);
         createMenu.getChildren().addAll(difficulty, difficulties, challenge, btnMutation, btnVirulent, btnBioTerrorist, btnCardShowing, btnCreateGame, btnCreateBack);
         joinMenu.getChildren().addAll(enterIP, ipAddress, btnJoinIP, btnJoinBack);
         joinLobby.getChildren().addAll(player1, player2, player3, player4, waitingToStart, btnJoinLobbyBack);
+        createLobby.getChildren().addAll(playerc1, playerc2, playerc3, playerc4, btnCreateGameNow, btnCreateLobbyBack);
+        
         Rectangle bg = new Rectangle(1024, 768);
         bg.setFill(Color.GREY);
         bg.setOpacity(0.4);
