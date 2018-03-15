@@ -757,6 +757,7 @@ public class GameManager {
     	CityInfectionCard card = (CityInfectionCard) deck.drawCard();
     	City toInfect = currentGame.getCityByName(card.getCityName());
     	currentGame.getInfectionDiscardPile().addCard(card);
+    	Disease d = toInfect.get
     }
 
     public void setOneQuietNight(boolean b){
