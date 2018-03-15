@@ -435,11 +435,11 @@ public class Game {
     }
 
   	public void setResolvingEpidemic(boolean b){
-		resolvingEpidemic = b;
+  	    resolvingEpidemic = b;
 	}
 
 	public int getInfectionRate(){
-		return infectionRate;
+  	    return infectionRate;
 	}
 
 	public void increaseInfectionRate(){
@@ -449,27 +449,27 @@ public class Game {
 	}
 
 	public InfectionDeck getInfectionDeck(){
-		return myInfectionDeck;
+  	    return myInfectionDeck;
 	}
 
 	public InfectionDiscardPile getInfectionDiscardPile() {
-		return myInfectionDiscardPile;
+  	    return myInfectionDiscardPile;
 	}
 
 	public City getCityByName(CityName cn){
-		return myGameBoard.getCityByName(cn);
+  	    return myGameBoard.getCityByName(cn);
 	}
 
 	public void setGamePhase(GamePhase phase){
-		currentPhase = phase;
+  	    currentPhase = phase;
 	}
 
 	public Player getCurrentPlayer(){
-		return currentPlayer;
+  	    return currentPlayer;
 	}
 
 	public PlayerDeck getPlayerDeck(){
-		return myPlayerDeck;
+  	    return myPlayerDeck;
 	}
 
 	public void printGameBoard() {
@@ -481,37 +481,41 @@ public class Game {
 	}
 	
 	public void setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus status){
-		currentPlayerTurnStatus = status;
+  	    currentPlayerTurnStatus = status;
 	}
 	
 	public ConsentRequiringAction getCurrentConsentRequiringAction(){
-		return currentConsentRequiringAction;
+  	    return currentConsentRequiringAction;
 	}
 	
 	public void setCurrentConsentRequiringAction(ConsentRequiringAction action){
-		currentConsentRequiringAction = action;
+  	    currentConsentRequiringAction = action;
 	}
 	
 	public PlayerDiscardPile getPlayerDiscardPile(){
-		return myPlayerDiscardPile;
+  	    return myPlayerDiscardPile;
 	}
 	
 	public Player getPlayerDiscardingCards(){
-		return playerDiscardingCards;
+  	    return playerDiscardingCards;
 	}
 	
 	public void setPlayerDiscardingCards(Player p){
-		playerDiscardingCards = p;
+  	    playerDiscardingCards = p;
 	}
 	
 	public boolean getOneQuietNight(){
-		return oneQuietNightActivated;
+  	    return oneQuietNightActivated;
 	}
 	
 	public void setOneQuietNight(boolean b){
-		oneQuietNightActivated = b;
+  	    oneQuietNightActivated = b;
 	}
-	
+
+	public boolean isQuarantineSpecialistOrMedicInCity(City c) {
+  	    return myGameBoard.isQuarantineSpecialistOrMedicInCity(c);
+    }
+
 	// TO TEST
 	public void setCurrentPlayer(Player p){
 		currentPlayer = p;

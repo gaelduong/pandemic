@@ -1,9 +1,6 @@
 package pandemic;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameManager {
@@ -128,7 +125,7 @@ public class GameManager {
 	}
 	
 	public void infectCityForEpidemic(City c){
-		// TO FILL IN LATER
+		infectNextCity(c);
 	}
 	
 	public void shuffleInfectionDiscardPile(){
@@ -178,9 +175,7 @@ public class GameManager {
 			}
 			currentGame.setGamePhase(GamePhase.TurnInfection);
 		}
-			// CALL INFECTNEXTCITY HERE? SET NEXT PLAYER TO CURRENTPLAYER AND SET
-			// CURRENTPLAYERTURNSTATUS TO PLAYINGACTIONS??
-		
+
 		if (currentGame.getOneQuietNight()){
 			currentGame.setOneQuietNight(false);
 			// must set up next player's turn
@@ -188,20 +183,39 @@ public class GameManager {
 		else {
 		    int currentInfectionRate = currentGame.getInfectionRate();
 		    for(int i = 0; i < currentInfectionRate; i++) {
-                infectNextCity((CityInfectionCard) currentGame.getInfectionDeck().drawCard());
+		        CityInfectionCard card = (CityInfectionCard) currentGame.getInfectionDeck().drawCard();
+		        City cardCity = currentGame.getCityByName(card.getCityName());
+                infectNextCity(cardCity);
             }
 		}
+		//SET NEXT PLAYER TO CURRENT PLAYER
 		
 	}
 
     // TO DO
-    public void infectNextCity(CityInfectionCard card){
-	    City cardCity = currentGame.getCityByName(card.getCityName());
-	    ArrayList<DiseaseFlag> diseaseFlags =
-                currentGame.getDiseaseSupplyByDiseaseType(
-                        regionToDiseaseTypeDict.get(card.getRegion()));
+    public void infectNextCity(City city){
 
-	    
+	    DiseaseType cityDiseaseType = regionToDiseaseTypeDict.get(city.getRegion());
+	    ArrayList<DiseaseFlag> diseaseFlags =
+                currentGame.getDiseaseSupplyByDiseaseType(cityDiseaseType);
+
+	    boolean qsOrMedicPresentInCity = currentGame.isQuarantineSpecialistOrMedicInCity(city);
+	    boolean diseaseEradicated = currentGame.checkIfEradicated(cityDiseaseType);
+	    int numberOfRemainingDiseaseFlags = diseaseFlags.size();
+
+	    ArrayList<City> cityNeighbors = city.getNeighbors();
+        LinkedList<City> Q = new LinkedList<>();
+        Q.addLast(city);
+
+        boolean qsOrMedicPresentInNeighbor = false;
+        for(City c : cityNeighbors) {
+            qsOrMedicPresentInNeighbor = currentGame.isQuarantineSpecialistOrMedicInCity(c);
+            if(qsOrMedicPresentInNeighbor) break;
+        }
+
+
+
+
 
     }
 	

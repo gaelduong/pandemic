@@ -77,4 +77,19 @@ public class GameBoard {
         return flagsOnBoard.isEmpty();
     }
 
+    public boolean isQuarantineSpecialistOrMedicInCity(City c) {
+        List<Unit> cPawns = c.getCityUnits().stream().filter(unit -> unit.getUnitType() == UnitType.Pawn)
+                .collect(Collectors.toList());
+        boolean result = false;
+
+        for (Unit pawn : cPawns) {
+            result = ((Pawn) pawn).getRole().getRoleType() == RoleType.QuarantineSpecialist ||
+                    ((Pawn) pawn).getRole().getRoleType() == RoleType.Medic;
+            if(result == true) break;
+        }
+
+        return result;
+
+    }
+
 }
