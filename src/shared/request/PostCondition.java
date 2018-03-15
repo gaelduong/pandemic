@@ -18,18 +18,18 @@ public class PostCondition {
         /**
          * CardSource source, CardSource destination
          */
-        MOVE_CARD,
+        MOVE_CARD, //from hand to discard pile, from deck to hand, from  player to player
 
         /**
-         * String playerUserName, String cityName
+         * String playerUserName, String cityName,
          */
-        MOVE_PLAYER_POS,
+        MOVE_PLAYER_POS, //drive/ferry, direct flight, shuttle flight
 
 
-        TREAT_DISEASE,  //NO ARGUMENTS
+        TREAT_DISEASE,  //type of disease
 
 
-        DISCOVER_CURE,  //NO ARGUMENTS
+        DISCOVER_CURE,  //type of disease
     }
 
     public PostCondition(ACTION action, Object... arguments) {
