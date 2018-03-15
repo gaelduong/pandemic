@@ -13,12 +13,14 @@ public class ShareKnowledgeAction extends ConsentRequiringAction{
 			// currentPlayer wants to give card to participant
 			cPlayer.discardCard(associatedCard);
 			affectedPlayer.addToHand(associatedCard);
+			gameManager.checkHandSize(affectedPlayer);
 			return 1;
 		}
 		else if (affectedPlayer.isInHand(associatedCard)){
 			// currentPlayer wants to take card from participant
 			affectedPlayer.discardCard(associatedCard);
 			cPlayer.addToHand(associatedCard);
+			gameManager.checkHandSize(cPlayer);
 			return 1;
 		}
 		return 0;

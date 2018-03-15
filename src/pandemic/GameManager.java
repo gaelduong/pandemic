@@ -80,335 +80,12 @@ public class GameManager {
 	    return hostPlayer;
     }
 
-    private void setRegionToDiseaseTypeDict() {
-	    regionToDiseaseTypeDict = new HashMap<Region, DiseaseType>() {
-            {
-                put(Region.Blue, DiseaseType.Blue);
-                put(Region.Black, DiseaseType.Black);
-                put(Region.Red, DiseaseType.Red);
-                put(Region.Yellow, DiseaseType.Yellow);
-            }
-        };
-    }
-    private void setNameToRegionDict() {
-	    nameToRegionDict = new HashMap<CityName, Region>() {
-            {
-                put(CityName.SanFrancisco, Region.Blue);
-                put(CityName.Chicago, Region.Blue);
-                put(CityName.Atlanta, Region.Blue);
-                put(CityName.Montreal, Region.Blue);
-                put(CityName.Washington, Region.Blue);
-                put(CityName.NewYork, Region.Blue);
-                put(CityName.London, Region.Blue);
-                put(CityName.Madrid, Region.Blue);
-                put(CityName.Paris, Region.Blue);
-                put(CityName.Essen, Region.Blue);
-                put(CityName.Milan, Region.Blue);
-                put(CityName.StPetersburg, Region.Blue);
-
-                put(CityName.LosAngeles, Region.Yellow);
-                put(CityName.MexicoCity, Region.Yellow);
-                put(CityName.Miami, Region.Yellow);
-                put(CityName.Bogota, Region.Yellow);
-                put(CityName.Lima, Region.Yellow);
-                put(CityName.Santiago, Region.Yellow);
-                put(CityName.BuenosAires, Region.Yellow);
-                put(CityName.SaoPaulo, Region.Yellow);
-                put(CityName.Lagos, Region.Yellow);
-                put(CityName.Kinshasa, Region.Yellow);
-                put(CityName.Johannesburg, Region.Yellow);
-                put(CityName.Khartoum, Region.Yellow);
-
-                put(CityName.Algiers, Region.Black);
-                put(CityName.Istanbul, Region.Black);
-                put(CityName.Cairo, Region.Black);
-                put(CityName.Moscow, Region.Black);
-                put(CityName.Baghdad, Region.Black);
-                put(CityName.Riyadh, Region.Black);
-                put(CityName.Tehran, Region.Black);
-                put(CityName.Karachi, Region.Black);
-                put(CityName.Mumbai, Region.Black);
-                put(CityName.Delhi, Region.Black);
-                put(CityName.Chennai, Region.Black);
-                put(CityName.Kolkata, Region.Black);
-
-                put(CityName.Bangkok, Region.Red);
-                put(CityName.Jakarta, Region.Red);
-                put(CityName.Beijing, Region.Red);
-                put(CityName.Shanghai, Region.Red);
-                put(CityName.HongKong, Region.Red);
-                put(CityName.HoChiMinhCity, Region.Red);
-                put(CityName.Seoul, Region.Red);
-                put(CityName.Taipei, Region.Red);
-                put(CityName.Manila, Region.Red);
-                put(CityName.Sydney, Region.Red);
-                put(CityName.Tokyo, Region.Red);
-                put(CityName.Osaka, Region.Red);
-            }
-        };
+    public void joinGame(User user){
+	    Player newPlayer = new Player(user);
+        activePlayers.add(newPlayer);
     }
 
-	private void setNeighborsDict() {
-      neighborsDict = new HashMap<CityName, ArrayList<CityName>>() {
-        {
-          put(CityName.SanFrancisco, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Chicago, CityName.Tokyo, CityName.Manila,
-                                CityName.LosAngeles)
-          ));
 
-          put(CityName.LosAngeles, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Sydney, CityName.Chicago, CityName.MexicoCity,
-                                CityName.SanFrancisco)
-          ));
-
-          put(CityName.MexicoCity, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Miami, CityName.Bogota, CityName.Lima, CityName.LosAngeles,
-                                CityName.Chicago)
-          ));
-
-          put(CityName.Lima, new ArrayList<CityName>(
-                  Arrays.asList(CityName.MexicoCity, CityName.Bogota, CityName.Santiago)
-          ));
-
-          put(CityName.Santiago, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Lima)
-          ));
-
-          put(CityName.Chicago, new ArrayList<CityName>(
-                  Arrays.asList(CityName.SanFrancisco, CityName.LosAngeles, CityName.MexicoCity,
-                                CityName.Atlanta, CityName.Montreal)
-          ));
-
-          put(CityName.Atlanta, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Chicago, CityName.Washington, CityName.Miami)
-          ));
-
-          put(CityName.Miami, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Atlanta, CityName.MexicoCity, CityName.Washington,
-                                CityName.Bogota)
-          ));
-
-          put(CityName.Bogota, new ArrayList<CityName>(
-                  Arrays.asList(CityName.MexicoCity, CityName.Miami, CityName.Lima,
-                                CityName.BuenosAires, CityName.SaoPaulo)
-          ));
-
-          put(CityName.SaoPaulo, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Bogota, CityName.Madrid, CityName.Lagos,
-                          CityName.BuenosAires)
-          ));
-
-          put(CityName.BuenosAires, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Bogota, CityName.SaoPaulo)
-          ));
-
-          put(CityName.Montreal, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Chicago, CityName.NewYork)
-          ));
-
-          put(CityName.Washington, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Atlanta, CityName.Miami, CityName.Montreal,
-                                CityName.NewYork)
-          ));
-
-          put(CityName.NewYork, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Montreal, CityName.Washington, CityName.London,
-                                CityName.Madrid)
-          ));
-
-          put(CityName.London, new ArrayList<CityName>(
-                  Arrays.asList(CityName.NewYork, CityName.Madrid, CityName.Paris,
-                                CityName.Essen)
-          ));
-
-          put(CityName.Madrid, new ArrayList<CityName>(
-                  Arrays.asList(CityName.NewYork, CityName.SaoPaulo, CityName.London, CityName.Paris,
-                                CityName.Algiers)
-          ));
-
-          put(CityName.Essen, new ArrayList<CityName>(
-                  Arrays.asList(CityName.London, CityName.Paris, CityName.Milan,
-                                CityName.StPetersburg)
-          ));
-
-          put(CityName.Paris, new ArrayList<CityName>(
-                  Arrays.asList(CityName.London, CityName.Essen, CityName.Milan,
-                                CityName.Algiers, CityName.Madrid)
-          ));
-
-          put(CityName.Algiers, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Madrid, CityName.Paris, CityName.Istanbul,
-                                CityName.Cairo)
-          ));
-
-          put(CityName.Lagos, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Khartoum, CityName.Kinshasa, CityName.SaoPaulo)
-          ));
-
-          put(CityName.Kinshasa, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Lagos, CityName.Khartoum, CityName.Johannesburg)
-          ));
-
-          put(CityName.Johannesburg, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Kinshasa, CityName.Khartoum)
-          ));
-
-          put(CityName.Khartoum, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Cairo, CityName.Johannesburg)
-          ));
-
-          put(CityName.Cairo, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Algiers, CityName.Istanbul, CityName.Baghdad,
-                                CityName.Riyadh, CityName.Khartoum)
-          ));
-
-          put(CityName.Istanbul, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Milan, CityName.StPetersburg, CityName.Moscow,
-                                CityName.Baghdad, CityName.Cairo, CityName.Algiers)
-          ));
-
-          put(CityName.Milan, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Essen, CityName.Paris, CityName.Istanbul)
-          ));
-
-          put(CityName.StPetersburg, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Essen, CityName.Istanbul, CityName.Moscow)
-          ));
-
-          put(CityName.Moscow, new ArrayList<CityName>(
-                  Arrays.asList(CityName.StPetersburg, CityName.Tehran, CityName.Istanbul)
-          ));
-
-          put(CityName.Baghdad, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Istanbul, CityName.Cairo, CityName.Riyadh, CityName.Karachi,
-                                CityName.Tehran)
-          ));
-
-          put(CityName.Riyadh, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Cairo, CityName.Baghdad, CityName.Karachi)
-          ));
-
-          put(CityName.Tehran, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Moscow, CityName.Baghdad, CityName.Karachi,
-                                CityName.Delhi)
-          ));
-
-          put(CityName.Karachi, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Tehran, CityName.Baghdad, CityName.Riyadh,
-                                CityName.Mumbai, CityName.Delhi)
-          ));
-
-          put(CityName.Mumbai, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Karachi, CityName.Delhi)
-          ));
-
-          put(CityName.Delhi, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Tehran, CityName.Karachi, CityName.Mumbai,
-                                CityName.Chennai, CityName.Kolkata)
-          ));
-
-          put(CityName.Chennai, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Mumbai, CityName.Delhi, CityName.Kolkata,
-                                CityName.Bangkok, CityName.Jakarta)
-          ));
-
-          put(CityName.Kolkata, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Delhi, CityName.Chennai, CityName.Bangkok,
-                                CityName.HongKong)
-          ));
-
-          put(CityName.Bangkok, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Kolkata, CityName.HongKong, CityName.HoChiMinhCity,
-                                CityName.Jakarta, CityName.Chennai)
-          ));
-
-          put(CityName.Jakarta, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Chennai, CityName.Bangkok, CityName.HoChiMinhCity,
-                                CityName.Sydney)
-          ));
-
-          put(CityName.Beijing, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Seoul, CityName.Shanghai)
-          ));
-
-          put(CityName.Shanghai, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Beijing, CityName.Seoul, CityName.Tokyo,
-                                CityName.Taipei, CityName.HongKong)
-          ));
-
-          put(CityName.HongKong, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Shanghai, CityName.Taipei, CityName.Manila,
-                                CityName.HoChiMinhCity, CityName.Bangkok, CityName.Kolkata)
-          ));
-
-          put(CityName.HoChiMinhCity, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Bangkok, CityName.HongKong, CityName.Manila,
-                                CityName.Jakarta)
-          ));
-
-          put(CityName.Seoul, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Beijing, CityName.Shanghai, CityName.Tokyo)
-          ));
-
-          put(CityName.Tokyo, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Seoul, CityName.Shanghai, CityName.SanFrancisco)
-          ));
-
-          put(CityName.Osaka, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Tokyo, CityName.Taipei)
-          ));
-
-          put(CityName.Taipei, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Shanghai, CityName.Osaka, CityName.HongKong,
-                                CityName.Manila)
-          ));
-
-          put(CityName.Manila, new ArrayList<CityName>(
-                  Arrays.asList(CityName.HongKong, CityName.Taipei, CityName.SanFrancisco,
-                                CityName.Sydney, CityName.HoChiMinhCity)
-          ));
-
-          put(CityName.Sydney, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Jakarta, CityName.Manila, CityName.LosAngeles)
-          ));
-        }
-      };
-    }
-
-	private void setRegionsDict() {
-      regionsDict = new HashMap<Region, ArrayList<CityName>>() {
-        {
-          put(Region.Blue, new ArrayList<CityName>(
-                  Arrays.asList(CityName.SanFrancisco, CityName.Chicago, CityName.Montreal,
-                          CityName.NewYork, CityName.Atlanta, CityName.Washington,
-                          CityName.London, CityName.Madrid, CityName.Essen, CityName.Paris,
-                          CityName.StPetersburg, CityName.Milan)
-          ));
-
-          put(Region.Yellow, new ArrayList<CityName>(
-                  Arrays.asList(CityName.LosAngeles, CityName.MexicoCity, CityName.Miami,
-                          CityName.Bogota, CityName.Lima, CityName.Santiago, CityName.BuenosAires,
-                          CityName.SaoPaulo, CityName.Lagos, CityName.Khartoum, CityName.Kinshasa,
-                          CityName.Johannesburg)
-          ));
-
-          put(Region.Black, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Algiers, CityName.Istanbul, CityName.Cairo,
-                          CityName.Baghdad, CityName.Riyadh, CityName.Moscow,
-                          CityName.Tehran, CityName.Karachi, CityName.Mumbai,
-                          CityName.Delhi, CityName.Kolkata, CityName.Chennai)
-          ));
-
-          put(Region.Red, new ArrayList<CityName>(
-                  Arrays.asList(CityName.Bangkok, CityName.Jakarta, CityName.Beijing,
-                                CityName.Shanghai, CityName.HongKong, CityName.HoChiMinhCity,
-                                CityName.Seoul, CityName.Tokyo, CityName.Osaka, CityName.Taipei,
-                                CityName.Manila, CityName.Sydney)
-          ));
-
-        }
-      };
-    }
 
     public DiseaseType getDiseaseTypeByRegion(Region r) {
 	    return regionToDiseaseTypeDict.get(r);
@@ -490,12 +167,14 @@ public class GameManager {
 			}
 			else {
 				p.addToHand(playerCard1);
+				checkHandSize(p);
 			}
 			if (playerCard2 instanceof EpidemicCard){
 				((EpidemicCard) playerCard2).resolveEpidemic();
 			}
 			else {
 				p.addToHand(playerCard2);
+				checkHandSize(p);
 			}
 			currentGame.setGamePhase(GamePhase.TurnInfection);
 		}
@@ -507,13 +186,26 @@ public class GameManager {
 			// must set up next player's turn
 		}
 		else {
-			infectNextCity();
+		    int currentInfectionRate = currentGame.getInfectionRate();
+		    for(int i = 0; i < currentInfectionRate; i++) {
+                infectNextCity((CityInfectionCard) currentGame.getInfectionDeck().drawCard());
+            }
 		}
 		
 	}
+
+    // TO DO
+    public void infectNextCity(CityInfectionCard card){
+	    City cardCity = currentGame.getCityByName(card.getCityName());
+	    ArrayList<DiseaseFlag> diseaseFlags =
+                currentGame.getDiseaseSupplyByDiseaseType(
+                        regionToDiseaseTypeDict.get(card.getRegion()));
+
+	    
+
+    }
 	
-	// Checks if Player has too many cards in hand. Must resolve issue if Player has
-	// too many cards.
+	// Checks if Player has too many cards in hand. Must resolve issue if Player has too many cards.
 	public void checkHandSize(Player p){
 		int numCardsInHand = p.getHandSize();
 		// For OTB, must check if Player is Generalist
@@ -540,8 +232,7 @@ public class GameManager {
 	// returns 0 if successful, 1 if failed
 	// Removes card from player's hand and adds it to PlayerDiscardPile
 	public int discardPlayerCard(Player p, PlayerCard c){
-		// Must take a player as a parameter for when a non-current player has too
-		// many cards and must discard one
+		// Must take a player as a parameter for when a non-current player has too many cards and must discard one
 		if (p.isInHand(c)){
 			p.discardCard(c);
 			PlayerDiscardPile pile = currentGame.getPlayerDiscardPile();
@@ -685,7 +376,7 @@ public class GameManager {
 
     }
 
-    
+
     public void playShareKnowledgeRequest(Player participant, CityCard c) {
     	ShareKnowledgeAction share = new ShareKnowledgeAction(this, participant, c);
     	currentGame.setCurrentConsentRequiringAction(share);
@@ -749,16 +440,6 @@ public class GameManager {
     	// TO TEST:
     	System.out.println("Notifying Player request Denied");
     }
-    
-    // TO DO
-    public void infectNextCity(){
-    	/*InfectionDeck deck = currentGame.getInfectionDeck();
-    	// MUST HANDLE MUTATION CARDS HERE FOR OTB
-    	CityInfectionCard card = (CityInfectionCard) deck.drawCard();
-    	City toInfect = currentGame.getCityByName(card.getCityName());
-    	currentGame.getInfectionDiscardPile().addCard(card);
-    	Disease d = toInfect.get*/
-    }
 
     public void setOneQuietNight(boolean b){
     	currentGame.setOneQuietNight(b);
@@ -769,7 +450,337 @@ public class GameManager {
     	currentGame.setCurrentPlayer(p);
     }
 
-    public LinkedList<Player> getActivePlayers() {
-        return activePlayers;
+    public LinkedList<Player> getActivePlayers(){
+	    return activePlayers;
+    }
+
+    private void setRegionToDiseaseTypeDict() {
+        regionToDiseaseTypeDict = new HashMap<Region, DiseaseType>() {
+            {
+                put(Region.Blue, DiseaseType.Blue);
+                put(Region.Black, DiseaseType.Black);
+                put(Region.Red, DiseaseType.Red);
+                put(Region.Yellow, DiseaseType.Yellow);
+            }
+        };
+    }
+    private void setNameToRegionDict() {
+        nameToRegionDict = new HashMap<CityName, Region>() {
+            {
+                put(CityName.SanFrancisco, Region.Blue);
+                put(CityName.Chicago, Region.Blue);
+                put(CityName.Atlanta, Region.Blue);
+                put(CityName.Montreal, Region.Blue);
+                put(CityName.Washington, Region.Blue);
+                put(CityName.NewYork, Region.Blue);
+                put(CityName.London, Region.Blue);
+                put(CityName.Madrid, Region.Blue);
+                put(CityName.Paris, Region.Blue);
+                put(CityName.Essen, Region.Blue);
+                put(CityName.Milan, Region.Blue);
+                put(CityName.StPetersburg, Region.Blue);
+
+                put(CityName.LosAngeles, Region.Yellow);
+                put(CityName.MexicoCity, Region.Yellow);
+                put(CityName.Miami, Region.Yellow);
+                put(CityName.Bogota, Region.Yellow);
+                put(CityName.Lima, Region.Yellow);
+                put(CityName.Santiago, Region.Yellow);
+                put(CityName.BuenosAires, Region.Yellow);
+                put(CityName.SaoPaulo, Region.Yellow);
+                put(CityName.Lagos, Region.Yellow);
+                put(CityName.Kinshasa, Region.Yellow);
+                put(CityName.Johannesburg, Region.Yellow);
+                put(CityName.Khartoum, Region.Yellow);
+
+                put(CityName.Algiers, Region.Black);
+                put(CityName.Istanbul, Region.Black);
+                put(CityName.Cairo, Region.Black);
+                put(CityName.Moscow, Region.Black);
+                put(CityName.Baghdad, Region.Black);
+                put(CityName.Riyadh, Region.Black);
+                put(CityName.Tehran, Region.Black);
+                put(CityName.Karachi, Region.Black);
+                put(CityName.Mumbai, Region.Black);
+                put(CityName.Delhi, Region.Black);
+                put(CityName.Chennai, Region.Black);
+                put(CityName.Kolkata, Region.Black);
+
+                put(CityName.Bangkok, Region.Red);
+                put(CityName.Jakarta, Region.Red);
+                put(CityName.Beijing, Region.Red);
+                put(CityName.Shanghai, Region.Red);
+                put(CityName.HongKong, Region.Red);
+                put(CityName.HoChiMinhCity, Region.Red);
+                put(CityName.Seoul, Region.Red);
+                put(CityName.Taipei, Region.Red);
+                put(CityName.Manila, Region.Red);
+                put(CityName.Sydney, Region.Red);
+                put(CityName.Tokyo, Region.Red);
+                put(CityName.Osaka, Region.Red);
+            }
+        };
+    }
+
+    private void setNeighborsDict() {
+        neighborsDict = new HashMap<CityName, ArrayList<CityName>>() {
+            {
+                put(CityName.SanFrancisco, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Chicago, CityName.Tokyo, CityName.Manila,
+                                CityName.LosAngeles)
+                ));
+
+                put(CityName.LosAngeles, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Sydney, CityName.Chicago, CityName.MexicoCity,
+                                CityName.SanFrancisco)
+                ));
+
+                put(CityName.MexicoCity, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Miami, CityName.Bogota, CityName.Lima, CityName.LosAngeles,
+                                CityName.Chicago)
+                ));
+
+                put(CityName.Lima, new ArrayList<CityName>(
+                        Arrays.asList(CityName.MexicoCity, CityName.Bogota, CityName.Santiago)
+                ));
+
+                put(CityName.Santiago, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Lima)
+                ));
+
+                put(CityName.Chicago, new ArrayList<CityName>(
+                        Arrays.asList(CityName.SanFrancisco, CityName.LosAngeles, CityName.MexicoCity,
+                                CityName.Atlanta, CityName.Montreal)
+                ));
+
+                put(CityName.Atlanta, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Chicago, CityName.Washington, CityName.Miami)
+                ));
+
+                put(CityName.Miami, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Atlanta, CityName.MexicoCity, CityName.Washington,
+                                CityName.Bogota)
+                ));
+
+                put(CityName.Bogota, new ArrayList<CityName>(
+                        Arrays.asList(CityName.MexicoCity, CityName.Miami, CityName.Lima,
+                                CityName.BuenosAires, CityName.SaoPaulo)
+                ));
+
+                put(CityName.SaoPaulo, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Bogota, CityName.Madrid, CityName.Lagos,
+                                CityName.BuenosAires)
+                ));
+
+                put(CityName.BuenosAires, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Bogota, CityName.SaoPaulo)
+                ));
+
+                put(CityName.Montreal, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Chicago, CityName.NewYork)
+                ));
+
+                put(CityName.Washington, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Atlanta, CityName.Miami, CityName.Montreal,
+                                CityName.NewYork)
+                ));
+
+                put(CityName.NewYork, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Montreal, CityName.Washington, CityName.London,
+                                CityName.Madrid)
+                ));
+
+                put(CityName.London, new ArrayList<CityName>(
+                        Arrays.asList(CityName.NewYork, CityName.Madrid, CityName.Paris,
+                                CityName.Essen)
+                ));
+
+                put(CityName.Madrid, new ArrayList<CityName>(
+                        Arrays.asList(CityName.NewYork, CityName.SaoPaulo, CityName.London, CityName.Paris,
+                                CityName.Algiers)
+                ));
+
+                put(CityName.Essen, new ArrayList<CityName>(
+                        Arrays.asList(CityName.London, CityName.Paris, CityName.Milan,
+                                CityName.StPetersburg)
+                ));
+
+                put(CityName.Paris, new ArrayList<CityName>(
+                        Arrays.asList(CityName.London, CityName.Essen, CityName.Milan,
+                                CityName.Algiers, CityName.Madrid)
+                ));
+
+                put(CityName.Algiers, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Madrid, CityName.Paris, CityName.Istanbul,
+                                CityName.Cairo)
+                ));
+
+                put(CityName.Lagos, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Khartoum, CityName.Kinshasa, CityName.SaoPaulo)
+                ));
+
+                put(CityName.Kinshasa, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Lagos, CityName.Khartoum, CityName.Johannesburg)
+                ));
+
+                put(CityName.Johannesburg, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Kinshasa, CityName.Khartoum)
+                ));
+
+                put(CityName.Khartoum, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Cairo, CityName.Johannesburg)
+                ));
+
+                put(CityName.Cairo, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Algiers, CityName.Istanbul, CityName.Baghdad,
+                                CityName.Riyadh, CityName.Khartoum)
+                ));
+
+                put(CityName.Istanbul, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Milan, CityName.StPetersburg, CityName.Moscow,
+                                CityName.Baghdad, CityName.Cairo, CityName.Algiers)
+                ));
+
+                put(CityName.Milan, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Essen, CityName.Paris, CityName.Istanbul)
+                ));
+
+                put(CityName.StPetersburg, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Essen, CityName.Istanbul, CityName.Moscow)
+                ));
+
+                put(CityName.Moscow, new ArrayList<CityName>(
+                        Arrays.asList(CityName.StPetersburg, CityName.Tehran, CityName.Istanbul)
+                ));
+
+                put(CityName.Baghdad, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Istanbul, CityName.Cairo, CityName.Riyadh, CityName.Karachi,
+                                CityName.Tehran)
+                ));
+
+                put(CityName.Riyadh, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Cairo, CityName.Baghdad, CityName.Karachi)
+                ));
+
+                put(CityName.Tehran, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Moscow, CityName.Baghdad, CityName.Karachi,
+                                CityName.Delhi)
+                ));
+
+                put(CityName.Karachi, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Tehran, CityName.Baghdad, CityName.Riyadh,
+                                CityName.Mumbai, CityName.Delhi)
+                ));
+
+                put(CityName.Mumbai, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Karachi, CityName.Delhi)
+                ));
+
+                put(CityName.Delhi, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Tehran, CityName.Karachi, CityName.Mumbai,
+                                CityName.Chennai, CityName.Kolkata)
+                ));
+
+                put(CityName.Chennai, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Mumbai, CityName.Delhi, CityName.Kolkata,
+                                CityName.Bangkok, CityName.Jakarta)
+                ));
+
+                put(CityName.Kolkata, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Delhi, CityName.Chennai, CityName.Bangkok,
+                                CityName.HongKong)
+                ));
+
+                put(CityName.Bangkok, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Kolkata, CityName.HongKong, CityName.HoChiMinhCity,
+                                CityName.Jakarta, CityName.Chennai)
+                ));
+
+                put(CityName.Jakarta, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Chennai, CityName.Bangkok, CityName.HoChiMinhCity,
+                                CityName.Sydney)
+                ));
+
+                put(CityName.Beijing, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Seoul, CityName.Shanghai)
+                ));
+
+                put(CityName.Shanghai, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Beijing, CityName.Seoul, CityName.Tokyo,
+                                CityName.Taipei, CityName.HongKong)
+                ));
+
+                put(CityName.HongKong, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Shanghai, CityName.Taipei, CityName.Manila,
+                                CityName.HoChiMinhCity, CityName.Bangkok, CityName.Kolkata)
+                ));
+
+                put(CityName.HoChiMinhCity, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Bangkok, CityName.HongKong, CityName.Manila,
+                                CityName.Jakarta)
+                ));
+
+                put(CityName.Seoul, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Beijing, CityName.Shanghai, CityName.Tokyo)
+                ));
+
+                put(CityName.Tokyo, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Seoul, CityName.Shanghai, CityName.SanFrancisco)
+                ));
+
+                put(CityName.Osaka, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Tokyo, CityName.Taipei)
+                ));
+
+                put(CityName.Taipei, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Shanghai, CityName.Osaka, CityName.HongKong,
+                                CityName.Manila)
+                ));
+
+                put(CityName.Manila, new ArrayList<CityName>(
+                        Arrays.asList(CityName.HongKong, CityName.Taipei, CityName.SanFrancisco,
+                                CityName.Sydney, CityName.HoChiMinhCity)
+                ));
+
+                put(CityName.Sydney, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Jakarta, CityName.Manila, CityName.LosAngeles)
+                ));
+            }
+        };
+    }
+
+    private void setRegionsDict() {
+        regionsDict = new HashMap<Region, ArrayList<CityName>>() {
+            {
+                put(Region.Blue, new ArrayList<CityName>(
+                        Arrays.asList(CityName.SanFrancisco, CityName.Chicago, CityName.Montreal,
+                                CityName.NewYork, CityName.Atlanta, CityName.Washington,
+                                CityName.London, CityName.Madrid, CityName.Essen, CityName.Paris,
+                                CityName.StPetersburg, CityName.Milan)
+                ));
+
+                put(Region.Yellow, new ArrayList<CityName>(
+                        Arrays.asList(CityName.LosAngeles, CityName.MexicoCity, CityName.Miami,
+                                CityName.Bogota, CityName.Lima, CityName.Santiago, CityName.BuenosAires,
+                                CityName.SaoPaulo, CityName.Lagos, CityName.Khartoum, CityName.Kinshasa,
+                                CityName.Johannesburg)
+                ));
+
+                put(Region.Black, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Algiers, CityName.Istanbul, CityName.Cairo,
+                                CityName.Baghdad, CityName.Riyadh, CityName.Moscow,
+                                CityName.Tehran, CityName.Karachi, CityName.Mumbai,
+                                CityName.Delhi, CityName.Kolkata, CityName.Chennai)
+                ));
+
+                put(Region.Red, new ArrayList<CityName>(
+                        Arrays.asList(CityName.Bangkok, CityName.Jakarta, CityName.Beijing,
+                                CityName.Shanghai, CityName.HongKong, CityName.HoChiMinhCity,
+                                CityName.Seoul, CityName.Tokyo, CityName.Osaka, CityName.Taipei,
+                                CityName.Manila, CityName.Sydney)
+                ));
+
+            }
+        };
     }
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class Player {
 
-	private GameManager gameManager;
 	private int actionsTaken;
 	private boolean oncePerTurnActionTaken;
 	private ArrayList<PlayerCard> cardsInHand;
@@ -17,10 +16,6 @@ public class Player {
 	    cardsInHand = new ArrayList<PlayerCard>();
     }
 
-	public void setGameManager(GameManager gm){
-		gameManager = gm;
-	}
-	
     public String getPlayerUserName() {
 	    return user.getUserName();
     }
@@ -42,16 +37,15 @@ public class Player {
     }
 
     public int getHandSize(){
-    	return cardsInHand.size();
+	    return cardsInHand.size();
     }
     
     public void addToHand(PlayerCard pc){
 	    cardsInHand.add(pc);
-	    gameManager.checkHandSize(this);
 	}
 
 	public boolean isInHand(PlayerCard pc) {
-	    return cardsInHand.stream().filter(card -> card == pc).findAny().orElse(null) != null ? true : false;
+	    return cardsInHand.stream().anyMatch(pc::equals);
     }
 	
 	// Note: Does not add card too any discard pile
