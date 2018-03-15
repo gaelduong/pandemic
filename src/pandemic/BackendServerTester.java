@@ -16,10 +16,8 @@ public class BackendServerTester {
         System.out.println("TESTING SHAREKNOWLEDGE...");
         User user1Test = new User("jbh12", "123456", "127.0.0.1");
         Player player1Test = new Player(user1Test);
-        player1Test.setGameManager(gameManager);
         User user2Test = new User("skdnasn", "123456", "127.0.0.1");
         Player player2Test = new Player(user2Test);
-        player2Test.setGameManager(gameManager);
         CityCard c = new CityCard(CityName.Atlanta, Region.Blue);
         player2Test.addToHand(c);
         gameManager.setCurrentPlayer(player1Test);

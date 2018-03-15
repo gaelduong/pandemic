@@ -80,6 +80,11 @@ public class GameManager {
 	    return hostPlayer;
     }
 
+    public void joinGame(User user){
+	    Player newPlayer = new Player(user);
+        activePlayers.add(newPlayer);
+    }
+
     private void setRegionToDiseaseTypeDict() {
 	    regionToDiseaseTypeDict = new HashMap<Region, DiseaseType>() {
             {
@@ -490,12 +495,14 @@ public class GameManager {
 			}
 			else {
 				p.addToHand(playerCard1);
+				checkHandSize(p);
 			}
 			if (playerCard2 instanceof EpidemicCard){
 				((EpidemicCard) playerCard2).resolveEpidemic();
 			}
 			else {
 				p.addToHand(playerCard2);
+				checkHandSize(p);
 			}
 			currentGame.setGamePhase(GamePhase.TurnInfection);
 		}
@@ -512,8 +519,7 @@ public class GameManager {
 		
 	}
 	
-	// Checks if Player has too many cards in hand. Must resolve issue if Player has
-	// too many cards.
+	// Checks if Player has too many cards in hand. Must resolve issue if Player has too many cards.
 	public void checkHandSize(Player p){
 		int numCardsInHand = p.getHandSize();
 		// For OTB, must check if Player is Generalist
@@ -540,8 +546,7 @@ public class GameManager {
 	// returns 0 if successful, 1 if failed
 	// Removes card from player's hand and adds it to PlayerDiscardPile
 	public int discardPlayerCard(Player p, PlayerCard c){
-		// Must take a player as a parameter for when a non-current player has too
-		// many cards and must discard one
+		// Must take a player as a parameter for when a non-current player has too many cards and must discard one
 		if (p.isInHand(c)){
 			p.discardCard(c);
 			PlayerDiscardPile pile = currentGame.getPlayerDiscardPile();
@@ -685,7 +690,7 @@ public class GameManager {
 
     }
 
-    
+
     public void playShareKnowledgeRequest(Player participant, CityCard c) {
     	ShareKnowledgeAction share = new ShareKnowledgeAction(this, participant, c);
     	currentGame.setCurrentConsentRequiringAction(share);
@@ -767,5 +772,9 @@ public class GameManager {
     // TO TEST
     public void setCurrentPlayer(Player p){
     	currentGame.setCurrentPlayer(p);
+    }
+
+    public LinkedList<Player> getActivePlayers(){
+	    return activePlayers;
     }
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class Player {
 
-	private GameManager gameManager;
 	private int actionsTaken;
 	private boolean oncePerTurnActionTaken;
 	private ArrayList<PlayerCard> cardsInHand;
@@ -17,10 +16,6 @@ public class Player {
 	    cardsInHand = new ArrayList<PlayerCard>();
     }
 
-	public void setGameManager(GameManager gm){
-		gameManager = gm;
-	}
-	
     public String getPlayerUserName() {
 	    return user.getUserName();
     }
@@ -47,7 +42,6 @@ public class Player {
     
     public void addToHand(PlayerCard pc){
 	    cardsInHand.add(pc);
-	    gameManager.checkHandSize(this);
 	}
 
 	public boolean isInHand(PlayerCard pc) {

@@ -141,21 +141,36 @@ public class Game {
             myInfectionDeck.addCard(new CityInfectionCard(cName, cRegion));
         }
 
- /*       for(EventCardName eName : EventCardName.values()) {
-            myPlayerDeck.addCard(new EventCard(eName));
-        }
-*/
-        
-        // MC added this:
         myPlayerDeck.addCard(new AirLiftEventCard(gameManager));
         myPlayerDeck.addCard(new ForecastEventCard(gameManager));
         myPlayerDeck.addCard(new GovernmentGrantEventCard(gameManager));
         myPlayerDeck.addCard(new OneQuietNightEventCard(gameManager));
         myPlayerDeck.addCard(new ResilientPopulationEventCard(gameManager));
-        //myPlayerDeck.shuffleDeck();
+        myPlayerDeck.shuffleDeck();
+
+        // Dealing cards to Players:
+        for(Player p : gameManager.getActivePlayers()){
+            if (gameManager.getActivePlayers().size() == 2){
+                // Each player begins with 4 cards
+                for(int i = 0; i < 4; i++){
+                    p.addToHand(myPlayerDeck.drawCard());
+                }
+            }
+            else if (gameManager.getActivePlayers().size() == 3){
+                // Each player begins with 3 cards
+                for(int i = 0; i < 3; i++){
+                    p.addToHand(myPlayerDeck.drawCard());
+                }
+            }
+            else if (gameManager.getActivePlayers().size() == 4){
+                // Each player begins with 2 cards
+                for(int i = 0; i < 2; i++){
+                    p.addToHand(myPlayerDeck.drawCard());
+                }
+            }
+        }
         
         // - shuffling in Epidemic cards based on settings
-        // MUST BE DONE AFTER ALL PLAYERS HAVE JOINED AND ALL HAVE BEEN DEALT PLAYERCARDS ACCORDING TO RULES
         List<PlayerCard> epidemicCards = new ArrayList<PlayerCard>();
         int numOfEpidemicCards = settings.getNumOfEpidemicCards();
         for(int i = 0; i < numOfEpidemicCards; i++) {
