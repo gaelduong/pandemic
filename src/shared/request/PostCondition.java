@@ -26,7 +26,7 @@ public class PostCondition {
          * If the source or destination is a player, then it should be the {@link pandemic.RoleType#name()} of that player,
          * Otherwise, use the {@link shared.CardTargetType#name()}.
          */
-        MOVE_CARD, //from hand to discard pile, from deck to hand, from  player to player
+        MOVE_CARD,
 
         /**
          * This action moves a players position to a city.
@@ -34,7 +34,7 @@ public class PostCondition {
          * The server will make sure the request is valid before execution.
          *
          * <br><br><b>Arguments required:</b><br>
-         * String playerUserName, String cityName, {@link shared.TravelType travelType}
+         * String playerUserName, String cityName, {@link shared.TravelType travelType} travelType
          */
         MOVE_PLAYER_POS,
 
