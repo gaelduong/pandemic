@@ -92,4 +92,7 @@ public class GameBoard {
 
     }
 
+    public ArrayList<City> getCitiesOnBoard() {
+        return citiesOnBoard;
+    }
 }

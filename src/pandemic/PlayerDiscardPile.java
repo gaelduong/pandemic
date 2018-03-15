@@ -1,8 +1,9 @@
 package pandemic;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class PlayerDiscardPile {
+public class PlayerDiscardPile implements Serializable {
 
 
 	private ArrayList<PlayerCard> cardsInPile;

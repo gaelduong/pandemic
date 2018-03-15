@@ -37,4 +37,14 @@ public enum ServerCommands {
      * boolean accept
      */
     ANSWER_CONSENT_PROMPT,
+
+
+    /**
+     * Clients will use this command to register a username with a socket connection.
+     * Clients should use the command right after they connect!!
+     *
+     * <b>Parameters:</b>
+     * String playerUserName
+     */
+    REGISTER_USERNAME,
 }
