@@ -1,5 +1,7 @@
 package pandemic;
 
+import javafx.util.Pair;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,6 +65,12 @@ public class City {
         cityUnits.remove(toRemove);
         toRemove.setLocation(null);
         return toRemove;
+    }
+
+    //TODO get a list of all disease tuples (disease, qty)
+    @SuppressWarnings("unchecked")
+    public List<Pair<DiseaseType, Integer>> getDiseaseFlags() {
+        return null;
     }
 
 }

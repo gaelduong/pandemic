@@ -25,7 +25,7 @@ public class SendMessage {
     public void writeMessageToClients(String msg, Object... objects) {
         final List<SocketBundle> clientsToWrite = new ArrayList<>(clients);
         for (SocketBundle client : clientsToWrite) {
-            writeMessageToSocket(client, msg, objects);   //incase a socket times out; this doesn't work?
+            writeMessageToSocket(client, msg, objects);
         }
     }
 

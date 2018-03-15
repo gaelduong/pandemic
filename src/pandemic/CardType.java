@@ -1,5 +1,8 @@
 package pandemic;
 
-public enum CardType {
+import java.io.Serializable;
+
+public enum CardType implements Serializable {
+
     CityCard, CityInfectionCard, EventCard, BasicEpidemicCard, VirulentStrainEpidemicCard
 }

@@ -1,9 +1,10 @@
 package pandemic;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class InfectionDiscardPile {
+public class InfectionDiscardPile implements Serializable {
 
 
 	private ArrayList<InfectionCard> cardsInPile;
