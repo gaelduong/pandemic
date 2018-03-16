@@ -202,7 +202,7 @@ public class Game {
         // UNCOMMENT AFTER TESTING//////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        //myInfectionDeck.shuffleDeck();
+        myInfectionDeck.shuffleDeck();
 
 
 
@@ -300,16 +300,16 @@ public class Game {
         int numOfPlayers = settings.getNumOfPlayers();
 
         /////////// FOR TESTING ://////////////////////////////////////////////////////////////////////////////////////
-        Role r = unusedRoles.stream().filter(role -> role.getRoleType() == RoleType.Medic).findAny().orElse(null);
+        /*Role r = unusedRoles.stream().filter(role -> role.getRoleType() == RoleType.Medic).findAny().orElse(null);
         Pawn medic = new Pawn(r);
         inGamePawns.add(medic);
         unusedRoles.remove(r);
         medic.setLocation(atlCity);
-        atlCity.getCityUnits().add(medic);
+        atlCity.getCityUnits().add(medic);*/
         //////////////////////////////////////////////////
         // also change k back to 0 after testing
         //////////////////////////////////////////////////
-        for(int k = 1; k < numOfPlayers; k++) {
+        for(int k = 0; k < numOfPlayers; k++) {
             Pawn playerPawn = new Pawn(getRandomUnassignedRole());
             inGamePawns.add(playerPawn);
             playerPawn.setLocation(atlCity);
@@ -324,11 +324,11 @@ public class Game {
         Player host = gameManager.getHostPlayer();
 
         // UNCOMMENT AFTER TESTING:
-        //Pawn pawnHost = getRandomUnassignedPawn();
+        Pawn pawnHost = getRandomUnassignedPawn();
 
         //FOR TESTING drive/ferry, directflight, treat disease as medic:
-        Pawn pawnHost = inGamePawns.stream().filter(pawn -> pawn.getRole().getRoleType() == RoleType.Medic)
-                                            .findAny().orElse(null);
+        //Pawn pawnHost = inGamePawns.stream().filter(pawn -> pawn.getRole().getRoleType() == RoleType.Medic)
+        //                                    .findAny().orElse(null);
 
         host.setPawn(pawnHost);
         pawnHost.setPlayer(host);

@@ -52,15 +52,15 @@ public class GameManager {
         currentGame.printGameUnits();*/
 
         // TESTING TREAT DISEASE:
-        System.out.println("------------------GAME UNIT BEFORE treat disease----------------------");
+        /*System.out.println("------------------GAME UNIT BEFORE treat disease----------------------");
         currentGame.printGameUnits();
         playTreatDisease((DiseaseFlag) currentGame.getCityByName(CityName.Atlanta).getCityUnits().stream()
                                                                                                  .filter(unit ->
                                                                                                                     unit.getUnitType() == UnitType.DiseaseFlag)
-                                                                                                 .findAny().orElse(null));
+                                                                                                 .findAny().orElse(null));*/
         currentGame.printGameBoard();
-        System.out.println("------------------GAME UNIT after treat disease----------------------");
-        currentGame.printGameUnits();
+        //System.out.println("------------------GAME UNIT after treat disease----------------------");
+        //currentGame.printGameUnits();
 
 
 
