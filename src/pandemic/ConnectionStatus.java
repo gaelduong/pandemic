@@ -1,5 +1,6 @@
 package pandemic;
 
 public enum ConnectionStatus {
-    EndOutbreak, NoOutbreaks
+    BlueDiseaseOutbreak, BlackDiseaseOutbreak, RedDiseaseOutbreak, YellowDiseaseOutbreak, PurpleDiseaseOutbreak,
+    NoOutbreaks
 }

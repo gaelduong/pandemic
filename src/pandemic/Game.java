@@ -28,6 +28,7 @@ public class Game {
     private ArrayList<DiseaseFlag> purpleUnusedDiseaseFlags;
     private HashMap<DiseaseType, ArrayList<DiseaseFlag>> diseaseTypeToSupplyDict;
     private HashMap<DiseaseType, Disease> diseaseTypeToDiseaseDict;
+    private HashMap<DiseaseType, ConnectionStatus> diseaseTypeToConnectionStatusDict;
     private ArrayList<Role> unusedRoles;
   	private ArrayList<Pawn> inGamePawns;
   	private Random randomRoleGenerator;
@@ -40,6 +41,7 @@ public class Game {
 
   	private boolean resolvingEpidemic;
   	private int infectionRate;
+  	private int outBreakMeterReading;
 
 	private CurrentPlayerTurnStatus currentPlayerTurnStatus;
 	private ConsentRequiringAction currentConsentRequiringAction;
@@ -52,6 +54,17 @@ public class Game {
   	    this.gameManager = gameManager;
   	    randomRoleGenerator = new Random();
   	    randomPawnGenerator = new Random();
+
+  	     diseaseTypeToConnectionStatusDict = new HashMap<DiseaseType, ConnectionStatus>() {
+            {
+                put(DiseaseType.Blue, ConnectionStatus.BlueDiseaseOutbreak);
+                put(DiseaseType.Black, ConnectionStatus.BlackDiseaseOutbreak);
+                put(DiseaseType.Red, ConnectionStatus.RedDiseaseOutbreak);
+                put(DiseaseType.Yellow, ConnectionStatus.YellowDiseaseOutbreak);
+                put(DiseaseType.Purple, ConnectionStatus.PurpleDiseaseOutbreak);
+            }
+        };
+
 	}
 
 	public void initializeGame() {
@@ -478,7 +491,7 @@ public class Game {
     }
 	
 	public CurrentPlayerTurnStatus getCurrentPlayerTurnStatus(){
-		return currentPlayerTurnStatus;
+  	    return currentPlayerTurnStatus;
 	}
 	
 	public void setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus status){
@@ -517,9 +530,85 @@ public class Game {
   	    return myGameBoard.isQuarantineSpecialistOrMedicInCity(c);
     }
 
-	// TO TEST
+    public int getOutBreakMeterReading() {
+        return outBreakMeterReading;
+    }
+
+    public void incrementOutbreakMeter() {
+  	    outBreakMeterReading++;
+    }
+
+    public void infectAndResolveOutbreaks(DiseaseType cityDiseaseType, Disease cityDisease,
+                                          boolean gameStatus, LinkedList<City> Q) {
+  	    while(gameStatus && !Q.isEmpty() ) {
+  	        City c = Q.removeFirst();
+  	        int numberOfDiseaseFlagsPlaced = c.getNumOfDiseaseFlagsPlaced(cityDiseaseType);
+            ArrayList<DiseaseFlag> freshFlags = diseaseTypeToSupplyDict.get(cityDiseaseType);
+
+  	        if(numberOfDiseaseFlagsPlaced == 3) {
+  	            //OUTBREAK
+                incrementOutbreakMeter();
+
+                int numberOfDiseaseFlagsRemaining = freshFlags.size();
+                ArrayList<City> neighbors = c.getNeighbors();
+
+                for(City connCity : neighbors) {
+                    if(numberOfDiseaseFlagsRemaining >= 1) {
+                        int dFlagCount = connCity.getNumOfDiseaseFlagsPlaced(cityDiseaseType);
+                        ArrayList<Connection> connections = connCity.getConnections();
+                        Connection conn = connections.stream()
+                                .filter(cNeigh -> cNeigh.getEnd1().getName().equals(c.getName()) ||
+                                        cNeigh.getEnd2().getName().equals(c.getName()))
+                                .findAny().orElse(null);
+
+                        ConnectionStatus diseaseTypeConnectionStatus = diseaseTypeToConnectionStatusDict.get(cityDiseaseType);
+
+                        if(conn != null) {
+                            if(dFlagCount == 3
+                                    && conn.getStatus() != diseaseTypeConnectionStatus) {
+                                Q.addLast(connCity);
+                                conn.setConnectionStatus(cityDiseaseType);
+                            } else {
+                                DiseaseFlag flag;
+                                try {
+                                    flag = freshFlags.remove(0);
+                                } catch (NullPointerException e) {
+                                    //FOR TESTING, SHOULD NOT HAPPEN
+                                    System.out.println("ERROR -- diseaseFlags not sufficient");
+                                    return;
+                                }
+
+                                connCity.getCityUnits().add(flag);
+                                flag.setUsed(true);
+
+                            }
+                        }
+                    } else {
+                        break;
+                    }
+                }
+
+            } else {
+                DiseaseFlag flag;
+                try {
+                    flag = freshFlags.remove(0);
+                } catch (NullPointerException e) {
+                    //FOR TESTING, SHOULD NOT HAPPEN
+                    System.out.println("ERROR -- diseaseFlags not sufficient");
+                    return;
+                }
+
+                c.getCityUnits().add(flag);
+                flag.setUsed(true);
+            }
+            gameStatus = (getOutBreakMeterReading() < 8) && (freshFlags.size() >= 1);
+        }
+
+    }
+
+    // TO TEST
 	public void setCurrentPlayer(Player p){
-		currentPlayer = p;
+  	    currentPlayer = p;
 	}
 
 	//the ultimate functional programming test
@@ -538,4 +627,6 @@ public class Game {
 
 	    return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, myInfectionDiscardPile, myPlayerDiscardPile);
     }
+
+
 }

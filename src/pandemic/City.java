@@ -70,7 +70,7 @@ public class City {
     //TODO get a list of all disease tuples (disease, qty)
     @SuppressWarnings("unchecked")
     public List<Pair<DiseaseType, Integer>> getDiseaseFlags() {
-        return null;
+	    return null;
     }
 
 }

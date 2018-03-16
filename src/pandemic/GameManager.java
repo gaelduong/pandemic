@@ -182,13 +182,38 @@ public class GameManager {
 		}
 		else {
 		    int currentInfectionRate = currentGame.getInfectionRate();
+
 		    for(int i = 0; i < currentInfectionRate; i++) {
 		        CityInfectionCard card = (CityInfectionCard) currentGame.getInfectionDeck().drawCard();
 		        City cardCity = currentGame.getCityByName(card.getCityName());
                 infectNextCity(cardCity);
+
+                DiseaseType cityDiseaseType = regionToDiseaseTypeDict.get(cardCity.getRegion());
+                ArrayList<DiseaseFlag> diseaseFlags =
+                        currentGame.getDiseaseSupplyByDiseaseType(cityDiseaseType);
+
+                boolean gameStatus = (currentGame.getOutBreakMeterReading() < 8) && diseaseFlags.size() >= 1;
+
+                if(!gameStatus) {
+                    //NOTIFY ALL PLAYERS LOST
+                    currentGame.setGamePhase(GamePhase.Completed);
+                    return;
+                }
             }
+
+
+
+
 		}
-		//SET NEXT PLAYER TO CURRENT PLAYER
+
+        // SET NEXT PLAYER TO CURRENT PLAYER
+        currentGame.setGamePhase(GamePhase.TurnActions);
+
+		// MUST MAKE SURE current player is at the head of the queue
+		activePlayers.addLast(activePlayers.removeFirst());
+		setCurrentPlayer(activePlayers.getFirst());
+
+
 		
 	}
 
@@ -198,20 +223,36 @@ public class GameManager {
 	    DiseaseType cityDiseaseType = regionToDiseaseTypeDict.get(city.getRegion());
 	    ArrayList<DiseaseFlag> diseaseFlags =
                 currentGame.getDiseaseSupplyByDiseaseType(cityDiseaseType);
+	    Disease cityDisease = currentGame.getDiseaseByDiseaseType(cityDiseaseType);
 
 	    boolean qsOrMedicPresentInCity = currentGame.isQuarantineSpecialistOrMedicInCity(city);
 	    boolean diseaseEradicated = currentGame.checkIfEradicated(cityDiseaseType);
-	    int numberOfRemainingDiseaseFlags = diseaseFlags.size();
+        boolean qsOrMedicPresentInNeighbor = false;
 
 	    ArrayList<City> cityNeighbors = city.getNeighbors();
         LinkedList<City> Q = new LinkedList<>();
         Q.addLast(city);
 
-        boolean qsOrMedicPresentInNeighbor = false;
+
         for(City c : cityNeighbors) {
             qsOrMedicPresentInNeighbor = currentGame.isQuarantineSpecialistOrMedicInCity(c);
             if(qsOrMedicPresentInNeighbor) break;
         }
+
+        boolean infectStatus = qsOrMedicPresentInCity || qsOrMedicPresentInNeighbor
+                || diseaseEradicated;
+
+        boolean diseaseFlagsSufficient = diseaseFlags.size() >= 1;
+        int outbreakMeterNum = currentGame.getOutBreakMeterReading();
+
+        boolean gameStatus = (outbreakMeterNum < 8) && diseaseFlagsSufficient;
+
+        if(!infectStatus) {
+            currentGame.infectAndResolveOutbreaks(cityDiseaseType, cityDisease, gameStatus, Q);
+        }
+
+
+
 
 
 
