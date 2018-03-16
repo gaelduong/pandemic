@@ -31,6 +31,11 @@ public class BackendServerTester {
         System.out.println("Player2 holds Card c: " + player2Test.isInHand(c));
         
         System.out.println("TESTING SHAREKNOWLEDGE COMPLETE");
-        
+
+
+        System.out.println("TESTING END TURN...");
+        gameManager.endTurn();
+        System.out.println("TESTING END TURN COMPLETE");
+
     }
 }

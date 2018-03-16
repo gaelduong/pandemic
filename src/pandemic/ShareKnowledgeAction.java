@@ -6,7 +6,7 @@ public class ShareKnowledgeAction extends ConsentRequiringAction{
 		super(gm, participant, card);
 	}
 	
-	// return 0 is successful, 1 if failed
+	// return 0 if successful, 1 if failed
 	public int playAction(){
 		Player cPlayer = gameManager.getCurrentPlayer();
 		if (cPlayer.isInHand(associatedCard)){
