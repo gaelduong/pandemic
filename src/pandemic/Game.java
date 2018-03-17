@@ -557,8 +557,9 @@ public class Game {
                 incrementOutbreakMeter();
 
                 // FOR TESTING:
-                System.out.println("Incrementing Outbreak Meter");
                 System.out.println(c.getName() + " is outbreaking");
+                System.out.println("Incrementing Outbreak Meter");
+
 
 
                 int numberOfDiseaseFlagsRemaining = freshFlags.size();
