@@ -1,6 +1,6 @@
 package pandemic;
 
-abstract class ConsentRequiringAction {
+public abstract class ConsentRequiringAction {
 	
 	protected GameManager gameManager;
 	protected Player affectedPlayer;
@@ -19,7 +19,7 @@ abstract class ConsentRequiringAction {
 	public PlayerCard getAssociatedCard(){
 		return associatedCard;
 	}
-	
+
 	// returns 0 if successful, 1 if failed
 	public abstract int playAction();
 }
