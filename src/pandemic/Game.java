@@ -579,6 +579,12 @@ public class Game {
                                     && conn.getStatus() != diseaseTypeConnectionStatus) {
                                 Q.addLast(connCity);
                                 conn.setConnectionStatus(cityDiseaseType);
+
+
+                                // FOR TESTING:
+                                System.out.println(connCity.getName() + " is outbreaking.");
+
+
                             } else {
                                 DiseaseFlag flag;
                                 try {
@@ -594,10 +600,10 @@ public class Game {
 
 
                                 // FOR TESTING:
-                                System.out.println(c.getName() + " is outbreaking.");
+                                System.out.println("Outbreak spread to " + connCity.getName());
                                 System.out.println("Number of disease cubes in city before outbreak:");
                                 for (DiseaseType d : DiseaseType.values()){
-                                    System.out.println("    " + d + ": " + c.getNumOfDiseaseFlagsPlaced(d));
+                                    System.out.println("    " + d + ": " + connCity.getNumOfDiseaseFlagsPlaced(d));
                                 }
 
 
@@ -613,7 +619,7 @@ public class Game {
                                 // FOR TESTING:
                                 System.out.println("Number of disease cubes in city after outbreak:");
                                 for (DiseaseType d : DiseaseType.values()){
-                                    System.out.println("    " + d + ": " + c.getNumOfDiseaseFlagsPlaced(d));
+                                    System.out.println("    " + d + ": " + connCity.getNumOfDiseaseFlagsPlaced(d));
                                 }
 
 
