@@ -699,5 +699,7 @@ public class Game {
 	    return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, myInfectionDiscardPile, myPlayerDiscardPile);
     }
 
-
+    public GameManager getGameManager() {
+        return gameManager;
+    }
 }
