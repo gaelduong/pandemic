@@ -114,7 +114,14 @@ public class Game {
   	        DiseaseType cardDisease = gameManager.getDiseaseTypeByRegion(card.getRegion());
   	        ArrayList<DiseaseFlag> diseaseFlagsSupply = diseaseTypeToSupplyDict.get(cardDisease);
   	        City cardCity = myGameBoard.getCityByName(cardName);
-            //System.out.println(".....infecting initial city name: " + cardName + ", card disease: " + cardDisease + "........");
+
+
+
+  	        // FOR TESTING:
+  	        System.out.println(".....infecting initial city name: " + cardName + ", card disease: " + cardDisease + "........");
+
+
+
 
   	        if(i >= 1 && i <= 3) {
   	            numOfDiseaseFlags = 3;
@@ -549,6 +556,10 @@ public class Game {
   	            //OUTBREAK
                 incrementOutbreakMeter();
 
+                // FOR TESTING:
+                System.out.println("Incrementing Outbreak Meter");
+
+
                 int numberOfDiseaseFlagsRemaining = freshFlags.size();
                 ArrayList<City> neighbors = c.getNeighbors();
 
@@ -578,8 +589,34 @@ public class Game {
                                     return;
                                 }
 
+
+
+
+
+                                // FOR TESTING:
+                                System.out.println(c.getName() + " is outbreaking.");
+                                System.out.println("Number of disease cubes in city before outbreak:");
+                                for (DiseaseType d : DiseaseType.values()){
+                                    System.out.println("    " + d + ": " + c.getNumOfDiseaseFlagsPlaced(d));
+                                }
+
+
+
+
                                 connCity.getCityUnits().add(flag);
                                 flag.setUsed(true);
+
+
+
+
+
+                                // FOR TESTING:
+                                System.out.println("Number of disease cubes in city after outbreak:");
+                                for (DiseaseType d : DiseaseType.values()){
+                                    System.out.println("    " + d + ": " + c.getNumOfDiseaseFlagsPlaced(d));
+                                }
+
+
 
                             }
                         }
@@ -598,8 +635,34 @@ public class Game {
                     return;
                 }
 
+
+
+
+                // FOR TESTING:
+                System.out.println("Infecting " + c.getName());
+                System.out.println("Number of disease cubes in city before infecting:");
+                for (DiseaseType d : DiseaseType.values()){
+                    System.out.println("    " + d + ": " + c.getNumOfDiseaseFlagsPlaced(d));
+                }
+
+
+
+
                 c.getCityUnits().add(flag);
                 flag.setUsed(true);
+
+
+
+
+
+                // FOR TESTING:
+                System.out.println("Number of disease cubes in city after infecting:");
+                for (DiseaseType d : DiseaseType.values()){
+                    System.out.println("    " + d + ": " + c.getNumOfDiseaseFlagsPlaced(d));
+                }
+
+
+
             }
             gameStatus = (getOutBreakMeterReading() < 8) && (freshFlags.size() >= 1);
         }

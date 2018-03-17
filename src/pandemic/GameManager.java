@@ -160,14 +160,39 @@ public class GameManager {
 			PlayerCard playerCard1 = pd.drawCard();
 			PlayerCard playerCard2 = pd.drawCard();
 			if (playerCard1 instanceof EpidemicCard){
+
+
+			    //FOR TESTING:
+                System.out.println("Epidemic occurring...");
+
+
+
 				((EpidemicCard) playerCard1).resolveEpidemic();
+
+
+
+                // FOR TESTING:
+                System.out.println("Epidemic resolved");
+
 			}
 			else {
 				p.addToHand(playerCard1);
 				checkHandSize(p);
 			}
 			if (playerCard2 instanceof EpidemicCard){
+
+
+			    // FOR TESTING:
+                System.out.println("Epidemic occurring...");
+
+
+
 				((EpidemicCard) playerCard2).resolveEpidemic();
+
+
+
+				// FOR TESTING:
+                System.out.println("Epidemic resolved");
 			}
 			else {
 				p.addToHand(playerCard2);
@@ -186,6 +211,18 @@ public class GameManager {
 		    for(int i = 0; i < currentInfectionRate; i++) {
 		        CityInfectionCard card = (CityInfectionCard) currentGame.getInfectionDeck().drawCard();
 		        City cardCity = currentGame.getCityByName(card.getCityName());
+
+
+
+
+                // FOR TESTING:
+                System.out.println("InfectionCard drawn: " + card.getCityName());
+
+
+
+
+
+                // NOT FOR TESTING: DO NOT REMOVE!:
                 infectNextCity(cardCity);
 
                 DiseaseType cityDiseaseType = regionToDiseaseTypeDict.get(cardCity.getRegion());
@@ -251,6 +288,11 @@ public class GameManager {
             currentGame.infectAndResolveOutbreaks(cityDiseaseType, cityDisease, gameStatus, Q);
         }
 
+
+
+
+        // FOR TESTING:
+        else {System.out.println("Quarantine Specialist or Medic in neighboring city.");}
 
 
 

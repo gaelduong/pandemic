@@ -22,6 +22,11 @@ abstract class EpidemicCard {
 		myGameManager.discardInfectionCard(bottomInfectionCard);
 		CityName cityName = bottomInfectionCard.getCityName();
 		City city = myGameManager.getCityByName(cityName);
+
+		// FOR TESTING:
+		System.out.println("Infecting " + cityName + " for epidemic...");
+
+
 		myGameManager.infectCityForEpidemic(city);
 		
 		// Intensify:
