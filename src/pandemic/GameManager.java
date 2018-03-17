@@ -262,9 +262,9 @@ public class GameManager {
                 currentGame.getDiseaseSupplyByDiseaseType(cityDiseaseType);
 	    Disease cityDisease = currentGame.getDiseaseByDiseaseType(cityDiseaseType);
 
-	    boolean qsOrMedicPresentInCity = currentGame.isQuarantineSpecialistOrMedicInCity(city);
+	    boolean qsOrMedicPreventingInfectionInCity = currentGame.isQuarantineSpecialistInCity(city) || (currentGame.isMedicInCity(city) && cityDisease.isCured());
 	    boolean diseaseEradicated = currentGame.checkIfEradicated(cityDiseaseType);
-        boolean qsOrMedicPresentInNeighbor = false;
+        boolean qsPresentInNeighbor = false;
 
 	    ArrayList<City> cityNeighbors = city.getNeighbors();
         LinkedList<City> Q = new LinkedList<>();
@@ -272,12 +272,29 @@ public class GameManager {
 
 
         for(City c : cityNeighbors) {
-            qsOrMedicPresentInNeighbor = currentGame.isQuarantineSpecialistOrMedicInCity(c);
-            if(qsOrMedicPresentInNeighbor) break;
+             qsPresentInNeighbor = currentGame.isQuarantineSpecialistInCity(c);
+            if( qsPresentInNeighbor) break;
         }
 
-        boolean infectStatus = qsOrMedicPresentInCity || qsOrMedicPresentInNeighbor
+        boolean infectStatus = qsOrMedicPreventingInfectionInCity ||  qsPresentInNeighbor
                 || diseaseEradicated;
+
+
+
+
+        // FOR TESTING:
+        if(qsOrMedicPreventingInfectionInCity){
+            System.out.println("Quarantine Specialist or Medic preventing infection in this city.");
+        }
+        else if( qsPresentInNeighbor){
+            System.out.println("Quarantine Specialist in neighboring city.");
+        }
+        else if(diseaseEradicated){
+            System.out.println("Disease is eradicated.");
+        }
+
+
+
 
         boolean diseaseFlagsSufficient = diseaseFlags.size() >= 1;
         int outbreakMeterNum = currentGame.getOutBreakMeterReading();
@@ -287,19 +304,6 @@ public class GameManager {
         if(!infectStatus) {
             currentGame.infectAndResolveOutbreaks(cityDiseaseType, cityDisease, gameStatus, Q);
         }
-
-
-
-
-        // FOR TESTING:
-        else {System.out.println("Quarantine Specialist or Medic in neighboring city.");}
-
-
-
-
-
-
-
     }
 	
 	// Checks if Player has too many cards in hand. Must resolve issue if Player has too many cards.
@@ -879,5 +883,14 @@ public class GameManager {
 
             }
         };
+    }
+
+
+
+
+
+    // REMOVE AFTER TESTING
+    public Game getGame(){
+	    return currentGame;
     }
 }

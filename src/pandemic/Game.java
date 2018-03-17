@@ -533,8 +533,12 @@ public class Game {
   	    oneQuietNightActivated = b;
 	}
 
-	public boolean isQuarantineSpecialistOrMedicInCity(City c) {
-  	    return myGameBoard.isQuarantineSpecialistOrMedicInCity(c);
+	public boolean isQuarantineSpecialistInCity(City c) {
+  	    return myGameBoard.isQuarantineSpecialistInCity(c);
+    }
+
+    public boolean isMedicInCity(City c){
+  	    return myGameBoard.isMedicInCity(c);
     }
 
     public int getOutBreakMeterReading() {

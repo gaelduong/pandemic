@@ -77,14 +77,27 @@ public class GameBoard {
         return flagsOnBoard.isEmpty();
     }
 
-    public boolean isQuarantineSpecialistOrMedicInCity(City c) {
+    public boolean isQuarantineSpecialistInCity(City c) {
         List<Unit> cPawns = c.getCityUnits().stream().filter(unit -> unit.getUnitType() == UnitType.Pawn)
                 .collect(Collectors.toList());
         boolean result = false;
 
         for (Unit pawn : cPawns) {
-            result = ((Pawn) pawn).getRole().getRoleType() == RoleType.QuarantineSpecialist ||
-                    ((Pawn) pawn).getRole().getRoleType() == RoleType.Medic;
+            result = ((Pawn) pawn).getRole().getRoleType() == RoleType.QuarantineSpecialist;
+            if(result == true) break;
+        }
+
+        return result;
+
+    }
+
+    public boolean isMedicInCity(City c) {
+        List<Unit> cPawns = c.getCityUnits().stream().filter(unit -> unit.getUnitType() == UnitType.Pawn)
+                .collect(Collectors.toList());
+        boolean result = false;
+
+        for (Unit pawn : cPawns) {
+            result = ((Pawn) pawn).getRole().getRoleType() == RoleType.Medic;
             if(result == true) break;
         }
 

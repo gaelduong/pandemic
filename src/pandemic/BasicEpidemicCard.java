@@ -2,11 +2,8 @@ package pandemic;
 
 public class BasicEpidemicCard extends EpidemicCard implements PlayerCard {
 
-    private CardType cardType;
-
 	public BasicEpidemicCard(GameManager gm){
-	    super(gm);
-	    cardType = CardType.BasicEpidemicCard;
+	    super(CardType.BasicEpidemicCard, gm, EpidemicCardName.BasicEpidemicCard);
 	}
 	
 	public void resolveEpidemic(){
@@ -14,10 +11,10 @@ public class BasicEpidemicCard extends EpidemicCard implements PlayerCard {
 	}
 
     public CardType getCardType() {
-        return cardType;
+        return type;
     }
 
     public String getCardName() {
-        return cardType.toString();
+        return type.toString();
     }
 }

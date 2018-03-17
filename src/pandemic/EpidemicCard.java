@@ -1,11 +1,23 @@
 package pandemic;
 
-abstract class EpidemicCard {
+abstract class EpidemicCard implements PlayerCard{
 
+	protected CardType type;
 	protected GameManager myGameManager;
+	protected EpidemicCardName name;
 	
-	public EpidemicCard(GameManager gm){
-	    myGameManager = gm;
+	public EpidemicCard(CardType t, GameManager gm, EpidemicCardName n){
+	    type = t;
+		myGameManager = gm;
+		name = n;
+	}
+
+	public CardType getCardType(){
+		return type;
+	}
+
+	public String getCardName(){
+		return name.toString();
 	}
 	
 	protected void increaseInfectIntensify(){

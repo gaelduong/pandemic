@@ -1,12 +1,14 @@
 package pandemic;
 
 public class CityCard implements PlayerCard{
-	
+
+	private CardType type;
 	private CityName name;
 	private Region region;
 	private CardType cardType;
 	
 	public CityCard(CityName pName,  Region pRegion){
+		type = CardType.CityCard;
 		name = pName;
 		region = pRegion;
 		cardType = CardType.CityCard;
