@@ -118,6 +118,7 @@ public class Game {
 
 
         currentPhase = GamePhase.ReadyToJoin;
+        currentPlayerTurnStatus = CurrentPlayerTurnStatus.PlayingActions;
     }
 
     public boolean checkIfEradicated(DiseaseType d) {
@@ -602,15 +603,24 @@ public class Game {
                         int dFlagCount = connCity.getNumOfDiseaseFlagsPlaced(cityDiseaseType);
                         ArrayList<Connection> connections = connCity.getConnections();
                         Connection conn = connections.stream()
-                                .filter(cNeigh -> cNeigh.getEnd1().getName().equals(c.getName()) ||
+                               .filter(cNeigh -> cNeigh.getEnd1().getName().equals(c.getName()) ||
                                         cNeigh.getEnd2().getName().equals(c.getName()))
                                 .findAny().orElse(null);
+//
+//                        ConnectionStatus diseaseTypeConnectionStatus = diseaseTypeToConnectionStatusDict.get(cityDiseaseType);
 
-                        ConnectionStatus diseaseTypeConnectionStatus = diseaseTypeToConnectionStatusDict.get(cityDiseaseType);
+                        boolean alreadyAffectedByOutbreak = false;
+                        for(Connection connection : connections){
+                            if(connection.getStatus() == diseaseTypeToConnectionStatusDict.get(cityDiseaseType)){
+                                alreadyAffectedByOutbreak = true;
+                                break;
+                            }
+                        }
 
                         if(conn != null) {
                             if(dFlagCount == 3
-                                    && conn.getStatus() != diseaseTypeConnectionStatus) {
+                                    && !alreadyAffectedByOutbreak) {
+                                // Chain reaction outbreak is occurring.
                                     Q.addLast(connCity);
                                     conn.setConnectionStatus(cityDiseaseType);
 
@@ -620,7 +630,7 @@ public class Game {
 
 
                             } else if(dFlagCount < 3
-                                    && conn.getStatus() != diseaseTypeConnectionStatus) {
+                                    && !alreadyAffectedByOutbreak) {
 
                                 boolean qsOrMedicPreventingInfectionInCity = isQuarantineSpecialistInCity(connCity) || (isMedicInCity(connCity) && cityDisease.isCured());
                                 boolean diseaseEradicated = checkIfEradicated(cityDiseaseType);

@@ -73,8 +73,7 @@ public class GameBoard {
                                                          .collect(Collectors.toList()));
         }
 
-        //return flagsOnBoard.size() > 0 ? false : true;
-        return flagsOnBoard.isEmpty();
+        return flagsOnBoard.size() > 0 ? false : true;
     }
 
     public boolean isQuarantineSpecialistInCity(City c) {

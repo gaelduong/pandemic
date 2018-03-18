@@ -124,9 +124,21 @@ public class GameManager {
 	    return currentGame.getCityByName(cn);
 	}
 
-	//MUST MODIFY FOR PROPER EPIDEMIC INFECTION////////////////
 	public void infectCityForEpidemic(City c){
-		infectNextCity(c);
+		int numFlagsInCity = c.getNumOfDiseaseFlagsPlaced(regionToDiseaseTypeDict.get(c.getRegion()));
+		if (numFlagsInCity == 0) {
+            infectNextCity(c);
+            infectNextCity(c);
+            infectNextCity(c);
+        }
+        else{
+		    int numInfectionsRemaining = 4 - numFlagsInCity;
+		    while(numInfectionsRemaining > 0){
+		        infectNextCity(c);
+		        numInfectionsRemaining--;
+            }
+
+        }
 	}
 	
 	public void shuffleInfectionDiscardPile(){
