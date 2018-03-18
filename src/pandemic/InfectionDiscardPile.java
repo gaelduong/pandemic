@@ -1,5 +1,7 @@
 package pandemic;
 
+import shared.request.CardTarget;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,7 +19,7 @@ public class InfectionDiscardPile implements Serializable {
 	public void addCard(InfectionCard ic){
 	    cardsInPile.add(0,ic);
 	}
-	
+
 	public void shuffle(){
 	    Collections.shuffle(cardsInPile);
 	}
@@ -44,4 +46,6 @@ public class InfectionDiscardPile implements Serializable {
                 ", card name: " + card.getCardName()));
         System.out.println("INFECTION DISCARD PILE PRINTED.");
     }
+
+
 }

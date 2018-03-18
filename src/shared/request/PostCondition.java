@@ -1,5 +1,7 @@
 package shared.request;
 
+import shared.PlayerCardSimple;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,7 +23,7 @@ public class PostCondition {
          * You may use a null value for the PlayerCardSimple if you do not know the card (such as if you are drawing a card from the deck).
          *
          * <br><br><b>Arguments required:</b><br>
-         * {@link shared.PlayerCardSimple} card, String source, String destination
+         * {@link PlayerCardSimple} card, String source, String destination
          * <br><br>
          * If the source or destination is a player, then it should be the {@link pandemic.RoleType#name()} of that player,
          * Otherwise, use the {@link shared.CardTargetType#name()}.
@@ -54,7 +56,7 @@ public class PostCondition {
          * The server will check the player curing the disease is at a ResearchStation.
          *
          * <br><br><b>Arguments required:</b><br>
-         * {@link pandemic.DiseaseType} diseaseType, List<{@link shared.PlayerCardSimple}> cardsToDiscard
+         * {@link pandemic.DiseaseType} diseaseType, List<{@link PlayerCardSimple}> cardsToDiscard
          */
         DISCOVER_CURE,
 

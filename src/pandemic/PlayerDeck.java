@@ -1,11 +1,13 @@
 package pandemic;
 
+import shared.request.CardSource;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class PlayerDeck {
+public class PlayerDeck implements CardSource {
 
 
 	private ArrayList<PlayerCard> cardsInDeck;
@@ -18,6 +20,12 @@ public class PlayerDeck {
 	public void addCard(PlayerCard pCard){
 	    cardsInDeck.add(pCard);
 	}
+
+    public PlayerCard getCard(PlayerCard card) {
+        return cardsInDeck.stream().filter(c -> c.getCardName().equals(card.getCardName()) &&
+                c.getCardType() == card.getCardType())
+                .findAny().orElse(null);
+    }
 	
 	public int getDeckSize(){
 	    return cardsInDeck.size();

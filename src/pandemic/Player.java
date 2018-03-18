@@ -1,8 +1,11 @@
 package pandemic;
 
+import shared.request.CardSource;
+import shared.request.CardTarget;
+
 import java.util.ArrayList;
 
-public class Player {
+public class Player implements CardTarget, CardSource {
 
 	private int actionsTaken;
 	private boolean oncePerTurnActionTaken;
@@ -43,6 +46,19 @@ public class Player {
     public void addToHand(PlayerCard pc){
 	    cardsInHand.add(pc);
 	}
+
+    public void acceptCard(Object cardObj) {
+        PlayerCard card  = (PlayerCard) cardObj;
+        addToHand(card);
+    }
+
+    public PlayerCard getCard(PlayerCard card) {
+	    return cardsInHand.stream().filter(c -> c.getCardName().equals(card.getCardName()) &&
+                                    c.getCardType() == card.getCardType())
+                            .findAny().orElse(null);
+    }
+
+
 
 	public boolean isInHand(PlayerCard pc) {
 	    return cardsInHand.stream().anyMatch(pc::equals);

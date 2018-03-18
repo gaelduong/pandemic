@@ -1,9 +1,11 @@
 package pandemic;
 
+import shared.request.CardTarget;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class PlayerDiscardPile implements Serializable {
+public class PlayerDiscardPile implements Serializable, CardTarget {
 
 
 	private ArrayList<PlayerCard> cardsInPile;
@@ -16,6 +18,11 @@ public class PlayerDiscardPile implements Serializable {
 	public void addCard(PlayerCard pc){
 	    cardsInPile.add(0, pc);
 	}
+
+    public void acceptCard(Object cardObj) {
+        PlayerCard card  = (PlayerCard) cardObj;
+        addCard(card);
+    }
 
     public int getPileSize() {
         return cardsInPile.size();

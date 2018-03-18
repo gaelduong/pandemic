@@ -2,8 +2,12 @@ package shared.request;
 
 import pandemic.DiseaseType;
 import pandemic.Game;
+import pandemic.GameManager;
+import pandemic.RoleType;
 import shared.PlayerCardSimple;
+import shared.CardTargetType;
 import shared.TravelType;
+import shared.Utils;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -75,20 +79,25 @@ public class UpdateRequest implements Serializable {
                 break;
 
             case END_TURN:
-                executeEndTurn();
+                executeEndTurn(game);
                 break;
         }
     }
 
     private void executeMoveCard(Game game, String playerUsername, List arguments) {
+        final GameManager gameManager = game.getGameManager();
         final PlayerCardSimple cardToMove = (PlayerCardSimple)arguments.get(0);
-        final String cardSource = (String)arguments.get(1);         //read the MOVE_CARD enum for the string encoding
-        final String cardDestination = (String)arguments.get(2);
+        final String cardSourceString = (String)arguments.get(1);         //read the MOVE_CARD enum for the string encoding
+        final String cardDestinationString = (String)arguments.get(2);
+
+        //final CardSourceTarget cardSource = getCardSourceTarget()
+
 
         //TODO link to backend commands (should we consider being thread-safe?)
     }
 
     private void executeMovePlayerPos(Game game, String playerUsername, List arguments) {
+        final GameManager gameManager = game.getGameManager();
         final String playerUserName = (String)arguments.get(0);
         final String cityName = (String)arguments.get(1);
         final TravelType travelType = (TravelType)arguments.get(2);
@@ -97,6 +106,7 @@ public class UpdateRequest implements Serializable {
     }
 
     private void executeDiscoverCure(Game game, String playerUsername, List arguments) {
+        final GameManager gameManager = game.getGameManager();
         final DiseaseType diseaseType = (DiseaseType)arguments.get(0);
         @SuppressWarnings("unchecked")
         final List<PlayerCardSimple> cardsToDiscard = (List<PlayerCardSimple>)arguments.get(1);
@@ -105,6 +115,7 @@ public class UpdateRequest implements Serializable {
     }
 
     private void executeTreatDisease(Game game, String playerUsername, List arguments) {
+        final GameManager gameManager = game.getGameManager();
         final DiseaseType diseaseType = (DiseaseType)arguments.get(0);
 
         //TODO link to backend commands (should we consider being thread-safe?)
@@ -114,7 +125,29 @@ public class UpdateRequest implements Serializable {
         //TODO link to backend commands (should we consider being thread-safe?)
     }
 
-    private void executeEndTurn() {
+    private void executeEndTurn(Game game) {
         //TODO link to backend commands (should we consider being thread-safe?)
+        final GameManager gameManager = game.getGameManager();
+    }
+
+    private CardSourceTarget getCardSourceTarget(String sourceTarget, Game game) {
+        final RoleType playerRole = Utils.getEnum(RoleType.class, sourceTarget);
+        CardSourceTarget result = null;
+
+        if (playerRole == null) { //not a player
+            final CardTargetType deckSource = Utils.getEnum(CardTargetType.class, sourceTarget);
+            switch (deckSource) {
+                case DECK:
+                    result = game.getPlayerDeck();
+
+                case DISCARD_PILE:
+                    result = game.getPlayerDiscardPile();
+            }
+        } else {
+            result = game.getGameManager().getActivePlayers().stream()
+                                                            .filter(p -> p.getRoleType() == playerRole)
+                                                            .findAny().orElse(null);
+        }
+        return result;
     }
 }
