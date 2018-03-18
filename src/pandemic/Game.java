@@ -704,7 +704,7 @@ public class Game {
                     if( qsPresentInNeighbor) break;
                 }
                 boolean infectionPrevented = qsOrMedicPreventingInfectionInCity || diseaseEradicated || qsPresentInNeighbor;
-                
+
                 if(!infectionPrevented && freshFlags.size() >= 1) {
                     DiseaseFlag flag;
                     try {
@@ -780,8 +780,11 @@ public class Game {
                                                      .collect(Collectors.toMap(d -> d,
                                                                                d -> getDiseaseSupplyByDiseaseType(d).size()));
 
+        // MUST MODIFY TO HANDLE GENERALIST
+        int actionsRemaining = 4 - currentPlayer.getActionsTaken();
+
         return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, remainingDiseaseCubesMap,
-                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading);
+                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining);
     }
 
     public GameManager getGameManager() {

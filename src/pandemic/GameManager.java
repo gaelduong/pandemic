@@ -367,6 +367,7 @@ public class GameManager {
 	
 	public void notifyAllPlayersGameLost(){
 		// TO FILL IN LATER
+        System.out.println("GAME LOST");
 	}
 
 	// FOR THESE MIGHT NEED TO CHANGE INPUTS DEPENDING ON SERIALIZED OBJECT

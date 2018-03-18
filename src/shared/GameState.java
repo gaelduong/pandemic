@@ -22,6 +22,7 @@ public class GameState {
     private final PlayerDiscardPile playerDiscardPile;
     private final int currentInfectionRate;
     private final int currentOutbreakMeter;
+    private final int currentPlayerActionsRemaining;
 
 
 
@@ -30,7 +31,7 @@ public class GameState {
      */
     public GameState(Map<RoleType, String> userMap, Map<RoleType, List<PlayerCard>> cardMap, Map<RoleType, City> positionMap,
                      Map<CityName, List<Pair<DiseaseType, Integer>>> diseaseCubesMap, Map<DiseaseType, Integer> remainingDiseaseCubesMap,
-                     InfectionDiscardPile infectionDiscardPile, PlayerDiscardPile playerDiscardPile, int currentInfectionRate, int currentOutbreakMeter) {
+                     InfectionDiscardPile infectionDiscardPile, PlayerDiscardPile playerDiscardPile, int currentInfectionRate, int currentOutbreakMeter, int actionsRemaining) {
         this.userMap = userMap;
         this.cardMap = cardMap;
         this.positionMap = positionMap;
@@ -40,6 +41,7 @@ public class GameState {
         this.playerDiscardPile = playerDiscardPile;
         this.currentInfectionRate = currentInfectionRate;
         this.currentOutbreakMeter = currentOutbreakMeter;
+        this.currentPlayerActionsRemaining = actionsRemaining;
     }
 
     /**

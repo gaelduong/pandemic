@@ -36,27 +36,46 @@ public class BackendServerTester {
         System.out.println("TESTING SHAREKNOWLEDGE COMPLETE");
 */
 
-        System.out.println("TESTING END TURN...");
-        gameManager.endTurn();
-        System.out.println("TESTING END TURN COMPLETE");
+//        System.out.println("TESTING END TURN...");
+//        gameManager.endTurn();
+//        System.out.println("TESTING END TURN COMPLETE");
 
 
 //        System.out.println("TESTING INFECT THEN OUTBREAK...");
-//        City madrid = gameManager.getCityByName(CityName.Madrid);
-//        City london = gameManager.getCityByName(CityName.London);
-//        City washington = gameManager.getCityByName(CityName.Washington);
-//        City newyork = gameManager.getCityByName(CityName.NewYork);
-//        gameManager.infectNextCity(washington);
-//        gameManager.infectNextCity(madrid);
-//        gameManager.infectNextCity(madrid);
-//        gameManager.infectNextCity(madrid);
-//        gameManager.infectNextCity(london);
-//        gameManager.infectNextCity(london);
-//        gameManager.infectNextCity(london);
-//        gameManager.infectNextCity(newyork);
-//        gameManager.infectNextCity(newyork);
-//        gameManager.infectNextCity(newyork);
-//        gameManager.infectNextCity(newyork);
+        City madrid = gameManager.getCityByName(CityName.Madrid);
+        City london = gameManager.getCityByName(CityName.London);
+        City washington = gameManager.getCityByName(CityName.Washington);
+        City newyork = gameManager.getCityByName(CityName.NewYork);
+        City paris = gameManager.getCityByName(CityName.Paris);
+        City essen = gameManager.getCityByName(CityName.Essen);
+        City montreal = gameManager.getCityByName(CityName.Montreal);
+        City milan = gameManager.getCityByName(CityName.Milan);
+        gameManager.infectNextCity(washington);
+        gameManager.infectNextCity(madrid);
+        gameManager.infectNextCity(madrid);
+        gameManager.infectNextCity(madrid);
+        gameManager.infectNextCity(london);
+        gameManager.infectNextCity(london);
+        gameManager.infectNextCity(london);
+        gameManager.infectNextCity(newyork);
+        gameManager.infectNextCity(newyork);
+        gameManager.infectNextCity(newyork);
+        gameManager.infectNextCity(washington);
+        gameManager.infectNextCity(washington);
+        gameManager.infectNextCity(washington);
+        gameManager.infectNextCity(paris);
+        gameManager.infectNextCity(paris);
+        gameManager.infectNextCity(paris);
+        gameManager.infectNextCity(essen);
+        gameManager.infectNextCity(essen);
+        gameManager.infectNextCity(essen);
+        gameManager.infectNextCity(montreal);
+        gameManager.infectNextCity(montreal);
+        gameManager.infectNextCity(montreal);
+        gameManager.infectNextCity(milan);
+        gameManager.infectNextCity(milan);
+        gameManager.infectNextCity(milan);
+
 
 
 

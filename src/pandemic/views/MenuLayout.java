@@ -449,7 +449,7 @@ public class MenuLayout extends Parent {
 	public void setUpCreateGame(PandemicServer s, PandemicClient c)
     {
         try {
-            s = new PandemicServer(null, 70);
+            s = new PandemicServer(70);
         } catch (IOException e) {
             e.printStackTrace();
         }
