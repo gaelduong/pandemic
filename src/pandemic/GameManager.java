@@ -123,7 +123,8 @@ public class GameManager {
 	public City getCityByName(CityName cn){
 	    return currentGame.getCityByName(cn);
 	}
-	
+
+	//MUST MODIFY FOR PROPER EPIDEMIC INFECTION////////////////
 	public void infectCityForEpidemic(City c){
 		infectNextCity(c);
 	}

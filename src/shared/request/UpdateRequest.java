@@ -73,6 +73,10 @@ public class UpdateRequest implements Serializable {
             case BUILD_RESEARCH_STATION:
                 executeBuildResearchStation(game, playerUsername);
                 break;
+
+            case END_TURN:
+                executeEndTurn();
+                break;
         }
     }
 
@@ -107,6 +111,10 @@ public class UpdateRequest implements Serializable {
     }
 
     private void executeBuildResearchStation(Game game, String playerUsername) {
+        //TODO link to backend commands (should we consider being thread-safe?)
+    }
+
+    private void executeEndTurn() {
         //TODO link to backend commands (should we consider being thread-safe?)
     }
 }

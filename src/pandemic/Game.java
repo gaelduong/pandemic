@@ -323,12 +323,23 @@ public class Game {
             atlCity.getCityUnits().add(playerPawn);
         }
 
-        // - assigning role to hostPlayer
+        // - assigning role to all active players (all joined players)
         //*****************************************************************************************************
-        // -MIGHT REQUIRE MODIFICATION TO ACCOUNT FOR ALL ACTIVE PLAYERS DEPENDING ON ORDER OF initializeGame()
+        // - MODIFICATION TO ACCOUNT FOR ALL ACTIVE PLAYERS DEPENDING ON ORDER OF initializeGame()
         //   AND consecutive joinGame() calls
         //*****************************************************************************************************
-        Player host = gameManager.getHostPlayer();
+        for(Player p : gameManager.getActivePlayers()) {
+            Pawn playerPawn = getRandomUnassignedPawn();
+            p.setPawn(playerPawn);
+            playerPawn.setPlayer(p);
+            p.setRole(playerPawn.getRole());
+            playerPawn.getRole().setAssigned(true);
+            playerPawn.setAssigned(true);
+
+        }
+
+
+        /*Player host = gameManager.getHostPlayer();
 
         // UNCOMMENT AFTER TESTING:
         Pawn pawnHost = getRandomUnassignedPawn();
@@ -340,7 +351,7 @@ public class Game {
         host.setPawn(pawnHost);
         pawnHost.setPlayer(host);
         pawnHost.getRole().setAssigned(true);
-        pawnHost.setAssigned(true);
+        pawnHost.setAssigned(true);*/
 
 
 
@@ -703,5 +714,7 @@ public class Game {
 	    return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, myInfectionDiscardPile, myPlayerDiscardPile);
     }
 
-
+    public GameManager getGameManager() {
+        return gameManager;
+    }
 }

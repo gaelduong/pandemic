@@ -22,7 +22,7 @@ public class GameBoard {
 			}
 		}
 		return found;*/
-		return citiesOnBoard.stream().filter(n -> n.getName() == cn).findAny().orElse(null);
+		return citiesOnBoard.stream().filter(n -> n.getName().equals(cn)).findAny().orElse(null);
 	}
 
 	public void printGameBoard() {

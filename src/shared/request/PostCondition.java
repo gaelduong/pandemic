@@ -67,6 +67,11 @@ public class PostCondition {
          * <br><br><b>Arguments required:</b> NONE
          */
         BUILD_RESEARCH_STATION,
+
+        /**
+         * This action will end the turn for the current player
+         */
+        END_TURN,
     }
 
     public PostCondition(ACTION action, Object... arguments) {
