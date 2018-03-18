@@ -65,6 +65,10 @@ public class Player {
     	return role.getRoleType();
     }
 
+    public void setRole(Role role) {
+	    this.role = role;
+    }
+
 	public ArrayList<PlayerCard> getCardsInHand() {
 		return cardsInHand;
 	}
