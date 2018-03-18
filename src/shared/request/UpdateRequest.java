@@ -89,7 +89,15 @@ public class UpdateRequest implements Serializable {
         final CardSource cardSource = (CardSource) getCardSourceTarget(cardSourceString, playerUsername, game);
         final CardTarget cardTarget = (CardTarget) getCardSourceTarget(cardDestinationString, playerUsername, game);
 
-        cardTarget.acceptCard(cardSource.getCard(cardToMove));
+        PlayerCard cardToMoveObj = cardSource.getCard(cardToMove);
+
+        cardTarget.acceptCard(cardToMoveObj);
+
+        if(cardSource instanceof PlayerDeck)
+            ((PlayerDeck) cardSource).drawCard();
+
+        if(cardSource instanceof Player)
+            ((Player) cardSource).discardCard(cardToMoveObj);
 
 
 
@@ -107,6 +115,7 @@ public class UpdateRequest implements Serializable {
 
 
         if (game.getCurrentPlayer().getPlayerUserName().equals(playerUserName)) {
+            Player currentPlayer = game.getCurrentPlayer();
 
             try {
 
@@ -118,7 +127,7 @@ public class UpdateRequest implements Serializable {
                     case DIRECT_FLIGHT:
                         CityCard card = (CityCard) game.getCurrentPlayer().getCard(new PlayerCardSimple(CardType.CityCard, cityName));
                         gameManager.playDirectFlight(card);
-                        game.getCurrentPlayer().discardCard(card);
+                        currentPlayer.discardCard(card);
                         game.getPlayerDiscardPile().acceptCard(card);
                     case SHUTTLE_FLIGHT:
                         //TODO to fill in later
@@ -147,6 +156,21 @@ public class UpdateRequest implements Serializable {
         final GameManager gameManager = game.getGameManager();
         final DiseaseType diseaseType = (DiseaseType)arguments.get(0);
 
+        if (game.getCurrentPlayer().getPlayerUserName().equals(playerUsername)) {
+            City currentPlayerPos = game.getCurrentPlayer().getPawn().getLocation();
+            try {
+                DiseaseFlag toTreat = (DiseaseFlag) currentPlayerPos.getCityUnits().stream().filter(u -> u.getUnitType() == UnitType.DiseaseFlag)
+                                                        .findAny().orElse(null);
+                gameManager.playTreatDisease(toTreat);
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+
         //TODO link to backend commands (should we consider being thread-safe?)
     }
 
@@ -157,6 +181,7 @@ public class UpdateRequest implements Serializable {
     private void executeEndTurn(Game game) {
         //TODO link to backend commands (should we consider being thread-safe?)
         final GameManager gameManager = game.getGameManager();
+        gameManager.endTurn();
     }
 
     private CardSourceTarget getCardSourceTarget(String sourceTarget, String playerUsername, Game game) {
