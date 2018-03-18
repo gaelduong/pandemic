@@ -39,7 +39,12 @@ import pandemic.RoleType;
 import pandemic.Unit;
 import pandemic.UnitType;
 import pandemic.User;
+import server.ServerCommands;
 import shared.GameState;
+import shared.MessageType;
+import shared.TravelType;
+import shared.request.PostCondition;
+import shared.request.UpdateRequest;
 
 /**
  * Purpose: Create GUI components + event listeners
@@ -319,6 +324,18 @@ public class GUI extends JFrame
 	/*Cards container*/
 	private JLabel cardsContainer = new JLabel();
 	
+	/*TreatdiseaseOptions container*/
+	private JLabel genericBox;
+	
+	/*Accept label*/
+	private JLabel acceptLabel;
+	
+	/*Decline label*/
+	private JLabel declineLabel;
+	
+	/*Discard card button */
+	private JLabel discardCardButton;
+	
 	/*Action buttons*/
 	private JButton btnDriveFerry = new JButton("Drive");;
 	private JButton btnDirectFlight = new JButton("<html>Direct <br> Flight</html>");;
@@ -410,7 +427,7 @@ public class GUI extends JFrame
 		put(RoleType.ContingencyPlanner,orangePawn);
 		put(RoleType.Dispatcher,purplePawn);
 		put(RoleType.OperationsExpert,bluePawn);
-		put(RoleType.QuarantineSpecialist,whitePawn);
+		//put(RoleType.QuarantineSpecialist,whitePawn);
 	}};
 	
 	
@@ -924,6 +941,20 @@ public class GUI extends JFrame
 		topBar.add(outbreakMeterCount);
 		outbreakMeterCount.setOpaque(true);
 		
+		
+		/*---popups/messages/optionDisplay..---*/
+		acceptLabel = new JLabel();
+		declineLabel = new JLabel();
+		genericBox = new JLabel();
+		discardCardButton = new JLabel();
+		
+		contentPane.add(discardCardButton);
+		contentPane.add(genericBox);
+		contentPane.add(acceptLabel);
+		contentPane.add(declineLabel);
+		
+		
+		
 		loadPlayerCards();
 		loadPlayerDiscardCards();
 		loadInfectionDiscardCards();
@@ -933,9 +964,6 @@ public class GUI extends JFrame
 		/*----------Set up controlPawn------*/
 		loadControlPawn();
 		
-		
-		
-		System.out.println("hey " + SydneyCityLabel.getX() + " s " + target.getY());
 		
 		/*----------Set up citiesLabels ----------*/
 		loadCities();
@@ -971,11 +999,11 @@ public class GUI extends JFrame
 		
 		
 		loadTargetsDrive();
-		loadDriveAndFlightMessage();
-		loadTargetsDirectFlight();
+		//loadDriveAndFlightMessage();
+		//loadTargetsDirectFlight();
 		
-		loadTreatDiseaseMessage();
-		loadShareKnowledgeMessage();
+		//loadTreatDiseaseMessage();
+		//loadShareKnowledgeMessage();
 		
 		/*----------Set up board map ----------*/
 		loadMap();
@@ -1006,22 +1034,16 @@ public class GUI extends JFrame
 			public void mouseReleased(MouseEvent e)
 			{
 				mapPawnLabels.get(userRole).setLocation(city.getX(),city.getY()-20);
-			
-				/*if(driveSelected)
-				{
-					target.setVisible(false);
-					target2.setVisible(false);
-				}
-				if(directFlightSelected)
-				{
-					target3.setVisible(false);
-					target4.setVisible(false);
-					target5.setVisible(false);
-					lblCard3.setLocation(playerDiscard.getX()+5,playerDiscard.getY()+5);
-				}*/
 			}
 		});
 		}
+		
+		discardCardButton.addMouseListener(new MouseAdapter(){
+			public void mouseReleased(MouseEvent e)
+			{
+				discardCardButton.setVisible(false);
+			}
+		});
 		
 		/*-------Events for 8 buttons-------*/
 		//Drive Ferry button
@@ -1029,13 +1051,11 @@ public class GUI extends JFrame
 			public void actionPerformed(ActionEvent e) {
 				
 				resetDisplayOptions(displayOptions);
-				
+				loadDriveAndFlightMessage();
 				displayTargetsDrive();
-				message.setVisible(true);
-				
-				
+			
 				//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), 
-		          //      new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, "bob", "paris", TravelType.DRIVE)));
+		         //new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, "bob", "paris", TravelType.DRIVE)));
 			}
 
 			private void displayTargetsDrive() {targetsDrive.forEach(t -> t.setVisible(true));}
@@ -1045,7 +1065,7 @@ public class GUI extends JFrame
 		btnDirectFlight.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				resetDisplayOptions(displayOptions);
-				message.setVisible(true);
+				loadDriveAndFlightMessage();
 				displayTargetsDirectFlight();
 			}
 			private void displayTargetsDirectFlight() {targetsDirectFlight.forEach(t -> t.setVisible(true));}
@@ -1075,7 +1095,7 @@ public class GUI extends JFrame
 		//TreatDisease button
 		btnTreatDisease.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			
+				loadTreatDiseaseMessage();
 			}
 		});
 		
@@ -1092,6 +1112,8 @@ public class GUI extends JFrame
 			
 			}
 		});
+		
+		
 	}
 
 	/*Helper method*/
@@ -1372,11 +1394,11 @@ public class GUI extends JFrame
 	
 	private void loadDriveAndFlightMessage()
 	{
-		message.setForeground(Color.WHITE);
-		message.setText("Choose city to move to");
-		message.setBounds(600,520,200,50);
-		message.setVisible(false);
-		contentPane.add(message);
+		genericBox.setForeground(Color.WHITE);
+		genericBox.setOpaque(false);
+		genericBox.setText("Choose city to move to");
+		genericBox.setBounds(600,520,200,50);
+		genericBox.setVisible(true);
 	}
 	
 	private void loadTreatDiseaseMessage()
@@ -1388,7 +1410,7 @@ public class GUI extends JFrame
 		for(Pair<DiseaseType, Integer> d : cubesTuples)
 		{
 			JLabel chooseCube = new JLabel(""+ d.getKey());
-			chooseCube.setBackground(Color.BLACK);
+			chooseCube.setBounds(586, 256, 68, 36);
 			chooseCube.setForeground(Color.WHITE);
 			String path = "";
 			switch(d.getKey())
@@ -1402,9 +1424,14 @@ public class GUI extends JFrame
 			}
 			
 			chooseCube.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(path)).getImage().getScaledInstance(35, 35, Image.SCALE_SMOOTH)));
-			chooseCube.setBounds(286, 56, 68, 36);
+			
 			contentPane.add(chooseCube);
-			chooseCube.setOpaque(true);
+			
+			genericBox.setText("hello my name is gael");
+			genericBox.setForeground(Color.WHITE);
+			genericBox.setBackground(Color.BLACK);
+			genericBox.setBounds(486,200,300,200);
+			genericBox.setOpaque(true);
 		}
 		//n diseaseType => n labels to click on, labels with icons
 			//if red => icon redCube
@@ -1418,7 +1445,6 @@ public class GUI extends JFrame
 	{
 		
 	}
-	
 	
 	
 	private void resetDisplayOptions(ArrayList<ArrayList<JLabel>> lists){
@@ -1442,6 +1468,60 @@ public class GUI extends JFrame
 	public JPanel getContentPane()
 	{
 		return this.contentPane;
+	}
+	
+	
+	public GameState getGameState()
+	{
+		return this.gs;
+	}
+	public void setGameState(GameState newGS)
+	{
+		this.gs = newGS;
+	}
+	
+
+	public void drawAcceptDeclineMessageBox(String consentPrompt)
+	{
+		genericBox.setText(consentPrompt);
+		genericBox.setForeground(Color.WHITE);
+		genericBox.setBackground(Color.BLACK);
+		genericBox.setBounds(486,200,400,100);
+		genericBox.setOpaque(true);
+		
+		acceptLabel.setText("Accept");
+		acceptLabel.setBackground(Color.GREEN);
+		acceptLabel.setBounds(486,300,50,50);
+		acceptLabel.setOpaque(true);
+		
+		declineLabel.setText("Decline");
+		declineLabel.setBackground(Color.RED);
+		declineLabel.setBounds(550,300,50,50);
+		declineLabel.setOpaque(true);
+		
+	}
+	public void drawReceiveMessage(String message, MessageType type)
+	{
+		genericBox.setText(type.toString() + ": " + message);
+		genericBox.setForeground(Color.WHITE);
+		genericBox.setBackground(Color.BLACK);
+		genericBox.setBounds(486,200,400,200);
+		genericBox.setOpaque(true);
+		
+		acceptLabel.setText("OK");
+		acceptLabel.setBackground(Color.GREEN);
+		acceptLabel.setBounds(486,300,50,50);
+		acceptLabel.setOpaque(true);
+		
+	}
+	
+	public void enableDiscardCardButton()
+	{
+		discardCardButton.setVisible(true);
+		discardCardButton.setText("Discard");
+		discardCardButton.setBackground(Color.ORANGE);
+		discardCardButton.setBounds(486,300,50,50);
+		discardCardButton.setOpaque(true);
 	}
 	
 }
