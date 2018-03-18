@@ -21,7 +21,7 @@ public class PlayerDiscardPile implements Serializable {
         return cardsInPile.size();
     }
 
-    public ArrayList<PlayerCard> getCardInPile(){
+    public ArrayList<PlayerCard> getCardsInPile(){
 	    return cardsInPile;
     }
 
