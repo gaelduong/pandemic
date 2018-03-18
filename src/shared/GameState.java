@@ -18,18 +18,25 @@ public class GameState {
     private final Map<CityName, List<Pair<DiseaseType,Integer>>> diseaseCubesMap;
     private final InfectionDiscardPile infectionDiscardPile;
     private final PlayerDiscardPile playerDiscardPile;
+    private final int currentInfectionRate;
+    private final int currentOutbreakMeter;
+
+
 
     /**
      * The server will create this object! The client just receives it.
      */
     public GameState(Map<RoleType, String> userMap, Map<RoleType, List<PlayerCard>> cardMap, Map<RoleType, CityName> positionMap, Map<CityName,
-            List<Pair<DiseaseType, Integer>>> diseaseCubesMap, InfectionDiscardPile infectionDiscardPile, PlayerDiscardPile playerDiscardPile) {
+            List<Pair<DiseaseType, Integer>>> diseaseCubesMap, InfectionDiscardPile infectionDiscardPile, PlayerDiscardPile playerDiscardPile,
+            int currentInfectionRate, int currentOutbreakMeter) {
         this.userMap = userMap;
         this.cardMap = cardMap;
         this.positionMap = positionMap;
         this.diseaseCubesMap = diseaseCubesMap;
         this.infectionDiscardPile = infectionDiscardPile;
         this.playerDiscardPile = playerDiscardPile;
+        this.currentInfectionRate = currentInfectionRate;
+        this.currentOutbreakMeter = currentOutbreakMeter;
     }
 
     /**
@@ -67,4 +74,13 @@ public class GameState {
     public PlayerDiscardPile getPlayerDiscardPile() {
         return playerDiscardPile;
     }
+
+    /**
+     * Return the current game infection rate and outbreak meter readings
+     */
+    public int getCurrentInfectionRate() { return currentInfectionRate; }
+
+    public int getCurrentOutbreakMeter() { return currentOutbreakMeter; }
+
+
 }

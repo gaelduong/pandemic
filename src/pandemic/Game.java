@@ -736,7 +736,8 @@ public class Game {
         final Map<CityName, List<Pair<DiseaseType,Integer>>> diseaseCubesMap
                 = myGameBoard.getCitiesOnBoard().stream().collect(Collectors.toMap(City::getName, City::getDiseaseFlags));
 
-	    return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, myInfectionDiscardPile, myPlayerDiscardPile);
+	    return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, myInfectionDiscardPile, myPlayerDiscardPile,
+                             currentInfectionRate, outBreakMeterReading);
     }
 
     public GameManager getGameManager() {
