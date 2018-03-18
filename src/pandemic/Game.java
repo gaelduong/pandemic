@@ -49,7 +49,6 @@ public class Game {
   	private int outBreakMeterReading;
 
 	private CurrentPlayerTurnStatus currentPlayerTurnStatus;
-	private ConsentRequiringAction currentConsentRequiringAction;
 	private Player playerDiscardingCards;
 	private boolean oneQuietNightActivated;
   	
@@ -541,15 +540,7 @@ public class Game {
 	public void setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus status){
   	    currentPlayerTurnStatus = status;
 	}
-	
-	public ConsentRequiringAction getCurrentConsentRequiringAction(){
-  	    return currentConsentRequiringAction;
-	}
-	
-	public void setCurrentConsentRequiringAction(ConsentRequiringAction action){
-  	    currentConsentRequiringAction = action;
-	}
-	
+
 	public PlayerDiscardPile getPlayerDiscardPile(){
   	    return myPlayerDiscardPile;
 	}
