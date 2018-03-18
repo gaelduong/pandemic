@@ -1,6 +1,6 @@
 package client;
 
-import pandemic.GUI;
+import pandemic.views.GUI;
 import shared.GameState;
 import shared.MessageType;
 

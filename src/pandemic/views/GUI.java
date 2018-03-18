@@ -1,6 +1,12 @@
-package pandemic;
+package pandemic.views;
+
 
 import javafx.util.Pair;
+import pandemic.CityName;
+import pandemic.DiseaseType;
+import pandemic.RoleType;
+import pandemic.dummyGS;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
@@ -49,7 +55,7 @@ public class GUI extends JFrame
 {
 	
 
-    
+
 	private dummyGS gs;
 	private String username;
 	private RoleType medic = RoleType.Medic;

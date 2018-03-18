@@ -2,7 +2,7 @@ package client;
 
 import api.socketcomm.Client;
 import api.socketcomm.SocketBundle;
-import pandemic.GUI;
+import pandemic.views.GUI;
 import shared.GameState;
 import shared.MessageType;
 import shared.Utils;
