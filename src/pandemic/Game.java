@@ -40,7 +40,12 @@ public class Game {
   	private PlayerDiscardPile myPlayerDiscardPile;
 
   	private boolean resolvingEpidemic;
-  	private int infectionRate;
+
+  	private LinkedList<Integer> infectionRateMeter;
+  	private int currentInfectionRate;
+  	private boolean lastInfectionMarkerReached;
+
+
   	private int outBreakMeterReading;
 
 	private CurrentPlayerTurnStatus currentPlayerTurnStatus;
@@ -55,6 +60,20 @@ public class Game {
   	    randomRoleGenerator = new Random();
   	    randomPawnGenerator = new Random();
 
+  	    infectionRateMeter = new LinkedList<Integer>() {
+            {
+                add(2);
+                add(2);
+                add(2);
+                add(3);
+                add(3);
+                add(4);
+                add(4);
+            }
+        };
+
+  	    lastInfectionMarkerReached = false;
+
   	     diseaseTypeToConnectionStatusDict = new HashMap<DiseaseType, ConnectionStatus>() {
             {
                 put(DiseaseType.Blue, ConnectionStatus.BlueDiseaseOutbreak);
@@ -64,6 +83,7 @@ public class Game {
                 put(DiseaseType.Purple, ConnectionStatus.PurpleDiseaseOutbreak);
             }
         };
+
 
 	}
 
@@ -106,8 +126,8 @@ public class Game {
     }
 
     private void infectInitialCities() {
-  	    infectionRate = 2;
-  	    int numOfDiseaseFlags = 0;
+  	    currentInfectionRate = infectionRateMeter.get(0);
+  	    int numOfDiseaseFlags;
   	    for(int i = 1; i <= 9; i++) {
   	        CityInfectionCard card = (CityInfectionCard) myInfectionDeck.drawCard();
   	        CityName cardName = card.getCityName();
@@ -123,9 +143,9 @@ public class Game {
 
 
 
-  	        if(i >= 1 && i <= 3) {
+  	        if(i <= 3) {
   	            numOfDiseaseFlags = 3;
-            } else if(i > 3 && i <= 6) {
+            } else if(i <= 6) {
   	            numOfDiseaseFlags = 2;
             } else {
   	            numOfDiseaseFlags = 1;
@@ -471,13 +491,18 @@ public class Game {
 	}
 
 	public int getInfectionRate(){
-  	    return infectionRate;
+  	    return currentInfectionRate;
 	}
 
 	public void increaseInfectionRate(){
-		if (infectionRate < 4){
-			infectionRate++;
+
+		if (!lastInfectionMarkerReached){
+		    infectionRateMeter.addLast(infectionRateMeter.removeFirst());
+			currentInfectionRate = infectionRateMeter.getFirst();
 		}
+
+		if(currentInfectionRate == 4 && !lastInfectionMarkerReached)
+		    lastInfectionMarkerReached = true;
 	}
 
 	public InfectionDeck getInfectionDeck(){
