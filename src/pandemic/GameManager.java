@@ -477,22 +477,6 @@ public class GameManager {
 	    }
 
     }
-
-
-    public void playShareKnowledgeRequest(Player participant, CityCard c) {
-    	ShareKnowledgeAction share = new ShareKnowledgeAction(this, participant, c);
-    	currentGame.setCurrentConsentRequiringAction(share);
-    	if (currentGame.getCurrentPlayer().isInHand(c)){
-    		promptGive(participant, c);
-    	}
-    	else {
-    		promptTake(participant, c);
-    	}
-    	// currentPlayer cannot play any actions until participant replies
-    	// Client must check currentPlayerTurnStatus before sending any actions
-    	currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.WaitingForReply);
-    	
-    }
     
     public void replyConsentRequest(Boolean b){
     	if (b){
