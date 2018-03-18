@@ -34,34 +34,55 @@ public class BackendServerTester {
         System.out.println("Player2 holds Card c: " + player2Test.isInHand(c));
         
         System.out.println("TESTING SHAREKNOWLEDGE COMPLETE");
-
+*/
 
         System.out.println("TESTING END TURN...");
         gameManager.endTurn();
-        System.out.println("TESTING END TURN COMPLETE");*/
+        System.out.println("TESTING END TURN COMPLETE");
 
-        System.out.println("TESTING Game::increaseInfectionRate...");
-        gameManager.getGame().increaseInfectionRate();
-        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
-        gameManager.getGame().increaseInfectionRate();
-        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
-        gameManager.getGame().increaseInfectionRate();
-        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
-        gameManager.getGame().increaseInfectionRate();
-        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
-        gameManager.getGame().increaseInfectionRate();
-        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
-        gameManager.getGame().increaseInfectionRate();
-        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
-        gameManager.getGame().increaseInfectionRate();
-        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
-        gameManager.getGame().increaseInfectionRate();
-        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
-        gameManager.getGame().increaseInfectionRate();
-        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
-        gameManager.getGame().increaseInfectionRate();
-        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
-        System.out.println("TESTING Game::increaseInfectionRate complete.");
+
+//        System.out.println("TESTING INFECT THEN OUTBREAK...");
+//        City madrid = gameManager.getCityByName(CityName.Madrid);
+//        City london = gameManager.getCityByName(CityName.London);
+//        City washington = gameManager.getCityByName(CityName.Washington);
+//        City newyork = gameManager.getCityByName(CityName.NewYork);
+//        gameManager.infectNextCity(washington);
+//        gameManager.infectNextCity(madrid);
+//        gameManager.infectNextCity(madrid);
+//        gameManager.infectNextCity(madrid);
+//        gameManager.infectNextCity(london);
+//        gameManager.infectNextCity(london);
+//        gameManager.infectNextCity(london);
+//        gameManager.infectNextCity(newyork);
+//        gameManager.infectNextCity(newyork);
+//        gameManager.infectNextCity(newyork);
+//        gameManager.infectNextCity(newyork);
+
+
+
+
+//        System.out.println("TESTING Game::increaseInfectionRate...");
+//        gameManager.getGame().increaseInfectionRate();
+//        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
+//        gameManager.getGame().increaseInfectionRate();
+//        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
+//        gameManager.getGame().increaseInfectionRate();
+//        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
+//        gameManager.getGame().increaseInfectionRate();
+//        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
+//        gameManager.getGame().increaseInfectionRate();
+//        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
+//        gameManager.getGame().increaseInfectionRate();
+//        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
+//        gameManager.getGame().increaseInfectionRate();
+//        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
+//        gameManager.getGame().increaseInfectionRate();
+//        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
+//        gameManager.getGame().increaseInfectionRate();
+//        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
+//        gameManager.getGame().increaseInfectionRate();
+//        System.out.println("infection rate increased = " + gameManager.getGame().getInfectionRate());
+//        System.out.println("TESTING Game::increaseInfectionRate complete.");
 
 
 
