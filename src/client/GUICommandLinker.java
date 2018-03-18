@@ -1,6 +1,7 @@
 package client;
 
 import pandemic.views.GUI;
+import server.ServerCommands;
 import shared.GameState;
 import shared.MessageType;
 
@@ -17,9 +18,8 @@ public class GUICommandLinker {
      * command to the server with the argument 'true' if Accept and 'false' if Decline.
      */
     public static void handleReceiveConsentRequest(GUI gui, String consentPrompt) {
-
       //TODO gael
-        //gui.drawAcceptDeclineMessageBox(consentPrompt);
+        gui.drawAcceptDeclineMessageBox(consentPrompt);
     }
 
     /**
@@ -28,9 +28,9 @@ public class GUICommandLinker {
      */
     public static void handleReceiveMessage(GUI gui, MessageType type, String message) {
         //TODO gael
-        //gui.drawMessageBox(message)
-        //if(type == MessageType.DISCARD_CARD)
-        //      gui.enableDiscardCardButton()
+    	gui.drawReceiveMessage(message,type);
+    	if(type == MessageType.DISCARD_CARD)
+             gui.enableDiscardCardButton();
     }
 
     /**
@@ -38,7 +38,7 @@ public class GUICommandLinker {
      */
     public static void handleReceiveUpdatedGS(GUI gui, GameState gs) {
         //TODO gael
-        // gui.setGameState(gs);
-        // gui.draw();
+    	gui.setGameState(gs);
+    	gui.draw();
     }
 }
