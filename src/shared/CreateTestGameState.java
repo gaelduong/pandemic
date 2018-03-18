@@ -29,7 +29,7 @@ public class CreateTestGameState {
         gameManager.getActivePlayers().forEach(p -> System.out.println("    Player username:" + p.getPlayerUserName()));
         System.out.println("-------------------------");
 
-        System.out.println("All Player joined. Creating game....");
+        System.out.println("All Players joined. Creating game....");
         gameManager.createNewGame();
         System.out.println("Game created.");
 

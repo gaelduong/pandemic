@@ -594,50 +594,67 @@ public class Game {
                         if(conn != null) {
                             if(dFlagCount == 3
                                     && conn.getStatus() != diseaseTypeConnectionStatus) {
-                                Q.addLast(connCity);
-                                conn.setConnectionStatus(cityDiseaseType);
+                                    Q.addLast(connCity);
+                                    conn.setConnectionStatus(cityDiseaseType);
 
 
-                                // FOR TESTING:
-                                System.out.println(connCity.getName() + " is also outbreaking.");
+                                    // FOR TESTING:
+                                    System.out.println(connCity.getName() + " is also outbreaking.");
 
 
-                            } else {
-                                DiseaseFlag flag;
-                                try {
-                                    flag = freshFlags.remove(0);
-                                } catch (NullPointerException e) {
-                                    //FOR TESTING, SHOULD NOT HAPPEN
-                                    System.out.println("ERROR -- diseaseFlags not sufficient");
-                                    return;
+                            } else if(dFlagCount < 3
+                                    && conn.getStatus() != diseaseTypeConnectionStatus) {
+
+                                boolean qsOrMedicPreventingInfectionInCity = isQuarantineSpecialistInCity(connCity) || (isMedicInCity(connCity) && cityDisease.isCured());
+                                boolean diseaseEradicated = checkIfEradicated(cityDiseaseType);
+                                boolean qsPresentInNeighbor = false;
+                                ArrayList<City> cityNeighbors = connCity.getNeighbors();
+                                for(City a : cityNeighbors) {
+                                    qsPresentInNeighbor = isQuarantineSpecialistInCity(a);
+                                    if( qsPresentInNeighbor) break;
+                                }
+                                boolean infectionPrevented = qsOrMedicPreventingInfectionInCity || diseaseEradicated || qsPresentInNeighbor;
+
+                                if(!infectionPrevented) {
+                                    DiseaseFlag flag;
+                                    try {
+                                        flag = freshFlags.remove(0);
+                                    } catch (NullPointerException e) {
+                                        //FOR TESTING, SHOULD NOT HAPPEN
+                                        System.out.println("ERROR -- diseaseFlags not sufficient");
+                                        return;
+                                    }
+
+
+                                    // FOR TESTING:
+                                    System.out.println("Outbreak spread to " + connCity.getName());
+                                    System.out.println("Number of disease cubes in city before outbreak:");
+                                    for (DiseaseType d : DiseaseType.values()) {
+                                        System.out.println("    " + d + ": " + connCity.getNumOfDiseaseFlagsPlaced(d));
+                                    }
+
+
+                                    connCity.getCityUnits().add(flag);
+                                    flag.setUsed(true);
+
+
+                                    // FOR TESTING:
+                                    System.out.println("Number of disease cubes in city after outbreak:");
+                                    for (DiseaseType d : DiseaseType.values()) {
+                                        System.out.println("    " + d + ": " + connCity.getNumOfDiseaseFlagsPlaced(d));
+                                    }
+
+
                                 }
 
 
 
 
-
                                 // FOR TESTING:
-                                System.out.println("Outbreak spread to " + connCity.getName());
-                                System.out.println("Number of disease cubes in city before outbreak:");
-                                for (DiseaseType d : DiseaseType.values()){
-                                    System.out.println("    " + d + ": " + connCity.getNumOfDiseaseFlagsPlaced(d));
+                                else {
+                                    System.out.println("Outbreak prevented from spreading to " + connCity.getName());
                                 }
 
-
-
-
-                                connCity.getCityUnits().add(flag);
-                                flag.setUsed(true);
-
-
-
-
-
-                                // FOR TESTING:
-                                System.out.println("Number of disease cubes in city after outbreak:");
-                                for (DiseaseType d : DiseaseType.values()){
-                                    System.out.println("    " + d + ": " + connCity.getNumOfDiseaseFlagsPlaced(d));
-                                }
 
 
 
@@ -649,43 +666,47 @@ public class Game {
                 }
 
             } else {
-                DiseaseFlag flag;
-                try {
-                    flag = freshFlags.remove(0);
-                } catch (NullPointerException e) {
-                    //FOR TESTING, SHOULD NOT HAPPEN
-                    System.out.println("ERROR -- diseaseFlags not sufficient");
-                    return;
+                boolean qsOrMedicPreventingInfectionInCity = isQuarantineSpecialistInCity(c) || (isMedicInCity(c) && cityDisease.isCured());
+                boolean diseaseEradicated = checkIfEradicated(cityDiseaseType);
+                boolean qsPresentInNeighbor = false;
+                ArrayList<City> cityNeighbors = c.getNeighbors();
+                for(City a : cityNeighbors) {
+                    qsPresentInNeighbor = isQuarantineSpecialistInCity(a);
+                    if( qsPresentInNeighbor) break;
                 }
+                boolean infectionPrevented = qsOrMedicPreventingInfectionInCity || diseaseEradicated || qsPresentInNeighbor;
+
+                if(!infectionPrevented) {
+                    DiseaseFlag flag;
+                    try {
+                        flag = freshFlags.remove(0);
+                    } catch (NullPointerException e) {
+                        //FOR TESTING, SHOULD NOT HAPPEN
+                        System.out.println("ERROR -- diseaseFlags not sufficient");
+                        return;
+                    }
 
 
+                    // FOR TESTING:
+                    System.out.println("Infecting " + c.getName());
+                    System.out.println("Number of disease cubes in city before infecting:");
+                    for (DiseaseType d : DiseaseType.values()) {
+                        System.out.println("    " + d + ": " + c.getNumOfDiseaseFlagsPlaced(d));
+                    }
 
 
-                // FOR TESTING:
-                System.out.println("Infecting " + c.getName());
-                System.out.println("Number of disease cubes in city before infecting:");
-                for (DiseaseType d : DiseaseType.values()){
-                    System.out.println("    " + d + ": " + c.getNumOfDiseaseFlagsPlaced(d));
+                    c.getCityUnits().add(flag);
+                    flag.setUsed(true);
+
+
+                    // FOR TESTING:
+                    System.out.println("Number of disease cubes in city after infecting:");
+                    for (DiseaseType d : DiseaseType.values()) {
+                        System.out.println("    " + d + ": " + c.getNumOfDiseaseFlagsPlaced(d));
+                    }
+
+
                 }
-
-
-
-
-                c.getCityUnits().add(flag);
-                flag.setUsed(true);
-
-
-
-
-
-                // FOR TESTING:
-                System.out.println("Number of disease cubes in city after infecting:");
-                for (DiseaseType d : DiseaseType.values()){
-                    System.out.println("    " + d + ": " + c.getNumOfDiseaseFlagsPlaced(d));
-                }
-
-
-
             }
             gameStatus = (getOutBreakMeterReading() < 8) && (freshFlags.size() >= 1);
         }

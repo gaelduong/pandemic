@@ -21,6 +21,10 @@ public class PlayerDiscardPile implements Serializable {
         return cardsInPile.size();
     }
 
+    public ArrayList<PlayerCard> getCardInPile(){
+	    return cardsInPile;
+    }
+
     public void printPile() {
         System.out.println("PRINTING OUT PLAYER DISCARD PILE(size: " + getPileSize()+ ")......");
         cardsInPile.forEach(card -> System.out.println("Card: " +
