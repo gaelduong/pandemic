@@ -105,6 +105,7 @@ public class Game {
 
         //    - infecting initial cities
         infectInitialCities();
+        initializePlayerPawns();
         myGameBoard.printGameBoard();
         myInfectionDeck.printDeck();
         myInfectionDiscardPile.printPile();
@@ -248,17 +249,17 @@ public class Game {
         System.out.println("    Research Stations supply: ");
         System.out.println("        number of unused research stations: " + unusedResearchStations.size());
 
-        System.out.println("    Unused Roles: ");
-        System.out.println("        number of unused roles: " + unusedRoles.size());
-        unusedRoles.forEach(role -> System.out.println("            role type: " + role.getRoleType() +
-                                                       ", assigned: " + role.isAssigned()));
-
-        System.out.println("Used Roles (as Pawns): ");
-        System.out.println("        number of used roles: " + inGamePawns.size());
-        inGamePawns.forEach(pawn -> System.out.println("            (pawn) role type: " + pawn.getRole().getRoleType() +
-                                                       ", pawn location: " + pawn.getLocation().getName() +
-                                                       ", pawn assigned: " + pawn.isAssigned()));
-        System.out.println("Host Player pawn role: " + gameManager.getHostPlayer().getPawn().getRole().getRoleType());
+//        System.out.println("    Unused Roles: ");
+//        System.out.println("        number of unused roles: " + unusedRoles.size());
+//        unusedRoles.forEach(role -> System.out.println("            role type: " + role.getRoleType() +
+//                                                       ", assigned: " + role.isAssigned()));
+//
+////        System.out.println("Used Roles (as Pawns): ");
+//        System.out.println("        number of used roles: " + inGamePawns.size());
+//        inGamePawns.forEach(pawn -> System.out.println("            (pawn) role type: " + pawn.getRole().getRoleType() +
+//                                                       ", pawn location: " + pawn.getLocation().getName() +
+//                                                       ", pawn assigned: " + pawn.isAssigned()));
+//        System.out.println("Host Player pawn role: " + gameManager.getHostPlayer().getPawn().getRole().getRoleType());
         System.out.println("GAME UNITS PRINTED.");
 
     }
@@ -315,7 +316,10 @@ public class Game {
             }
         }
 
-        //    - initialize PlayerPawns
+
+    }
+
+    public void initializePlayerPawns(){
         unusedRoles = new ArrayList<Role>() {
             {
                 for(RoleType r : RoleType.values()) {
@@ -324,19 +328,9 @@ public class Game {
             }
         };
 
+        City atlCity = myGameBoard.getCityByName(CityName.Atlanta);
         inGamePawns = new ArrayList<Pawn>();
         int numOfPlayers = settings.getNumOfPlayers();
-
-        /////////// FOR TESTING ://////////////////////////////////////////////////////////////////////////////////////
-        /*Role r = unusedRoles.stream().filter(role -> role.getRoleType() == RoleType.Medic).findAny().orElse(null);
-        Pawn medic = new Pawn(r);
-        inGamePawns.add(medic);
-        unusedRoles.remove(r);
-        medic.setLocation(atlCity);
-        atlCity.getCityUnits().add(medic);*/
-        //////////////////////////////////////////////////
-        // also change k back to 0 after testing
-        //////////////////////////////////////////////////
         for(int k = 0; k < numOfPlayers; k++) {
             Pawn playerPawn = new Pawn(getRandomUnassignedRole());
             inGamePawns.add(playerPawn);
@@ -357,25 +351,11 @@ public class Game {
             playerPawn.getRole().setAssigned(true);
             playerPawn.setAssigned(true);
 
+
+
+            System.out.println("Role assigned: " + playerPawn.getRole().getRoleType());
+
         }
-
-
-        /*Player host = gameManager.getHostPlayer();
-
-        // UNCOMMENT AFTER TESTING:
-        Pawn pawnHost = getRandomUnassignedPawn();
-
-        //FOR TESTING drive/ferry, directflight, treat disease as medic:
-        //Pawn pawnHost = inGamePawns.stream().filter(pawn -> pawn.getRole().getRoleType() == RoleType.Medic)
-        //                                    .findAny().orElse(null);
-
-        host.setPawn(pawnHost);
-        pawnHost.setPlayer(host);
-        pawnHost.getRole().setAssigned(true);
-        pawnHost.setAssigned(true);*/
-
-
-
     }
 
     public Disease getDiseaseByDiseaseType(DiseaseType d) {
@@ -704,7 +684,7 @@ public class Game {
                     if( qsPresentInNeighbor) break;
                 }
                 boolean infectionPrevented = qsOrMedicPreventingInfectionInCity || diseaseEradicated || qsPresentInNeighbor;
-                
+
                 if(!infectionPrevented && freshFlags.size() >= 1) {
                     DiseaseFlag flag;
                     try {
@@ -746,7 +726,7 @@ public class Game {
             if (!gameStatus){
                 gameManager.notifyAllPlayersGameLost();
                 setGamePhase(GamePhase.Completed);
-                System.out.println("Outbreak meter maxed out");
+                System.out.println("Ran out of disease cubes or Outbreak meter maxed out");
             }
         }
 
@@ -780,8 +760,28 @@ public class Game {
                                                      .collect(Collectors.toMap(d -> d,
                                                                                d -> getDiseaseSupplyByDiseaseType(d).size()));
 
+        // MUST MODIFY TO HANDLE GENERALIST
+        int actionsRemaining = 4 - currentPlayer.getActionsTaken();
+
+        ArrayList<DiseaseType> curedDiseases = new ArrayList<DiseaseType>();
+        if(blueDisease.isCured()){
+            curedDiseases.add(blueDisease.getDiseaseType());
+        }
+        if(redDisease.isCured()){
+            curedDiseases.add(redDisease.getDiseaseType());
+        }
+        if(yellowDisease.isCured()){
+            curedDiseases.add(yellowDisease.getDiseaseType());
+        }
+        if(blackDisease.isCured()){
+            curedDiseases.add(blackDisease.getDiseaseType());
+        }
+//        if(purpleDisease.isCured()){
+//            curedDiseases.add(purpleDisease.getDiseaseType());
+//        }
+
         return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, remainingDiseaseCubesMap,
-                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading);
+                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases);
     }
 
     public GameManager getGameManager() {

@@ -370,6 +370,7 @@ public class GameManager {
 	public void notifyAllPlayersGameLost(){
 		// TO FILL IN LATER
         gameLost = true;
+        System.out.println("GAME LOST");
 	}
 
 	public boolean isGameLost() {
