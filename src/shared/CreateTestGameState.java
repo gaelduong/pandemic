@@ -50,6 +50,8 @@ public class CreateTestGameState {
         gameManager.infectNextCity(losAngeles);
         gameManager.infectNextCity(losAngeles);
         gameManager.infectNextCity(losAngeles);
+        City chennai = gameManager.getCityByName(CityName.Chennai);
+        gameManager.infectNextCity(chennai);
 
 
         GameState gameStateTest = gameManager.getGame().generateCondensedGameState();

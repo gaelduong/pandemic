@@ -14,7 +14,8 @@ public class GameState {
 
     private final Map<RoleType, String> userMap;
     private final Map<RoleType, List<PlayerCard>> cardMap;
-    private final Map<RoleType, CityName> positionMap;
+//    private final Map<RoleType, CityName> positionMap;
+    private final Map<RoleType, City> positionMap;
     private final Map<CityName, List<Pair<DiseaseType,Integer>>> diseaseCubesMap;
     private final Map<DiseaseType, Integer> remainingDiseaseCubesMap;
     private final InfectionDiscardPile infectionDiscardPile;
@@ -27,7 +28,7 @@ public class GameState {
     /**
      * The server will create this object! The client just receives it.
      */
-    public GameState(Map<RoleType, String> userMap, Map<RoleType, List<PlayerCard>> cardMap, Map<RoleType, CityName> positionMap,
+    public GameState(Map<RoleType, String> userMap, Map<RoleType, List<PlayerCard>> cardMap, Map<RoleType, City> positionMap,
                      Map<CityName, List<Pair<DiseaseType, Integer>>> diseaseCubesMap, Map<DiseaseType, Integer> remainingDiseaseCubesMap,
                      InfectionDiscardPile infectionDiscardPile, PlayerDiscardPile playerDiscardPile, int currentInfectionRate, int currentOutbreakMeter) {
         this.userMap = userMap;
@@ -51,7 +52,7 @@ public class GameState {
     /**
      * Maps players to their position on the board
      */
-    public Map<RoleType, CityName> getPositionMap() {
+    public Map<RoleType, City> getPositionMap() {
         return positionMap;
     }
 

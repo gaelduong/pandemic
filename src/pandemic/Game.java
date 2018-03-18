@@ -753,8 +753,12 @@ public class Game {
         final Map<RoleType, List<PlayerCard>> cardMap
                 = gameManager.getActivePlayers().stream().collect(Collectors.toMap(Player::getRoleType, Player::getCardsInHand));
 
-        final Map<RoleType, CityName> positionMap
-                = gameManager.getActivePlayers().stream().collect(Collectors.toMap(Player::getRoleType, p -> p.getPawn().getLocation().getName()));
+//        final Map<RoleType, CityName> positionMap
+//                = gameManager.getActivePlayers().stream().collect(Collectors.toMap(Player::getRoleType, p -> p.getPawn().getLocation().getName()));
+
+        final Map<RoleType, City> positionMap
+                = gameManager.getActivePlayers().stream().collect(Collectors.toMap(Player::getRoleType, p -> myGameBoard.getCityByName(p.getPawn().getLocation().getName())));
+
 
         final Map<CityName, List<Pair<DiseaseType,Integer>>> diseaseCubesMap
                 = myGameBoard.getCitiesOnBoard().stream().collect(Collectors.toMap(City::getName, City::getDiseaseFlags));
