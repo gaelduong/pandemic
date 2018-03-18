@@ -6,6 +6,7 @@ import java.nio.file.*;
 
 import javax.swing.JFrame;
 
+import client.PandemicClient;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.layout.Pane;
@@ -15,9 +16,22 @@ import javafx.scene.image.ImageView;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.animation.FadeTransition;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
+import server.PandemicServer;
 
 public class MenuGUI extends Application {
+
+	PandemicServer pandemicServer = null;
+	PandemicClient pandemicClient = null;
+
+	class Message extends Thread {
+
+		public void run() {
+			pandemicServer.close();
+			pandemicClient.close();
+		}
+	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -34,7 +48,8 @@ public class MenuGUI extends Application {
 		imageView.setFitWidth(1024);
 		imageView.setFitHeight(768);
 
-		MenuLayout MenuLayout = new MenuLayout();
+
+		MenuLayout MenuLayout = new MenuLayout(pandemicServer, pandemicClient);
 		MenuLayout.setVisible(false);
 		main.getChildren().addAll(imageView, MenuLayout);
 
@@ -44,12 +59,14 @@ public class MenuGUI extends Application {
 		ft.setToValue(1);
 		MenuLayout.setVisible(true);
 		ft.play();
-		
-
 
 		primaryStage.setScene(s);
 		primaryStage.show();
 
+		//Runtime.getRuntime().addShutdownHook(new Message());
+
+
 	}
+
 
 }

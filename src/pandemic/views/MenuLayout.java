@@ -1,5 +1,6 @@
 package pandemic.views;
 
+import client.PandemicClient;
 import javafx.scene.Parent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -21,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Accordion;
 import javafx.application.Platform;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -28,13 +30,18 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import javafx.util.Duration;
+import pandemic.Game;
+import server.PandemicServer;
 
 import java.util.ArrayList;
 import java.util.Date;
 
 public class MenuLayout extends Parent {
-	    
-	public MenuLayout() {
+    PandemicServer pandemicServer;
+    PandemicClient pandemicClient;
+	public MenuLayout(PandemicServer ps, PandemicClient pc) {
+        pandemicServer = ps;
+        pandemicClient = pc;
 		CreateGameObjectData tracker = new CreateGameObjectData();
 		
         VBox mainMenu = new VBox(10);
@@ -113,7 +120,8 @@ public class MenuLayout extends Parent {
 
         MenuButton btnExit = new MenuButton("EXIT");
         btnExit.setOnMouseClicked(event -> {
-        	Platform.exit();
+
+        	System.exit(0);
         });
         
         /********************************************************************* 
@@ -214,6 +222,7 @@ public class MenuLayout extends Parent {
         });
         MenuButton btnCreateGame = new MenuButton("Ready: Create Game Lobby!");
         btnCreateGame.setOnMouseClicked(event -> {
+
         	if(difficulties.getValue().equals("Introductory"))
         	{
         		tracker.difficulty = 0;
@@ -232,9 +241,10 @@ public class MenuLayout extends Parent {
         	}	
         	// print tracker for good measure
         	magicalPrintingFunction(tracker);
-        	
-        	
-        	// transition time
+
+            setUpCreateGame(pandemicServer, pandemicClient);
+
+            // transition time
         	getChildren().add(createLobby);
 
             TranslateTransition tt = new TranslateTransition(Duration.seconds(0.25), createMenu);
@@ -297,8 +307,13 @@ public class MenuLayout extends Parent {
         
         MenuButton btnJoinIP = new MenuButton("Join");
         btnJoinIP.setOnMouseClicked(event -> {
-        	
-        	/***********************************
+            try {
+                setPandemicClient(new PandemicClient(ipAddress.getText(), 71));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            /***********************************
         	 * Verify some network shit, i.e. the game actually does exist
         	 * Write some error if no good, else join the game via the code below
         	 * *************************************
@@ -378,9 +393,18 @@ public class MenuLayout extends Parent {
         
         MenuButton btnCreateGameNow = new MenuButton("Start Game");
         btnCreateGameNow.setOnMouseClicked(event -> {
-            
+        this.setVisible(false);
         	// Actually start the game
-        	
+            /*EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    try {
+                        GUI frame = new GUI();
+                        frame.setVisible(true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });*/
         });
         
         MenuButton btnCreateLobbyBack = new MenuButton("BACK");
@@ -417,7 +441,27 @@ public class MenuLayout extends Parent {
         
         
     }
-	
+    private void setPandemicClient(PandemicClient c)
+    {
+        pandemicClient = c;
+    }
+
+	public void setUpCreateGame(PandemicServer s, PandemicClient c)
+    {
+        try {
+            s = new PandemicServer(null, 70);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            c = new PandemicClient("127.0.0.1", 70);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        serverThing serverT = new serverThing(s, c);
+        Runtime.getRuntime().addShutdownHook(serverT);
+    }
+
 	public void magicalPrintingFunction(CreateGameObjectData tracker)
 	{
 	DateFormat dateFormat = new SimpleDateFormat("HH mm ss");
@@ -445,7 +489,30 @@ public class MenuLayout extends Parent {
         }
     }
 }
-	
+
+private class serverThing extends Thread {
+	    PandemicServer server;
+	    PandemicClient client;
+	    serverThing(PandemicServer s, PandemicClient c)
+        {
+            server = s;
+            client = c;
+        }
+	    public void run()
+        {
+            System.out.println("HELLO");
+            System.out.println("HELLO");
+            System.out.println("HELLO");
+            System.out.println("HELLO");
+            System.out.println("HELLO");
+            if(server != null)
+                server.close();
+            if(client != null)
+                client.close();
+        }
+}
+
+
 	private static class MenuButton extends StackPane {
         private Text text;
         Rectangle bg;
