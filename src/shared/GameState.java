@@ -5,6 +5,7 @@ import pandemic.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * Condensed version of the server's core game state.
@@ -23,6 +24,7 @@ public class GameState {
     private final int currentInfectionRate;
     private final int currentOutbreakMeter;
     private final int currentPlayerActionsRemaining;
+    private final ArrayList<DiseaseType> curedDiseases;
 
 
 
@@ -31,7 +33,7 @@ public class GameState {
      */
     public GameState(Map<RoleType, String> userMap, Map<RoleType, List<PlayerCard>> cardMap, Map<RoleType, City> positionMap,
                      Map<CityName, List<Pair<DiseaseType, Integer>>> diseaseCubesMap, Map<DiseaseType, Integer> remainingDiseaseCubesMap,
-                     InfectionDiscardPile infectionDiscardPile, PlayerDiscardPile playerDiscardPile, int currentInfectionRate, int currentOutbreakMeter, int actionsRemaining) {
+                     InfectionDiscardPile infectionDiscardPile, PlayerDiscardPile playerDiscardPile, int currentInfectionRate, int currentOutbreakMeter, int actionsRemaining, ArrayList<DiseaseType> diseases) {
         this.userMap = userMap;
         this.cardMap = cardMap;
         this.positionMap = positionMap;
@@ -42,6 +44,7 @@ public class GameState {
         this.currentInfectionRate = currentInfectionRate;
         this.currentOutbreakMeter = currentOutbreakMeter;
         this.currentPlayerActionsRemaining = actionsRemaining;
+        this.curedDiseases = diseases;
     }
 
     /**
