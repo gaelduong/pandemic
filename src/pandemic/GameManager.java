@@ -347,7 +347,8 @@ public class GameManager {
 	
 	// returns 0 if successful, 1 if failed
 	// Removes card from player's hand and adds it to PlayerDiscardPile
-	public int discardPlayerCard(Player p, PlayerCard c){
+
+    public int discardPlayerCard(Player p, PlayerCard c){
 		// Must take a player as a parameter for when a non-current player has too many cards and must discard one
 		if (p.isInHand(c)){
 			p.discardCard(c);

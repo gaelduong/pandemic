@@ -3,6 +3,7 @@ package server;
 import api.socketcomm.Server;
 import api.socketcomm.SocketBundle;
 import client.ClientCommands;
+import pandemic.CurrentPlayerTurnStatus;
 import pandemic.Game;
 import pandemic.GamePhase;
 import shared.MessageType;
@@ -85,6 +86,7 @@ public class PandemicServer extends Server {
             if (acceptedRequest) {
                 System.out.printf("Player %s accepted the consent request!\n", playerUsername);
                 executeRequestAndPropagate(playerUsername, game, consentRequestMap.get(playerUsername));
+
             }
             consentRequestMap.put(playerUsername, null);
         }
@@ -126,6 +128,7 @@ public class PandemicServer extends Server {
 
         final UpdateRequest updateRequest = (UpdateRequest)message.get(1);
         executeRequestAndPropagate(playerUsername, game, updateRequest);
+
     }
 
     private boolean executeRequestAndPropagate(String playerUsername, Game g, UpdateRequest updateRequest) {
@@ -139,6 +142,25 @@ public class PandemicServer extends Server {
             updateRequest.executeRequest(game, playerUsername);
             sendMessageToClients(ClientCommands.RECEIVE_UPDATED_GAMESTATE.name(), g.generateCondensedGameState());
             ret = true;
+
+            if(game.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayerDiscardingCards) {
+                String clientToDiscard = game.getPlayerDiscardingCards().getPlayerUserName();
+                final SocketBundle clientToDiscardSocket;
+
+                synchronized (clientMap) {
+                    clientToDiscardSocket = clientMap.entrySet().stream()
+                            .filter(e -> e.getValue().equals(clientToDiscard)).map(Map.Entry::getKey).findFirst().orElse(null);
+                }
+
+                if (clientToDiscardSocket == null) {
+                    System.err.printf("Unable to find corresponding socket connection for %s\n", clientToDiscard);
+                    return false;
+                }
+
+                sendMessage(clientToDiscardSocket, ClientCommands.RECEIVE_DISCARD_CARD.name(), MessageType.DISCARD_CARD,
+                                                        "You have too many cards. Please discard a card.");
+            }
+
         } else {
             System.out.println("Could not satisfy update request from player " + playerUsername);
         }

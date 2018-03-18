@@ -187,6 +187,9 @@ public class UpdateRequest implements Serializable {
         //(should we consider being thread-safe?)
         final GameManager gameManager = game.getGameManager();
         gameManager.endTurn();
+
+        //if(game.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayerDiscardingCards)
+            // inform current player to discard cards
     }
 
     private CardSourceTarget getCardSourceTarget(String sourceTarget, String playerUsername, Game game) {

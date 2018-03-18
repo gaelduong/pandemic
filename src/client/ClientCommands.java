@@ -50,7 +50,16 @@ public enum ClientCommands {
      * <b>Parameters:</b>
      * String gameLost
      */
-    RECEIVE_GAME_LOST
+    RECEIVE_GAME_LOST,
+
+    /**
+     * This command receives a message to inform the player that they need to discard cards.
+     *
+     *
+     * <b>Parameters:</b>
+     * String gameLost
+     */
+    RECEIVE_DISCARD_CARD
 
 
 }

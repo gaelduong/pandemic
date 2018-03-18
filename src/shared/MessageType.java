@@ -7,5 +7,6 @@ public enum MessageType implements Serializable {
     WARNING,
     ERROR,
     GAME_WON,
-    GAME_LOST;
+    GAME_LOST,
+    DISCARD_CARD;
 }

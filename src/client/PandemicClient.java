@@ -56,6 +56,11 @@ public class PandemicClient extends Client {
                 final String messageTextGameLost = (String)message.get(2);
                 GUICommandLinker.handleReceiveMessage(gui, messageTypeGameLost, messageTextGameLost);
                 break;
+            case RECEIVE_DISCARD_CARD:
+                final MessageType messageTypeDiscardCard = (MessageType)message.get(1);
+                final String messageTextDiscardCard = (String)message.get(2);
+                GUICommandLinker.handleReceiveMessage(gui, messageTypeDiscardCard, messageTextDiscardCard);
+                break;
         }
     }
 }
