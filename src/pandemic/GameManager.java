@@ -886,9 +886,9 @@ public class GameManager {
         };
     }
 
-
-
-
+    public Player getPlayerFromUsername(String username) {
+        return activePlayers.stream().filter(p -> p.getPlayerUserName().equals(username)).findFirst().orElse(null);
+    }
 
     // REMOVE AFTER TESTING
     public Game getGame(){
