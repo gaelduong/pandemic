@@ -73,7 +73,7 @@ public class City {
 	    for(DiseaseType dType : DiseaseType.values()) {
 	        int numOfFlags = (int) cityUnits.stream().filter(unit -> unit.getUnitType() == UnitType.DiseaseFlag
                     && ((DiseaseFlag) unit).getDiseaseType() == dType)
-                    .distinct().count();
+                    .count();
 	        if(numOfFlags > 0)
 	            result.add(new Pair<DiseaseType, Integer>(dType, numOfFlags));
         }
