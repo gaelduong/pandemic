@@ -595,11 +595,10 @@ public class Game {
 
 
 
-                int numberOfDiseaseFlagsRemaining = freshFlags.size();
                 ArrayList<City> neighbors = c.getNeighbors();
 
                 for(City connCity : neighbors) {
-                    if(numberOfDiseaseFlagsRemaining >= 1) {
+                    if(freshFlags.size() >= 1) {
                         int dFlagCount = connCity.getNumOfDiseaseFlagsPlaced(cityDiseaseType);
                         ArrayList<Connection> connections = connCity.getConnections();
                         Connection conn = connections.stream()
@@ -688,6 +687,9 @@ public class Game {
                             }
                         }
                     } else {
+                        gameManager.notifyAllPlayersGameLost();
+                        setGamePhase(GamePhase.Completed);
+                        System.out.println("Ran out of disease cubes.");
                         break;
                     }
                 }
@@ -702,8 +704,8 @@ public class Game {
                     if( qsPresentInNeighbor) break;
                 }
                 boolean infectionPrevented = qsOrMedicPreventingInfectionInCity || diseaseEradicated || qsPresentInNeighbor;
-
-                if(!infectionPrevented) {
+                
+                if(!infectionPrevented && freshFlags.size() >= 1) {
                     DiseaseFlag flag;
                     try {
                         flag = freshFlags.remove(0);
@@ -734,8 +736,18 @@ public class Game {
 
 
                 }
+                else{
+                    gameManager.notifyAllPlayersGameLost();
+                    setGamePhase(GamePhase.Completed);
+                    System.out.println("Ran out of disease cubes.");
+                }
             }
             gameStatus = (getOutBreakMeterReading() < 8) && (freshFlags.size() >= 1);
+            if (!gameStatus){
+                gameManager.notifyAllPlayersGameLost();
+                setGamePhase(GamePhase.Completed);
+                System.out.println("Outbreak meter maxed out");
+            }
         }
 
     }
