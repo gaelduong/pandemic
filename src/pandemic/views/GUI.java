@@ -48,7 +48,8 @@ import javax.swing.border.EmptyBorder;
 public class GUI extends JFrame 
 {
 	
-	
+
+    
 	private dummyGS gs;
 	private String username;
 	private RoleType medic = RoleType.Medic;

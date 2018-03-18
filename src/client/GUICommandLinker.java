@@ -17,6 +17,7 @@ public class GUICommandLinker {
      * command to the server with the argument 'true' if Accept and 'false' if Decline.
      */
     public static void handleReceiveConsentRequest(GUI gui, String consentPrompt) {
+
       //TODO gael
     }
 

@@ -50,6 +50,7 @@ public class dummyGS {
 
    
     public Map<CityName, List<Pair<DiseaseType, Integer>>> getDiseaseCubesMap() {
+
         return diseaseCubesMap;
     }
 

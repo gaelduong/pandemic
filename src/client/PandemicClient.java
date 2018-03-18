@@ -15,6 +15,7 @@ public class PandemicClient extends Client {
     private GUI gui;
 
     public PandemicClient(String hostName, int port) throws IOException {
+
         super(hostName, port);
     }
 
