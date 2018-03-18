@@ -79,7 +79,9 @@ public class City {
             ));
         }
 
+       /* System.out.println("City: " + name);
         System.out.println(result);
+        System.out.println();*/
 
 	    return result;
     }

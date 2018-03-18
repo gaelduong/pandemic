@@ -1,4 +1,4 @@
-package pandemic.views;
+package pandemic;
 
 import java.util.List;
 import java.util.Map;
@@ -49,7 +49,7 @@ public class dummyGS {
     }
 
    
-    public Map<pandemic.views.CityName, List<Pair<pandemic.views.DiseaseType, Integer>>> getDiseaseCubesMap() {
+    public Map<CityName, List<Pair<DiseaseType, Integer>>> getDiseaseCubesMap() {
         return diseaseCubesMap;
     }
 

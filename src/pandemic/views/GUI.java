@@ -1,4 +1,5 @@
-package pandemic.views;
+package pandemic;
+
 import javafx.util.Pair;
 import java.awt.Color;
 import java.awt.Cursor;
