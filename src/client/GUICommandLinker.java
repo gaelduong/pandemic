@@ -19,6 +19,7 @@ public class GUICommandLinker {
     public static void handleReceiveConsentRequest(GUI gui, String consentPrompt) {
 
       //TODO gael
+        //gui.drawAcceptDeclineMessageBox(consentPrompt);
     }
 
     /**
@@ -27,6 +28,7 @@ public class GUICommandLinker {
      */
     public static void handleReceiveMessage(GUI gui, MessageType type, String message) {
         //TODO gael
+        //gui.drawMessageBox(message)
     }
 
     /**
@@ -34,5 +36,7 @@ public class GUICommandLinker {
      */
     public static void handleReceiveUpdatedGS(GUI gui, GameState gs) {
         //TODO gael
+        // gui.setGameState(gs);
+        // gui.draw();
     }
 }

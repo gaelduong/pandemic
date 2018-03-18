@@ -138,6 +138,8 @@ public class UpdateRequest implements Serializable {
                 e.printStackTrace();
             }
 
+        } else {
+            System.err.println("ERROR - passed player user name does not correspond to current player");
         }
 
         //TODO link to backend commands (should we consider being thread-safe?)
@@ -164,14 +166,17 @@ public class UpdateRequest implements Serializable {
                 gameManager.playTreatDisease(toTreat);
 
 
-            } catch (Exception e) {
+            } catch (NullPointerException e) {
+                System.err.println("ERROR - cant find disease flag of that type in current player city");
                 e.printStackTrace();
             }
 
+        } else {
+            System.err.println("ERROR - passed player user name does not correspond to current player");
         }
 
 
-        //TODO link to backend commands (should we consider being thread-safe?)
+        //  (should we consider being thread-safe?)
     }
 
     private void executeBuildResearchStation(Game game, String playerUsername) {
@@ -179,7 +184,7 @@ public class UpdateRequest implements Serializable {
     }
 
     private void executeEndTurn(Game game) {
-        //TODO link to backend commands (should we consider being thread-safe?)
+        //(should we consider being thread-safe?)
         final GameManager gameManager = game.getGameManager();
         gameManager.endTurn();
     }

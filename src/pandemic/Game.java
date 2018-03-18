@@ -787,4 +787,8 @@ public class Game {
     public GameManager getGameManager() {
         return gameManager;
     }
+
+    public GamePhase getGamePhase() {
+  	    return currentPhase;
+    }
 }

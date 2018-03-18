@@ -32,5 +32,25 @@ public enum ClientCommands {
      * <b>Parameters:</b>
      * String consentPrompt
      */
-    RECEIVE_CONSENT_REQUEST
+    RECEIVE_CONSENT_REQUEST,
+
+    /**
+     * This command receives a message to inform the player that the game has been won.
+     *
+     *
+     * <b>Parameters:</b>
+     * String gameWon
+     */
+    RECEIVE_GAME_WON,
+
+    /**
+     * This command receives a message to inform the player that the game has been lost.
+     *
+     *
+     * <b>Parameters:</b>
+     * String gameLost
+     */
+    RECEIVE_GAME_LOST
+
+
 }

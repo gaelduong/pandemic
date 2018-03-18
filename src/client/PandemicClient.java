@@ -46,6 +46,16 @@ public class PandemicClient extends Client {
                 final GameState newGS = (GameState)message.get(1);
                 GUICommandLinker.handleReceiveUpdatedGS(gui, newGS);
                 break;
+            case RECEIVE_GAME_WON:
+                final MessageType messageTypeGameWon = (MessageType)message.get(1);
+                final String messageTextGameWon = (String)message.get(2);
+                GUICommandLinker.handleReceiveMessage(gui, messageTypeGameWon, messageTextGameWon);
+                break;
+            case RECEIVE_GAME_LOST:
+                final MessageType messageTypeGameLost = (MessageType)message.get(1);
+                final String messageTextGameLost = (String)message.get(2);
+                GUICommandLinker.handleReceiveMessage(gui, messageTypeGameLost, messageTextGameLost);
+                break;
         }
     }
 }

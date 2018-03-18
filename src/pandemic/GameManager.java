@@ -13,6 +13,7 @@ public class GameManager {
 	private Player hostPlayer;
 	private Game currentGame;
 	private GameSettings gameSettings;
+	private boolean gameLost;
 
 	public GameManager(Player hostPlayer, int numOfPlayers, int numOfEpidemicCards, ChallengeKind challengeKind) {
         gameSettings = new GameSettings(numOfPlayers, numOfEpidemicCards, challengeKind);
@@ -20,6 +21,7 @@ public class GameManager {
         this.hostPlayer = hostPlayer;
         activePlayers = new LinkedList<Player>();
         activePlayers.add(hostPlayer);
+        gameLost = false;
 		setRegionsDict();
 		setNeighborsDict();
 		setNameToRegionDict();
@@ -367,7 +369,12 @@ public class GameManager {
 	
 	public void notifyAllPlayersGameLost(){
 		// TO FILL IN LATER
+        gameLost = true;
 	}
+
+	public boolean isGameLost() {
+	    return gameLost;
+    }
 
 	// FOR THESE MIGHT NEED TO CHANGE INPUTS DEPENDING ON SERIALIZED OBJECT
     // PASSED ACROSS NETWORK
@@ -375,102 +382,116 @@ public class GameManager {
 	//returns 0 upon success, 1 upon failure
 	public int playDriveFerry(City city) {
 	    Player currentPlayer = currentGame.getCurrentPlayer();
-	    Pawn currentPlayerPawn = currentPlayer.getPawn();
-        Role currentPlayerRole = currentPlayerPawn.getRole();
-        City currentPlayerCity = currentPlayerPawn.getLocation();
 
-	    if(currentPlayer.getActionsTaken() == 4) {
-	        currentPlayer.setActionsTaken(0);
-	        return 1;
-        }
+	    if (currentGame.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayingActions) {
+            Pawn currentPlayerPawn = currentPlayer.getPawn();
+            Role currentPlayerRole = currentPlayerPawn.getRole();
+            City currentPlayerCity = currentPlayerPawn.getLocation();
 
-        if ((currentPlayerCity.getConnections().stream().filter(conn -> conn.getEnd1() == city || conn.getEnd2() == city)
-                                      .collect(Collectors.toList())).isEmpty()) {
-            return 1;
-        }
+            if(currentPlayer.getActionsTaken() == 4) {
+                currentPlayer.setActionsTaken(0);
+                return 1;
+}
 
-        currentPlayerCity.getCityUnits().remove(currentPlayerPawn);
-	    city.getCityUnits().add(currentPlayerPawn);
-	    currentPlayerPawn.setLocation(city);
+            if ((currentPlayerCity.getConnections().stream().filter(conn -> conn.getEnd1() == city || conn.getEnd2() == city)
+                                          .collect(Collectors.toList())).isEmpty()) {
+                return 1;
+            }
 
-        if(currentPlayerRole.getRoleType() == RoleType.Medic)
-            medicEnterCity(city);
+            currentPlayerCity.getCityUnits().remove(currentPlayerPawn);
+            city.getCityUnits().add(currentPlayerPawn);
+            currentPlayerPawn.setLocation(city);
 
-        // OTB EXTENSION----
+            if(currentPlayerRole.getRoleType() == RoleType.Medic)
+                medicEnterCity(city);
+
+            // OTB EXTENSION----
         /*if(currentPlayerRole.getRoleType() == RoleType.ContainmentSpecialist) {
 
 
         }*/
 
-        currentPlayer.incrementActionTaken();
-        return 0;
+            currentPlayer.incrementActionTaken();
+            return 0;
+        } else {
+	        return 1;
+        }
+
 
     }
 
     //returns 0 upon success, 1 upon failure
     public int playDirectFlight(CityCard card) {
         Player currentPlayer = currentGame.getCurrentPlayer();
-        Pawn currentPlayerPawn = currentPlayer.getPawn();
-        Role currentPlayerRole = currentPlayerPawn.getRole();
-        City currentPlayerCity = currentPlayerPawn.getLocation();
-        City city = currentGame.getCityByName(card.getCityName());
+        if (currentGame.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayingActions) {
+            Pawn currentPlayerPawn = currentPlayer.getPawn();
+            Role currentPlayerRole = currentPlayerPawn.getRole();
+            City currentPlayerCity = currentPlayerPawn.getLocation();
+            City city = currentGame.getCityByName(card.getCityName());
 
-        if(currentPlayer.getActionsTaken() == 4) {
-            currentPlayer.setActionsTaken(0);
-            return 1;
-        }
+            if(currentPlayer.getActionsTaken() == 4) {
+                currentPlayer.setActionsTaken(0);
+                return 1;
+            }
 
-        if (!currentPlayer.isInHand(card)) {
-            return 1;
-        }
+            if (!currentPlayer.isInHand(card)) {
+                return 1;
+            }
 
-        currentPlayerCity.getCityUnits().remove(currentPlayerPawn);
-        city.getCityUnits().add(currentPlayerPawn);
-        currentPlayerPawn.setLocation(city);
+            currentPlayerCity.getCityUnits().remove(currentPlayerPawn);
+            city.getCityUnits().add(currentPlayerPawn);
+            currentPlayerPawn.setLocation(city);
 
-        if(currentPlayerRole.getRoleType() == RoleType.Medic)
-            medicEnterCity(city);
+            if(currentPlayerRole.getRoleType() == RoleType.Medic)
+                medicEnterCity(city);
 
-        // OTB EXTENSION----
+            // OTB EXTENSION----
         /*if(currentPlayerRole.getRoleType() == RoleType.TroubleShooter) {
 
 
         }*/
 
-        currentPlayer.incrementActionTaken();
-        // MUST DISCARD CARD AFTER PLAY?
-        return 0;
+            currentPlayer.incrementActionTaken();
+            // MUST DISCARD CARD AFTER PLAY?
+            return 0;
+        } else {
+            return 1;
+        }
     }
 
     //returns 0 upon success, 1 upon failure
     public int playTreatDisease(DiseaseFlag flag) {
         Player currentPlayer = currentGame.getCurrentPlayer();
-        Pawn currentPlayerPawn = currentPlayer.getPawn();
-        Role currentPlayerRole = currentPlayerPawn.getRole();
-        City city = currentPlayerPawn.getLocation();
-        DiseaseType diseaseType = flag.getDiseaseType();
-        Disease disease = currentGame.getDiseaseByDiseaseType(diseaseType);
-        boolean cured = disease.isCured();
+        if (currentGame.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayingActions) {
+            Pawn currentPlayerPawn = currentPlayer.getPawn();
+            Role currentPlayerRole = currentPlayerPawn.getRole();
+            City city = currentPlayerPawn.getLocation();
+            DiseaseType diseaseType = flag.getDiseaseType();
+            Disease disease = currentGame.getDiseaseByDiseaseType(diseaseType);
+            boolean cured = disease.isCured();
 
-        if(currentPlayer.getActionsTaken() == 4) {
-            currentPlayer.setActionsTaken(0);
+            if(currentPlayer.getActionsTaken() == 4) {
+                currentPlayer.setActionsTaken(0);
+                return 1;
+            }
+
+            if(currentPlayerRole.getRoleType() == RoleType.Medic || cured) {
+                city.removeAllDiseaseFlags(diseaseType).forEach(unit -> currentGame.getDiseaseSupplyByDiseaseType(diseaseType).add((DiseaseFlag) unit));
+                if(currentPlayerRole.getRoleType() != RoleType.Medic)
+                    currentPlayer.incrementActionTaken();
+            } else {
+                currentGame.getDiseaseSupplyByDiseaseType(diseaseType).add(city.removeOneDiseaseFlag(diseaseType));
+                currentPlayer.incrementActionTaken();
+            }
+
+            if(cured && currentGame.checkIfEradicated(diseaseType)) {
+                disease.setEradicated(true);
+            }
+
+            return 0;
+        } else {
             return 1;
         }
-
-        if(currentPlayerRole.getRoleType() == RoleType.Medic || cured) {
-            city.removeAllDiseaseFlags(diseaseType).forEach(unit -> currentGame.getDiseaseSupplyByDiseaseType(diseaseType).add((DiseaseFlag) unit));
-            if(currentPlayerRole.getRoleType() != RoleType.Medic)
-                currentPlayer.incrementActionTaken();
-        } else {
-            currentGame.getDiseaseSupplyByDiseaseType(diseaseType).add(city.removeOneDiseaseFlag(diseaseType));
-            currentPlayer.incrementActionTaken();
-        }
-
-        if(cured && currentGame.checkIfEradicated(diseaseType)) {
-            disease.setEradicated(true);
-        }
-
-        return 0;
     }
 
     private void medicEnterCity(City city) {

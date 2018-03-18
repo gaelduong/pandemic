@@ -4,6 +4,8 @@ import api.socketcomm.Server;
 import api.socketcomm.SocketBundle;
 import client.ClientCommands;
 import pandemic.Game;
+import pandemic.GamePhase;
+import shared.MessageType;
 import shared.Utils;
 import shared.request.UpdateRequest;
 
@@ -34,30 +36,40 @@ public class PandemicServer extends Server {
 
     @Override
     protected void handleReceivedMessage(SocketBundle client, List<Object> message) {
-        if (message == null) return;
+        if (game.getGamePhase() != GamePhase.Completed) {
+            if (message == null) return;
 
-        final String commandString = (String)message.get(0);
-        final ServerCommands command = Utils.getEnum(ServerCommands.class, commandString);
-        if (command == null) return;
+            final String commandString = (String)message.get(0);
+            final ServerCommands command = Utils.getEnum(ServerCommands.class, commandString);
+            if (command == null) return;
 
-        switch (command) {
-            case ANSWER_CONSENT_PROMPT:
-                answerConsentPrompt(client, message);
-                break;
+            switch (command) {
+                case ANSWER_CONSENT_PROMPT:
+                    answerConsentPrompt(client, message);
+                    break;
 
-            case SEND_UPDATE_REQUEST:
-                sendUpdateRequest(client, message);
-                break;
+                case SEND_UPDATE_REQUEST:
+                    sendUpdateRequest(client, message);
+                    break;
 
-            case INITIATE_CONSENT_REQUIRING_MOVE:
-                initiateConsentReqMove(message);
-                break;
+                case INITIATE_CONSENT_REQUIRING_MOVE:
+                    initiateConsentReqMove(message);
+                    break;
 
-            case REGISTER_USERNAME:
-                final String playerUserName = (String)message.get(1);
-                clientMap.put(client, playerUserName);
-                System.out.printf("Registered player %s, from %s!\n", playerUserName, client.getSocket().getRemoteSocketAddress().toString());
-                break;
+                case REGISTER_USERNAME:
+                    final String playerUserName = (String)message.get(1);
+                    clientMap.put(client, playerUserName);
+                    System.out.printf("Registered player %s, from %s!\n", playerUserName, client.getSocket().getRemoteSocketAddress().toString());
+                    break;
+            }
+        } else {
+
+            if(game.getGameManager().isGameLost())
+                sendMessageToClients(ClientCommands.RECEIVE_GAME_LOST.name(), MessageType.GAME_LOST, "GAME LOST!");
+            else
+                sendMessageToClients(ClientCommands.RECEIVE_GAME_WON.name(), MessageType.GAME_WON, "GAME WON!");
+
+            //STOP THE SERVER THREAD HERE?
         }
     }
 
