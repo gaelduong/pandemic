@@ -71,17 +71,16 @@ public class City {
 	    List<Pair<DiseaseType, Integer>> result = new ArrayList<Pair<DiseaseType, Integer>>();
 
 	    for(DiseaseType dType : DiseaseType.values()) {
-	        result.add(new Pair<DiseaseType, Integer>(
-	           dType, (cityUnits.stream().filter(unit -> unit.getUnitType() == UnitType.DiseaseFlag
+	        int numOfFlags = (cityUnits.stream().filter(unit -> unit.getUnitType() == UnitType.DiseaseFlag
                     && ((DiseaseFlag) unit).getDiseaseType() == dType)
-                    .collect(Collectors.toList())).size()
-
-            ));
+                    .collect(Collectors.toList())).size();
+	        if(numOfFlags > 0)
+	            result.add(new Pair<DiseaseType, Integer>(dType, numOfFlags));
         }
 
-       /* System.out.println("City: " + name);
+        System.out.println("City: " + name);
         System.out.println(result);
-        System.out.println();*/
+        System.out.println();
 
 	    return result;
     }
