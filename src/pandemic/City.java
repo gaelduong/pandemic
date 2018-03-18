@@ -2,8 +2,7 @@ package pandemic;
 
 import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class City {
@@ -68,9 +67,21 @@ public class City {
     }
 
     //TODO get a list of all disease tuples (disease, qty)
-    @SuppressWarnings("unchecked")
     public List<Pair<DiseaseType, Integer>> getDiseaseFlags() {
-	    return null;
+	    List<Pair<DiseaseType, Integer>> result = new ArrayList<Pair<DiseaseType, Integer>>();
+
+	    for(DiseaseType dType : DiseaseType.values()) {
+	        result.add(new Pair<DiseaseType, Integer>(
+	           dType, (cityUnits.stream().filter(unit -> unit.getUnitType() == UnitType.DiseaseFlag
+                    && ((DiseaseFlag) unit).getDiseaseType() == dType)
+                    .collect(Collectors.toList())).size()
+
+            ));
+        }
+
+        System.out.println(result);
+
+	    return result;
     }
 
 }

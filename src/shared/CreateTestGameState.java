@@ -17,8 +17,26 @@ public class CreateTestGameState {
         System.out.println("Players joining game...");
         User userTest2 = new User("laskdf", "123456", "127.0.0.2");
         gameManager.joinGame(userTest2);
+
+        System.out.println("------ACTIVE PLAYER LIST:");
+        gameManager.getActivePlayers().forEach(p -> System.out.println("    Player username:" + p.getPlayerUserName()));
+        System.out.println("-------------------------");
+
         User userTest3 = new User("aksjfdkdsjn", "123456", "127.0.0.3");
         gameManager.joinGame(userTest3);
+
+        System.out.println("------ACTIVE PLAYER LIST:");
+        gameManager.getActivePlayers().forEach(p -> System.out.println("    Player username:" + p.getPlayerUserName()));
+        System.out.println("-------------------------");
+
+        System.out.println("All Player joined. Creating game....");
+        gameManager.createNewGame();
+        System.out.println("Game created.");
+
+        System.out.println("------ACTIVE PLAYER LIST:");
+        gameManager.getActivePlayers().forEach(p -> System.out.println("    Player username:" + p.getPlayerUserName() +
+                                                ", role: " + p.getRoleType()));
+        System.out.println("-------------------------");
 
         GameState gameStateTest = gameManager.getGame().generateCondensedGameState();
     }

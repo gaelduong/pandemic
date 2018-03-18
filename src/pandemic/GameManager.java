@@ -26,11 +26,11 @@ public class GameManager {
 		setRegionToDiseaseTypeDict();
 
 		//FOR TESTING:
-		createNewGame();
-		currentGame.getDiseaseByDiseaseType(DiseaseType.Blue).setCured(true);
+		//createNewGame();
+		//currentGame.getDiseaseByDiseaseType(DiseaseType.Blue).setCured(true);
 		
 		// FOR TESTING SHAREKNOWLEGE:
-		currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.PlayingActions);
+		//currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.PlayingActions);
 		
 		//TESTING DRIVE/FERRY:
 		/*System.out.println("------------------GAME UNIT BEFORE drive/ferry----------------------");
@@ -58,7 +58,7 @@ public class GameManager {
                                                                                                  .filter(unit ->
                                                                                                                     unit.getUnitType() == UnitType.DiseaseFlag)
                                                                                                  .findAny().orElse(null));*/
-        currentGame.printGameBoard();
+        //currentGame.printGameBoard();
         //System.out.println("------------------GAME UNIT after treat disease----------------------");
         //currentGame.printGameUnits();
 
