@@ -478,53 +478,9 @@ public class GameManager {
 
     }
     
-    public void replyConsentRequest(Boolean b){
-    	if (b){
-    		notifyConsentRequestApproved();
-    		currentGame.getCurrentConsentRequiringAction().playAction();
-    	}
-    	else {
-    		notifyConsentRequestDenied();
-    	}
-    	currentGame.setCurrentConsentRequiringAction(null);
-    	currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.PlayingActions);
-    }
-    
     
     public Player getCurrentPlayer(){
     	return currentGame.getCurrentPlayer();
-    }
-    
-    
-//    public int playShareKnowledgeReply(ConsentRequiringAction a) {
-//	    return 0;
-//    }
-    
-    // TO DO
-    // Prompts toPlayer for permission for currentPlayer to give card to toPlayer
-    public void promptGive(Player toPlayer, PlayerCard card){
-    	//TO TEST:
-    	System.out.println("Prompting give: " + card.getCardName());
-    }
-    
-    // TO DO
-    // Prompts fromPlayer for permission for currentPlayer to take card from fromPlayer
-    public void promptTake(Player fromPlayer, PlayerCard card){
-    	System.out.println("Prompting take: " + card.getCardName());
-
-    }
-    
-    // TO DO (notifies currentPlayer)
-    // Do we want to also notify other players?
-    public void notifyConsentRequestApproved(){
-    	// TO TEST:
-    	System.out.println("Notifying Player request approved");
-    }
-    
-    // TO DO (notifies currentPlayer)
-    public void notifyConsentRequestDenied(){
-    	// TO TEST:
-    	System.out.println("Notifying Player request Denied");
     }
 
     public void setOneQuietNight(boolean b){
