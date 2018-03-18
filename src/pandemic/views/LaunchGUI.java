@@ -16,19 +16,19 @@ public class LaunchGUI {
 
         //Application.launch(MyApp.class, args);
 	
-		
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GUI frame = new GUI();
-					frame.draw();
+					GUI frame = new GUI("jbh12");
 					frame.setVisible(true);
+					frame.draw();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
-		
+
 }
 }
 

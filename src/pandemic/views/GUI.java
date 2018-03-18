@@ -410,7 +410,7 @@ public class GUI extends JFrame
 		put(RoleType.ContingencyPlanner,orangePawn);
 		put(RoleType.Dispatcher,purplePawn);
 		put(RoleType.OperationsExpert,bluePawn);
-		//put(RoleType.QuarantineSpecialist,whitePawn);
+		put(RoleType.QuarantineSpecialist,whitePawn);
 	}};
 	
 	
