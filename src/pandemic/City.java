@@ -78,9 +78,9 @@ public class City {
 	            result.add(new Pair<DiseaseType, Integer>(dType, numOfFlags));
         }
 
-        System.out.println("City: " + name);
+        /*System.out.println("City: " + name);
         System.out.println(result);
-        System.out.println();
+        System.out.println();*/
 
 	    return result;
     }
