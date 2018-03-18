@@ -94,8 +94,10 @@ public class PandemicServer extends Server {
             return;
         }
 
-        Server.sendMessage(targetPlayerSocket, ClientCommands.RECEIVE_CONSENT_REQUEST.name(), consentPrompt);
-        consentRequestMap.put(targetPlayerUsername, consentUR);
+        if (consentRequestMap.get(targetPlayerUsername) == null) {  //only one consent per person at a time
+            Server.sendMessage(targetPlayerSocket, ClientCommands.RECEIVE_CONSENT_REQUEST.name(), consentPrompt);
+            consentRequestMap.put(targetPlayerUsername, consentUR);
+        }
     }
 
     private void sendUpdateRequest(SocketBundle client, List<Object> message) {
