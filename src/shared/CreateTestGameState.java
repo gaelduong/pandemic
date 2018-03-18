@@ -30,6 +30,7 @@ public class CreateTestGameState {
         System.out.println("-------------------------");
 
         System.out.println("All Players joined. Creating game....");
+
         gameManager.createNewGame();
         System.out.println("Game created.");
 
@@ -39,5 +40,6 @@ public class CreateTestGameState {
         System.out.println("-------------------------");
 
         GameState gameStateTest = gameManager.getGame().generateCondensedGameState();
+
     }
 }

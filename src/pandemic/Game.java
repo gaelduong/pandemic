@@ -111,17 +111,18 @@ public class Game {
 
         // TESTING myGameBoard.isEradicated(DiseaseType)
         System.out.println("TESTING myGameBoard.isEradicated......");
-        System.out.println("    black disease isEradicated: " + myGameBoard.isEradicated(DiseaseType.Black));
-        System.out.println("    blue disease isEradicated: " + myGameBoard.isEradicated(DiseaseType.Blue));
-        System.out.println("    red disease isEradicated: " + myGameBoard.isEradicated(DiseaseType.Red));
-        System.out.println("    yellow disease isEradicated: " + myGameBoard.isEradicated(DiseaseType.Yellow));
+        System.out.println("    black disease isNotPresentOnBoard: " + myGameBoard.isNotPresentOnBoard(DiseaseType.Black));
+        System.out.println("    blue disease isNotPresentOnBoard: " + myGameBoard.isNotPresentOnBoard(DiseaseType.Blue));
+        System.out.println("    red disease isNotPresentOnBoard: " + myGameBoard.isNotPresentOnBoard(DiseaseType.Red));
+        System.out.println("    yellow disease isNotPresentOnBoard: " + myGameBoard.isNotPresentOnBoard(DiseaseType.Yellow));
 
 
         currentPhase = GamePhase.ReadyToJoin;
     }
 
     public boolean checkIfEradicated(DiseaseType d) {
-  	    return myGameBoard.isEradicated(d);
+  	    return myGameBoard.isNotPresentOnBoard(d) &&
+                diseaseTypeToDiseaseDict.get(d).isCured();
     }
 
     private void infectInitialCities() {
@@ -748,8 +749,13 @@ public class Game {
         final Map<CityName, List<Pair<DiseaseType,Integer>>> diseaseCubesMap
                 = myGameBoard.getCitiesOnBoard().stream().collect(Collectors.toMap(City::getName, City::getDiseaseFlags));
 
-	    return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, myInfectionDiscardPile, myPlayerDiscardPile,
-                             currentInfectionRate, outBreakMeterReading);
+        final Map<DiseaseType, Integer> remainingDiseaseCubesMap
+                = Arrays.stream(DiseaseType.values()).filter(d -> d != DiseaseType.Purple)
+                                                     .collect(Collectors.toMap(d -> d,
+                                                                               d -> getDiseaseSupplyByDiseaseType(d).size()));
+
+        return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, remainingDiseaseCubesMap,
+                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading);
     }
 
     public GameManager getGameManager() {

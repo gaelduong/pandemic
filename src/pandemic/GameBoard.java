@@ -64,7 +64,7 @@ public class GameBoard {
         System.out.println("GAMEBOARD PRINTED.");
     }
 
-    public boolean isEradicated(DiseaseType d) {
+    public boolean isNotPresentOnBoard(DiseaseType d) {
         List<Unit> flagsOnBoard = new ArrayList<Unit>();
         for(City c : citiesOnBoard) {
             flagsOnBoard.addAll(c.getCityUnits().stream().filter(unit ->

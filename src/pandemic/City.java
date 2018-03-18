@@ -71,9 +71,9 @@ public class City {
 	    List<Pair<DiseaseType, Integer>> result = new ArrayList<Pair<DiseaseType, Integer>>();
 
 	    for(DiseaseType dType : DiseaseType.values()) {
-	        int numOfFlags = (cityUnits.stream().filter(unit -> unit.getUnitType() == UnitType.DiseaseFlag
+	        int numOfFlags = (int) cityUnits.stream().filter(unit -> unit.getUnitType() == UnitType.DiseaseFlag
                     && ((DiseaseFlag) unit).getDiseaseType() == dType)
-                    .collect(Collectors.toList())).size();
+                    .distinct().count();
 	        if(numOfFlags > 0)
 	            result.add(new Pair<DiseaseType, Integer>(dType, numOfFlags));
         }
