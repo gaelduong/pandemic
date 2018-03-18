@@ -1,5 +1,6 @@
 package pandemic;
 
+import shared.PlayerCardSimple;
 import shared.request.CardSource;
 import shared.request.CardTarget;
 
@@ -47,12 +48,11 @@ public class Player implements CardTarget, CardSource {
 	    cardsInHand.add(pc);
 	}
 
-    public void acceptCard(Object cardObj) {
-        PlayerCard card  = (PlayerCard) cardObj;
+    public void acceptCard(PlayerCard card) {
         addToHand(card);
     }
 
-    public PlayerCard getCard(PlayerCard card) {
+    public PlayerCard getCard(PlayerCardSimple card) {
 	    return cardsInHand.stream().filter(c -> c.getCardName().equals(card.getCardName()) &&
                                     c.getCardType() == card.getCardType())
                             .findAny().orElse(null);

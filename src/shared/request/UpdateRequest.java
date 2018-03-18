@@ -1,9 +1,6 @@
 package shared.request;
 
-import pandemic.DiseaseType;
-import pandemic.Game;
-import pandemic.GameManager;
-import pandemic.RoleType;
+import pandemic.*;
 import shared.PlayerCardSimple;
 import shared.CardTargetType;
 import shared.TravelType;
@@ -90,7 +87,11 @@ public class UpdateRequest implements Serializable {
         final String cardSourceString = (String)arguments.get(1);         //read the MOVE_CARD enum for the string encoding
         final String cardDestinationString = (String)arguments.get(2);
 
-        //final CardSourceTarget cardSource = getCardSourceTarget()
+        final CardSource cardSource = (CardSource) getCardSourceTarget(cardSourceString, game);
+        final CardTarget cardTarget = (CardTarget) getCardSourceTarget(cardDestinationString, game);
+        
+        cardTarget.acceptCard(cardSource.getCard(cardToMove));
+
 
 
         //TODO link to backend commands (should we consider being thread-safe?)

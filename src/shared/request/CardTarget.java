@@ -9,6 +9,6 @@ import java.io.Serializable;
  */
 public interface CardTarget extends CardSourceTarget, Serializable {
 
-    void acceptCard(Object cardObj);
+    void acceptCard(PlayerCard card);
 
 }
