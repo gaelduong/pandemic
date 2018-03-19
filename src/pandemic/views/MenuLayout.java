@@ -464,7 +464,7 @@ public class MenuLayout extends Parent {
                 public void run() {
                     try {
                         System.out.println(pandemicServer + "test");
-                        //if (pandemicClient.getGui() == null) return;;
+                      //  if (pandemicClient.getGui() == null) return;
                         pandemicClient.getGui().setVisible(true);
                         pandemicClient.getGui().draw();
                     } catch (Exception e) {

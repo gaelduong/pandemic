@@ -5,20 +5,19 @@ import api.socketcomm.SocketBundle;
 import client.ClientCommands;
 import pandemic.*;
 import pandemic.views.MenuLayout;
+import shared.ConsentRequestBundle;
 import shared.MessageType;
 import shared.Utils;
 import shared.request.UpdateRequest;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Semaphore;
 
 public class PandemicServer extends Server {
     private final Map<SocketBundle, String> clientMap;    //<socket, playerUserName>
     private final Map<String, UpdateRequest> consentRequestMap; //<username, UR>
+    private final List<ConsentRequestBundle> pendingConsentRequests;
 
     private final MenuLayout menuLayout;
 
@@ -29,6 +28,7 @@ public class PandemicServer extends Server {
         this.menuLayout = menuLayout;
         this.clientMap = Collections.synchronizedMap(new HashMap<>());
         this.consentRequestMap = Collections.synchronizedMap(new HashMap<>());
+        this.pendingConsentRequests = Collections.synchronizedList(new ArrayList<>());
         this.updateRequestSemaphore = new Semaphore(1);
     }
 
