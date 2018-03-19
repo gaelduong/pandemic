@@ -70,12 +70,18 @@ public class GUI extends JFrame
 	private GameState gs;
 	private String username;
 	private RoleType userRole;
+	private City currentUserCity;
 	
-	private boolean driveFerrySelected;
-	private boolean directFlightSelected;
-	private boolean treatDiseaseSelected;
-	private boolean shareKnowledgeSelected;
 	
+	//private boolean[] moves = {driveFerrySelected,directFlightSelected,treatDiseaseSelected,shareKnowledgeSelected};
+	private Map<String,Boolean> moves = new HashMap<String,Boolean>()
+	{{
+		put("drive",false);
+		put("directFlight",false);
+		put("treatDisease",false);
+		put("shareKnowledge",false);
+	}};
+	private CityName cityNameSelected= null;
 	
 	
 	
@@ -298,7 +304,7 @@ public class GUI extends JFrame
 	
 	private ArrayList<JLabel> targetsDrive = new ArrayList<JLabel>();
 	private ArrayList<JLabel> targetsDirectFlight = new ArrayList<JLabel>();
-	
+	//private ArrayList<JLabel> optionsTreatDisease = new ArrayList<JLabel>(Arrays.asList(genericBox));
 	private ArrayList<ArrayList<JLabel>> displayOptions = new ArrayList<ArrayList<JLabel>>
 	(Arrays.asList(targetsDrive, targetsDirectFlight));
 	/*Pawn dimensions*/
@@ -368,6 +374,8 @@ public class GUI extends JFrame
 	
 	/*Instruction*/
 	private JLabel instruction;
+	
+	JPanel topBar = new JPanel();
 	
 	/*ICON/IMAGE PATHS (FINAL FIELDS)*/
 	//Including: MAP, pawn icons, city icons, card pics
@@ -733,6 +741,7 @@ public class GUI extends JFrame
 		this.gs = gameStateTest;
 		this.username = username;
 		this.userRole = getUserRole();
+		this.currentUserCity = gs.getPositionMap().get(userRole);
 		}
 	
 	public void draw()
@@ -833,7 +842,7 @@ public class GUI extends JFrame
 		/* (cubes remaining,instruction,outbreak count, infection rate)*/
 		
 		//top bar panel container
-		JPanel topBar = new JPanel();
+		
 		topBar.setBackground(Color.BLACK);
 		topBar.setBounds(214, 0, 980, 30);
 		contentPane.add(topBar);
@@ -971,7 +980,7 @@ public class GUI extends JFrame
 			/*When click on city*/
 			public void mouseReleased(MouseEvent e)
 			{
-				CityName cityNameSelected= null;
+				
 		        JLabel value= city;
 		        for(Map.Entry entry: mapCityLabels.entrySet()){
 		            if(value.equals(entry.getValue())){
@@ -979,13 +988,15 @@ public class GUI extends JFrame
 		                break; //breaking because its one to one map
 		            }
 		        }
+		        System.out.println("City Clicked: " + cityNameSelected);
 		        
-		        if(driveFerrySelected){
-		        
+		        if(moves.get("drive") && 
+		        		currentUserCity.getNeighbors().stream().anyMatch(city -> city.getName().equals(cityNameSelected)) ){
+		        System.out.println("yey" + moves.get("drive"));
 		      //client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), 
 		         //new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.DRIVE)));
 		        }
-		        else if(directFlightSelected){
+		        else if(moves.get("directFlight")){
 		        	//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), 
 			         //new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.DIRECT_FLIGHT)));
 			      
@@ -1021,7 +1032,9 @@ public class GUI extends JFrame
 		//Drive Ferry button
 		btnDriveFerry.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//driveFerrySelected = true;
+				resetMovesSelected(moves);
+				for(Boolean b: moves.values()) System.out.println(b);
+				moves.put("drive",true);
 				resetDisplayOptions(displayOptions);
 				loadDriveAndFlightMessage();
 				displayTargetsDrive();
@@ -1033,11 +1046,11 @@ public class GUI extends JFrame
 		//Direct Flight button
 		btnDirectFlight.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				resetMovesSelected(moves);
+				moves.put("directFlight",true);
 				resetDisplayOptions(displayOptions);
 				loadDriveAndFlightMessage();
 				displayTargetsDirectFlight();
-				System.out.println("sdf");
 			}
 			private void displayTargetsDirectFlight() {targetsDirectFlight.forEach(t -> t.setVisible(true));}
 		});
@@ -1066,6 +1079,8 @@ public class GUI extends JFrame
 		//TreatDisease button
 		btnTreatDisease.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				resetMovesSelected(moves);
+				
 				loadTreatDiseaseMessage();
 			}
 		});
@@ -1315,10 +1330,8 @@ public class GUI extends JFrame
 	
 	private void loadTargetsDrive()
 	{
-		
-		//current position of user
-		City currentCity = gs.getPositionMap().get(userRole);
-		for(City c : currentCity.getNeighbors())
+	
+		for(City c : currentUserCity.getNeighbors())
 		{
 			//city => cityLabel
 			JLabel cityLabel = mapCityLabels.get(c.getName());
@@ -1343,7 +1356,7 @@ public class GUI extends JFrame
 		for(PlayerCard pc : gs.getCardMap().get(userRole))
 		{
 			if(pc.getCardType().equals(CardType.CityCard) 
-				&& !pc.getCardName().equals(gs.getPositionMap().get(userRole).getName().toString()))
+				&& !pc.getCardName().equals(currentUserCity.getName().toString()))
 			{
 				JLabel cityLabel = mapCityLabels.get(CityName.valueOf(pc.getCardName()));
 				//System.out.println(pc.getCardName());
@@ -1373,8 +1386,8 @@ public class GUI extends JFrame
 	private void loadTreatDiseaseMessage()
 	{
 		//current position of user
-		CityName citName = gs.getPositionMap().get(userRole).getName();
-		List<Pair<DiseaseType,Integer>> cubesTuples = gs.getDiseaseCubesMap().get(citName);
+		
+		List<Pair<DiseaseType,Integer>> cubesTuples = gs.getDiseaseCubesMap().get(currentUserCity.getName());
 		cubesTuples.forEach(p-> System.out.println("yo" + p.getKey()));
 		for(Pair<DiseaseType, Integer> d : cubesTuples)
 		{
@@ -1418,6 +1431,10 @@ public class GUI extends JFrame
 	
 	private void resetDisplayOptions(ArrayList<ArrayList<JLabel>> lists){
 			lists.forEach(list ->list.forEach(j -> j.setVisible(false)));
+	}
+	private void resetMovesSelected(Map<String,Boolean> moves){
+		for(String m : moves.keySet()) moves.put(m,false);
+		
 	}
 	
 	private RoleType getUserRole()
