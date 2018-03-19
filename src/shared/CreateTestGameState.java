@@ -12,7 +12,7 @@ public class CreateTestGameState {
         System.out.println("...hostPlayer created.");
 
         System.out.println("Creating GameBoard and initializing game....");
-        GameManager gameManager = new GameManager( 3, 6, ChallengeKind.OriginalBaseGame);
+        GameManager gameManager = new GameManager( 2, 6, ChallengeKind.OriginalBaseGame);
 
         System.out.println("Players joining game...");
         User userTest2 = new User("laskdf", "123456", "127.0.0.2");

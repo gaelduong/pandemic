@@ -104,9 +104,11 @@ public class GameManager {
         activePlayers.forEach(player -> System.out.println("    Player username:" + player.getPlayerUserName() +
                 ", role: " + player.getRoleType()));
         System.out.println("-------------------------");
-
-        if(activePlayers.size() == gameSettings.getNumOfPlayers())
+        System.out.println("DEALING CHECK " + activePlayers.size() + " " + gameSettings.getNumOfPlayers());
+        if(activePlayers.size() == gameSettings.getNumOfPlayers()) {
+            System.out.println("DEALING " + gameSettings.getNumOfPlayers());
             currentGame.dealCardsAndShuffleInEpidemicCards();
+        }
 
     }
 

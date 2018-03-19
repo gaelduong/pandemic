@@ -333,11 +333,11 @@ public class MenuLayout extends Parent {
 
             System.out.println("Pandemic client: " + pandemicClient);
 
-            try {
-                sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+          //  try {
+           //     sleep(1000);
+           // } catch (InterruptedException e) {
+            //    e.printStackTrace();
+            //}
 
             GUI clientGUI = new GUI(usernameTFText, pandemicClient);
             pandemicClient.setGUI(clientGUI);
@@ -371,7 +371,7 @@ public class MenuLayout extends Parent {
             while(clientGUI.getGameState() == null && backButtonNotPressed)
             {
 
-                if (clientGUI.getGameState() != null)
+                //if (clientGUI.getGameState() != null)
                     System.out.println(clientGUI.getGameState());
 
                 //wait for a gameState or the user to backout from the lobby ? might work
@@ -464,7 +464,7 @@ public class MenuLayout extends Parent {
                 public void run() {
                     try {
                         System.out.println(pandemicServer + "test");
-                        if (pandemicClient.getGui() == null) return;;
+                      //  if (pandemicClient.getGui() == null) return;
                         pandemicClient.getGui().setVisible(true);
                         pandemicClient.getGui().draw();
                     } catch (Exception e) {
