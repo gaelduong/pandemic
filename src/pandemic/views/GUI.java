@@ -146,7 +146,7 @@ public class GUI extends JFrame
 	private JLabel LimaCityLabel = new JLabel("y,364,467");
 	private JLabel SaoPauloCityLabel = new JLabel("y,508,433");
 	private JLabel LosAngelesCityLabel = new JLabel("y,285,270");
-	private JLabel MexicoCityCityLabel = new JLabel("y,352,334");
+	private JLabel MexicoCityCityLabel = new JLabel("y,376,300");
 	private JLabel MiamiCityLabel = new JLabel("y,435,334");
 	private JLabel BogotaCityLabel = new JLabel("y,393,407");
 	private JLabel BuenosAiresCityLabel = new JLabel("y,468,509");
@@ -382,7 +382,8 @@ public class GUI extends JFrame
 	
 	/*Board Map*/
 	private final String boardMapPath = "/pandemic/resources/Map/pandemic9.jpeg";
-	
+	private final String boardMapLinesPath = "/pandemic/resources/Map/mapLines6.png";
+
 	
 	/*City icons*/
 	private final String blueCityIconPath = "/pandemic/resources/Cities/blueCity.png";
@@ -438,7 +439,7 @@ public class GUI extends JFrame
 		put(RoleType.ContingencyPlanner,orangePawn);
 		put(RoleType.Dispatcher,purplePawn);
 		put(RoleType.OperationsExpert,bluePawn);
-		//put(RoleType.QuarantineSpecialist,whitePawn);
+		put(RoleType.QuarantineSpecialist,whitePawn);
 	}};
 	
 	
@@ -953,6 +954,7 @@ public class GUI extends JFrame
 		//loadShareKnowledgeMessage();
 		
 		/*----------Set up board map ----------*/
+		loadMapLines();
 		loadMap();
 		
 	
@@ -1304,13 +1306,20 @@ public class GUI extends JFrame
 				cityCardLabel.setBounds(102+i*5,185,100,140);
 				contentPane.add(cityCardLabel);
 				i++;
-				
 			}
 			
 		}
 		
 	}
-	
+
+	private void loadMapLines(){
+		JLabel mapLines = new JLabel();
+		mapLines.setBounds(210, -14, 980, 650);
+		mapLines.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(boardMapLinesPath))
+				.getImage().getScaledInstance(980, 560,  Image.SCALE_SMOOTH)));
+		contentPane.add(mapLines);
+	}
+
 	private void loadMap()
 	{
 		JLabel map = new JLabel();
