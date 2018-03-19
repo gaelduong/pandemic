@@ -833,7 +833,6 @@ public class GUI extends JFrame
 
 		/*----------Set up 8 buttons----------*/
 
-		if (gs == null) return;
 		String currentPlayer = gs.getCurrentPlayer();
 		if(currentPlayer != null && username.equals(currentPlayer) && gs.getCurrentPlayerActionsRemaining() > 0) {
 			//Drive Ferry
