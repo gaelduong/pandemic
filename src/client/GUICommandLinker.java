@@ -39,6 +39,11 @@ public class GUICommandLinker {
      */
     public static void handleReceiveUpdatedGS(GUI gui, GameState gs) {
         //TODO gael
+        if (gui == null) {
+            System.err.println("gui is null");
+            return;
+        }
+
         System.out.println("GUI : " + gui);
         System.out.println("GameState: " + gs);
     	gui.setGameState(gs);

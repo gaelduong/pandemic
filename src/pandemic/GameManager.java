@@ -105,8 +105,11 @@ public class GameManager {
                 ", role: " + player.getRoleType()));
         System.out.println("-------------------------");
 
-        if(activePlayers.size() == gameSettings.getNumOfPlayers())
+        if(activePlayers.size() == gameSettings.getNumOfPlayers()) {
+            System.out.println("activePlayer size: " + activePlayers.size());
             currentGame.dealCardsAndShuffleInEpidemicCards();
+        }
+
 
     }
 

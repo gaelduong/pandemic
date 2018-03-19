@@ -326,7 +326,7 @@ public class MenuLayout extends Parent {
             String usernameTFText = usernameTF.getText();
             try {
                 setPandemicClient(new PandemicClient(ipAddress.getText(), usernameTFText,  70));
-                pandemicClient.sendMessageToServer(ServerCommands.REGISTER_USERNAME.name(), usernameTFText);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -334,17 +334,15 @@ public class MenuLayout extends Parent {
 
             System.out.println("Pandemic client: " + pandemicClient);
 
-            try {
-                sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
+
 
             GUI clientGUI = new GUI(usernameTFText, pandemicClient);
             pandemicClient.setGUI(clientGUI);
             System.out.println("Client GUI" + clientGUI.getUsername());
             //System.out.println("pandemicClient.getNumOfPlayersConnectedToServer(): " + pandemicClient.getNumOfPlayersConnectedToServer());
 
+            pandemicClient.sendMessageToServer(ServerCommands.REGISTER_USERNAME.name(), usernameTFText);
 
             System.out.println("clientGUI in MenuLayout:" + clientGUI);
             System.out.println("clientGUI from pandemicClient: " + pandemicClient.getGui());
@@ -372,11 +370,12 @@ public class MenuLayout extends Parent {
             while(clientGUI.getGameState() == null && backButtonNotPressed)
             {
 
-                if (clientGUI.getGameState() != null)
+//               if (clientGUI.getGameState() != null)
                     System.out.println(clientGUI.getGameState());
 
                 //wait for a gameState or the user to backout from the lobby ? might work
             }
+
             backButtonNotPressed = true;
             System.out.println("hello");
 
@@ -465,7 +464,7 @@ public class MenuLayout extends Parent {
                 public void run() {
                     try {
                         System.out.println(pandemicServer + "test");
-                        if (pandemicClient.getGui() == null) return;;
+                        //if (pandemicClient.getGui() == null) return;;
                         pandemicClient.getGui().setVisible(true);
                         pandemicClient.getGui().draw();
                     } catch (Exception e) {
@@ -475,6 +474,7 @@ public class MenuLayout extends Parent {
             });
 
             getParent().setVisible(false);
+
             pandemicServer.sendMessageToClients(ClientCommands.RECEIVE_UPDATED_GAMESTATE.name(), gameManager.getGame().generateCondensedGameState());
         });
 
