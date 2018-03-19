@@ -4,6 +4,7 @@ import api.socketcomm.Server;
 import client.ClientCommands;
 import client.PandemicClient;
 import javafx.scene.Parent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
@@ -321,7 +322,7 @@ public class MenuLayout extends Parent {
         usernameTF.setMinWidth(250);
 
         MenuButton btnJoinIP = new MenuButton("Join");
-        btnJoinIP.setOnMouseClicked(event -> {
+        btnJoinIP.setOnMouseClicked((MouseEvent event) -> {
             String usernameTFText = usernameTF.getText();
             try {
                 setPandemicClient(new PandemicClient(ipAddress.getText(), usernameTFText,  70));
@@ -390,7 +391,7 @@ public class MenuLayout extends Parent {
                     }
                 }
             });
-            //getParent().setVisible(false);
+            getParent().setVisible(false);
         });
         
         MenuButton btnJoinBack = new MenuButton("BACK");
@@ -473,6 +474,7 @@ public class MenuLayout extends Parent {
                 }
             });
 
+            getParent().setVisible(false);
             pandemicServer.sendMessageToClients(ClientCommands.RECEIVE_UPDATED_GAMESTATE.name(), gameManager.getGame().generateCondensedGameState());
         });
 

@@ -168,14 +168,21 @@ public class UpdateRequest implements Serializable {
 
     private void executeTreatDisease(Game game, String playerUsername, List arguments) {
         final GameManager gameManager = game.getGameManager();
-        final DiseaseType diseaseType = (DiseaseType)arguments.get(0);
+        final DiseaseType diseaseType = (DiseaseType) arguments.get(1);
 
         if (game.getCurrentPlayer().getPlayerUserName().equals(playerUsername)) {
             City currentPlayerPos = game.getCurrentPlayer().getPawn().getLocation();
 
-                DiseaseFlag toTreat = (DiseaseFlag) currentPlayerPos.getCityUnits().stream().filter(u -> u.getUnitType() == UnitType.DiseaseFlag)
+                DiseaseFlag toTreat = (DiseaseFlag) currentPlayerPos.getCityUnits().stream().filter(u -> u.getUnitType() == UnitType.DiseaseFlag
+                                                                                                    && ((DiseaseFlag) u).getDiseaseType() == diseaseType)
                                                         .findAny().orElse(null);
+            if (toTreat == null) {
+                System.out.println("DiseaseType : " + diseaseType);
+                System.out.println("toTreat : " + toTreat);
+                System.out.println("agr[0] :" + (String) arguments.get(0));
+            } else {
                 gameManager.playTreatDisease(toTreat);
+            }
 
 
             if (toTreat == null) {
