@@ -184,6 +184,7 @@ public class Game {
             myPlayerDeck.addCard(new CityCard(cName, cRegion));
             myInfectionDeck.addCard(new CityInfectionCard(cName, cRegion));
         }
+        myInfectionDeck.shuffleDeck();
 
         myPlayerDeck.addCard(new AirLiftEventCard(gameManager));
         myPlayerDeck.addCard(new ForecastEventCard(gameManager));
@@ -766,6 +767,7 @@ public class Game {
 
         final Map<CityName, List<Pair<DiseaseType,Integer>>> diseaseCubesMap
                 = myGameBoard.getCitiesOnBoard().stream().collect(Collectors.toMap(City::getName, City::getDiseaseFlags));
+        System.out.println("GAMESTATE DISEASE CUBES: " + diseaseCubesMap);
 
         final Map<DiseaseType, Integer> remainingDiseaseCubesMap
                 = Arrays.stream(DiseaseType.values()).filter(d -> d != DiseaseType.Purple)

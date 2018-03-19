@@ -320,8 +320,10 @@ public class MenuLayout extends Parent {
                 e.printStackTrace();
             }
 
+            System.out.println("Client: " + pandemicClient);
             GUI clientGUI = new GUI("client" + pandemicClient.getNumOfPlayersConnectedToServer(), pandemicClient);
             pandemicClient.setGUI(clientGUI);
+            System.out.println("Client GUI: " + clientGUI.getUsername());
 
 
             System.out.println("clientGUI in MenuLayout:" + clientGUI);
@@ -361,6 +363,7 @@ public class MenuLayout extends Parent {
                         System.out.println(pandemicServer + "test");
                         pandemicClient.getGui().setVisible(true);
                         pandemicClient.getGui().draw();
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -442,6 +445,7 @@ public class MenuLayout extends Parent {
                         System.out.println(pandemicServer + "test");
                         pandemicClient.getGui().setVisible(true);
                         pandemicClient.getGui().draw();
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
