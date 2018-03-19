@@ -10,22 +10,14 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import api.gui.ListDialog;
 import client.ClientCommands;
 import client.PandemicClient;
 import javafx.util.Pair;
@@ -44,9 +36,7 @@ import pandemic.UnitType;
 //import pandemic.User;
 import server.PandemicServer;
 import server.ServerCommands;
-import shared.GameState;
-import shared.MessageType;
-import shared.TravelType;
+import shared.*;
 import shared.request.PostCondition;
 import shared.request.UpdateRequest;
 
@@ -1139,7 +1129,7 @@ public class GUI extends JFrame
 		acceptButton.addMouseListener(new MouseAdapter(){
 			public void mouseReleased(MouseEvent e)
 			{
-				//client.sendMesageToServer(ServerCommands.ANSWER_CONSENT_PROMPT.name(), true);
+				client.sendMessageToServer(ServerCommands.ANSWER_CONSENT_PROMPT.name(), true);
 				acceptButton.setVisible(false);
 			}
 		});
@@ -1148,7 +1138,7 @@ public class GUI extends JFrame
 			public void mouseReleased(MouseEvent e)
 			{
 				declineButton.setVisible(false);
-				//client.sendMesageToServer(ServerCommands.ANSWER_CONSENT_PROMPT.name(), false);
+				client.sendMessageToServer(ServerCommands.ANSWER_CONSENT_PROMPT.name(), false);
 			}
 		});
 		
@@ -1274,7 +1264,28 @@ public class GUI extends JFrame
 		//Share Knowledge button
 		btnShareKnowledge.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			
+				String currentPlayer = getGameState().getCurrentPlayer();
+
+				List<String> playerList = getGameState().getUserMap().entrySet().stream()
+						.filter(entry -> !entry.getValue().equals(currentPlayer))
+						.map(entry -> entry.getKey().toString()).collect(Collectors.toList());
+
+				final JList<String> list = new JList<>(new Vector<>(playerList));
+				final ListDialog dialog = new ListDialog("Share Knowledge", "Please select another player: ", list);
+				dialog.setOnOk(ev -> {
+					final List<String> chosenItems = dialog.getSelectedItems();
+					String sharingKnowlegeTarget = chosenItems.get(0);
+					System.out.println("Sharing knowledge with " + sharingKnowlegeTarget);
+					client.sendMessageToServer(ServerCommands.INITIATE_CONSENT_REQUIRING_MOVE.name(),
+							sharingKnowlegeTarget, "Player " + currentPlayer + " wants to share knowlegdge with you.",
+							new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_CARD,
+									new PlayerCardSimple(CardType.CityCard, "Atlanta"),
+									getGameState().getUserMap().entrySet().stream().filter(entry -> entry.getValue().equals(currentPlayer))
+									.map(Map.Entry::getKey).findFirst().orElse(null),
+									Utils.getEnum(RoleType.class, sharingKnowlegeTarget))));
+
+				});
+				dialog.show();
 			}
 		});
 
