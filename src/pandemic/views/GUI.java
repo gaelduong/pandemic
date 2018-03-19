@@ -420,7 +420,17 @@ public class GUI extends JFrame
 	private final String yellowCubesRemPath = "/pandemic/resources/TopBar/yellowRem.png";
 	private final String blackCubesRemPath = "/pandemic/resources/TopBar/blackRem.png";
 	private final String purpleCubesRemPath = "/pandemic/resources/TopBar/purpleRem.png";
-	
+
+	private JLabel orangePawnProf = new JLabel("/pandemic/resources/Pawns/orangePawn.png");
+	private JLabel greenPawnProf= new JLabel("/pandemic/resources/Pawns/greenPawn.png");
+	private JLabel bluePawnProf = new JLabel("/pandemic/resources/Pawns/bluePawn.png");
+	private JLabel purplePawnProf = new JLabel("/pandemic/resources/Pawns/purplePawn.png");
+	private JLabel yellowPawnProf = new JLabel("/pandemic/resources/Pawns/yellowPawn.png");
+	private JLabel whitePawnProf = new JLabel("/pandemic/resources/Pawns/whitePawn.png");
+	private JLabel pinkPawnProf = new JLabel("/pandemic/resources/Pawns/pinkPawn.png");
+
+	private ArrayList<JLabel> profPawns = new ArrayList<JLabel>();
+
 	/*Target icon*/
 	private final String targetIconPath = "/pandemic/resources/target.png";
 	
@@ -699,6 +709,17 @@ public class GUI extends JFrame
 		put("Sydney",SydneyInfectionLabel);//
 	}};
 
+	private Map<RoleType,JLabel> mapPawnProf = new HashMap<RoleType,JLabel>()
+	{{
+		put(RoleType.Medic,pinkPawnProf);
+		put(RoleType.Scientist,greenPawnProf);
+		put(RoleType.Researcher,yellowPawnProf);
+		put(RoleType.ContingencyPlanner,orangePawnProf);
+		put(RoleType.Dispatcher,purplePawnProf);
+		put(RoleType.OperationsExpert,bluePawnProf);
+		put(RoleType.QuarantineSpecialist,whitePawnProf);
+	}};
+
 	//========================================================================
 	//========================================================================
 	//========================================================================
@@ -832,29 +853,32 @@ public class GUI extends JFrame
 		contentPane.setLayout(null);
 
 
+
 		/*----------Set up 8 buttons----------*/
 
         if(gs == null)
             return;
 		String currentPlayer = gs.getCurrentPlayer();
-
 		if(currentPlayer != null && username.equals(currentPlayer) && gs.getCurrentPlayerActionsRemaining() > 0) {
 			//Drive Ferry
 			//btnDriveFerry.setIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/icon.png")));
 			btnDriveFerry.setBounds(11, 370, 90, 40);
 			btnDriveFerry.setFont(new Font("Dialog", Font.PLAIN, 12));
 			contentPane.add(btnDriveFerry);
+			btnDriveFerry.setVisible(true);
 
 			//Direct Flight
 			//btnDirectFlight.setIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/icon.png")));
 			btnDirectFlight.setBounds(97, 370, 90, 40);
 			btnDirectFlight.setFont(new Font("Dialog", Font.PLAIN, 12));
 			contentPane.add(btnDirectFlight);
+			btnDirectFlight.setVisible(true);
 
 			//Charter Flight
 			btnCharterFlight.setBounds(11, 407, 90, 40);
 			btnCharterFlight.setFont(new Font("Dialog", Font.PLAIN, 12));
 			contentPane.add(btnCharterFlight);
+			btnCharterFlight.setVisible(true);
 
 			//Shuttle Flight
 			btnShuttleFlight.setBounds(97, 407, 90, 40);
@@ -865,52 +889,61 @@ public class GUI extends JFrame
 			btnTreatDisease.setBounds(97, 445, 90, 40);
 			btnTreatDisease.setFont(new Font("Dialog", Font.PLAIN, 12));
 			contentPane.add(btnTreatDisease);
+			btnTreatDisease.setVisible(true);
 
 			//Discover Cure
 			btnDiscoverCure.setBounds(97, 482, 90, 40);
 			btnDiscoverCure.setFont(new Font("Dialog", Font.PLAIN, 12));
 			contentPane.add(btnDiscoverCure);
+			btnDiscoverCure.setVisible(true);
 
 			//Build Research
 			btnBuildResearch.setBounds(11, 445, 90, 40);
 			btnBuildResearch.setFont(new Font("Dialog", Font.PLAIN, 12));
 			contentPane.add(btnBuildResearch);
+			btnBuildResearch.setVisible(true);
 
 			//Share Knowledge
 			btnShareKnowledge.setBounds(11, 482, 90, 40);
 			btnShareKnowledge.setFont(new Font("Dialog", Font.PLAIN, 12));
 			contentPane.add(btnShareKnowledge);
+			btnShareKnowledge.setVisible(true);
 		}
 		/*-------Set up Actions remaining-------*/
 		
 		actionsRemaining.setBounds(19, 348, 131, 16);
 		actionsRemaining.setForeground(Color.WHITE);
 		contentPane.add(actionsRemaining);
-	
+		actionsRemaining.setVisible(true);
+
 		/*----------Set up playerDeck----------*/
 		playerDeck.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(playerDeckPicPath))
 				.getImage().getScaledInstance(100, 130, Image.SCALE_SMOOTH)));
 		playerDeck.setBounds(7, 56, 100, 130);
 		contentPane.add(playerDeck);
+		playerDeck.setVisible(true);
 
 		/*----------Set up infectionDeck----------*/
 		infectionDeck.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(infectionDeckPicPath))
 				.getImage().getScaledInstance(100, 130, Image.SCALE_SMOOTH)));
 		infectionDeck.setBounds(7, 185, 100, 130);
 		contentPane.add(infectionDeck);
+		infectionDeck.setVisible(true);
 
 		/*----------Set up playerDiscard----------*/
 		playerDiscard.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(playerDiscardPicPath))
 				.getImage().getScaledInstance(100, 130, Image.SCALE_SMOOTH)));
 		playerDiscard.setBounds(106, 56, 100, 130);
 		contentPane.add(playerDiscard);
-		
+		playerDiscard.setVisible(true);
+
 		/*----------Set up infectionDiscard----------*/
 		infectionDiscard.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(infectionDiscardPicPath))
 				.getImage().getScaledInstance(100, 130, Image.SCALE_SMOOTH)));
 		infectionDiscard.setBounds(106, 185, 100, 130);
 		contentPane.add(infectionDiscard);
-		
+		infectionDiscard.setVisible(true);
+
 		/*----------Set up top bar ----------*/
 		/* (cubes remaining,instruction,outbreak count, infection rate)*/
 		
@@ -919,6 +952,7 @@ public class GUI extends JFrame
 		topBar.setBackground(Color.BLACK);
 		topBar.setBounds(214, 0, 980, 30);
 		contentPane.add(topBar);
+		topBar.setVisible(true);
 		topBar.setLayout(null);
 		//+gameManager().getDiseaseSupplyByDiseaseType(DiseaseType.Red).size()
 		//red cubes remaining
@@ -1005,6 +1039,7 @@ public class GUI extends JFrame
 
 
 
+
 		loadPlayerCards();
 		loadPlayerDiscardCards();
 		loadInfectionDiscardCards();
@@ -1013,6 +1048,9 @@ public class GUI extends JFrame
 
 		/*----------Set up pawns ----------*/
 		loadPawns();
+		loadProfPawns();
+		loadAllPlayerCards();
+
 		/*----------Set up controlPawn------*/
 		loadControlPawn();
 
@@ -1037,7 +1075,7 @@ public class GUI extends JFrame
 		loadGenericMessageBox();
 		//loadTreatDiseaseMessage();
 		//loadShareKnowledgeMessage();
-		
+
 		/*----------Set up board map ----------*/
 		loadMapLines();
 		loadMap();
@@ -1246,6 +1284,35 @@ public class GUI extends JFrame
 				client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.END_TURN)));
 			}
 		});
+
+		for(JLabel j : profPawns){
+			j.addMouseListener(new MouseAdapter(){
+				public void mouseReleased(MouseEvent e){
+
+					RoleType key = null;
+					JLabel value = j;
+					for(Map.Entry entry: mapPawnProf.entrySet()){
+						if(value.equals(entry.getValue())){
+							key = (RoleType) entry.getKey();
+							break; //breaking because its one to one map
+						}
+					}
+					List<PlayerCard> cardsInHand = gs.getCardMap().get(key);
+					int i = 0;
+					for(PlayerCard card : cardsInHand){
+						JLabel cityCardLabel = mapPlayerCardLabels.get(card.getCardName());
+						if(cityCardLabel != null){
+							cityCardLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(cityCardLabel.getText())).getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
+							cityCardLabel.setBounds(202+115*i,55,100,140);
+							//contentPane.add(cityCardLabel);
+							i++;
+						}
+					}
+
+				}
+			});
+		}
+
 	}
 
 	/*Helper method*/
@@ -1285,7 +1352,7 @@ public class GUI extends JFrame
 				default:break;
 			}
 			contentPane.add(city);
-			
+			city.setVisible(true);
 			//add city names
 			CityName key= null;
 	        JLabel value= city;
@@ -1300,7 +1367,8 @@ public class GUI extends JFrame
 			cityNameLabel.setForeground(Color.WHITE);
 			cityNameLabel.setBounds(city.getX()-key.toString().length()+5, city.getY()+23, 90, 16);
 			contentPane.add(cityNameLabel);
-			
+			cityNameLabel.setVisible(true);
+
 			//add cubes
 			int[][] cubePos = {{city.getX()-2,city.getY()-5},{city.getX()-2,city.getY()+5},
 					{city.getX()-9,city.getY()-5},{city.getX()-9,city.getY()+5},{city.getX()-16,city.getY()}};
@@ -1324,15 +1392,42 @@ public class GUI extends JFrame
 					
 					cubeLabel.setBounds(cubePos[i][0], cubePos[i][1], 90, 16);
 					contentPane.add(cubeLabel);
-					
+					cubeLabel.setVisible(true);
+
 				}
 			}
 		}
 	}
+	private void loadAllPlayerCards()
+	{
+		for(Entry<String, JLabel> entry: mapPlayerCardLabels.entrySet())
+		{
+			contentPane.add(entry.getValue());
+		}
+	}
 
+	private void loadProfPawns()
+	{
+		ArrayList<JLabel> profPawns2 = new ArrayList<JLabel>();
+		int i = 0;
+		for(RoleType r : gs.getUserMap().keySet()){
+			if (!r.equals(userRole)) {
+				System.out.println(mapPawnProf.get(r));
+				profPawns2.add(mapPawnProf.get(r));
+				mapPawnProf.get(r).setBounds(10 + 10 * i, 10, 26, 30);
+				mapPawnProf.get(r).setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(mapPawnProf.get(r).getText())).getImage().getScaledInstance(26, 30, Image.SCALE_SMOOTH)));
+
+				//System.out.println("Icon path: " +new ImageIcon(new ImageIcon(GUI.class.getResource(mapPawnProf.get(r).getText())).getImage().getScaledInstance(80, 106, Image.SCALE_SMOOTH) ));
+				contentPane.add(mapPawnProf.get(r));
+				mapPawnProf.get(r).setVisible(true);
+				i++;
+			}
+		}
+		profPawns = profPawns2;
+	}
 	private void loadPawns()
 	{
-		
+
 		/*Load blue pawn*/
 		
 		//System.out.println(gs.getPositionMap().get(medic));
@@ -1358,7 +1453,8 @@ public class GUI extends JFrame
 		    pawnLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(pawnLabel.getText())).getImage().getScaledInstance(pawnDims[0], pawnDims[1], Image.SCALE_SMOOTH)));
 			pawnLabel.setBounds(pawnX, pawnY, pawnDims[0], pawnDims[1]);
 			contentPane.add(pawnLabel);
-			
+			pawnLabel.setVisible(true);
+
 		}
 
 	}
@@ -1505,6 +1601,7 @@ public class GUI extends JFrame
 		map.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(boardMapPath))
 				.getImage().getScaledInstance(980, 650,  Image.SCALE_SMOOTH)));
 		contentPane.add(map);
+		map.setVisible(true);
 		map.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
