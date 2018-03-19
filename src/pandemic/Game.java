@@ -203,6 +203,12 @@ public class Game {
 
     public void dealCardsAndShuffleInEpidemicCards() {
 
+        CityCard cardAtl = (CityCard) myPlayerDeck.getDeck().stream()
+                .filter(c -> c.getCardType() == CardType.CityCard && c.getCardName().equals("Atlanta"))
+                .findAny().orElse(null);
+        myPlayerDeck.getDeck().add(0, cardAtl);
+        myPlayerDeck.printDeck();
+
   	    for(Player p : gameManager.getActivePlayers()){
             if (gameManager.getActivePlayers().size() == 2){
                 // Each player begins with 4 cards
@@ -236,6 +242,9 @@ public class Game {
 
         myPlayerDeck.insertAndShuffleEpidemicCards(epidemicCards, 1);
         myPlayerDeck.printDeck();
+
+
+
         //myPlayerDeck.getDeck().addAll(0, epidemicCards);
 
         /*System.out.println("......PlayerDeck after Epidemic Cards inserted (size: " + myPlayerDeck.getDeckSize()+ ")....");
