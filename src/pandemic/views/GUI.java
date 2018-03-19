@@ -1916,7 +1916,7 @@ public class GUI extends JFrame
 
         System.out.println("draw receive message drawn.");
         try {
-            sleep(5000);
+            sleep(15000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

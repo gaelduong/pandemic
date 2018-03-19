@@ -221,9 +221,10 @@ public class UpdateRequest implements Serializable {
             switch (deckSource) {
                 case DECK:
                     result = game.getPlayerDeck();
-
+                    break;
                 case DISCARD_PILE:
                     result = game.getPlayerDiscardPile();
+                    break;
             }
         } else {
             result = game.getGameManager().getActivePlayers().stream()
