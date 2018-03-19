@@ -1277,7 +1277,7 @@ public class GUI extends JFrame
 					String sharingKnowlegeTarget = chosenItems.get(0);
 					System.out.println("Sharing knowledge with " + sharingKnowlegeTarget);
 					client.sendMessageToServer(ServerCommands.INITIATE_CONSENT_REQUIRING_MOVE.name(),
-							getGameState().getUserMap().get(sharingKnowlegeTarget), "Player " + currentPlayer + " wants to share knowlegdge with you.",
+							getGameState().getUserMap().get(Utils.getEnum(RoleType.class, sharingKnowlegeTarget)), "Player " + currentPlayer + " wants to share knowlegdge with you.",
 							new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_CARD,
 									new PlayerCardSimple(CardType.CityCard, "Atlanta"),
 									getGameState().getUserMap().entrySet().stream().filter(entry -> entry.getValue().equals(currentPlayer))
