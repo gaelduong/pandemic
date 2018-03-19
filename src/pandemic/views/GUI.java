@@ -48,10 +48,7 @@ import shared.request.UpdateRequest;
 
 /**
  * Purpose: Create GUI components + event listeners
- * NOTES: All GUI components which might be used in other classes (e.g pawns,cards) will be declared as private fields 
- * (For now, I'll make everything as fields, will figure out later which ones don't need to be a field)
- * For clarity's sake, I declared and initialized them at the same time, in one line
- * (Could also initialize them in constructor but let's keep it this way for now)
+ *
  **/
 
 /**TO DO: 
@@ -73,6 +70,12 @@ public class GUI extends JFrame
 	private GameState gs;
 	private String username;
 	private RoleType userRole;
+	
+	private boolean driveFerrySelected;
+	private boolean directFlightSelected;
+	private boolean treatDiseaseSelected;
+	private boolean shareKnowledgeSelected;
+	
 	
 	
 	
@@ -328,10 +331,10 @@ public class GUI extends JFrame
 	private JLabel genericBox;
 	
 	/*Accept label*/
-	private JLabel acceptLabel;
+	private JLabel acceptButton;
 	
 	/*Decline label*/
-	private JLabel declineLabel;
+	private JLabel declineButton;
 	
 	/*Discard card button */
 	private JLabel discardCardButton;
@@ -667,50 +670,11 @@ public class GUI extends JFrame
 		put("Sydney",SydneyInfectionLabel);//
 	}};
 	
-	
-	
-	
-	/*
-	 * startTurn
-	 * After Play is pressed: 
-	 * 1) Draw pawn's hand (each hand for everyone) => a pawn is associated to playerID
-	 * 		blue - {Paris, Montreal, New York}
-	 * 		same for green,orange, purple
-	 * 2) 
-	 * 3) 
-	 * 
-	 * ----
-	 * 1) 48 cityCardLabels 
-	 * Ultimately, all 48 cards are on the screen, we're just moving them around
-	 * JLabel TorontoLabel = new JLabel("Toronto");
-	 * m = Map<String, ArrayList<String> > = Map<color,hand> => {"blue",{"Toronto","Paris"}}
-	 * 
-	 * 
-	 * JLabel currentPawn = pawnMap.get(gt.getCurrentPawn());
-	 * currentPawn.setLocation(m.getX(currentPawn.get(), m.getY(
-	 * => need drawPlayerHand method 
-	 * { loops through hands, 
-	 * 
-	 * 
-	 * driveFerry
-	 * In order to draw new GUI after driveFerry is executed, I need to know:
-	 * current pawn: blue or green or orange
-	 * pawn's position, i.e city
-	 * new GUI = pawn position
-	 * 
-	 * directFlight
-	 * In order to draw new GUI after directFlight is executed, I need to know:
-	 * pawn's position, i.e city
-	 * which city card is discarded
-	 * new GUI
-	 * 
-	 */
-	
 	//========================================================================
 	//========================================================================
 	//========================================================================
 	//========================================================================
-	/*Constructor does 2 things: (1) setting up GUI components (2) create event listener for each component*/
+	
 	public GUI(String username) {
 		
 		 System.out.println("Creating host player for user 'jbh12'...");
@@ -771,9 +735,6 @@ public class GUI extends JFrame
 		this.userRole = getUserRole();
 		}
 	
-	//public void receiveNewGameState(GameState gs) {}
-	
-		
 	public void draw()
 	{
 		/*This method is responsible for setting up GUI components*/
@@ -943,15 +904,15 @@ public class GUI extends JFrame
 		
 		
 		/*---popups/messages/optionDisplay..---*/
-		acceptLabel = new JLabel();
-		declineLabel = new JLabel();
+		acceptButton = new JLabel();
+		declineButton = new JLabel();
 		genericBox = new JLabel();
 		discardCardButton = new JLabel();
 		
 		contentPane.add(discardCardButton);
 		contentPane.add(genericBox);
-		contentPane.add(acceptLabel);
-		contentPane.add(declineLabel);
+		contentPane.add(acceptButton);
+		contentPane.add(declineButton);
 		
 		
 		
@@ -968,30 +929,7 @@ public class GUI extends JFrame
 		/*----------Set up citiesLabels ----------*/
 		loadCities();
 		
-		
-		
-		
-		/*Ignore this - For testing/Hardcode this part
-		Icon iconTarget = new ImageIcon(new ImageIcon(GUI.class.getResource(targetIconPath))
-				.getImage().getScaledInstance(40, 40,  Image.SCALE_SMOOTH));
-		target.setVisible(false);
-		System.out.println(ChicagoCityLabel.getX());
-		target.setBounds(ChicagoCityLabel.getX()-5,ChicagoCityLabel.getY()-5,40,40);
-		target.setIcon(iconTarget);
-		contentPane.add(target);
-		
-		target2.setVisible(false);
-		target2.setBounds(WashingtonCityLabel.getX()-5,WashingtonCityLabel.getY()-5,40,40);
-		target2.setIcon(iconTarget);
-		contentPane.add(target2);
 	
-		
-		JLabel lblCard = new JLabel("");
-		lblCard.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/Miami.png")).getImage().getScaledInstance(90, 120, Image.SCALE_SMOOTH)));
-		lblCard.setBounds(535, 613, 90, 120);
-
-		contentPane.add(lblCard);
-		*/
 		
 		cardsContainer.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/cardsContainer.png")).getImage().getScaledInstance(809, 191, Image.SCALE_SMOOTH)));
 		cardsContainer.setBounds(270, 560, 809, 191);
@@ -999,8 +937,8 @@ public class GUI extends JFrame
 		
 		
 		loadTargetsDrive();
-		//loadDriveAndFlightMessage();
-		//loadTargetsDirectFlight();
+		loadDriveAndFlightMessage();
+		loadTargetsDirectFlight();
 		
 		//loadTreatDiseaseMessage();
 		//loadShareKnowledgeMessage();
@@ -1033,10 +971,44 @@ public class GUI extends JFrame
 			/*When click on city*/
 			public void mouseReleased(MouseEvent e)
 			{
-				mapPawnLabels.get(userRole).setLocation(city.getX(),city.getY()-20);
+				CityName cityNameSelected= null;
+		        JLabel value= city;
+		        for(Map.Entry entry: mapCityLabels.entrySet()){
+		            if(value.equals(entry.getValue())){
+		                cityNameSelected = (CityName) entry.getKey();
+		                break; //breaking because its one to one map
+		            }
+		        }
+		        
+		        if(driveFerrySelected){
+		        
+		      //client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), 
+		         //new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.DRIVE)));
+		        }
+		        else if(directFlightSelected){
+		        	//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), 
+			         //new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.DIRECT_FLIGHT)));
+			      
+		        }
+		       
+				//mapPawnLabels.get(userRole).setLocation(city.getX(),city.getY()-20);
 			}
 		});
 		}
+		
+		acceptButton.addMouseListener(new MouseAdapter(){
+			public void mouseReleased(MouseEvent e)
+			{
+				//client.sendMesageToServer(ServerCommands.ANSWER_CONSENT_PROMPT.name(), true);
+			}
+		});
+		
+		declineButton.addMouseListener(new MouseAdapter(){
+			public void mouseReleased(MouseEvent e)
+			{
+				//client.sendMesageToServer(ServerCommands.ANSWER_CONSENT_PROMPT.name(), false);
+			}
+		});
 		
 		discardCardButton.addMouseListener(new MouseAdapter(){
 			public void mouseReleased(MouseEvent e)
@@ -1049,14 +1021,11 @@ public class GUI extends JFrame
 		//Drive Ferry button
 		btnDriveFerry.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				//driveFerrySelected = true;
 				resetDisplayOptions(displayOptions);
 				loadDriveAndFlightMessage();
 				displayTargetsDrive();
-			
-				//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), 
-		         //new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, "bob", "paris", TravelType.DRIVE)));
-			}
+				}
 
 			private void displayTargetsDrive() {targetsDrive.forEach(t -> t.setVisible(true));}
 		});
@@ -1064,9 +1033,11 @@ public class GUI extends JFrame
 		//Direct Flight button
 		btnDirectFlight.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 				resetDisplayOptions(displayOptions);
 				loadDriveAndFlightMessage();
 				displayTargetsDirectFlight();
+				System.out.println("sdf");
 			}
 			private void displayTargetsDirectFlight() {targetsDirectFlight.forEach(t -> t.setVisible(true));}
 		});
@@ -1297,11 +1268,9 @@ public class GUI extends JFrame
 			JLabel cityCardLabel = mapPlayerCardLabels.get(cityCard.getCardName());
 			if(cityCardLabel != null)
 			{
-				
 				cityCardLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(cityCardLabel.getText())).getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
 				cityCardLabel.setBounds(202,585,100,140);
 				contentPane.add(cityCardLabel);
-				
 			}
 			
 		}
@@ -1427,7 +1396,7 @@ public class GUI extends JFrame
 			
 			contentPane.add(chooseCube);
 			
-			genericBox.setText("hello my name is gael");
+			genericBox.setText("Display the options here");
 			genericBox.setForeground(Color.WHITE);
 			genericBox.setBackground(Color.BLACK);
 			genericBox.setBounds(486,200,300,200);
@@ -1489,15 +1458,15 @@ public class GUI extends JFrame
 		genericBox.setBounds(486,200,400,100);
 		genericBox.setOpaque(true);
 		
-		acceptLabel.setText("Accept");
-		acceptLabel.setBackground(Color.GREEN);
-		acceptLabel.setBounds(486,300,50,50);
-		acceptLabel.setOpaque(true);
+		acceptButton.setText("Accept");
+		acceptButton.setBackground(Color.GREEN);
+		acceptButton.setBounds(486,300,50,50);
+		acceptButton.setOpaque(true);
 		
-		declineLabel.setText("Decline");
-		declineLabel.setBackground(Color.RED);
-		declineLabel.setBounds(550,300,50,50);
-		declineLabel.setOpaque(true);
+		declineButton.setText("Decline");
+		declineButton.setBackground(Color.RED);
+		declineButton.setBounds(550,300,50,50);
+		declineButton.setOpaque(true);
 		
 	}
 	public void drawReceiveMessage(String message, MessageType type)
@@ -1508,10 +1477,10 @@ public class GUI extends JFrame
 		genericBox.setBounds(486,200,400,200);
 		genericBox.setOpaque(true);
 		
-		acceptLabel.setText("OK");
-		acceptLabel.setBackground(Color.GREEN);
-		acceptLabel.setBounds(486,300,50,50);
-		acceptLabel.setOpaque(true);
+		acceptButton.setText("OK");
+		acceptButton.setBackground(Color.GREEN);
+		acceptButton.setBounds(486,300,50,50);
+		acceptButton.setOpaque(true);
 		
 	}
 	
