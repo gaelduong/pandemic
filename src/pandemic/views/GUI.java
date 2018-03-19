@@ -160,7 +160,7 @@ public class GUI extends JFrame
 	private JLabel LimaCityLabel = new JLabel("y,364,467");
 	private JLabel SaoPauloCityLabel = new JLabel("y,508,433");
 	private JLabel LosAngelesCityLabel = new JLabel("y,285,270");
-	private JLabel MexicoCityCityLabel = new JLabel("y,352,334");
+	private JLabel MexicoCityCityLabel = new JLabel("y,390,295");
 	private JLabel MiamiCityLabel = new JLabel("y,435,334");
 	private JLabel BogotaCityLabel = new JLabel("y,393,407");
 	private JLabel BuenosAiresCityLabel = new JLabel("y,468,509");
@@ -206,10 +206,10 @@ public class GUI extends JFrame
 	
 	
 	/*Event Cards*/
-	private JLabel AirliftCardLabel = new JLabel("/pandemic/resources/PlayerCards/AirliftEventCard.png");
+	private JLabel AirLiftCardLabel = new JLabel("/pandemic/resources/PlayerCards/AirLiftEventCard.png");
 	private JLabel OneQuietNightCardLabel = new JLabel("/pandemic/resources/PlayerCards/OneQuietNightEventCard.png");
 	private JLabel ResilientPopulationCardLabel = new JLabel("/pandemic/resources/PlayerCards/ResilientPopulationEventCard.png");
-	private JLabel GovernmentRantCardLabel = new JLabel("/pandemic/resources/PlayerCards/GovernmentRantEventCardLabel.png");
+	private JLabel GovernmentGrantCardLabel = new JLabel("/pandemic/resources/PlayerCards/GovernmentGrantEventCardLabel.png");
 	private JLabel ForecastCardLabel = new JLabel("/pandemic/resources/PlayerCards/ForecastEventCard.png");
 	private JLabel BasicEpidemicCardLabel = new JLabel("/pandemic/resources/PlayerCards/BasicEpidemic.png");
 	
@@ -633,10 +633,10 @@ public class GUI extends JFrame
 		put("HoChiMinhCity",HoChiMinhCityCardLabel);//
 		put("Sydney",SydneyCardLabel);//
 		
-		put("Airlift",AirliftCardLabel);
+		put("AirLift",AirLiftCardLabel);
 		put("Forecast",ForecastCardLabel);
 		put("OneQuietNight",OneQuietNightCardLabel);
-		put("GovernmentRant",GovernmentRantCardLabel);
+		put("GovernmentGrant",GovernmentGrantCardLabel);
 		put("ResilientPopulation",ResilientPopulationCardLabel);
 		put("BasicEpidemicCard",BasicEpidemicCardLabel);
 		
@@ -791,12 +791,10 @@ public class GUI extends JFrame
 
     }
 
-    public String getUsername() {
-	    return username;
-    }
-
 	//public void receiveNewGameState(GameState gs) {}
-	
+	public String getUsername() {
+		return username;
+	}
 		
 	public void draw()
 	{
@@ -817,7 +815,7 @@ public class GUI extends JFrame
 
 	private void initComponents() 
 	{
-	
+
 		/*------Set up JFrame and contentPane-----*/
 		setTitle("Pandemic");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -827,50 +825,52 @@ public class GUI extends JFrame
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
-		
+
 		/*----------Set up 8 buttons----------*/
-		//Drive Ferry
-		//btnDriveFerry.setIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/icon.png")));
-		btnDriveFerry.setBounds(11, 370, 90, 40);
-		btnDriveFerry.setFont(new Font("Dialog", Font.PLAIN, 12));
-		contentPane.add(btnDriveFerry);
-		
-		//Direct Flight
-		//btnDirectFlight.setIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/icon.png")));
-		btnDirectFlight.setBounds(97, 370, 90, 40);
-		btnDirectFlight.setFont(new Font("Dialog", Font.PLAIN, 12));
-		contentPane.add(btnDirectFlight);
-		
-		//Charter Flight
-		btnCharterFlight.setBounds(11, 407, 90, 40);
-		btnCharterFlight.setFont(new Font("Dialog", Font.PLAIN, 12));
-		contentPane.add(btnCharterFlight);
-		
-		//Shuttle Flight
-		btnShuttleFlight.setBounds(97, 407, 90, 40);
-		btnShuttleFlight.setFont(new Font("Dialog", Font.PLAIN, 12));
-		contentPane.add(btnShuttleFlight);
 
-		//Treat Disease
-		btnTreatDisease.setBounds(97, 445, 90, 40);
-		btnTreatDisease.setFont(new Font("Dialog", Font.PLAIN, 12));
-		contentPane.add(btnTreatDisease);
-		
-		//Discover Cure
-		btnDiscoverCure.setBounds(97, 482, 90, 40);
-		btnDiscoverCure.setFont(new Font("Dialog", Font.PLAIN, 12));
-		contentPane.add(btnDiscoverCure);
+		if(username.equals(gs.getCurrentPlayer()) && gs.getCurrentPlayerActionsRemaining() > 0) {
+			//Drive Ferry
+			//btnDriveFerry.setIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/icon.png")));
+			btnDriveFerry.setBounds(11, 370, 90, 40);
+			btnDriveFerry.setFont(new Font("Dialog", Font.PLAIN, 12));
+			contentPane.add(btnDriveFerry);
 
-		//Build Research
-		btnBuildResearch.setBounds(11, 445, 90, 40);
-		btnBuildResearch.setFont(new Font("Dialog", Font.PLAIN, 12));
-		contentPane.add(btnBuildResearch);
-		
-		//Share Knowledge
-		btnShareKnowledge.setBounds(11, 482, 90, 40);
-		btnShareKnowledge.setFont(new Font("Dialog", Font.PLAIN, 12));
-		contentPane.add(btnShareKnowledge);
-		
+			//Direct Flight
+			//btnDirectFlight.setIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/icon.png")));
+			btnDirectFlight.setBounds(97, 370, 90, 40);
+			btnDirectFlight.setFont(new Font("Dialog", Font.PLAIN, 12));
+			contentPane.add(btnDirectFlight);
+
+			//Charter Flight
+			btnCharterFlight.setBounds(11, 407, 90, 40);
+			btnCharterFlight.setFont(new Font("Dialog", Font.PLAIN, 12));
+			contentPane.add(btnCharterFlight);
+
+			//Shuttle Flight
+			btnShuttleFlight.setBounds(97, 407, 90, 40);
+			btnShuttleFlight.setFont(new Font("Dialog", Font.PLAIN, 12));
+			contentPane.add(btnShuttleFlight);
+
+			//Treat Disease
+			btnTreatDisease.setBounds(97, 445, 90, 40);
+			btnTreatDisease.setFont(new Font("Dialog", Font.PLAIN, 12));
+			contentPane.add(btnTreatDisease);
+
+			//Discover Cure
+			btnDiscoverCure.setBounds(97, 482, 90, 40);
+			btnDiscoverCure.setFont(new Font("Dialog", Font.PLAIN, 12));
+			contentPane.add(btnDiscoverCure);
+
+			//Build Research
+			btnBuildResearch.setBounds(11, 445, 90, 40);
+			btnBuildResearch.setFont(new Font("Dialog", Font.PLAIN, 12));
+			contentPane.add(btnBuildResearch);
+
+			//Share Knowledge
+			btnShareKnowledge.setBounds(11, 482, 90, 40);
+			btnShareKnowledge.setFont(new Font("Dialog", Font.PLAIN, 12));
+			contentPane.add(btnShareKnowledge);
+		}
 		/*-------Set up Actions remaining-------*/
 		
 		actionsRemaining.setBounds(19, 348, 131, 16);
@@ -888,7 +888,7 @@ public class GUI extends JFrame
 				.getImage().getScaledInstance(100, 130, Image.SCALE_SMOOTH)));
 		infectionDeck.setBounds(7, 185, 100, 130);
 		contentPane.add(infectionDeck);
-		
+
 		/*----------Set up playerDiscard----------*/
 		playerDiscard.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(playerDiscardPicPath))
 				.getImage().getScaledInstance(100, 130, Image.SCALE_SMOOTH)));
@@ -1115,7 +1115,7 @@ public class GUI extends JFrame
 			public void mouseReleased(MouseEvent e)
 			{
 				hideTreatDiseaseOptions();
-			//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Red)));
+			client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Red)));
 			}
 		});
 
@@ -1123,7 +1123,7 @@ public class GUI extends JFrame
 			public void mouseReleased(MouseEvent e)
 			{
 				hideTreatDiseaseOptions();
-				//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Blue)));
+				client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Blue)));
 			}
 		});
 
@@ -1132,7 +1132,7 @@ public class GUI extends JFrame
 			public void mouseReleased(MouseEvent e)
 			{
 				hideTreatDiseaseOptions();
-				//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Yellow)));
+				client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Yellow)));
 			}
 		});
 
@@ -1140,7 +1140,7 @@ public class GUI extends JFrame
 			public void mouseReleased(MouseEvent e)
 			{
 				hideTreatDiseaseOptions();
-				//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Black)));
+				client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Black)));
 			}
 		});
 
@@ -1148,7 +1148,7 @@ public class GUI extends JFrame
 			public void actionPerformed(ActionEvent e)
 			{
 				btnEndTurn.setVisible(false);
-				//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.END_TURN)));
+				client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.END_TURN)));
 			}
 		});
 
@@ -1433,7 +1433,8 @@ public class GUI extends JFrame
 	
 	private void loadPlayerDiscardCards()
 	{
-		
+		System.out.println("CARDS IN PLAYER DISCARD PILE: " + gs.getPlayerDiscardPile().getCardsInPile());
+		System.out.println("PLAYER DISCARD PILE: " + gs.getPlayerDiscardPile());
 		for(PlayerCard cityCard : gs.getPlayerDiscardPile().getCardsInPile())
 		{
 			
@@ -1441,7 +1442,7 @@ public class GUI extends JFrame
 			if(cityCardLabel != null)
 			{
 				cityCardLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(cityCardLabel.getText())).getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
-				cityCardLabel.setBounds(202,585,100,140);
+				cityCardLabel.setBounds(106, 56, 100, 130);
 				contentPane.add(cityCardLabel);
 			}
 			
