@@ -1,6 +1,8 @@
 package pandemic;
 
-public abstract class Unit {
+import java.io.Serializable;
+
+public abstract class Unit implements Serializable {
     private City location;
     private UnitType u;
 

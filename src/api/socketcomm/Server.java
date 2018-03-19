@@ -16,11 +16,12 @@ public abstract class Server extends Thread {
     private SendMessage sendMessage;
 
     public Server(int port) throws IOException {
-        System.out.println("New server initialized!");
+
         this.server = new ServerSocket(port);
         this.sendMessage = new SendMessage();
 
         this.start();
+        System.out.println("New server initialized!");
     }
 
     @Override

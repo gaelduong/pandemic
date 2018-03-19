@@ -1,6 +1,8 @@
 package pandemic;
 
-public class Role {
+import java.io.Serializable;
+
+public class Role implements Serializable {
     private RoleType r;
     private boolean assigned;
 

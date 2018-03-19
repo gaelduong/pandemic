@@ -38,6 +38,8 @@ public class GUICommandLinker {
      */
     public static void handleReceiveUpdatedGS(GUI gui, GameState gs) {
         //TODO gael
+        System.out.println("GUI : " + gui);
+        System.out.println("GameState: " + gs);
     	gui.setGameState(gs);
     	gui.draw();
     }

@@ -124,12 +124,15 @@ public class UpdateRequest implements Serializable {
                         newPositionCityName = Utils.getEnum(CityName.class, cityName);
                         newPosition = gameManager.getCityByName(newPositionCityName);
                         gameManager.playDriveFerry(newPosition);
+                        break;
                     case DIRECT_FLIGHT:
                         CityCard card = (CityCard) game.getCurrentPlayer().getCard(new PlayerCardSimple(CardType.CityCard, cityName));
                         gameManager.playDirectFlight(card);
                         currentPlayer.discardCard(card);
                         game.getPlayerDiscardPile().acceptCard(card);
+                        break;
                     case SHUTTLE_FLIGHT:
+                        break;
                         //TODO to fill in later
 
                 }
@@ -160,15 +163,15 @@ public class UpdateRequest implements Serializable {
 
         if (game.getCurrentPlayer().getPlayerUserName().equals(playerUsername)) {
             City currentPlayerPos = game.getCurrentPlayer().getPawn().getLocation();
-            try {
+
                 DiseaseFlag toTreat = (DiseaseFlag) currentPlayerPos.getCityUnits().stream().filter(u -> u.getUnitType() == UnitType.DiseaseFlag)
                                                         .findAny().orElse(null);
                 gameManager.playTreatDisease(toTreat);
 
 
-            } catch (NullPointerException e) {
+            if (toTreat == null) {
                 System.err.println("ERROR - cant find disease flag of that type in current player city");
-                e.printStackTrace();
+                return;
             }
 
         } else {
@@ -207,8 +210,7 @@ public class UpdateRequest implements Serializable {
             }
         } else {
             result = game.getGameManager().getActivePlayers().stream()
-                                                            .filter(p -> p.getRoleType() == playerRole
-                                                                     && p.getPlayerUserName().equals(playerUsername))
+                                                            .filter(p -> p.getRoleType() == playerRole)
                                                             .findAny().orElse(null);
         }
         return result;

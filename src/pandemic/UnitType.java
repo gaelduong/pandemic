@@ -1,5 +1,7 @@
 package pandemic;
 
-public enum UnitType {
+import java.io.Serializable;
+
+public enum UnitType implements Serializable {
     ResearchStation, Pawn, DiseaseFlag
 }

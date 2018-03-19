@@ -13,14 +13,19 @@ import java.util.List;
 public class PandemicClient extends Client {
 
     private GUI gui;
+    private String clientName;
 
-    public PandemicClient(String hostName, int port) throws IOException {
-
+    public PandemicClient(String hostName, String clientName, int port) throws IOException {
         super(hostName, port);
+        this.clientName = clientName;
     }
 
     public void setGUI(GUI gui) {
         this.gui = gui;
+    }
+
+    public GUI getGui() {
+        return gui;
     }
 
     @Override
@@ -44,6 +49,7 @@ public class PandemicClient extends Client {
 
             case RECEIVE_UPDATED_GAMESTATE:
                 final GameState newGS = (GameState)message.get(1);
+                System.out.println("RECEIVED GAME STATE client: " + clientName + " gui: " + gui);
                 GUICommandLinker.handleReceiveUpdatedGS(gui, newGS);
                 break;
             case RECEIVE_GAME_WON:

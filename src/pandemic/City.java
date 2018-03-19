@@ -2,10 +2,11 @@ package pandemic;
 
 import javafx.util.Pair;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class City {
+public class City implements Serializable {
 	
 	private CityName name;
 	private Region region;

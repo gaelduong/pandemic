@@ -1,6 +1,8 @@
 package pandemic;
 
-public class Connection {
+import java.io.Serializable;
+
+public class Connection implements Serializable {
 
     private City end1;
     private City end2;

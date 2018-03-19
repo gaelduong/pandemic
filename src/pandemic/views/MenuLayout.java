@@ -39,6 +39,7 @@ import java.util.Date;
 public class MenuLayout extends Parent {
     PandemicServer pandemicServer;
     PandemicClient pandemicClient;
+    boolean backButtonNotPressed = true;
 	public MenuLayout(PandemicServer ps, PandemicClient pc) {
         pandemicServer = ps;
         pandemicClient = pc;
@@ -240,7 +241,7 @@ public class MenuLayout extends Parent {
         		tracker.difficulty = 3;
         	}	
         	// print tracker for good measure
-        	magicalPrintingFunction(tracker);
+        	//magicalPrintingFunction(tracker);
 
             setUpCreateGame(pandemicServer, pandemicClient);
 
@@ -308,11 +309,15 @@ public class MenuLayout extends Parent {
         MenuButton btnJoinIP = new MenuButton("Join");
         btnJoinIP.setOnMouseClicked(event -> {
             try {
-                setPandemicClient(new PandemicClient(ipAddress.getText(), 71));
+                setPandemicClient(new PandemicClient(ipAddress.getText(), "client124",  70));
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
+            GUI clientGUI = new GUI("client", pandemicClient);
+            pandemicClient.setGUI(clientGUI);
+            System.out.println("clientGUI in MenuLayout:" + clientGUI);
+            System.out.println("clientGUI from pandemicClient: " + pandemicClient.getGui());
             /***********************************
         	 * Verify some network shit, i.e. the game actually does exist
         	 * Write some error if no good, else join the game via the code below
@@ -333,6 +338,12 @@ public class MenuLayout extends Parent {
             tt.setOnFinished(evt -> {
                 getChildren().remove(joinMenu);
             });
+
+            while(clientGUI.getGameState() == null && backButtonNotPressed)
+            {
+                //wait for a gameState or the user to backout from the lobby ? might work
+            }
+            backButtonNotPressed = true;
         });
         
         MenuButton btnJoinBack = new MenuButton("BACK");
@@ -365,6 +376,7 @@ public class MenuLayout extends Parent {
         
         MenuButton btnJoinLobbyBack = new MenuButton("BACK");
         btnJoinLobbyBack.setOnMouseClicked(event -> {
+            backButtonNotPressed = false;
             getChildren().add(mainMenu);
 
             TranslateTransition tt = new TranslateTransition(Duration.seconds(0.25), joinLobby);
@@ -378,7 +390,7 @@ public class MenuLayout extends Parent {
 
             tt.setOnFinished(evt -> {
                 getChildren().remove(joinLobby);
-            });
+        });
         });
         
         
@@ -395,16 +407,17 @@ public class MenuLayout extends Parent {
         btnCreateGameNow.setOnMouseClicked(event -> {
         this.setVisible(false);
         	// Actually start the game
-            /*EventQueue.invokeLater(new Runnable() {
+            EventQueue.invokeLater(new Runnable() {
                 public void run() {
                     try {
-                        GUI frame = new GUI();
+                        System.out.println(pandemicServer + "test");
+                        GUI frame = new GUI("sdfsd", pandemicServer);
                         frame.setVisible(true);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-            });*/
+            });
         });
         
         MenuButton btnCreateLobbyBack = new MenuButton("BACK");
@@ -449,12 +462,16 @@ public class MenuLayout extends Parent {
 	public void setUpCreateGame(PandemicServer s, PandemicClient c)
     {
         try {
-            s = new PandemicServer(70);
+
+            pandemicServer = new PandemicServer(70);
+            System.out.println("in try");
         } catch (IOException e) {
             e.printStackTrace();
         }
         try {
-            c = new PandemicClient("127.0.0.1", 70);
+            pandemicClient = new PandemicClient("127.0.0.1", "client123", 70);
+            GUI pandemicHostClientGUI = new GUI("hostclient", pandemicClient);
+            pandemicClient.setGUI(pandemicHostClientGUI);
         } catch (IOException e) {
             e.printStackTrace();
         }

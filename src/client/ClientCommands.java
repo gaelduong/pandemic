@@ -35,29 +35,31 @@ public enum ClientCommands {
     RECEIVE_CONSENT_REQUEST,
 
     /**
-     * This command receives a message to inform the player that the game has been won.
+     * This command receives a message to inform the player that the game has been won,
+     * receiving a message of type {@link shared.MessageType}
      *
      *
      * <b>Parameters:</b>
-     * String gameWon
+     * MessageType GAME_WON, String gameWon
      */
     RECEIVE_GAME_WON,
 
     /**
      * This command receives a message to inform the player that the game has been lost.
+     * receiving a message of type {@link shared.MessageType}
      *
      *
      * <b>Parameters:</b>
-     * String gameLost
+     * MessageType GAME_LOST, String gameLost
      */
     RECEIVE_GAME_LOST,
 
     /**
      * This command receives a message to inform the player that they need to discard cards.
-     *
+     * receiving a message of type {@link shared.MessageType}
      *
      * <b>Parameters:</b>
-     * String gameLost
+     * MessageType DISCARD_CARD, String discardCard
      */
     RECEIVE_DISCARD_CARD
 

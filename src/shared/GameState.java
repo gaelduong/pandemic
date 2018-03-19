@@ -3,6 +3,7 @@ package shared;
 import javafx.util.Pair;
 import pandemic.*;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  * Condensed version of the server's core game state.
  * Includes everything the client needs to render the state on the front-end
  */
-public class GameState {
+public class GameState implements Serializable {
 
     private final Map<RoleType, String> userMap;
     private final Map<RoleType, List<PlayerCard>> cardMap;
