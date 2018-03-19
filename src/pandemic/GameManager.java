@@ -105,7 +105,7 @@ public class GameManager {
                 ", role: " + player.getRoleType()));
         System.out.println("-------------------------");
 
-        if(activePlayers.size() == gameSettings.getNumOfPlayers())
+        //if(activePlayers.size() == gameSettings.getNumOfPlayers())
             currentGame.dealCardsAndShuffleInEpidemicCards();
 
     }
@@ -184,10 +184,11 @@ public class GameManager {
 		idp.clearPile();
 	}
 	
-	public void endTurn(){
+	public int endTurn(){
 	// MUST BE MODIFIED TO HANDLE OTB CHALLENGES (i.e. Mutations, Bioterrorist win/lose)
 	//	currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.ActionsCompleted);
-		currentGame.setGamePhase(GamePhase.TurnPlayerCards);
+		int status = 0;
+        currentGame.setGamePhase(GamePhase.TurnPlayerCards);
 		Player p = currentGame.getCurrentPlayer();
 		p.setActionsTaken(0);
 		p.setOncePerTurnActionTaken(false);
@@ -214,6 +215,7 @@ public class GameManager {
 
                 // FOR TESTING:
                 System.out.println("Epidemic resolved");
+                status = 1;
 
 			}
 			else {
@@ -275,7 +277,7 @@ public class GameManager {
                 if(!gameStatus) {
                     //NOTIFY ALL PLAYERS LOST
                     currentGame.setGamePhase(GamePhase.Completed);
-                    return;
+                    return 0;
                 }
             }
 
@@ -290,8 +292,7 @@ public class GameManager {
 		// MUST MAKE SURE current player is at the head of the queue
 		activePlayers.addLast(activePlayers.removeFirst());
 		setCurrentPlayer(activePlayers.getFirst());
-
-
+		return status;
 		
 	}
 

@@ -50,8 +50,10 @@ public abstract class Server extends Thread {
 
                 SocketBundle sb = new SocketBundle(client);
                 sendMessage.add(sb);
-                sendMessage(sb, ClientCommands.RECEIVE_NUM_OF_PLAYERS.name(), currentNumOfPlayerConnected);
+
                 currentNumOfPlayerConnected++;
+                sendMessage(sb, ClientCommands.RECEIVE_NUM_OF_PLAYERS.name(), currentNumOfPlayerConnected);
+
                 new MessageHandler(sb, this::handleReceivedMessage);
                 onClientConnected(sb, clientUsername);
 

@@ -22,6 +22,7 @@ public class UpdateRequest implements Serializable {
 
     private final List<PostCondition> postConditions;
     private PreCondition preCondition = null;
+    private boolean epidemicOccured = false;
 
     /**
      * A sequence of actions that will be performed in order
@@ -49,11 +50,17 @@ public class UpdateRequest implements Serializable {
     /**
      * Executes the update request on the game.
      */
-    public void executeRequest(Game game, String playerUsername) {
-        postConditions.forEach(action -> executeAction(game, playerUsername, action));
+    public int executeRequest(Game game, String playerUsername) {
+        postConditions.forEach(action -> {if(executeAction(game, playerUsername, action) == 1)
+                                                setEpidemicOccured();
+                                            });
+        if(epidemicOccured)
+            return 1;
+        return 0;
     }
 
-    private void executeAction(Game game, String playerUsername, PostCondition action) {
+    private int executeAction(Game game, String playerUsername, PostCondition action) {
+        int status = 0;
         final List arguments = action.getArguments();
         switch (action.getActionType()) {
             case MOVE_CARD:
@@ -77,9 +84,10 @@ public class UpdateRequest implements Serializable {
                 break;
 
             case END_TURN:
-                executeEndTurn(game);
+                status = executeEndTurn(game);
                 break;
         }
+        return status;
     }
 
     private void executeMoveCard(Game game, String playerUsername, List arguments) {
@@ -187,10 +195,11 @@ public class UpdateRequest implements Serializable {
         //TODO link to backend commands (should we consider being thread-safe?)
     }
 
-    private void executeEndTurn(Game game) {
+    private int executeEndTurn(Game game) {
         //(should we consider being thread-safe?)
         final GameManager gameManager = game.getGameManager();
-        gameManager.endTurn();
+        return gameManager.endTurn();
+
 
         //if(game.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayerDiscardingCards)
             // inform current player to discard cards
@@ -215,5 +224,9 @@ public class UpdateRequest implements Serializable {
                                                             .findAny().orElse(null);
         }
         return result;
+    }
+
+    private void setEpidemicOccured() {
+        epidemicOccured = true;
     }
 }

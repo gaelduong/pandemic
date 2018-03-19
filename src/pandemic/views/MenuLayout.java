@@ -38,6 +38,8 @@ import shared.GameState;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static java.lang.Thread.sleep;
+
 public class MenuLayout extends Parent {
     PandemicServer pandemicServer;
     PandemicClient pandemicClient;
@@ -320,8 +322,19 @@ public class MenuLayout extends Parent {
                 e.printStackTrace();
             }
 
+
+            System.out.println("Pandemic client: " + pandemicClient);
+
+            try {
+                sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
             GUI clientGUI = new GUI("client" + pandemicClient.getNumOfPlayersConnectedToServer(), pandemicClient);
             pandemicClient.setGUI(clientGUI);
+            System.out.println("Client GUI" + clientGUI.getUsername());
+            System.out.println("pandemicClient.getNumOfPlayersConnectedToServer(): " + pandemicClient.getNumOfPlayersConnectedToServer());
 
 
             System.out.println("clientGUI in MenuLayout:" + clientGUI);
@@ -506,9 +519,10 @@ public class MenuLayout extends Parent {
             e.printStackTrace();
         }
         try {
-            pandemicClient = new PandemicClient("127.0.0.1", "client123", 70);
+            pandemicClient = new PandemicClient("127.0.0.1", "client0", 70);
             GUI pandemicHostClientGUI = new GUI("client0", pandemicClient);
             pandemicClient.setGUI(pandemicHostClientGUI);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
