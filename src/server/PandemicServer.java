@@ -3,10 +3,8 @@ package server;
 import api.socketcomm.Server;
 import api.socketcomm.SocketBundle;
 import client.ClientCommands;
-import pandemic.CurrentPlayerTurnStatus;
-import pandemic.Game;
-import pandemic.GameManager;
-import pandemic.GamePhase;
+import pandemic.*;
+import pandemic.views.MenuLayout;
 import shared.MessageType;
 import shared.Utils;
 import shared.request.UpdateRequest;
@@ -22,17 +20,17 @@ public class PandemicServer extends Server {
     private final Map<SocketBundle, String> clientMap;    //<socket, playerUserName>
     private final Map<String, UpdateRequest> consentRequestMap; //<username, UR>
 
+    private final MenuLayout menuLayout;
 
     private Semaphore updateRequestSemaphore; //makes sure we only execute one UR at a time
 
-    public PandemicServer(Game g, int port) throws IOException {
+    public PandemicServer(MenuLayout menuLayout, Game g, int port) throws IOException {
         super(g, port);
+        this.menuLayout = menuLayout;
         this.clientMap = Collections.synchronizedMap(new HashMap<>());
         this.consentRequestMap = Collections.synchronizedMap(new HashMap<>());
         this.updateRequestSemaphore = new Semaphore(1);
     }
-
-
 
     @Override
     protected void handleReceivedMessage(SocketBundle client, List<Object> message) {
@@ -61,6 +59,10 @@ public class PandemicServer extends Server {
                     final String playerUserName = (String)message.get(1);
                     clientMap.put(client, playerUserName);
                     System.out.printf("Registered player %s, from %s!\n", playerUserName, client.getSocket().getRemoteSocketAddress().toString());
+
+                    User clientUser = new User(playerUserName, "lol", null);
+                    game.getGameManager().joinGame(clientUser);
+                    menuLayout.updateCreateLabel(playerUserName);
                     break;
             }
         } else {
@@ -180,8 +182,8 @@ public class PandemicServer extends Server {
 
 
     @Override
-    protected void onClientConnected(SocketBundle client, String clientUsername) {
-        clientMap.put(client, clientUsername);
+    protected void onClientConnected(SocketBundle client) {
+        clientMap.put(client, null);
         System.out.println("client map: " + clientMap);
     }
 }

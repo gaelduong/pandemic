@@ -3,7 +3,7 @@ package pandemic;
 abstract class EpidemicCard implements PlayerCard{
 
 	protected CardType type;
-	protected GameManager myGameManager;
+	protected transient GameManager myGameManager;
 	protected EpidemicCardName name;
 	
 	public EpidemicCard(CardType t, GameManager gm, EpidemicCardName n){

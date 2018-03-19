@@ -828,7 +828,8 @@ public class GUI extends JFrame
 
 		/*----------Set up 8 buttons----------*/
 
-		if(username.equals(gs.getCurrentPlayer()) && gs.getCurrentPlayerActionsRemaining() > 0) {
+		String currentPlayer = gs.getCurrentPlayer();
+		if(currentPlayer != null && username.equals(currentPlayer) && gs.getCurrentPlayerActionsRemaining() > 0) {
 			//Drive Ferry
 			//btnDriveFerry.setIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/icon.png")));
 			btnDriveFerry.setBounds(11, 370, 90, 40);

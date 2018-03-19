@@ -1,5 +1,6 @@
 package pandemic.views;
 
+import api.socketcomm.Server;
 import client.ClientCommands;
 import client.PandemicClient;
 import javafx.scene.Parent;
@@ -33,6 +34,7 @@ import java.text.SimpleDateFormat;
 import javafx.util.Duration;
 import pandemic.*;
 import server.PandemicServer;
+import server.ServerCommands;
 import shared.GameState;
 
 import java.util.ArrayList;
@@ -313,11 +315,17 @@ public class MenuLayout extends Parent {
         Label enterIP = new Label("Enter IP Address i.e. 192.168.1.1");
         TextField ipAddress = new TextField("");
         ipAddress.setMinWidth(250);
-        
+
+        Label username = new Label("Enter Username");
+        TextField usernameTF = new TextField("");
+        usernameTF.setMinWidth(250);
+
         MenuButton btnJoinIP = new MenuButton("Join");
         btnJoinIP.setOnMouseClicked(event -> {
+            String usernameTFText = usernameTF.getText();
             try {
-                setPandemicClient(new PandemicClient(ipAddress.getText(), "client124",  70));
+                setPandemicClient(new PandemicClient(ipAddress.getText(), usernameTFText,  70));
+                pandemicClient.sendMessageToServer(ServerCommands.REGISTER_USERNAME.name(), usernameTFText);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -331,10 +339,10 @@ public class MenuLayout extends Parent {
                 e.printStackTrace();
             }
 
-            GUI clientGUI = new GUI("client" + pandemicClient.getNumOfPlayersConnectedToServer(), pandemicClient);
+            GUI clientGUI = new GUI(usernameTFText, pandemicClient);
             pandemicClient.setGUI(clientGUI);
             System.out.println("Client GUI" + clientGUI.getUsername());
-            System.out.println("pandemicClient.getNumOfPlayersConnectedToServer(): " + pandemicClient.getNumOfPlayersConnectedToServer());
+            //System.out.println("pandemicClient.getNumOfPlayersConnectedToServer(): " + pandemicClient.getNumOfPlayersConnectedToServer());
 
 
             System.out.println("clientGUI in MenuLayout:" + clientGUI);
@@ -362,7 +370,10 @@ public class MenuLayout extends Parent {
 
             while(clientGUI.getGameState() == null && backButtonNotPressed)
             {
-                System.out.println(clientGUI.getGameState());
+
+                //if (clientGUI.getGameState() != null)
+                    System.out.println(clientGUI.getGameState());
+
                 //wait for a gameState or the user to backout from the lobby ? might work
             }
             backButtonNotPressed = true;
@@ -453,6 +464,7 @@ public class MenuLayout extends Parent {
                 public void run() {
                     try {
                         System.out.println(pandemicServer + "test");
+                        if (pandemicClient.getGui() == null) return;
                         pandemicClient.getGui().setVisible(true);
                         pandemicClient.getGui().draw();
                     } catch (Exception e) {
@@ -488,7 +500,7 @@ public class MenuLayout extends Parent {
         mainMenu.getChildren().addAll(btnCreate, btnJoin, btnOptions, btnExit);
         optionsMenu.getChildren().addAll(btnSound, btnVideo, btnOptionsBack);
         createMenu.getChildren().addAll(difficulty, difficulties, challenge, btnMutation, btnVirulent, btnBioTerrorist, btnCardShowing, btnCreateGame, btnCreateBack);
-        joinMenu.getChildren().addAll(enterIP, ipAddress, btnJoinIP, btnJoinBack);
+        joinMenu.getChildren().addAll(username, usernameTF, enterIP, ipAddress, btnJoinIP, btnJoinBack);
         joinLobby.getChildren().addAll(player1, player2, player3, player4, waitingToStart, btnJoinLobbyBack);
         createLobby.getChildren().addAll(playerc1, playerc2, playerc3, playerc4, btnCreateGameNow, btnCreateLobbyBack);
         
@@ -505,6 +517,11 @@ public class MenuLayout extends Parent {
         pandemicClient = c;
     }
 
+    public void updateCreateLabel(String newPlayerName) {
+	    //TODO
+        System.out.printf("new player joined %s\n", newPlayerName);
+    }
+
 	public void setUpCreateGame(PandemicServer s, PandemicClient c)
     {
         try {
@@ -513,15 +530,17 @@ public class MenuLayout extends Parent {
             gameManager =  new GameManager(2, 6, ChallengeKind.OriginalBaseGame);
 
             gameManager.createNewGame();
-            pandemicServer = new PandemicServer(gameManager.getGame(), 70);
+            pandemicServer = new PandemicServer(this, gameManager.getGame(), 70);
             System.out.println("in try");
         } catch (IOException e) {
             e.printStackTrace();
         }
         try {
-            pandemicClient = new PandemicClient("127.0.0.1", "client0", 70);
-            GUI pandemicHostClientGUI = new GUI("client0", pandemicClient);
+            pandemicClient = new PandemicClient("127.0.0.1", "host", 70);
+            GUI pandemicHostClientGUI = new GUI("host", pandemicClient);
             pandemicClient.setGUI(pandemicHostClientGUI);
+
+            pandemicClient.sendMessageToServer(ServerCommands.REGISTER_USERNAME.name(), "host");
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -2,7 +2,7 @@ package pandemic;
 
 public abstract class EventCard implements PlayerCard{
 	
-	protected GameManager gameManager = null;
+	protected transient GameManager gameManager = null;
 	protected EventCardName name;
 	protected CardType cardType;
 	
