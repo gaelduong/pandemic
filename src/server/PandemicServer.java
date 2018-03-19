@@ -56,13 +56,18 @@ public class PandemicServer extends Server {
                     break;
 
                 case REGISTER_USERNAME:
-                    final String playerUserName = (String)message.get(1);
-                    clientMap.put(client, playerUserName);
-                    System.out.printf("Registered player %s, from %s!\n", playerUserName, client.getSocket().getRemoteSocketAddress().toString());
+                    System.out.println("game phase is : " + game.getGamePhase());
+                    if (game.getGamePhase() == GamePhase.ReadyToJoin) {
+                        final String playerUserName = (String) message.get(1);
+                        clientMap.put(client, playerUserName);
+                        System.out.printf("Registered player %s, from %s!\n", playerUserName, client.getSocket().getRemoteSocketAddress().toString());
 
-                    User clientUser = new User(playerUserName, "lol", null);
-                    game.getGameManager().joinGame(clientUser);
-                    menuLayout.updateCreateLabel(playerUserName);
+                        User clientUser = new User(playerUserName, "lol", null);
+                        game.getGameManager().joinGame(clientUser);
+                        menuLayout.updateCreateLabel(playerUserName);
+                    } else {
+                        System.out.println("This game has already started!");
+                    }
                     break;
             }
         } else {
