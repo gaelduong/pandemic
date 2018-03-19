@@ -158,7 +158,7 @@ public class GUI extends JFrame
 	private JLabel LimaCityLabel = new JLabel("y,364,467");
 	private JLabel SaoPauloCityLabel = new JLabel("y,508,433");
 	private JLabel LosAngelesCityLabel = new JLabel("y,285,270");
-	private JLabel MexicoCityCityLabel = new JLabel("y,352,334");
+	private JLabel MexicoCityCityLabel = new JLabel("y,390,295");
 	private JLabel MiamiCityLabel = new JLabel("y,435,334");
 	private JLabel BogotaCityLabel = new JLabel("y,393,407");
 	private JLabel BuenosAiresCityLabel = new JLabel("y,468,509");
@@ -207,7 +207,7 @@ public class GUI extends JFrame
 	private JLabel AirLiftCardLabel = new JLabel("/pandemic/resources/PlayerCards/AirLiftEventCard.png");
 	private JLabel OneQuietNightCardLabel = new JLabel("/pandemic/resources/PlayerCards/OneQuietNightEventCard.png");
 	private JLabel ResilientPopulationCardLabel = new JLabel("/pandemic/resources/PlayerCards/ResilientPopulationEventCard.png");
-	private JLabel GovernmentRantCardLabel = new JLabel("/pandemic/resources/PlayerCards/GovernmentRantEventCardLabel.png");
+	private JLabel GovernmentGrantCardLabel = new JLabel("/pandemic/resources/PlayerCards/GovernmentGrantEventCardLabel.png");
 	private JLabel ForecastCardLabel = new JLabel("/pandemic/resources/PlayerCards/ForecastEventCard.png");
 	private JLabel BasicEpidemicCardLabel = new JLabel("/pandemic/resources/PlayerCards/BasicEpidemic.png");
 	
@@ -634,7 +634,7 @@ public class GUI extends JFrame
 		put("AirLift",AirLiftCardLabel);
 		put("Forecast",ForecastCardLabel);
 		put("OneQuietNight",OneQuietNightCardLabel);
-		put("GovernmentRant",GovernmentRantCardLabel);
+		put("GovernmentGrant",GovernmentGrantCardLabel);
 		put("ResilientPopulation",ResilientPopulationCardLabel);
 		put("BasicEpidemicCard",BasicEpidemicCardLabel);
 		
@@ -790,7 +790,9 @@ public class GUI extends JFrame
     }
 
 	//public void receiveNewGameState(GameState gs) {}
-	
+	public String getUsername() {
+		return username;
+	}
 		
 	public void draw()
 	{
@@ -1420,7 +1422,8 @@ public class GUI extends JFrame
 	
 	private void loadPlayerDiscardCards()
 	{
-		
+		System.out.println("CARDS IN PLAYER DISCARD PILE: " + gs.getPlayerDiscardPile().getCardsInPile());
+		System.out.println("PLAYER DISCARD PILE: " + gs.getPlayerDiscardPile());
 		for(PlayerCard cityCard : gs.getPlayerDiscardPile().getCardsInPile())
 		{
 			
@@ -1428,7 +1431,7 @@ public class GUI extends JFrame
 			if(cityCardLabel != null)
 			{
 				cityCardLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(cityCardLabel.getText())).getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
-				cityCardLabel.setBounds(202,585,100,140);
+				cityCardLabel.setBounds(106, 56, 100, 130);
 				contentPane.add(cityCardLabel);
 			}
 			
