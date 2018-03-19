@@ -49,6 +49,8 @@ import shared.TravelType;
 import shared.request.PostCondition;
 import shared.request.UpdateRequest;
 
+import static java.lang.Thread.sleep;
+
 /**
  * Purpose: Create GUI components + event listeners
  *
@@ -1022,8 +1024,8 @@ public class GUI extends JFrame
 		cardsContainer.setBounds(270, 560, 809, 191);
 		contentPane.add(cardsContainer);
 		
-//		if(gs.getCurrentPlayerActionsRemaining() == 0)
-//				loadEndTurn();
+		if(gs.getCurrentPlayerActionsRemaining() == 0)
+				loadBtnEndTurn();
 		loadTargetsDrive();
 		loadDriveAndFlightMessage();
 		loadTargetsDirectFlight();
@@ -1081,7 +1083,7 @@ public class GUI extends JFrame
 		                  new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.DRIVE_FERRY)));
 		        }
 		        else if(moves.get("directFlight")){
-		        	client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+		            client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
 			         new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.DIRECT_FLIGHT)));
 
 		        }
@@ -1402,7 +1404,16 @@ public class GUI extends JFrame
         System.out.println("gs : " + gs);
         System.out.println("gs.getCardMap: " +gs.getCardMap());
         System.out.println("gs.getUserMap: " +gs.getUserMap());
-        System.out.println("gs.getCardMap.get(userRole): " +gs.getCardMap().get(userRole));
+        //System.out.println("gs.getCardMap.get(userRole): " +gs.getCardMap().get(userRole));
+        System.out.println("CARD MAP: ");
+
+        for (Map.Entry<RoleType, List<PlayerCard>> entry : gs.getCardMap().entrySet())
+        {
+            System.out.println(entry.getKey() + "/");
+            System.out.println("Cards:");
+            entry.getValue().forEach(c -> System.out.println("          "+ c.getCardName() + " " + c.getCardType()));
+        }
+
         System.out.println("username: " +username);
         System.out.println("userRole: " + userRole);
 		for(PlayerCard cityCard : gs.getCardMap().get(userRole))
@@ -1664,15 +1675,15 @@ public class GUI extends JFrame
 		
 	}
 	
-//	private void loadEndTurn(){
-//
-//		btnEndTurn.setBounds(1100, 600, 70, 45);
-//		//btnEndTurn.setBackground(Color.gray);
-//		//btnEndTurn.setOpaque(true);
-//		btnEndTurn.setForeground(Color.BLACK);
-//		btnEndTurn.setFont(new Font("Dialog", Font.PLAIN, 9));
-//
-//	}
+	/*private void loadEndTurn(){
+
+		btnEndTurn.setBounds(1100, 600, 70, 45);
+		//btnEndTurn.setBackground(Color.gray);
+		//btnEndTurn.setOpaque(true);
+		btnEndTurn.setForeground(Color.BLACK);
+		btnEndTurn.setFont(new Font("Dialog", Font.PLAIN, 9));
+
+	}*/
 
 	private void loadOtherPlayersProfile()
 	{
@@ -1786,13 +1797,21 @@ public class GUI extends JFrame
 		genericBox.setBackground(Color.BLACK);
 		genericBox.setBounds(486,200,400,200);
 		genericBox.setOpaque(true);
-		
-		acceptButton.setText("OK");
+
+		genericBox.setVisible(true);
+
+		/*acceptButton.setText("OK");
 		acceptButton.setBackground(Color.GREEN);
 		acceptButton.setBounds(486,300,50,50);
-		acceptButton.setOpaque(true);
-		
-	}
+		acceptButton.setOpaque(true);*/
+
+        System.out.println("draw receive message drawn.");
+        try {
+            sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	public void enableDiscardCardButton()
 	{

@@ -31,7 +31,7 @@ public class MenuGUI extends Application {
 			pandemicServer.close();
 			pandemicClient.close();
 		}
-		
+
 	}
 
 	@Override

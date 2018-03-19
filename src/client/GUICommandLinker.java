@@ -29,6 +29,7 @@ public class GUICommandLinker {
     public static void handleReceiveMessage(GUI gui, MessageType type, String message) {
         //TODO gael
     	gui.drawReceiveMessage(message,type);
+        System.out.println("receive message!!");
     	if(type == MessageType.DISCARD_CARD)
              gui.enableDiscardCardButton();
     }

@@ -192,6 +192,7 @@ public class Game {
         myPlayerDeck.addCard(new OneQuietNightEventCard(gameManager));
         myPlayerDeck.addCard(new ResilientPopulationEventCard(gameManager));
         myPlayerDeck.shuffleDeck();
+        myInfectionDeck.shuffleDeck();
 
         // Dealing cards to Players:
 
@@ -232,7 +233,10 @@ public class Game {
 
         /*System.out.println("......PlayerDeck before Epidemic Cards inserted (size: " + myPlayerDeck.getDeckSize()+ ")....");
         myPlayerDeck.printDeck();*/
-        myPlayerDeck.insertAndShuffleEpidemicCards(epidemicCards);
+
+        //myPlayerDeck.insertAndShuffleEpidemicCards(epidemicCards);
+        myPlayerDeck.getDeck().addAll(0, epidemicCards);
+
         /*System.out.println("......PlayerDeck after Epidemic Cards inserted (size: " + myPlayerDeck.getDeckSize()+ ")....");
         myPlayerDeck.printDeck();*/
 
@@ -241,7 +245,7 @@ public class Game {
         // UNCOMMENT AFTER TESTING//////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        myInfectionDeck.shuffleDeck();
+
     }
 
     public void printGameUnits() {

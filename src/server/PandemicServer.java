@@ -143,7 +143,10 @@ public class PandemicServer extends Server {
         } catch (InterruptedException ignore) {}    //we don't interrupt
 
         if (updateRequest.isRequestValid()) {
-            updateRequest.executeRequest(game, playerUsername);
+
+            if(updateRequest.executeRequest(game, playerUsername) == 1)
+                sendMessageToClients(ClientCommands.RECEIVE_MESSAGE.name(), MessageType.INFORMATION, "An epidemic has occured.");
+
             sendMessageToClients(ClientCommands.RECEIVE_UPDATED_GAMESTATE.name(), g.generateCondensedGameState());
             ret = true;
 

@@ -65,7 +65,9 @@ public enum ClientCommands implements Serializable{
      */
     RECEIVE_DISCARD_CARD,
 
-    RECEIVE_NUM_OF_PLAYERS
+    RECEIVE_NUM_OF_PLAYERS,
+
+
 
 
 }

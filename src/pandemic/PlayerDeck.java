@@ -89,4 +89,9 @@ public class PlayerDeck implements CardSource {
     public PlayerCard getCard(String cardName) {
 	    return cardsInDeck.stream().filter(card -> card.getCardName().equals(cardName)).findAny().orElse(null);
     }
+
+    //FOR TEST
+    public ArrayList<PlayerCard> getDeck() {
+	    return cardsInDeck;
+    }
 }
