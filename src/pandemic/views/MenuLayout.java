@@ -527,13 +527,16 @@ public class MenuLayout extends Parent {
 
     public void updateCreateLabel(String newPlayerName) {
 	    //TODO
-        //playerc12-4
-        if (playerc2.getText().toLowerCase().contains("waiting to connect"))
-            playerc2.setText(newPlayerName);
-        else if (playerc3.getText().toLowerCase().contains("waiting to connect"))
-            playerc3.setText(newPlayerName);
-        else if (playerc4.getText().toLowerCase().contains("waiting to connect"))
-            playerc4.setText(newPlayerName);
+        if (newPlayerName.equals("host")) return;
+
+        Platform.runLater(() -> {
+            if (playerc2.getText().toLowerCase().contains("waiting to connect"))
+                playerc2.setText("Player 2: " + newPlayerName);
+            else if (playerc3.getText().toLowerCase().contains("waiting to connect"))
+                playerc3.setText("Player 3: " + newPlayerName);
+            else if (playerc4.getText().toLowerCase().contains("waiting to connect"))
+                playerc4.setText("Player 4: " + newPlayerName);
+        });
     }
 
 	public void setUpCreateGame(PandemicServer s, PandemicClient c)
