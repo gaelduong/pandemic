@@ -760,7 +760,10 @@ public class GUI extends JFrame
 		this.gs = gameStateTest;
 		this.username = username;
 		this.userRole = getUserRole();
-        System.out.println("userRole in constructor server: " + userRole);
+		//this.currentUserCity = gs.getPositionMap().get(userRole);
+
+        System.out.println("userRole in constructor server: " + userRole );
+        System.out.println("IN constructor: " + cubesInCity);
 
 
         /*This method is responsible for creating all the event listeners*/
@@ -798,10 +801,11 @@ public class GUI extends JFrame
 		
 	public void draw()
 	{
+		contentPane.setVisible(false);
 		/*This method is responsible for setting up GUI components*/
 		initComponents();
 		/*This method is responsible for creating all the event listeners*/
-
+		contentPane.setVisible(true);
 	}
 
 	public void createNewEventWrapper() {
@@ -825,6 +829,7 @@ public class GUI extends JFrame
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+
 
 		/*----------Set up 8 buttons----------*/
 
@@ -1071,7 +1076,7 @@ public class GUI extends JFrame
                 System.out.println("mouse event: " + e.getClickCount());
 
 		        if(moves.get("drive") &&
-		        		currentUserCity.getNeighbors().stream().anyMatch(city -> city.getName().equals(cityNameSelected)) ){
+						gs.getPositionMap().get(userRole).getNeighbors().stream().anyMatch(city -> city.getName().equals(cityNameSelected)) ){
 		        System.out.println("yey" + moves.get("drive"));
 
 		        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
@@ -1125,6 +1130,8 @@ public class GUI extends JFrame
 			{
 				hideTreatDiseaseOptions();
 				client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Blue)));
+
+			System.out.println("TREAT BLUE DISEASE SELECTED");
 			}
 		});
 
@@ -1210,6 +1217,8 @@ public class GUI extends JFrame
 				resetMovesSelected(moves);
 				resetDisplayOptions(displayOptions);
 				loadTreatDiseaseMessage();
+
+				System.out.println("Action Listener Added");
 			}
 		});
 		
@@ -1475,6 +1484,7 @@ public class GUI extends JFrame
 		mapLines.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(boardMapLinesPath))
 				.getImage().getScaledInstance(980, 560,  Image.SCALE_SMOOTH)));
 		contentPane.add(mapLines);
+		mapLines.setVisible(true);
 	}
 
 	private void loadMap()
@@ -1497,7 +1507,7 @@ public class GUI extends JFrame
 	private void loadTargetsDrive()
 	{
 
-		for(City c : currentUserCity.getNeighbors())
+		for(City c : gs.getPositionMap().get(userRole).getNeighbors())
 		{
 			//city => cityLabel
 			JLabel cityLabel = mapCityLabels.get(c.getName());
@@ -1506,8 +1516,9 @@ public class GUI extends JFrame
 			JLabel target = new JLabel();
 			target.setBounds(cityLabel.getX()-5,cityLabel.getY()-5,40,40);
 			target.setIcon(iconTarget);
-			target.setVisible(false);
+
 			contentPane.add(target);
+			target.setVisible(false);
 			//add to targetsDrive
 			targetsDrive.add(target);
 			
@@ -1522,15 +1533,16 @@ public class GUI extends JFrame
 		for(PlayerCard pc : gs.getCardMap().get(userRole))
 		{
 			if(pc.getCardType().equals(CardType.CityCard) 
-				&& !pc.getCardName().equals(currentUserCity.getName().toString()))
+				&& !pc.getCardName().equals(gs.getPositionMap().get(userRole).getName().toString()))
 			{
 				JLabel cityLabel = mapCityLabels.get(CityName.valueOf(pc.getCardName()));
 				//System.out.println(pc.getCardName());
 				JLabel targetDirectFlight = new JLabel();
 				targetDirectFlight.setBounds(cityLabel.getX()-5,cityLabel.getY()-5,40,40);
 				targetDirectFlight.setIcon(iconTarget);
-				targetDirectFlight.setVisible(false);
+
 				contentPane.add(targetDirectFlight);
+				targetDirectFlight.setVisible(false);
 				//add to targetsDirectFlight
 				targetsDirectFlight.add(targetDirectFlight);
 				
@@ -1547,6 +1559,7 @@ public class GUI extends JFrame
 		genericBox.setText("Choose city to move to");
 		genericBox.setBounds(600,520,200,50);
 		genericBox.setVisible(true);
+
 	}
 	
 	private void loadTreatDiseaseMessage() {
@@ -1557,7 +1570,8 @@ public class GUI extends JFrame
         optionBlackDisease.setBounds(586, 390, 68, 36);
 
         //cubesTuples.forEach(p-> System.out.println("yo" + p.getKey()));
-        for (Pair<DiseaseType, Integer> d : cubesInCity) {
+      //  System.out.println( cubesInCity + " shalalala");
+		for (Pair<DiseaseType, Integer> d : this.cubesInCity = gs.getDiseaseCubesMap().get(gs.getPositionMap().get(userRole).getName())) {
             JLabel t = new JLabel();
             if (d.getKey().equals(DiseaseType.Red)) {
                 t = optionRedDisease;
@@ -1617,16 +1631,18 @@ public class GUI extends JFrame
 			btnEndTurn.setBounds(11, 530, 176, 20);
 			btnEndTurn.setBackground(Color.RED);
 			btnEndTurn.setForeground(Color.WHITE);
-			btnEndTurn.setVisible(true);
+
 			contentPane.add(btnEndTurn);
+			btnEndTurn.setVisible(true);
 		}
 		else {
 			btnEndTurn.setText("END TURN");
 			btnEndTurn.setBounds(11, 530, 176, 20);
 			btnEndTurn.setBackground(Color.RED);
 			btnEndTurn.setForeground(Color.WHITE);
-			btnEndTurn.setVisible(false);
+
 			contentPane.add(btnEndTurn);
+			btnEndTurn.setVisible(false);
 		}
 	}
 
