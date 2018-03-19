@@ -43,7 +43,8 @@ public class GameBoard {
                                                          .collect(Collectors.toList());
             System.out.println("            pawns: ");
             cPawns.forEach(pawn -> System.out.println("             pawn role type: " + ((Pawn) pawn).getRole().getRoleType() +
-                                                      ", pawn city location: " + pawn.getLocation().getName()));
+                                                      ", pawn city location: " + pawn.getLocation().getName() +
+                                                      ", assigned: " + ((Pawn) pawn).isAssigned()));
 
             List<Unit> cResearchStations = c.getCityUnits().stream().filter(unit -> unit.getUnitType() == UnitType.ResearchStation)
                                                                     .collect(Collectors.toList());

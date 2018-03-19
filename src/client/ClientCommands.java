@@ -61,7 +61,9 @@ public enum ClientCommands {
      * <b>Parameters:</b>
      * MessageType DISCARD_CARD, String discardCard
      */
-    RECEIVE_DISCARD_CARD
+    RECEIVE_DISCARD_CARD,
+
+    RECEIVE_NUM_OF_PLAYERS
 
 
 }

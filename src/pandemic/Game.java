@@ -34,6 +34,7 @@ public class Game {
   	private Random randomRoleGenerator;
   	private Random randomPawnGenerator;
 
+
   	private InfectionDeck myInfectionDeck;
   	private InfectionDiscardPile myInfectionDiscardPile;
   	private PlayerDeck myPlayerDeck;
@@ -52,8 +53,8 @@ public class Game {
 	private Player playerDiscardingCards;
 	private boolean oneQuietNightActivated;
   	
-  	public Game(Player currentPlayer, GameSettings settings, GameManager gameManager) {
-  	    this.currentPlayer = currentPlayer;
+  	public Game(GameSettings settings, GameManager gameManager) {
+  	    //this.currentPlayer = currentPlayer;
   	    this.settings = settings;
   	    this.gameManager = gameManager;
   	    randomRoleGenerator = new Random();
@@ -192,7 +193,15 @@ public class Game {
         myPlayerDeck.shuffleDeck();
 
         // Dealing cards to Players:
-        for(Player p : gameManager.getActivePlayers()){
+
+
+
+
+    }
+
+    public void dealCardsAndShuffleInEpidemicCards() {
+
+  	    for(Player p : gameManager.getActivePlayers()){
             if (gameManager.getActivePlayers().size() == 2){
                 // Each player begins with 4 cards
                 for(int i = 0; i < 4; i++){
@@ -212,7 +221,7 @@ public class Game {
                 }
             }
         }
-        
+
         // - shuffling in Epidemic cards based on settings
         List<PlayerCard> epidemicCards = new ArrayList<PlayerCard>();
         int numOfEpidemicCards = settings.getNumOfEpidemicCards();
@@ -232,9 +241,6 @@ public class Game {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         myInfectionDeck.shuffleDeck();
-
-
-
     }
 
     public void printGameUnits() {
@@ -343,7 +349,8 @@ public class Game {
         // - MODIFICATION TO ACCOUNT FOR ALL ACTIVE PLAYERS DEPENDING ON ORDER OF initializeGame()
         //   AND consecutive joinGame() calls
         //*****************************************************************************************************
-        for(Player p : gameManager.getActivePlayers()) {
+
+        /*for(Player p : gameManager.getActivePlayers()) {
             Pawn playerPawn = getRandomUnassignedPawn();
             p.setPawn(playerPawn);
             playerPawn.setPlayer(p);
@@ -355,7 +362,7 @@ public class Game {
 
             System.out.println("Role assigned: " + playerPawn.getRole().getRoleType());
 
-        }
+        }*/
     }
 
     public Disease getDiseaseByDiseaseType(DiseaseType d) {
@@ -366,11 +373,16 @@ public class Game {
   	    return diseaseTypeToSupplyDict.get(d);
     }
 
-    private Pawn getRandomUnassignedPawn() {
-  	    Pawn p = inGamePawns.get(randomPawnGenerator.nextInt(inGamePawns.size()));
-  	    while(p.isAssigned()){
-            p = inGamePawns.get(randomPawnGenerator.nextInt(inGamePawns.size()));
+    public Pawn getRandomUnassignedPawn() {
+
+        int count = 0;
+  	    Pawn p = inGamePawns.get(count);
+  	    while(p.isAssigned() && count < inGamePawns.size()){
+            //System.out.println("getrand")
+            p = inGamePawns.get(count);
+            count++;
         }
+        System.out.println("Unassigned pawn found: " + p.getRole().getRoleType());
   	    return p;
     }
 
@@ -781,7 +793,7 @@ public class Game {
 //        }
 
         return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, remainingDiseaseCubesMap,
-                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer);
+                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName());
     }
 
     public GameManager getGameManager() {

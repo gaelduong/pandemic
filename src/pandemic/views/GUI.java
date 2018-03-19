@@ -33,14 +33,14 @@ import pandemic.ChallengeKind;
 import pandemic.City;
 import pandemic.CityName;
 import pandemic.DiseaseType;
-import pandemic.GameManager;
+//import pandemic.GameManager;
 import pandemic.InfectionCard;
-import pandemic.Player;
+//import pandemic.Player;
 import pandemic.PlayerCard;
 import pandemic.RoleType;
 import pandemic.Unit;
 import pandemic.UnitType;
-import pandemic.User;
+//import pandemic.User;
 import server.PandemicServer;
 import server.ServerCommands;
 import shared.GameState;
@@ -696,7 +696,7 @@ public class GUI extends JFrame
 
 
 	// REMOVE AFTER TESTING:
-	public GUI(String username) {
+	/*public GUI(String username) {
 
 		System.out.println("Creating host player for user 'jbh12'...");
 		User userTest1 = new User("jbh12", "123456", "127.0.0.1");
@@ -755,7 +755,7 @@ public class GUI extends JFrame
 		this.username = username;
 		this.userRole = getUserRole();
 		this.currentUserCity = gs.getPositionMap().get(userRole);
-	}
+	}*/
 
 
 
@@ -776,7 +776,7 @@ public class GUI extends JFrame
 	//========================================================================
 	//========================================================================
 	/*Constructor does 2 things: (1) setting up GUI components (2) create event listener for each component*/
-	public GUI(String username, PandemicServer server) {
+	public GUI(String username, PandemicServer server, GameState gameStateTest) {
 		
 		 /*System.out.println("Creating host player for user 'jbh12'...");
 	        User userTest1 = new User("jbh12", "123456", "127.0.0.1");
@@ -828,31 +828,28 @@ public class GUI extends JFrame
 	        City chennai = gameManager.getCityByName(CityName.Chennai);
 	        gameManager.infectNextCity(chennai);*/
 
-		    User hostUser = new User(username, "kjsheofh", "127.0.0.1");
-		    Player hostPlayer = new Player(hostUser);
-		    GameManager gameManager =  new GameManager(hostPlayer, 2, 6, ChallengeKind.OriginalBaseGame);
 
-		    gameManager.createNewGame();
-
-	        GameState gameStateTest = gameManager.getGame().generateCondensedGameState();
         
 		this.gs = gameStateTest;
 		this.username = username;
 		this.userRole = getUserRole();
-        try {
+        System.out.println("userRole in constructor server: " + userRole);
+        /*try {
             server.setGame(gameManager.getGame());
         } catch (NullPointerException e) {
-            //System.out.println(gameManager.getGame());
+            System.out.println(gameManager.getGame());
         }
         System.out.println(server);
         System.out.println(gameManager.getGame());
-        System.out.println(gameManager.getGame().generateCondensedGameState());
-        server.sendMessageToClients(ClientCommands.RECEIVE_UPDATED_GAMESTATE.name(), gameManager.getGame().generateCondensedGameState());
+        System.out.println(gameManager.getGame().generateCondensedGameState());*/
+
 
 		}
 
     public GUI(String username, PandemicClient client) {
 	    this.username = username;
+	    //this.userRole = getUserRole();
+        System.out.println("userRole in constructor client: " + userRole);
 	    this.client = client;
     }
 
@@ -1111,8 +1108,9 @@ public class GUI extends JFrame
 		        if(moves.get("drive") &&
 		        		currentUserCity.getNeighbors().stream().anyMatch(city -> city.getName().equals(cityNameSelected)) ){
 		        System.out.println("yey" + moves.get("drive"));
-		      //client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
-		         //new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.DRIVE)));
+		        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+		          new UpdateRequest(
+		                  new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.DRIVE_FERRY)));
 		        }
 		        else if(moves.get("directFlight")){
 		        	//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
@@ -1372,7 +1370,8 @@ public class GUI extends JFrame
 	private void loadControlPawn()
 	{
 		
-		//Display 
+		//Display
+        System.out.println("username  in lcp: " + username);
 		JLabel userRoleLabel = new JLabel("Role: " + userRole.toString());
 		//userRoleLabel.setFont(new Font("Lao MN", Font.PLAIN, 12));
 		userRoleLabel.setForeground(Color.WHITE);
@@ -1401,6 +1400,12 @@ public class GUI extends JFrame
         }
         
 		int i = 1;
+        System.out.println("gs : " + gs);
+        System.out.println("gs.getCardMap: " +gs.getCardMap());
+        System.out.println("gs.getUserMap: " +gs.getUserMap());
+        System.out.println("gs.getCardMap.get(userRole): " +gs.getCardMap().get(userRole));
+        System.out.println("username: " +username);
+        System.out.println("userRole: " + userRole);
 		for(PlayerCard cityCard : gs.getCardMap().get(userRole))
 		{
 			
@@ -1583,7 +1588,7 @@ public class GUI extends JFrame
 	}
 
 	private void loadBtnEndTurn(){
-		if(username.equals(gs.getCurrentPlayer().getPlayerUserName()) && gs.getActionsRemaining() == 0) {
+		if(username.equals(gs.getCurrentPlayer()) && gs.getActionsRemaining() == 0) {
 			btnEndTurn.setText("END TURN");
 			btnEndTurn.setBounds(11, 530, 176, 20);
 			btnEndTurn.setBackground(Color.RED);
@@ -1602,7 +1607,7 @@ public class GUI extends JFrame
 	}
 
 	private void loadActionsRemaining(){
-		if(username.equals(gs.getCurrentPlayer().getPlayerUserName())){
+		if(username.equals(gs.getCurrentPlayer())){
 			actionsRemaining.setText("Actions remaining: " + gs.getActionsRemaining());
 		}
 		else {
@@ -1611,7 +1616,7 @@ public class GUI extends JFrame
 	}
 
 	private void loadGenericMessageBox(){
-		if(username.equals(gs.getCurrentPlayer().getPlayerUserName())) {
+		if(username.equals(gs.getCurrentPlayer())) {
 			genericBox.setForeground(Color.WHITE);
 			genericBox.setOpaque(false);
 			genericBox.setText("YOUR TURN");
@@ -1621,7 +1626,7 @@ public class GUI extends JFrame
 		else {
 			genericBox.setForeground(Color.WHITE);
 			genericBox.setOpaque(false);
-			genericBox.setText(gs.getCurrentPlayer().getPlayerUserName() + "'s turn.");
+			genericBox.setText(gs.getCurrentPlayer() + "'s turn.");
 			genericBox.setBounds(600,520,200,50);
 			genericBox.setVisible(true);
 		}
@@ -1645,13 +1650,17 @@ public class GUI extends JFrame
 	{
 		RoleType userRole= null;
         String value= username;
+        System.out.println("userMap ");
         for(Map.Entry entry: gs.getUserMap().entrySet()){
             if(value.equals(entry.getValue())){
                 userRole = (RoleType) entry.getKey();
                 break; //breaking because its one to one map
             }
         }
-        
+
+        System.out.println("userRole in getUserRole: " + userRole);
+        System.out.println("username in getUserRole: " + username);
+
         return userRole;
 	}
 	
@@ -1663,11 +1672,16 @@ public class GUI extends JFrame
 	
 	public GameState getGameState()
 	{
-		return this.gs;
+		return gs;
 	}
+
 	public void setGameState(GameState newGS)
 	{
 		this.gs = newGS;
+		userRole = getUserRole();
+        System.out.println("userRole in setGameState: " + userRole);
+
+        currentUserCity = gs.getPositionMap().get(userRole);
 	}
 	
 

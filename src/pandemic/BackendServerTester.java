@@ -10,7 +10,7 @@ public class BackendServerTester {
         System.out.println("...hostPlayer created.");
 
         System.out.println("Creating GameBoard and initializing game....");
-        GameManager gameManager = new GameManager(playerTest, 3, 6, ChallengeKind.OriginalBaseGame);
+        GameManager gameManager = new GameManager(3, 6, ChallengeKind.OriginalBaseGame);
         gameManager.createNewGame();
 
         

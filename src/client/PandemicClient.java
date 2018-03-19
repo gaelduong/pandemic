@@ -14,6 +14,7 @@ public class PandemicClient extends Client {
 
     private GUI gui;
     private String clientName;
+    private int numOfPlayersConnectedToServer;
 
     public PandemicClient(String hostName, String clientName, int port) throws IOException {
         super(hostName, port);
@@ -67,6 +68,15 @@ public class PandemicClient extends Client {
                 final String messageTextDiscardCard = (String)message.get(2);
                 GUICommandLinker.handleReceiveMessage(gui, messageTypeDiscardCard, messageTextDiscardCard);
                 break;
+            case RECEIVE_NUM_OF_PLAYERS:
+                numOfPlayersConnectedToServer = (int) message.get(1);
+                break;
+
+
         }
+    }
+
+    public int getNumOfPlayersConnectedToServer() {
+        return numOfPlayersConnectedToServer;
     }
 }

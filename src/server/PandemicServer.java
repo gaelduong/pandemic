@@ -5,6 +5,7 @@ import api.socketcomm.SocketBundle;
 import client.ClientCommands;
 import pandemic.CurrentPlayerTurnStatus;
 import pandemic.Game;
+import pandemic.GameManager;
 import pandemic.GamePhase;
 import shared.MessageType;
 import shared.Utils;
@@ -20,23 +21,22 @@ import java.util.concurrent.Semaphore;
 public class PandemicServer extends Server {
     private final Map<SocketBundle, String> clientMap;    //<socket, playerUserName>
     private final Map<String, UpdateRequest> consentRequestMap; //<username, UR>
-    private Game game;
+
 
     private Semaphore updateRequestSemaphore; //makes sure we only execute one UR at a time
 
-    public PandemicServer(int port) throws IOException {
-        super(port);
+    public PandemicServer(Game g, int port) throws IOException {
+        super(g, port);
         this.clientMap = Collections.synchronizedMap(new HashMap<>());
         this.consentRequestMap = Collections.synchronizedMap(new HashMap<>());
         this.updateRequestSemaphore = new Semaphore(1);
     }
 
-    public void setGame(Game game) {
-        this.game = game;
-    }
+
 
     @Override
     protected void handleReceivedMessage(SocketBundle client, List<Object> message) {
+        Game game = getGame();
         if (game.getGamePhase() != GamePhase.Completed) {
             if (message == null) return;
 
@@ -75,6 +75,7 @@ public class PandemicServer extends Server {
     }
 
     private void answerConsentPrompt(SocketBundle client, List<Object> message) {
+        Game game = getGame();
         final String playerUsername = clientMap.get(client);
         if (playerUsername == null) {
             System.err.printf("No player registered from %s! ERROR!\n", client.getSocket().getRemoteSocketAddress().toString());
@@ -115,6 +116,7 @@ public class PandemicServer extends Server {
     }
 
     private void sendUpdateRequest(SocketBundle client, List<Object> message) {
+        Game game = getGame();
         final String playerUsername = clientMap.get(client);
         if (playerUsername == null) {
             System.err.printf("No player registered from %s! ERROR!\n", client.getSocket().getRemoteSocketAddress().toString());
@@ -132,6 +134,7 @@ public class PandemicServer extends Server {
     }
 
     private boolean executeRequestAndPropagate(String playerUsername, Game g, UpdateRequest updateRequest) {
+        Game game = getGame();
         boolean ret = false;
 
         try {
@@ -169,6 +172,8 @@ public class PandemicServer extends Server {
 
         return ret;
     }
+
+
 
     @Override
     protected void onClientConnected(SocketBundle client) {

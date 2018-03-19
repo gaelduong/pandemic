@@ -2,13 +2,14 @@ package shared.request;
 
 import shared.PlayerCardSimple;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * A single action request
  */
-public class PostCondition {
+public class PostCondition implements Serializable {
 
     private final ACTION action;
     private final List arguments;

@@ -15,12 +15,12 @@ public class GameManager {
 	private GameSettings gameSettings;
 	private boolean gameLost;
 
-	public GameManager(Player hostPlayer, int numOfPlayers, int numOfEpidemicCards, ChallengeKind challengeKind) {
+	public GameManager(int numOfPlayers, int numOfEpidemicCards, ChallengeKind challengeKind) {
         gameSettings = new GameSettings(numOfPlayers, numOfEpidemicCards, challengeKind);
 		// Setup neighborsDict and regionsDict lookups
-        this.hostPlayer = hostPlayer;
+        //this.hostPlayer = hostPlayer;
         activePlayers = new LinkedList<Player>();
-        activePlayers.add(hostPlayer);
+        //activePlayers.add(hostPlayer);
         gameLost = false;
 		setRegionsDict();
 		setNeighborsDict();
@@ -69,9 +69,13 @@ public class GameManager {
 	}
 
 	public void createNewGame() {
-        System.out.println("Creating new game for hostPlayer " + hostPlayer.getPlayerUserName() + " ......");
-	    currentGame = new Game(hostPlayer, gameSettings, this);
+        //System.out.println("Creating new game for hostPlayer " + hostPlayer.getPlayerUserName() + " ......");
+	    currentGame = new Game(gameSettings, this);
 	    currentGame.initializeGame();
+       /* System.out.println("------ACTIVE PLAYER LIST:");
+        activePlayers.forEach(p -> System.out.println("    Player username:" + p.getPlayerUserName() +
+                ", role: " + p.getRoleType()));
+        System.out.println("-------------------------");*/
 
     }
 
@@ -80,8 +84,30 @@ public class GameManager {
     }
 
     public void joinGame(User user){
-	    Player newPlayer = new Player(user);
-        activePlayers.add(newPlayer);
+	    Player p = new Player(user);
+        Pawn playerPawn = currentGame.getRandomUnassignedPawn();
+        p.setPawn(playerPawn);
+        playerPawn.setPlayer(p);
+        p.setRole(playerPawn.getRole());
+        playerPawn.getRole().setAssigned(true);
+        playerPawn.setAssigned(true);
+        //City atlCity = currentGame.getGameManager().getCityByName(CityName.Atlanta);
+        //atlCity.getCityUnits().add(playerPawn);
+
+        if(activePlayers.isEmpty()) {
+            hostPlayer = p;
+            currentGame.setCurrentPlayer(p);
+        }
+
+        activePlayers.add(p);
+        System.out.println("------ACTIVE PLAYER LIST:");
+        activePlayers.forEach(player -> System.out.println("    Player username:" + player.getPlayerUserName() +
+                ", role: " + player.getRoleType()));
+        System.out.println("-------------------------");
+
+        if(activePlayers.size() == gameSettings.getNumOfPlayers())
+            currentGame.dealCardsAndShuffleInEpidemicCards();
+
     }
 
 

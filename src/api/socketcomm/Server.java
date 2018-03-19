@@ -1,5 +1,9 @@
 package api.socketcomm;
 
+import client.ClientCommands;
+import pandemic.Game;
+import pandemic.User;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -14,11 +18,16 @@ import java.util.function.Supplier;
 public abstract class Server extends Thread {
     private ServerSocket server;
     private SendMessage sendMessage;
+    private Game game;
+    private int currentNumOfPlayerConnected;
 
-    public Server(int port) throws IOException {
 
+
+    public Server(Game g, int port) throws IOException {
+        game = g;
         this.server = new ServerSocket(port);
         this.sendMessage = new SendMessage();
+        currentNumOfPlayerConnected = 0;
 
         this.start();
         System.out.println("New server initialized!");
@@ -32,10 +41,17 @@ public abstract class Server extends Thread {
                 final String data[] = client.getRemoteSocketAddress().toString().split(":");
                 final String hostAddress = client.getInetAddress().getHostAddress();
 
+                User clientUser = new User("client" + game.getGameManager().getActivePlayers().size(),
+                        "ksjheukf", hostAddress);
+                game.getGameManager().joinGame(clientUser);
+
+
                 System.out.println(hostAddress + " (PORT:" + data[1] + ") connected");
 
                 SocketBundle sb = new SocketBundle(client);
                 sendMessage.add(sb);
+                sendMessage(sb, ClientCommands.RECEIVE_NUM_OF_PLAYERS.name(), currentNumOfPlayerConnected);
+                currentNumOfPlayerConnected++;
                 new MessageHandler(sb, this::handleReceivedMessage);
                 onClientConnected(sb);
 
@@ -75,7 +91,19 @@ public abstract class Server extends Thread {
         return SendMessage.writeMessageToSocket(client, msg, objects);
     }
 
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public Game getGame() {return game;}
+
+    public int getCurrentNumOfPlayerConnected() {
+        return currentNumOfPlayerConnected;
+    }
+
+
     protected abstract void handleReceivedMessage(SocketBundle client, List<Object> objects);
 
     protected abstract void onClientConnected(SocketBundle client);
+
 }
