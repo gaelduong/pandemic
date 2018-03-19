@@ -25,6 +25,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import client.ClientCommands;
+import client.PandemicClient;
 import javafx.util.Pair;
 import pandemic.CardType;
 import pandemic.ChallengeKind;
@@ -39,6 +41,7 @@ import pandemic.RoleType;
 import pandemic.Unit;
 import pandemic.UnitType;
 import pandemic.User;
+import server.PandemicServer;
 import server.ServerCommands;
 import shared.GameState;
 import shared.MessageType;
@@ -63,7 +66,6 @@ import shared.request.UpdateRequest;
  * 
  * -....
  **/
-//only click on ok city-directflight
 public class GUI extends JFrame 
 {
 	
@@ -71,10 +73,10 @@ public class GUI extends JFrame
 	private GameState gs;
 	private String username;
 	private RoleType userRole;
+	private PandemicClient client;
 	private City currentUserCity;
-	private List<Pair<DiseaseType,Integer>> cubesInCity;
-	
-	
+
+
 	//private boolean[] moves = {driveFerrySelected,directFlightSelected,treatDiseaseSelected,shareKnowledgeSelected};
 	private Map<String,Boolean> moves = new HashMap<String,Boolean>()
 	{{
@@ -84,7 +86,7 @@ public class GUI extends JFrame
 		put("shareKnowledge",false);
 	}};
 	private CityName cityNameSelected= null;
-	
+
 	
 	
 	/*private CityName Atlanta = CityName.Atlanta;
@@ -148,7 +150,7 @@ public class GUI extends JFrame
 	private JLabel LimaCityLabel = new JLabel("y,364,467");
 	private JLabel SaoPauloCityLabel = new JLabel("y,508,433");
 	private JLabel LosAngelesCityLabel = new JLabel("y,285,270");
-	private JLabel MexicoCityCityLabel = new JLabel("y,352,334");
+	private JLabel MexicoCityCityLabel = new JLabel("y,376,300");
 	private JLabel MiamiCityLabel = new JLabel("y,435,334");
 	private JLabel BogotaCityLabel = new JLabel("y,393,407");
 	private JLabel BuenosAiresCityLabel = new JLabel("y,468,509");
@@ -306,13 +308,6 @@ public class GUI extends JFrame
 	
 	private ArrayList<JLabel> targetsDrive = new ArrayList<JLabel>();
 	private ArrayList<JLabel> targetsDirectFlight = new ArrayList<JLabel>();
-	/*TreatdiseaseOptions container*/
-	private JLabel genericBox;
-	private JLabel optionRedDisease = new JLabel();
-	private JLabel optionBlueDisease = new JLabel();
-	private JLabel optionYellowDisease = new JLabel();
-	private JLabel optionBlackDisease = new JLabel();
-	private JButton btnEndTurn = new JButton("END TURN");
 	//private ArrayList<JLabel> optionsTreatDisease = new ArrayList<JLabel>(Arrays.asList(genericBox));
 	private ArrayList<ArrayList<JLabel>> displayOptions = new ArrayList<ArrayList<JLabel>>
 	(Arrays.asList(targetsDrive, targetsDirectFlight));
@@ -342,7 +337,9 @@ public class GUI extends JFrame
 	/*Cards container*/
 	private JLabel cardsContainer = new JLabel();
 	
-	
+	/*TreatdiseaseOptions container*/
+	private JLabel genericBox;
+
 	/*Accept label*/
 	private JLabel acceptButton;
 	
@@ -351,7 +348,7 @@ public class GUI extends JFrame
 	
 	/*Discard card button */
 	private JLabel discardCardButton;
-	
+
 	/*Action buttons*/
 	private JButton btnDriveFerry = new JButton("Drive");;
 	private JButton btnDirectFlight = new JButton("<html>Direct <br> Flight</html>");;
@@ -363,7 +360,7 @@ public class GUI extends JFrame
 	private JButton btnDiscoverCure = new JButton("<html>Discover <br> a Cure</html>");
 	
 	/*Actions remaining*/
-	private JLabel actionsRemaining = new JLabel("Actions remaining: 4");
+	private JLabel actionsRemaining = new JLabel();
 	
 	/*Cubes remaining indicators*/
 	private JLabel redRemaining;
@@ -383,13 +380,14 @@ public class GUI extends JFrame
 	private JLabel instruction;
 	
 	JPanel topBar = new JPanel();
-	
+
 	/*ICON/IMAGE PATHS (FINAL FIELDS)*/
 	//Including: MAP, pawn icons, city icons, card pics
 	
 	/*Board Map*/
 	private final String boardMapPath = "/pandemic/resources/Map/pandemic9.jpeg";
-	
+	private final String boardMapLinesPath = "/pandemic/resources/Map/mapLines6.png";
+
 	
 	/*City icons*/
 	private final String blueCityIconPath = "/pandemic/resources/Cities/blueCity.png";
@@ -684,75 +682,183 @@ public class GUI extends JFrame
 		put("HoChiMinhCity",HoChiMinhCityInfectionLabel);//
 		put("Sydney",SydneyInfectionLabel);//
 	}};
-	
-	//========================================================================
-	//========================================================================
-	//========================================================================
-	//========================================================================
-	
+
+	private JLabel optionRedDisease = new JLabel();
+	private JLabel optionBlueDisease = new JLabel();
+	private JLabel optionYellowDisease = new JLabel();
+	private JLabel optionBlackDisease = new JLabel();
+	private JButton btnEndTurn = new JButton("END TURN");
+
+
+
+
+
+
+
+	// REMOVE AFTER TESTING:
 	public GUI(String username) {
-		
+
 		System.out.println("Creating host player for user 'jbh12'...");
-	    User userTest1 = new User("jbh12", "123456", "127.0.0.1");
-	    Player playerTest = new Player(userTest1);
-	    System.out.println("...hostPlayer created.");
-	
-	    System.out.println("Creating GameBoard and initializing game....");
-	    GameManager gameManager = new GameManager(playerTest, 3, 6, ChallengeKind.OriginalBaseGame);
-	
-	    System.out.println("Players joining game...");
-	    User userTest2 = new User("laskdf", "123456", "127.0.0.2");
-	    gameManager.joinGame(userTest2);
-	
-	    System.out.println("------ACTIVE PLAYER LIST:");
-	    gameManager.getActivePlayers().forEach(p -> System.out.println("    Player username:" + p.getPlayerUserName()));
-	    System.out.println("-------------------------");
-	
-	    User userTest3 = new User("aksjfdkdsjn", "123456", "127.0.0.3");
-	    gameManager.joinGame(userTest3);
-	
-	    System.out.println("------ACTIVE PLAYER LIST:");
-	    gameManager.getActivePlayers().forEach(p -> System.out.println("    Player username:" + p.getPlayerUserName()));
-	    System.out.println("-------------------------");
-	
-	    System.out.println("All Players joined. Creating game....");
-	
-	    gameManager.createNewGame();
-	    System.out.println("Game created.");
-	
-	    System.out.println("------ACTIVE PLAYER LIST:");
-	    gameManager.getActivePlayers().forEach(p -> System.out.println("    Player username:" + p.getPlayerUserName() +
-	                                            ", role: " + p.getRoleType()));
-	    System.out.println("-------------------------");
-	
-	    // Forcing outbreak in Bangkok and Los Angeles:
-	    City bangkok = gameManager.getCityByName(CityName.Bangkok);
-	    City losAngeles = gameManager.getCityByName(CityName.LosAngeles);
-	    City atlanta = gameManager.getCityByName(CityName.Atlanta);
-	    
-	    gameManager.infectNextCity(atlanta);
-	    gameManager.infectNextCity(bangkok);
-	    gameManager.infectNextCity(bangkok);
-	    gameManager.infectNextCity(bangkok);
-	    gameManager.infectNextCity(bangkok);
-	    gameManager.infectNextCity(losAngeles);
-	    gameManager.infectNextCity(losAngeles);
-	    gameManager.infectNextCity(losAngeles);
-	    gameManager.infectNextCity(losAngeles);
-	    City chennai = gameManager.getCityByName(CityName.Chennai);
-	    gameManager.infectNextCity(chennai);
-	
-	
-	    GameState gameStateTest = gameManager.getGame().generateCondensedGameState();
-        
+		User userTest1 = new User("jbh12", "123456", "127.0.0.1");
+		Player playerTest = new Player(userTest1);
+		System.out.println("...hostPlayer created.");
+
+		System.out.println("Creating GameBoard and initializing game....");
+		GameManager gameManager = new GameManager(playerTest, 3, 6, ChallengeKind.OriginalBaseGame);
+
+		System.out.println("Players joining game...");
+		User userTest2 = new User("laskdf", "123456", "127.0.0.2");
+		gameManager.joinGame(userTest2);
+
+		System.out.println("------ACTIVE PLAYER LIST:");
+		gameManager.getActivePlayers().forEach(p -> System.out.println("    Player username:" + p.getPlayerUserName()));
+		System.out.println("-------------------------");
+
+		User userTest3 = new User("aksjfdkdsjn", "123456", "127.0.0.3");
+		gameManager.joinGame(userTest3);
+
+		System.out.println("------ACTIVE PLAYER LIST:");
+		gameManager.getActivePlayers().forEach(p -> System.out.println("    Player username:" + p.getPlayerUserName()));
+		System.out.println("-------------------------");
+
+		System.out.println("All Players joined. Creating game....");
+
+		gameManager.createNewGame();
+		System.out.println("Game created.");
+
+		System.out.println("------ACTIVE PLAYER LIST:");
+		gameManager.getActivePlayers().forEach(p -> System.out.println("    Player username:" + p.getPlayerUserName() +
+				", role: " + p.getRoleType()));
+		System.out.println("-------------------------");
+
+//		// Forcing outbreak in Bangkok and Los Angeles:
+//		City bangkok = gameManager.getCityByName(CityName.Bangkok);
+//		City losAngeles = gameManager.getCityByName(CityName.LosAngeles);
+//		City atlanta = gameManager.getCityByName(CityName.Atlanta);
+//
+//		gameManager.infectNextCity(atlanta);
+//		gameManager.infectNextCity(bangkok);
+//		gameManager.infectNextCity(bangkok);
+//		gameManager.infectNextCity(bangkok);
+//		gameManager.infectNextCity(bangkok);
+//		gameManager.infectNextCity(losAngeles);
+//		gameManager.infectNextCity(losAngeles);
+//		gameManager.infectNextCity(losAngeles);
+//		gameManager.infectNextCity(losAngeles);
+//		City chennai = gameManager.getCityByName(CityName.Chennai);
+//		gameManager.infectNextCity(chennai);
+
+
+		GameState gameStateTest = gameManager.getGame().generateCondensedGameState();
+
 		this.gs = gameStateTest;
 		this.username = username;
 		this.userRole = getUserRole();
 		this.currentUserCity = gs.getPositionMap().get(userRole);
-		this.cubesInCity = gs.getDiseaseCubesMap().get(currentUserCity.getName());
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	//========================================================================
+	//========================================================================
+	//========================================================================
+	//========================================================================
+	/*Constructor does 2 things: (1) setting up GUI components (2) create event listener for each component*/
+	public GUI(String username, PandemicServer server) {
 		
+		 /*System.out.println("Creating host player for user 'jbh12'...");
+	        User userTest1 = new User("jbh12", "123456", "127.0.0.1");
+	        Player playerTest = new Player(userTest1);
+	        System.out.println("...hostPlayer created.");
+
+	        System.out.println("Creating GameBoard and initializing game....");
+	        GameManager gameManager = new GameManager(playerTest, 3, 6, ChallengeKind.OriginalBaseGame);
+
+	        System.out.println("Players joining game...");
+	        User userTest2 = new User("laskdf", "123456", "127.0.0.2");
+	        gameManager.joinGame(userTest2);
+
+	        System.out.println("------ACTIVE PLAYER LIST:");
+	        gameManager.getActivePlayers().forEach(p -> System.out.println("    Player username:" + p.getPlayerUserName()));
+	        System.out.println("-------------------------");
+
+	        User userTest3 = new User("aksjfdkdsjn", "123456", "127.0.0.3");
+	        gameManager.joinGame(userTest3);
+
+	        System.out.println("------ACTIVE PLAYER LIST:");
+	        gameManager.getActivePlayers().forEach(p -> System.out.println("    Player username:" + p.getPlayerUserName()));
+	        System.out.println("-------------------------");
+
+	        System.out.println("All Players joined. Creating game....");
+
+	        gameManager.createNewGame();
+	        System.out.println("Game created.");
+
+	        System.out.println("------ACTIVE PLAYER LIST:");
+	        gameManager.getActivePlayers().forEach(p -> System.out.println("    Player username:" + p.getPlayerUserName() +
+	                                                ", role: " + p.getRoleType()));
+	        System.out.println("-------------------------");
+
+	        // Forcing outbreak in Bangkok and Los Angeles:
+	        City bangkok = gameManager.getCityByName(CityName.Bangkok);
+	        City losAngeles = gameManager.getCityByName(CityName.LosAngeles);
+	        City atlanta = gameManager.getCityByName(CityName.Atlanta);
+	        
+	        gameManager.infectNextCity(atlanta);
+	        gameManager.infectNextCity(bangkok);
+	        gameManager.infectNextCity(bangkok);
+	        gameManager.infectNextCity(bangkok);
+	        gameManager.infectNextCity(bangkok);
+	        gameManager.infectNextCity(losAngeles);
+	        gameManager.infectNextCity(losAngeles);
+	        gameManager.infectNextCity(losAngeles);
+	        gameManager.infectNextCity(losAngeles);
+	        City chennai = gameManager.getCityByName(CityName.Chennai);
+	        gameManager.infectNextCity(chennai);*/
+
+		    User hostUser = new User(username, "kjsheofh", "127.0.0.1");
+		    Player hostPlayer = new Player(hostUser);
+		    GameManager gameManager =  new GameManager(hostPlayer, 2, 6, ChallengeKind.OriginalBaseGame);
+
+		    gameManager.createNewGame();
+
+	        GameState gameStateTest = gameManager.getGame().generateCondensedGameState();
+        
+		this.gs = gameStateTest;
+		this.username = username;
+		this.userRole = getUserRole();
+        try {
+            server.setGame(gameManager.getGame());
+        } catch (NullPointerException e) {
+            //System.out.println(gameManager.getGame());
+        }
+        System.out.println(server);
+        System.out.println(gameManager.getGame());
+        System.out.println(gameManager.getGame().generateCondensedGameState());
+        server.sendMessageToClients(ClientCommands.RECEIVE_UPDATED_GAMESTATE.name(), gameManager.getGame().generateCondensedGameState());
+
 		}
+
+    public GUI(String username, PandemicClient client) {
+	    this.username = username;
+	    this.client = client;
+    }
+
+	//public void receiveNewGameState(GameState gs) {}
 	
+		
 	public void draw()
 	{
 		/*This method is responsible for setting up GUI components*/
@@ -851,7 +957,7 @@ public class GUI extends JFrame
 		/* (cubes remaining,instruction,outbreak count, infection rate)*/
 		
 		//top bar panel container
-		
+
 		topBar.setBackground(Color.BLACK);
 		topBar.setBounds(214, 0, 980, 30);
 		contentPane.add(topBar);
@@ -920,20 +1026,19 @@ public class GUI extends JFrame
 		topBar.add(outbreakMeterCount);
 		outbreakMeterCount.setOpaque(true);
 		
-		
+
 		/*---popups/messages/optionDisplay..---*/
 		acceptButton = new JLabel();
 		declineButton = new JLabel();
 		genericBox = new JLabel();
 		discardCardButton = new JLabel();
-		
+
 		contentPane.add(discardCardButton);
 		contentPane.add(genericBox);
 		contentPane.add(acceptButton);
 		contentPane.add(declineButton);
-		
-		
-		
+
+
 		loadPlayerCards();
 		loadPlayerDiscardCards();
 		loadInfectionDiscardCards();
@@ -942,13 +1047,16 @@ public class GUI extends JFrame
 		loadPawns();
 		/*----------Set up controlPawn------*/
 		loadControlPawn();
-		
-		
+
+		loadBtnEndTurn();
+		loadActionsRemaining();
+		loadGenericMessageBox();
+
 		/*----------Set up citiesLabels ----------*/
 		loadCities();
-		
+
 	
-		
+
 		cardsContainer.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/cardsContainer.png")).getImage().getScaledInstance(809, 191, Image.SCALE_SMOOTH)));
 		cardsContainer.setBounds(270, 560, 809, 191);
 		contentPane.add(cardsContainer);
@@ -957,11 +1065,12 @@ public class GUI extends JFrame
 		loadTargetsDrive();
 		loadDriveAndFlightMessage();
 		loadTargetsDirectFlight();
-		
+		loadGenericMessageBox();
 		//loadTreatDiseaseMessage();
 		//loadShareKnowledgeMessage();
 		
 		/*----------Set up board map ----------*/
+		loadMapLines();
 		loadMap();
 		
 	
@@ -989,7 +1098,7 @@ public class GUI extends JFrame
 			/*When click on city*/
 			public void mouseReleased(MouseEvent e)
 			{
-				
+
 		        JLabel value= city;
 		        for(Map.Entry entry: mapCityLabels.entrySet()){
 		            if(value.equals(entry.getValue())){
@@ -998,36 +1107,34 @@ public class GUI extends JFrame
 		            }
 		        }
 		        System.out.println("City Clicked: " + cityNameSelected);
-		        
-		        if(moves.get("drive") && 
+
+		        if(moves.get("drive") &&
 		        		currentUserCity.getNeighbors().stream().anyMatch(city -> city.getName().equals(cityNameSelected)) ){
 		        System.out.println("yey" + moves.get("drive"));
-		      //client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), 
+		      //client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
 		         //new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.DRIVE)));
 		        }
 		        else if(moves.get("directFlight")){
-		        	//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), 
+		        	//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
 			         //new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.DIRECT_FLIGHT)));
-			      
+
 		        }
-		       
+
 				//mapPawnLabels.get(userRole).setLocation(city.getX(),city.getY()-20);
 			}
 		});
 		}
-		
+
 		acceptButton.addMouseListener(new MouseAdapter(){
 			public void mouseReleased(MouseEvent e)
 			{
 				//client.sendMesageToServer(ServerCommands.ANSWER_CONSENT_PROMPT.name(), true);
-				acceptButton.setVisible(false);
 			}
 		});
-		
+
 		declineButton.addMouseListener(new MouseAdapter(){
 			public void mouseReleased(MouseEvent e)
 			{
-				declineButton.setVisible(false);
 				//client.sendMesageToServer(ServerCommands.ANSWER_CONSENT_PROMPT.name(), false);
 			}
 		});
@@ -1036,41 +1143,6 @@ public class GUI extends JFrame
 			public void mouseReleased(MouseEvent e)
 			{
 				discardCardButton.setVisible(false);
-			}
-		});
-		
-		optionRedDisease.addMouseListener(new MouseAdapter(){
-			public void mouseReleased(MouseEvent e)
-			{
-			//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Red)));
-			}
-		});
-
-		optionBlueDisease.addMouseListener(new MouseAdapter(){
-			public void mouseReleased(MouseEvent e)
-			{
-				//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Blue)));
-			}
-		});
-
-		optionYellowDisease.addMouseListener(new MouseAdapter(){
-			public void mouseReleased(MouseEvent e)
-			{
-				//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Yellow)));
-			}
-		});
-
-		optionBlackDisease.addMouseListener(new MouseAdapter(){
-			public void mouseReleased(MouseEvent e)
-			{
-				//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Black)));
-			}
-		});
-
-		btnEndTurn.addMouseListener(new MouseAdapter(){
-			public void mouseReleased(MouseEvent e)
-			{
-				//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.END_TURN)));
 			}
 		});
 		
@@ -1126,15 +1198,43 @@ public class GUI extends JFrame
 		btnTreatDisease.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				resetMovesSelected(moves);
-				resetDisplayOptions(displayOptions);
+
 				loadTreatDiseaseMessage();
+			}
+		});
+
+		optionRedDisease.addMouseListener(new MouseAdapter(){
+			public void mouseReleased(MouseEvent e)
+			{
+			client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Red)));
+			}
+		});
+
+		optionBlueDisease.addMouseListener(new MouseAdapter(){
+			public void mouseReleased(MouseEvent e)
+			{
+				client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Blue)));
+			}
+		});
+
+		optionYellowDisease.addMouseListener(new MouseAdapter(){
+			public void mouseReleased(MouseEvent e)
+			{
+				client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Yellow)));
+			}
+		});
+
+		optionBlackDisease.addMouseListener(new MouseAdapter(){
+			public void mouseReleased(MouseEvent e)
+			{
+				client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Black)));
 			}
 		});
 		
 		//Discover a cure button
 		btnDiscoverCure.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			
+
 			}
 		});
 		
@@ -1144,8 +1244,13 @@ public class GUI extends JFrame
 			
 			}
 		});
-		
-		
+
+		btnEndTurn.addMouseListener(new MouseAdapter(){
+			public void mouseReleased(MouseEvent e)
+			{
+				client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.END_TURN)));
+			}
+		});
 	}
 
 	/*Helper method*/
@@ -1330,7 +1435,7 @@ public class GUI extends JFrame
 			if(cityCardLabel != null)
 			{
 				cityCardLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(cityCardLabel.getText())).getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
-				cityCardLabel.setBounds(202,585,100,140);
+				cityCardLabel.setBounds(202,583,100,115);
 				contentPane.add(cityCardLabel);
 			}
 			
@@ -1347,16 +1452,23 @@ public class GUI extends JFrame
 			if(cityCardLabel != null)
 			{
 				cityCardLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(cityCardLabel.getText())).getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
-				cityCardLabel.setBounds(102+i*5,185,100,140);
+				cityCardLabel.setBounds(102+i*2,193,100,115);
 				contentPane.add(cityCardLabel);
 				i++;
-				
 			}
 			
 		}
 		
 	}
-	
+
+	private void loadMapLines(){
+		JLabel mapLines = new JLabel();
+		mapLines.setBounds(210, -14, 980, 650);
+		mapLines.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(boardMapLinesPath))
+				.getImage().getScaledInstance(980, 560,  Image.SCALE_SMOOTH)));
+		contentPane.add(mapLines);
+	}
+
 	private void loadMap()
 	{
 		JLabel map = new JLabel();
@@ -1376,7 +1488,7 @@ public class GUI extends JFrame
 	
 	private void loadTargetsDrive()
 	{
-	
+
 		for(City c : currentUserCity.getNeighbors())
 		{
 			//city => cityLabel
@@ -1432,17 +1544,11 @@ public class GUI extends JFrame
 	private void loadTreatDiseaseMessage()
 	{
 		//current position of user
-		
-		 
-		//cubesTuples.forEach(p-> System.out.println("yo" + p.getKey()));
-		for(Pair<DiseaseType, Integer> d : cubesInCity)
+
+		List<Pair<DiseaseType,Integer>> cubesTuples = gs.getDiseaseCubesMap().get(currentUserCity.getName());
+		cubesTuples.forEach(p-> System.out.println("yo" + p.getKey()));
+		for(Pair<DiseaseType, Integer> d : cubesTuples)
 		{
-			
-			/*if(d.getKey().equals(DiseaseType.Red)) rrr.setVisible(true);
-			else if(d.getKey().equals(DiseaseType.Blue)) bbb,setVisible(true);
-			else if(d.getKey().equals(DiseaseType.Yellow)) yyy,setVisible(true);
-			else if(d.getKey().equals(DiseaseType.Black)) nnn,setVisible(true);*/
-			
 			JLabel chooseCube = new JLabel(""+ d.getKey());
 			chooseCube.setBounds(586, 256, 68, 36);
 			chooseCube.setForeground(Color.WHITE);
@@ -1475,6 +1581,52 @@ public class GUI extends JFrame
 		
 		
 	}
+
+	private void loadBtnEndTurn(){
+		if(username.equals(gs.getCurrentPlayer().getPlayerUserName()) && gs.getActionsRemaining() == 0) {
+			btnEndTurn.setText("END TURN");
+			btnEndTurn.setBounds(11, 530, 176, 20);
+			btnEndTurn.setBackground(Color.RED);
+			btnEndTurn.setForeground(Color.WHITE);
+			btnEndTurn.setVisible(true);
+			contentPane.add(btnEndTurn);
+		}
+		else {
+			btnEndTurn.setText("END TURN");
+			btnEndTurn.setBounds(11, 530, 176, 20);
+			btnEndTurn.setBackground(Color.RED);
+			btnEndTurn.setForeground(Color.WHITE);
+			btnEndTurn.setVisible(false);
+			contentPane.add(btnEndTurn);
+		}
+	}
+
+	private void loadActionsRemaining(){
+		if(username.equals(gs.getCurrentPlayer().getPlayerUserName())){
+			actionsRemaining.setText("Actions remaining: " + gs.getActionsRemaining());
+		}
+		else {
+			actionsRemaining.setText("Actions remaining: 0");
+		}
+	}
+
+	private void loadGenericMessageBox(){
+		if(username.equals(gs.getCurrentPlayer().getPlayerUserName())) {
+			genericBox.setForeground(Color.WHITE);
+			genericBox.setOpaque(false);
+			genericBox.setText("YOUR TURN");
+			genericBox.setBounds(600, 520, 200, 50);
+			genericBox.setVisible(true);
+		}
+		else {
+			genericBox.setForeground(Color.WHITE);
+			genericBox.setOpaque(false);
+			genericBox.setText(gs.getCurrentPlayer().getPlayerUserName() + "'s turn.");
+			genericBox.setBounds(600,520,200,50);
+			genericBox.setVisible(true);
+		}
+	}
+
 	private void loadShareKnowledgeMessage()
 	{
 		
@@ -1486,9 +1638,9 @@ public class GUI extends JFrame
 	}
 	private void resetMovesSelected(Map<String,Boolean> moves){
 		for(String m : moves.keySet()) moves.put(m,false);
-		
+
 	}
-	
+
 	private RoleType getUserRole()
 	{
 		RoleType userRole= null;
@@ -1531,7 +1683,7 @@ public class GUI extends JFrame
 		acceptButton.setBackground(Color.GREEN);
 		acceptButton.setBounds(486,300,50,50);
 		acceptButton.setOpaque(true);
-		
+
 		declineButton.setText("Decline");
 		declineButton.setBackground(Color.RED);
 		declineButton.setBounds(550,300,50,50);

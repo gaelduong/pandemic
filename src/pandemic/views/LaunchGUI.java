@@ -12,11 +12,11 @@ public class LaunchGUI {
 	public static void main(String[] args) {
         //System.out.println("Working Directory = " +
         //        System.getProperty("user.dir"));
-		Application.launch(MenuGUI.class, args);
+//		Application.launch(MenuGUI.class, args);
 
         //Application.launch(MyApp.class, args);
 	
-/*
+
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -28,7 +28,7 @@ public class LaunchGUI {
 				}
 			}
 		});
-*/
+
 }
 }
 
