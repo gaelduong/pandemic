@@ -1569,16 +1569,16 @@ public class GUI extends JFrame
 	
 	private void loadInfectionDiscardCards()
 	{
-		int i = 0;
+	//	int i = 0;
 		for(InfectionCard cityCard : gs.getInfectionDiscardPile().getCards())
 		{
 			JLabel cityCardLabel = mapInfectionCardLabels.get(cityCard.getCardName());
 			if(cityCardLabel != null)
 			{
 				cityCardLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(cityCardLabel.getText())).getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
-				cityCardLabel.setBounds(102+i*5,185,100,140);
+				cityCardLabel.setBounds(102,185,100,140);
 				contentPane.add(cityCardLabel);
-				i++;
+
 			}
 			
 		}

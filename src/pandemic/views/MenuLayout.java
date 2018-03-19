@@ -50,6 +50,12 @@ public class MenuLayout extends Parent {
     GameManager gameManager;
     boolean backButtonNotPressed = true;
 
+    Label playerc1;
+    Label playerc2 ;
+    Label playerc3;
+    Label playerc4;
+
+
     int currentNumOfPlayerConnected = 0;
 	public MenuLayout(PandemicServer ps, PandemicClient pc) {
         pandemicServer = ps;
@@ -445,10 +451,10 @@ public class MenuLayout extends Parent {
          * ************Create Lobby Stuff ********************************** *
          *********************************************************************/
         
-        Label playerc1 = new Label("Player 1: You");
-        Label playerc2 = new Label("Player 2: waiting to connect");
-        Label playerc3 = new Label("Player 3: waiting to connect");
-        Label playerc4 = new Label("Player 4: waiting to connect");
+        playerc1 = new Label("Player 1: You");
+        playerc2 = new Label("Player 2: waiting to connect");
+        playerc3 = new Label("Player 3: waiting to connect");
+        playerc4 = new Label("Player 4: waiting to connect");
         //thread here
 
         MenuButton btnCreateGameNow = new MenuButton("Start Game");
@@ -497,22 +503,22 @@ public class MenuLayout extends Parent {
                 getChildren().remove(createLobby);
             });
         });
-        
-        
+
+
         mainMenu.getChildren().addAll(btnCreate, btnJoin, btnOptions, btnExit);
         optionsMenu.getChildren().addAll(btnSound, btnVideo, btnOptionsBack);
         createMenu.getChildren().addAll(difficulty, difficulties, challenge, btnMutation, btnVirulent, btnBioTerrorist, btnCardShowing, btnCreateGame, btnCreateBack);
         joinMenu.getChildren().addAll(username, usernameTF, enterIP, ipAddress, btnJoinIP, btnJoinBack);
         joinLobby.getChildren().addAll(player1, player2, player3, player4, waitingToStart, btnJoinLobbyBack);
         createLobby.getChildren().addAll(playerc1, playerc2, playerc3, playerc4, btnCreateGameNow, btnCreateLobbyBack);
-        
+
         Rectangle bg = new Rectangle(1024, 768);
         bg.setFill(Color.GREY);
         bg.setOpacity(0.4);
 
         getChildren().addAll(bg, mainMenu);
-        
-        
+
+
     }
     private void setPandemicClient(PandemicClient c)
     {
@@ -521,7 +527,13 @@ public class MenuLayout extends Parent {
 
     public void updateCreateLabel(String newPlayerName) {
 	    //TODO
-        System.out.printf("new player joined %s\n", newPlayerName);
+        //playerc12-4
+        if (playerc2.getText().toLowerCase().contains("waiting to connect"))
+            playerc2.setText(newPlayerName);
+        else if (playerc3.getText().toLowerCase().contains("waiting to connect"))
+            playerc3.setText(newPlayerName);
+        else if (playerc4.getText().toLowerCase().contains("waiting to connect"))
+            playerc4.setText(newPlayerName);
     }
 
 	public void setUpCreateGame(PandemicServer s, PandemicClient c)
@@ -558,13 +570,13 @@ public class MenuLayout extends Parent {
 	File parent = new File("C:\\Users\\G\\eclipse-workspace\\pandemic\\bin\\temp\\");
 	parent.mkdirs();
     File file = new File("C:\\Users\\G\\eclipse-workspace\\pandemic\\bin\\temp\\" + dateFormat.format(date) + ".cfg");
-    String data = Integer.toString(tracker.difficulty) + "\r\n" + Integer.toString(tracker.mutation) + "\r\n" + 
-    Integer.toString(tracker.virulent) + "\r\n" + 
-    		Integer.toString(tracker.bioTerrorist) + "\r\n" + Integer.toString(tracker.seeCards); 
+    String data = Integer.toString(tracker.difficulty) + "\r\n" + Integer.toString(tracker.mutation) + "\r\n" +
+    Integer.toString(tracker.virulent) + "\r\n" +
+    		Integer.toString(tracker.bioTerrorist) + "\r\n" + Integer.toString(tracker.seeCards);
     FileWriter fr = null;
     try {
     	file.createNewFile();
-    	
+
         fr = new FileWriter(file);
         fr.write(data);
     } catch (IOException e) {
@@ -607,7 +619,7 @@ private class serverThing extends Thread {
         }
 
         public void run() {
-	        
+
         }
 
  }
