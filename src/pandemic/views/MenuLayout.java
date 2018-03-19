@@ -450,7 +450,9 @@ public class MenuLayout extends Parent {
 
             pandemicServer.sendMessageToClients(ClientCommands.RECEIVE_UPDATED_GAMESTATE.name(), gameManager.getGame().generateCondensedGameState());
         });
-        
+
+
+
         MenuButton btnCreateLobbyBack = new MenuButton("BACK");
         btnCreateLobbyBack.setOnMouseClicked(event -> {
             getChildren().add(mainMenu);

@@ -1120,7 +1120,7 @@ public class GUI extends JFrame
 				//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Blue)));
 			}
 		});
-		
+
 
 		optionYellowDisease.addMouseListener(new MouseAdapter(){
 			public void mouseReleased(MouseEvent e)
