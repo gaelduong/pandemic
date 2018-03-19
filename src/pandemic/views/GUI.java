@@ -78,6 +78,9 @@ public class GUI extends JFrame
 	private City currentUserCity;
 	private List<Pair<DiseaseType,Integer>> cubesInCity;
 
+	private boolean hasNeverBeenDrawnBefore = true;
+	private int controller = 0;
+
 
 	//private boolean[] moves = {driveFerrySelected,directFlightSelected,treatDiseaseSelected,shareKnowledgeSelected};
 	private Map<String,Boolean> moves = new HashMap<String,Boolean>()
@@ -756,6 +759,12 @@ public class GUI extends JFrame
 		this.username = username;
 		this.userRole = getUserRole();
         System.out.println("userRole in constructor server: " + userRole);
+
+
+        /*This method is responsible for creating all the event listeners*/
+
+
+
         /*try {
             server.setGame(gameManager.getGame());
         } catch (NullPointerException e) {
@@ -773,6 +782,11 @@ public class GUI extends JFrame
 	    //this.userRole = getUserRole();
         System.out.println("userRole in constructor client: " + userRole);
 	    this.client = client;
+
+
+        /*This method is responsible for creating all the event listeners*/
+
+
     }
 
 	//public void receiveNewGameState(GameState gs) {}
@@ -783,8 +797,17 @@ public class GUI extends JFrame
 		/*This method is responsible for setting up GUI components*/
 		initComponents();
 		/*This method is responsible for creating all the event listeners*/
-		createEvents();
+
 	}
+
+	public void createNewEventWrapper() {
+	    if(controller == 0) {
+	        controller++;
+            System.out.println("print CONTROLLER");
+            initComponents();
+	        createEvents();
+        }
+    }
 
 	private void initComponents() 
 	{
@@ -1038,6 +1061,7 @@ public class GUI extends JFrame
 		            }
 		        }
 		        System.out.println("City Clicked: " + cityNameSelected);
+                System.out.println("mouse event: " + e.getClickCount());
 
 		        if(moves.get("drive") &&
 		        		currentUserCity.getNeighbors().stream().anyMatch(city -> city.getName().equals(cityNameSelected)) ){
@@ -1096,6 +1120,7 @@ public class GUI extends JFrame
 				//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Blue)));
 			}
 		});
+		
 
 		optionYellowDisease.addMouseListener(new MouseAdapter(){
 			public void mouseReleased(MouseEvent e)
@@ -1709,6 +1734,8 @@ public class GUI extends JFrame
         System.out.println("userRole in setGameState: " + userRole);
 
         currentUserCity = gs.getPositionMap().get(userRole);
+        createNewEventWrapper();
+
 	}
 	
 
