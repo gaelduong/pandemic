@@ -236,6 +236,7 @@ public class GameManager {
 
 				// FOR TESTING:
                 System.out.println("Epidemic resolved");
+                status = 1;
 			}
 			else {
 				p.addToHand(playerCard2);
