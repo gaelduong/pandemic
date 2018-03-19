@@ -49,15 +49,19 @@ public class PlayerDeck implements CardSource {
     }
 
     //must be done after all players have joined game and have been dealt cards according to numOfPlayers
-    public void insertAndShuffleEpidemicCards(List<PlayerCard> epidemicCards) {
+    public void insertAndShuffleEpidemicCards(List<PlayerCard> epidemicCards, int mode) {
 	    shuffleDeck();
 	    List<List<PlayerCard>> choppedDeck = chopDeckForEpidemicCardInsertion( (int) Math.ceil(cardsInDeck.size() / (double) epidemicCards.size()));
 	    ArrayList<PlayerCard> newCardDeck = new ArrayList<PlayerCard>();
 	    for(List<PlayerCard> sublist : choppedDeck) {
 	        if(epidemicCards.isEmpty())
 	            break;
-	        sublist.add(epidemicCards.remove(0));
-            Collections.shuffle(sublist);
+            if (mode == 1) {
+                sublist.add(3, epidemicCards.remove(0));
+            } else {
+                sublist.add(3, epidemicCards.remove(0));
+                Collections.shuffle(sublist);
+            }
             newCardDeck.addAll(sublist);
         }
         cardsInDeck.clear();

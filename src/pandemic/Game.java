@@ -234,8 +234,9 @@ public class Game {
         /*System.out.println("......PlayerDeck before Epidemic Cards inserted (size: " + myPlayerDeck.getDeckSize()+ ")....");
         myPlayerDeck.printDeck();*/
 
-        //myPlayerDeck.insertAndShuffleEpidemicCards(epidemicCards);
-        myPlayerDeck.getDeck().addAll(0, epidemicCards);
+        myPlayerDeck.insertAndShuffleEpidemicCards(epidemicCards, 1);
+        myPlayerDeck.printDeck();
+        //myPlayerDeck.getDeck().addAll(0, epidemicCards);
 
         /*System.out.println("......PlayerDeck after Epidemic Cards inserted (size: " + myPlayerDeck.getDeckSize()+ ")....");
         myPlayerDeck.printDeck();*/

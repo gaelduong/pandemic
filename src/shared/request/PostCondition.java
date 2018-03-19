@@ -47,7 +47,7 @@ public class PostCondition implements Serializable {
          * The server will handle removing 1 cube or all depending on if the disease was cured.
          *
          * <br><br><b>Arguments required:</b><br>
-         * {@link pandemic.DiseaseType} diseaseType
+         * String diseaseType
          */
         TREAT_DISEASE,
 

@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -833,7 +834,10 @@ public class GUI extends JFrame
 
 		/*----------Set up 8 buttons----------*/
 
+        if(gs == null)
+            return;
 		String currentPlayer = gs.getCurrentPlayer();
+
 		if(currentPlayer != null && username.equals(currentPlayer) && gs.getCurrentPlayerActionsRemaining() > 0) {
 			//Drive Ferry
 			//btnDriveFerry.setIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/icon.png")));
@@ -1424,7 +1428,14 @@ public class GUI extends JFrame
 			if(cityCardLabel != null)
 			{
 				System.out.println(cityCardLabel.getText());
-				cityCardLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(cityCardLabel.getText())).getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
+                URL resource = GUI.class.getResource(cityCardLabel.getText());
+
+                if(resource == null) {
+                    System.err.println("NO RESOURCE");
+                    return;
+                }
+
+                cityCardLabel.setIcon(new ImageIcon(new ImageIcon(resource).getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
 				cityCardLabel.setBounds(202+115*i,585,100,140);
 				contentPane.add(cityCardLabel);
 				i++;
@@ -1649,8 +1660,8 @@ public class GUI extends JFrame
 	private void hideTreatDiseaseOptions(){
 		optionBlueDisease.setVisible(false);
 		optionRedDisease.setVisible(false);
-		optionRedDisease.setVisible(false);
-		optionRedDisease.setVisible(false);
+		optionBlackDisease.setVisible(false);
+		optionYellowDisease.setVisible(false);
 		genericBox.setVisible(false);
 	}
 
