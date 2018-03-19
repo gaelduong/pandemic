@@ -2,12 +2,12 @@ package pandemic;
 
 public abstract class EventCard implements PlayerCard{
 	
-	protected GameManager gameManager;
+	protected GameManager gameManager = null;
 	protected EventCardName name;
 	protected CardType cardType;
 	
 	public EventCard(GameManager gm, EventCardName pName){
-	    gameManager = gm;
+	    //gameManager = gm;
 		name = pName;
 	    cardType = CardType.EventCard;
 	}

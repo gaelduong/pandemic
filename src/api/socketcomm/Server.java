@@ -41,8 +41,8 @@ public abstract class Server extends Thread {
                 final String data[] = client.getRemoteSocketAddress().toString().split(":");
                 final String hostAddress = client.getInetAddress().getHostAddress();
 
-                User clientUser = new User("client" + game.getGameManager().getActivePlayers().size(),
-                        "ksjheukf", hostAddress);
+                String clientUsername = "client" + game.getGameManager().getActivePlayers().size();
+                User clientUser = new User(clientUsername, "ksjheukf", hostAddress);
                 game.getGameManager().joinGame(clientUser);
 
 
@@ -53,7 +53,7 @@ public abstract class Server extends Thread {
                 sendMessage(sb, ClientCommands.RECEIVE_NUM_OF_PLAYERS.name(), currentNumOfPlayerConnected);
                 currentNumOfPlayerConnected++;
                 new MessageHandler(sb, this::handleReceivedMessage);
-                onClientConnected(sb);
+                onClientConnected(sb, clientUsername);
 
             } catch (SocketException e) {
                 System.out.println("Server closed");
@@ -104,6 +104,6 @@ public abstract class Server extends Thread {
 
     protected abstract void handleReceivedMessage(SocketBundle client, List<Object> objects);
 
-    protected abstract void onClientConnected(SocketBundle client);
+    protected abstract void onClientConnected(SocketBundle client, String clientUsername);
 
 }

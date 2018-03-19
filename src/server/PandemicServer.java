@@ -120,6 +120,7 @@ public class PandemicServer extends Server {
         final String playerUsername = clientMap.get(client);
         if (playerUsername == null) {
             System.err.printf("No player registered from %s! ERROR!\n", client.getSocket().getRemoteSocketAddress().toString());
+            System.out.println("client map (in sendUpdateRequest): " + clientMap);
             return;
         }
 
@@ -176,7 +177,8 @@ public class PandemicServer extends Server {
 
 
     @Override
-    protected void onClientConnected(SocketBundle client) {
-        clientMap.put(client, null);
+    protected void onClientConnected(SocketBundle client, String clientUsername) {
+        clientMap.put(client, clientUsername);
+        System.out.println("client map: " + clientMap);
     }
 }

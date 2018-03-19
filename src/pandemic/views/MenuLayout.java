@@ -361,12 +361,12 @@ public class MenuLayout extends Parent {
                         System.out.println(pandemicServer + "test");
                         pandemicClient.getGui().setVisible(true);
                         pandemicClient.getGui().draw();
-                        //getParent().setVisible(false);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             });
+            //getParent().setVisible(false);
         });
         
         MenuButton btnJoinBack = new MenuButton("BACK");

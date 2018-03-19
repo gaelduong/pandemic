@@ -2,13 +2,15 @@ package server;
 
 import shared.request.UpdateRequest;
 
+import java.io.Serializable;
+
 /**
  * Each of the below is a command that the Pandemic server can receive from the client.
  * Above each command are the arguments received.
  *
  * @author Russell Katz
  */
-public enum ServerCommands {
+public enum ServerCommands implements Serializable {
 
     /**
      * Clients will use this command to send an {@link UpdateRequest} to the server.

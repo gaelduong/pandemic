@@ -102,7 +102,7 @@ public class GameState implements Serializable {
 
     public int getCurrentOutbreakMeter() { return currentOutbreakMeter; }
 
-    public int getActionsRemaining(){
+    public int getCurrentPlayerActionsRemaining(){
         return currentPlayerActionsRemaining;
     }
 

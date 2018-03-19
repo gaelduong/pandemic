@@ -1,12 +1,14 @@
 package client;
 
+import java.io.Serializable;
+
 /**
  * Each of the below is a command that the Pandemic client can receive from the server.
  * Above each command are the arguments received.
  *
  * @author Russell Katz
  */
-public enum ClientCommands {
+public enum ClientCommands implements Serializable{
 
     /**
      * This command receives the new GameState of Pandemic so that the
