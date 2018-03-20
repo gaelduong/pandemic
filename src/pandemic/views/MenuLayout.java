@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.AudioClip;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -54,6 +55,7 @@ public class MenuLayout extends Parent {
     Label playerc2 ;
     Label playerc3;
     Label playerc4;
+    AudioClip mediaPlayer = new AudioClip(new File("src/pandemic/resources/Music/AlienSwarmSoundtrackRybergBattle.mp3").toURI().toString());
 
 
     int currentNumOfPlayerConnected = 0;
@@ -61,7 +63,7 @@ public class MenuLayout extends Parent {
         pandemicServer = ps;
         pandemicClient = pc;
 		CreateGameObjectData tracker = new CreateGameObjectData();
-		
+
         VBox mainMenu = new VBox(10);
         VBox optionsMenu = new VBox(10);
         VBox createMenu = new VBox(10);
@@ -138,7 +140,6 @@ public class MenuLayout extends Parent {
 
         MenuButton btnExit = new MenuButton("EXIT");
         btnExit.setOnMouseClicked(event -> {
-
         	System.exit(0);
         });
         
@@ -166,7 +167,8 @@ public class MenuLayout extends Parent {
         MenuButton btnSound = new MenuButton("SOUND");
         MenuButton btnVideo = new MenuButton("VIDEO");
         // End of Options Menu after clicking Back
-        
+
+
  
         /********************************************************************* 
          * ************Create Game Menu Stuff ****************************** *
@@ -297,7 +299,9 @@ public class MenuLayout extends Parent {
                 getChildren().remove(createMenu);
             });
         });
-        
+
+        mediaPlayer.play();
+
         /********************************************************************* 
          * ************Join Game Menu Stuff ******************************** *
          *********************************************************************/
@@ -462,7 +466,7 @@ public class MenuLayout extends Parent {
         this.setVisible(false);
         	// Actually start the game
 
-
+            mediaPlayer.stop();
 
             GameState gameStateTest = gameManager.getGame().generateCondensedGameState();
             //frame = new GUI("sdfsd", pandemicServer, gameStateTest);
@@ -517,6 +521,7 @@ public class MenuLayout extends Parent {
         bg.setOpacity(0.4);
 
         getChildren().addAll(bg, mainMenu);
+
 
 
     }
