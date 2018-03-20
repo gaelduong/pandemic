@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import static java.lang.Thread.sleep;
+import static javafx.scene.media.AudioClip.INDEFINITE;
 
 public class MenuLayout extends Parent {
     PandemicServer pandemicServer;
@@ -55,7 +56,7 @@ public class MenuLayout extends Parent {
     Label playerc2 ;
     Label playerc3;
     Label playerc4;
-    AudioClip mediaPlayer = new AudioClip(new File("src/pandemic/resources/Music/AlienSwarmSoundtrackRybergBattle.mp3").toURI().toString());
+    AudioClip mediaPlayer = new AudioClip(new File("src/pandemic/resources/Music/AlienSwarmSoundtrackRybergBattle.wav").toURI().toString());
 
 
     int currentNumOfPlayerConnected = 0;
@@ -299,7 +300,7 @@ public class MenuLayout extends Parent {
                 getChildren().remove(createMenu);
             });
         });
-
+        mediaPlayer.setCycleCount(INDEFINITE);
         mediaPlayer.play();
 
         /********************************************************************* 
@@ -385,7 +386,7 @@ public class MenuLayout extends Parent {
 
                 //wait for a gameState or the user to backout from the lobby ? might work
             }
-
+            mediaPlayer.stop();
             backButtonNotPressed = true;
             System.out.println("hello");
 
