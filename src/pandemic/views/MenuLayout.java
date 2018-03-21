@@ -408,6 +408,7 @@ public class MenuLayout extends Parent {
 
                 //wait for a gameState or the user to backout from the lobby ? might work
             }
+            startGameSound.play();
             menuMusic.stop();
             backButtonNotPressed = true;
             System.out.println("hello");
