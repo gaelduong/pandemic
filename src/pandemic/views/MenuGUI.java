@@ -74,9 +74,6 @@ public class MenuGUI extends Application {
 		primaryStage.show();
 
 
-//		AudioClip mediaPlayer = new AudioClip(new File("src/pandemic/resources/Music/AlienSwarmSoundtrackRybergBattle.mp3").toURI().toString());
-//		mediaPlayer.play();
-
 		//Runtime.getRuntime().addShutdownHook(new Message());
 
 

@@ -56,8 +56,9 @@ public class MenuLayout extends Parent {
     Label playerc2 ;
     Label playerc3;
     Label playerc4;
-    AudioClip mediaPlayer = new AudioClip(new File("src/pandemic/resources/Music/AlienSwarmSoundtrackRybergBattle.wav").toURI().toString());
-
+    final AudioClip menuMusic = new AudioClip(new File("src/pandemic/resources/Music/AlienSwarmSoundtrackRybergBattle.wav").toURI().toString());
+    final AudioClip startGameSound = new AudioClip(new File("src/pandemic/resources/Music/416385__fredzed__flash-and-a-bang.wav").toURI().toString());
+    final AudioClip selectSound = new AudioClip(new File("src/pandemic/resources/Music/50559__broumbroum__sf3-sfx-menu-select-l.wav").toURI().toString());
 
     int currentNumOfPlayerConnected = 0;
 	public MenuLayout(PandemicServer ps, PandemicClient pc) {
@@ -102,7 +103,8 @@ public class MenuLayout extends Parent {
 
         MenuButton btnCreate = new MenuButton("Create Game");
         btnCreate.setOnMouseClicked(event -> {
-            
+            selectSound.play();
+
         	getChildren().add(createMenu);
 
             TranslateTransition tt = new TranslateTransition(Duration.seconds(0.5), mainMenu);
@@ -123,6 +125,8 @@ public class MenuLayout extends Parent {
 
         MenuButton btnOptions = new MenuButton("OPTIONS");
         btnOptions.setOnMouseClicked(event -> {
+            selectSound.play();
+
             getChildren().add(optionsMenu);
 
             TranslateTransition tt = new TranslateTransition(Duration.seconds(0.5), mainMenu);
@@ -141,6 +145,7 @@ public class MenuLayout extends Parent {
 
         MenuButton btnExit = new MenuButton("EXIT");
         btnExit.setOnMouseClicked(event -> {
+            selectSound.play();
         	System.exit(0);
         });
         
@@ -150,6 +155,8 @@ public class MenuLayout extends Parent {
         
         MenuButton btnOptionsBack = new MenuButton("BACK");
         btnOptionsBack.setOnMouseClicked(event -> {
+            selectSound.play();
+
             getChildren().add(mainMenu);
 
             TranslateTransition tt = new TranslateTransition(Duration.seconds(0.25), optionsMenu);
@@ -186,6 +193,8 @@ public class MenuLayout extends Parent {
         
         MenuButton btnMutation = new MenuButton("Mutation");
         btnMutation.setOnMouseClicked(event -> {
+            selectSound.play();
+
         	if(btnMutation.bg.getFill() == Color.GREEN)
         	{
         		btnMutation.bg.setFill(Color.RED);
@@ -200,6 +209,8 @@ public class MenuLayout extends Parent {
         });
         MenuButton btnVirulent = new MenuButton("Virulent");
         btnVirulent.setOnMouseClicked(event -> {
+            selectSound.play();
+
         	if(btnVirulent.bg.getFill() == Color.GREEN)
         	{
         		btnVirulent.bg.setFill(Color.RED);
@@ -215,6 +226,8 @@ public class MenuLayout extends Parent {
 
         MenuButton btnBioTerrorist = new MenuButton("BioTerrorist");
         btnBioTerrorist.setOnMouseClicked(event -> {
+            selectSound.play();
+
         	if(btnBioTerrorist.bg.getFill() == Color.GREEN)
         	{
         		btnBioTerrorist.bg.setFill(Color.RED);
@@ -229,6 +242,8 @@ public class MenuLayout extends Parent {
         });
         MenuButton btnCardShowing = new MenuButton("Can See All Players Cards");
         btnCardShowing.setOnMouseClicked(event -> {
+            selectSound.play();
+
         	if(btnCardShowing.bg.getFill() == Color.GREEN)
         	{
         		btnCardShowing.bg.setFill(Color.RED);
@@ -243,6 +258,7 @@ public class MenuLayout extends Parent {
         });
         MenuButton btnCreateGame = new MenuButton("Ready: Create Game Lobby!");
         btnCreateGame.setOnMouseClicked(event -> {
+            selectSound.play();
 
         	if(difficulties.getValue().equals("Introductory"))
         	{
@@ -285,6 +301,8 @@ public class MenuLayout extends Parent {
         
         MenuButton btnCreateBack = new MenuButton("BACK");
         btnCreateBack.setOnMouseClicked(event -> {
+            selectSound.play();
+
             getChildren().add(mainMenu);
 
             TranslateTransition tt = new TranslateTransition(Duration.seconds(0.25), createMenu);
@@ -300,8 +318,8 @@ public class MenuLayout extends Parent {
                 getChildren().remove(createMenu);
             });
         });
-        mediaPlayer.setCycleCount(INDEFINITE);
-        mediaPlayer.play();
+        menuMusic.setCycleCount(INDEFINITE);
+        menuMusic.play();
 
         /********************************************************************* 
          * ************Join Game Menu Stuff ******************************** *
@@ -309,6 +327,8 @@ public class MenuLayout extends Parent {
         
         MenuButton btnJoin = new MenuButton("Join Game");
         btnJoin.setOnMouseClicked(event -> {
+            selectSound.play();
+
         	getChildren().add(joinMenu);
 
             TranslateTransition tt = new TranslateTransition(Duration.seconds(0.5), mainMenu);
@@ -334,6 +354,8 @@ public class MenuLayout extends Parent {
 
         MenuButton btnJoinIP = new MenuButton("Join");
         btnJoinIP.setOnMouseClicked((MouseEvent event) -> {
+            selectSound.play();
+
             String usernameTFText = usernameTF.getText();
             try {
                 setPandemicClient(new PandemicClient(ipAddress.getText(), usernameTFText,  70));
@@ -386,7 +408,7 @@ public class MenuLayout extends Parent {
 
                 //wait for a gameState or the user to backout from the lobby ? might work
             }
-            mediaPlayer.stop();
+            menuMusic.stop();
             backButtonNotPressed = true;
             System.out.println("hello");
 
@@ -406,6 +428,8 @@ public class MenuLayout extends Parent {
         
         MenuButton btnJoinBack = new MenuButton("BACK");
         btnJoinBack.setOnMouseClicked(event -> {
+            selectSound.play();
+
             getChildren().add(mainMenu);
 
             TranslateTransition tt = new TranslateTransition(Duration.seconds(0.25), joinMenu);
@@ -434,6 +458,8 @@ public class MenuLayout extends Parent {
         
         MenuButton btnJoinLobbyBack = new MenuButton("BACK");
         btnJoinLobbyBack.setOnMouseClicked(event -> {
+            selectSound.play();
+
             backButtonNotPressed = false;
             getChildren().add(mainMenu);
 
@@ -466,8 +492,9 @@ public class MenuLayout extends Parent {
         btnCreateGameNow.setOnMouseClicked(event -> {
         this.setVisible(false);
         	// Actually start the game
+            startGameSound.play();
+            menuMusic.stop();
 
-            mediaPlayer.stop();
 
             GameState gameStateTest = gameManager.getGame().generateCondensedGameState();
             //frame = new GUI("sdfsd", pandemicServer, gameStateTest);
@@ -493,6 +520,8 @@ public class MenuLayout extends Parent {
 
         MenuButton btnCreateLobbyBack = new MenuButton("BACK");
         btnCreateLobbyBack.setOnMouseClicked(event -> {
+            selectSound.play();
+
             getChildren().add(mainMenu);
 
             TranslateTransition tt = new TranslateTransition(Duration.seconds(0.25), createLobby);
