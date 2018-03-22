@@ -1048,11 +1048,11 @@ public class GUI extends JFrame
 		
 	public void draw()
 	{
-		contentPane.setVisible(false);
+		//contentPane.setVisible(false);
 		/*This method is responsible for setting up GUI components*/
 		initComponents();
 		/*This method is responsible for creating all the event listeners*/
-		contentPane.setVisible(true);
+		//contentPane.setVisible(true);
 	}
 
 	public void createNewEventWrapper() {
