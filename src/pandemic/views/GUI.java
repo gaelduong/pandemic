@@ -387,6 +387,8 @@ public class GUI extends JFrame
 	
 	JPanel topBar = new JPanel();
 
+	JLabel userRoleLabel = new JLabel();
+
 	/*ICON/IMAGE PATHS (FINAL FIELDS)*/
 	//Including: MAP, pawn icons, city icons, card pics
 	
@@ -1012,6 +1014,87 @@ public class GUI extends JFrame
 		genericBox.setVisible(true);
 		contentPane.add(genericBox);
 
+		// Top bar
+		topBar.setBackground(Color.BLACK);
+		topBar.setBounds(214, 0, 980, 30);
+		contentPane.add(topBar);
+		topBar.setVisible(true);
+		topBar.setLayout(null);
+		//+gameManager().getDiseaseSupplyByDiseaseType(DiseaseType.Red).size()
+		//red cubes remaining
+		redRemaining = new JLabel();
+		redRemaining.setBackground(Color.BLACK);
+		redRemaining.setForeground(Color.WHITE);
+		redRemaining.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(redCubesRemPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
+		redRemaining.setBounds(286, 6, 48, 16);
+		topBar.add(redRemaining);
+		redRemaining.setOpaque(true);
+
+		//blue cubes remaining
+		blueRemaining = new JLabel();
+		blueRemaining.setBackground(Color.BLACK);
+		blueRemaining.setForeground(Color.WHITE);
+		blueRemaining.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(blueCubesRemPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
+		blueRemaining.setBounds(341, 6, 48, 16);
+		topBar.add(blueRemaining);
+		blueRemaining.setOpaque(true);
+
+		//yellow cubes remaining
+		yellowRemaining = new JLabel();
+		yellowRemaining.setBackground(Color.BLACK);
+		yellowRemaining.setForeground(Color.WHITE);
+		yellowRemaining.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(yellowCubesRemPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
+		yellowRemaining.setBounds(396, 6, 48, 16);
+		topBar.add(yellowRemaining);
+		yellowRemaining.setOpaque(true);
+
+		//black cubes remaining
+		blackRemaining = new JLabel();
+		blackRemaining.setBackground(Color.BLACK);
+		blackRemaining.setForeground(Color.WHITE);
+		blackRemaining.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(blackCubesRemPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
+		blackRemaining.setBounds(451, 6, 48, 16);
+		topBar.add(blackRemaining);
+		blackRemaining.setOpaque(true);
+;
+		//instruction
+		instruction = new JLabel("");
+		instruction.setBackground(Color.BLACK);
+		instruction.setForeground(Color.WHITE);
+		instruction.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(instructionIconPath)).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+		instruction.setBounds(616, 6, 48, 16);
+		topBar.add(instruction);
+		instruction.setOpaque(true);
+
+		//infection rate
+		infectionRate = new JLabel();
+		infectionRate.setBackground(Color.BLACK);
+		infectionRate.setForeground(Color.WHITE);
+		infectionRate.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(infectionRateIconPath)).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+		infectionRate.setBounds(506, 6, 48, 16);
+		topBar.add(infectionRate);
+		infectionRate.setOpaque(true);
+
+		//outbreak meter count
+		outbreakMeterCount = new JLabel();
+		outbreakMeterCount.setBackground(Color.BLACK);
+		outbreakMeterCount.setForeground(Color.WHITE);
+		outbreakMeterCount.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(outbreakMeterCountIconPath)).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+		outbreakMeterCount.setBounds(561, 6, 48, 16);
+		topBar.add(outbreakMeterCount);
+		outbreakMeterCount.setOpaque(true);
+
+		//Display User role
+		System.out.println("username  in lcp: " + username);
+		//userRoleLabel.setFont(new Font("Lao MN", Font.PLAIN, 12));
+		userRoleLabel.setForeground(Color.WHITE);
+		contentPane.add(userRoleLabel);
+		userRoleLabel.setVisible(true);
+		controlPawn = new JLabel();
+		controlPawn.setBounds(74, 595, 80, 106);
+		contentPane.add(controlPawn);
+		controlPawn.setVisible(true);
+
 
 		contentPane.setComponentZOrder(btnDriveFerry, 1);
 		contentPane.setComponentZOrder(btnDirectFlight, 1);
@@ -1037,7 +1120,15 @@ public class GUI extends JFrame
 		}
 		contentPane.setComponentZOrder(btnEndTurn,1);
 		contentPane.setComponentZOrder(genericBox, 1);
-
+		contentPane.setComponentZOrder(topBar, 2);
+		contentPane.setComponentZOrder(redRemaining, 1);
+		contentPane.setComponentZOrder(blueRemaining, 1);
+		contentPane.setComponentZOrder(yellowRemaining, 1);
+		contentPane.setComponentZOrder(blackRemaining, 1);
+		contentPane.setComponentZOrder(infectionRate, 1);
+		contentPane.setComponentZOrder(outbreakMeterCount, 1);
+		contentPane.setComponentZOrder(userRoleLabel, 1);
+		contentPane.setComponentZOrder(controlPawn, 1);
 
 	}
 
@@ -1196,76 +1287,76 @@ public class GUI extends JFrame
 		
 		//top bar panel container
 
-		topBar.setBackground(Color.BLACK);
-		topBar.setBounds(214, 0, 980, 30);
-		contentPane.add(topBar);
-		contentPane.setComponentZOrder(topBar, 2);
-		topBar.setVisible(true);
-		topBar.setLayout(null);
-		//+gameManager().getDiseaseSupplyByDiseaseType(DiseaseType.Red).size()
-		//red cubes remaining
-		redRemaining = new JLabel(""+gs.getRemainingDiseaseCubesMap().get(DiseaseType.Red));
-		redRemaining.setBackground(Color.BLACK);
-		redRemaining.setForeground(Color.WHITE);
-		redRemaining.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(redCubesRemPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
-		redRemaining.setBounds(286, 6, 48, 16);
-		topBar.add(redRemaining);
-		//contentPane.setComponentZOrder(redRemaining, 1);
-		redRemaining.setOpaque(true);
+//		topBar.setBackground(Color.BLACK);
+//		topBar.setBounds(214, 0, 980, 30);
+//		contentPane.add(topBar);
+//		contentPane.setComponentZOrder(topBar, 2);
+//		topBar.setVisible(true);
+//		topBar.setLayout(null);
+//		//+gameManager().getDiseaseSupplyByDiseaseType(DiseaseType.Red).size()
+//		//red cubes remaining
+//		redRemaining = new JLabel(""+gs.getRemainingDiseaseCubesMap().get(DiseaseType.Red));
+//		redRemaining.setBackground(Color.BLACK);
+//		redRemaining.setForeground(Color.WHITE);
+//		redRemaining.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(redCubesRemPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
+//		redRemaining.setBounds(286, 6, 48, 16);
+//		topBar.add(redRemaining);
+//		//contentPane.setComponentZOrder(redRemaining, 1);
+//		redRemaining.setOpaque(true);
+//
+//		//blue cubes remaining
+//		blueRemaining = new JLabel(""+gs.getRemainingDiseaseCubesMap().get(DiseaseType.Blue));
+//		blueRemaining.setBackground(Color.BLACK);
+//		blueRemaining.setForeground(Color.WHITE);
+//		blueRemaining.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(blueCubesRemPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
+//		blueRemaining.setBounds(341, 6, 48, 16);
+//		topBar.add(blueRemaining);
+//		blueRemaining.setOpaque(true);
+//
+//		//yellow cubes remaining
+//		yellowRemaining = new JLabel(""+gs.getRemainingDiseaseCubesMap().get(DiseaseType.Yellow));
+//		yellowRemaining.setBackground(Color.BLACK);
+//		yellowRemaining.setForeground(Color.WHITE);
+//		yellowRemaining.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(yellowCubesRemPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
+//		yellowRemaining.setBounds(396, 6, 48, 16);
+//		topBar.add(yellowRemaining);
+//		yellowRemaining.setOpaque(true);
+//
+//		//purple cubes remaining
+//		blackRemaining = new JLabel(""+gs.getRemainingDiseaseCubesMap().get(DiseaseType.Black));
+//		blackRemaining.setBackground(Color.BLACK);
+//		blackRemaining.setForeground(Color.WHITE);
+//		blackRemaining.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(blackCubesRemPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
+//		blackRemaining.setBounds(451, 6, 48, 16);
+//		topBar.add(blackRemaining);
+//		blackRemaining.setOpaque(true);
+//
+//		//instruction
+//		instruction = new JLabel("");
+//		instruction.setBackground(Color.BLACK);
+//		instruction.setForeground(Color.WHITE);
+//		instruction.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(instructionIconPath)).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+//		instruction.setBounds(616, 6, 48, 16);
+//		topBar.add(instruction);
+//		instruction.setOpaque(true);
 		
-		//blue cubes remaining
-		blueRemaining = new JLabel(""+gs.getRemainingDiseaseCubesMap().get(DiseaseType.Blue));
-		blueRemaining.setBackground(Color.BLACK);
-		blueRemaining.setForeground(Color.WHITE);
-		blueRemaining.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(blueCubesRemPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
-		blueRemaining.setBounds(341, 6, 48, 16);
-		topBar.add(blueRemaining);
-		blueRemaining.setOpaque(true);
-
-		//yellow cubes remaining
-		yellowRemaining = new JLabel(""+gs.getRemainingDiseaseCubesMap().get(DiseaseType.Yellow));
-		yellowRemaining.setBackground(Color.BLACK);
-		yellowRemaining.setForeground(Color.WHITE);
-		yellowRemaining.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(yellowCubesRemPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
-		yellowRemaining.setBounds(396, 6, 48, 16);
-		topBar.add(yellowRemaining);
-		yellowRemaining.setOpaque(true);
-		
-		//purple cubes remaining
-		blackRemaining = new JLabel(""+gs.getRemainingDiseaseCubesMap().get(DiseaseType.Black));
-		blackRemaining.setBackground(Color.BLACK);
-		blackRemaining.setForeground(Color.WHITE);
-		blackRemaining.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(blackCubesRemPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
-		blackRemaining.setBounds(451, 6, 48, 16);
-		topBar.add(blackRemaining);
-		blackRemaining.setOpaque(true);
-		
-		//instruction
-		instruction = new JLabel("");
-		instruction.setBackground(Color.BLACK);
-		instruction.setForeground(Color.WHITE);
-		instruction.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(instructionIconPath)).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-		instruction.setBounds(616, 6, 48, 16);
-		topBar.add(instruction);
-		instruction.setOpaque(true);
-		
-		//infection rate
-		infectionRate = new JLabel(""+gs.getCurrentInfectionRate());
-		infectionRate.setBackground(Color.BLACK);
-		infectionRate.setForeground(Color.WHITE);
-		infectionRate.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(infectionRateIconPath)).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-		infectionRate.setBounds(506, 6, 48, 16);
-		topBar.add(infectionRate);
-		infectionRate.setOpaque(true);
-	
-		//outbreak meter count
-		outbreakMeterCount = new JLabel(""+gs.getCurrentOutbreakMeter());
-		outbreakMeterCount.setBackground(Color.BLACK);
-		outbreakMeterCount.setForeground(Color.WHITE);
-		outbreakMeterCount.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(outbreakMeterCountIconPath)).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-		outbreakMeterCount.setBounds(561, 6, 48, 16);
-		topBar.add(outbreakMeterCount);
-		outbreakMeterCount.setOpaque(true);
+//		//infection rate
+//		infectionRate = new JLabel(""+gs.getCurrentInfectionRate());
+//		infectionRate.setBackground(Color.BLACK);
+//		infectionRate.setForeground(Color.WHITE);
+//		infectionRate.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(infectionRateIconPath)).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+//		infectionRate.setBounds(506, 6, 48, 16);
+//		topBar.add(infectionRate);
+//		infectionRate.setOpaque(true);
+//
+//		//outbreak meter count
+//		outbreakMeterCount = new JLabel(""+gs.getCurrentOutbreakMeter());
+//		outbreakMeterCount.setBackground(Color.BLACK);
+//		outbreakMeterCount.setForeground(Color.WHITE);
+//		outbreakMeterCount.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(outbreakMeterCountIconPath)).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+//		outbreakMeterCount.setBounds(561, 6, 48, 16);
+//		topBar.add(outbreakMeterCount);
+//		outbreakMeterCount.setOpaque(true);
 		
 
 //		/*---popups/messages/optionDisplay..---*/
@@ -1288,7 +1379,7 @@ public class GUI extends JFrame
 
 
 
-
+		loadTopBar();
 		loadPlayerCards();
 		loadPlayerDiscardCards();
 		loadInfectionDiscardCards();
@@ -1626,6 +1717,15 @@ public class GUI extends JFrame
 		return new int[]{Integer.parseInt(X),Integer.parseInt(Y)};
 	}
 
+	private void loadTopBar(){
+		redRemaining.setText(""+gs.getRemainingDiseaseCubesMap().get(DiseaseType.Red));
+		blueRemaining.setText(""+gs.getRemainingDiseaseCubesMap().get(DiseaseType.Blue));
+		yellowRemaining.setText(""+gs.getRemainingDiseaseCubesMap().get(DiseaseType.Yellow));
+		blackRemaining.setText(""+gs.getRemainingDiseaseCubesMap().get(DiseaseType.Black));
+		infectionRate.setText(""+gs.getCurrentInfectionRate());
+		outbreakMeterCount.setText(""+gs.getCurrentOutbreakMeter());
+	}
+
 	private void loadCubesOnMap()	{
 		for(JLabel cubes : cityDiseaseCubes){
 			cubes.setVisible(false);
@@ -1816,26 +1916,26 @@ public class GUI extends JFrame
 	private void loadControlPawn()
 	{
 		
-		//Display
+//		//Display
         System.out.println("username  in lcp: " + username);
-		JLabel userRoleLabel = new JLabel("Role: " + userRole.toString());
-		//userRoleLabel.setFont(new Font("Lao MN", Font.PLAIN, 12));
-		userRoleLabel.setForeground(Color.WHITE);
+		userRoleLabel.setText("Role: " + userRole.toString());
+//		//userRoleLabel.setFont(new Font("Lao MN", Font.PLAIN, 12));
+//		userRoleLabel.setForeground(Color.WHITE);
 		userRoleLabel.setBounds(74-userRole.toString().length(), 555, 190, 16);
-		contentPane.add(userRoleLabel);
-		contentPane.setComponentZOrder(userRoleLabel, 1);
-		userRoleLabel.setVisible(true);
-		
-		
-		controlPawn = new JLabel();
+//		contentPane.add(userRoleLabel);
+//		contentPane.setComponentZOrder(userRoleLabel, 1);
+//		userRoleLabel.setVisible(true);
+//
+//
+//		controlPawn = new JLabel();
 		String controlPawnIconPath = mapPawnLabels.get(userRole).getText();
-		//System.out.println(controlPawnIconPath);
+//		//System.out.println(controlPawnIconPath);
 		controlPawn.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(controlPawnIconPath)).getImage().getScaledInstance(80, 106, Image.SCALE_SMOOTH)));
-		controlPawn.setBounds(74, 595, 80, 106);
-		contentPane.add(controlPawn);
-		contentPane.setComponentZOrder(controlPawn, 1);
-		controlPawn.setVisible(true);
-		
+//		controlPawn.setBounds(74, 595, 80, 106);
+//		contentPane.add(controlPawn);
+//		contentPane.setComponentZOrder(controlPawn, 1);
+//		controlPawn.setVisible(true);
+
 	}
 
     private void loadActionsRemaining(){
