@@ -6,10 +6,9 @@ public class ResilientPopulationEventCard extends EventCard {
 		super(gm, EventCardName.ResilientPopulation);
 	}
 
+	// Returns 0 if successful, 1 if failed
+	// @Pre: Player has viewed cards in Infection Discard Pile and selected InfectionCard c to remove from the game. c is not a Mutation card.
 	public int playEventCard(Player owner, InfectionCard c) {
-		// Remove any 1 card in the Infection Discard Pile from the Game.
-		// This card can be played between the infect and intensify steps of an epidemic
-		// Returns 0 if successful, 1 if failed
 		InfectionDiscardPile dp = gameManager.getGame().getInfectionDiscardPile();
 		if (dp.containsCard(c)){
 			dp.removeCard(c);

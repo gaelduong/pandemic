@@ -935,4 +935,112 @@ public class GameManager {
     private void notifyAllNonBTPlayersGameWon() {
 	    // TO DO
     }
+
+    // Returns 0 if successful, 1 if failed
+    // @Pre: currentPlayer has actions remaining and is currently in a city with a research station and selected another city with a
+    // research station as destination
+    public int playShuttleFlight(City destination){
+        if (currentGame.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayingActions) {
+            Player currentPlayer = currentGame.getCurrentPlayer();
+            Pawn playerPawn = currentPlayer.getPawn();
+            Role playerRole = playerPawn.getRole();
+            City currentCity = playerPawn.getLocation();
+
+            currentCity.getCityUnits().remove(playerPawn);
+            destination.getCityUnits().add(playerPawn);
+            playerPawn.setLocation(destination);
+
+            if (playerRole.getRoleType() == RoleType.Medic) {
+                medicEnterCity(destination);
+            }
+
+            currentPlayer.incrementActionTaken();
+            return 0;
+        }
+        else {
+            return 1;
+        }
+    }
+
+    // Return 0 if successful, 1 if failed
+    // @Pre: the player has actions remaining and selected CityCard toDiscard, which is the city their pawn is currently in, from their hand and has selected
+    // a destination city
+    public int playCharterFlight(CityCard toDiscard, City destination){
+        if (currentGame.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayingActions) {
+            Player currentPlayer = currentGame.getCurrentPlayer();
+            Pawn playerPawn = currentPlayer.getPawn();
+            Role playerRole = playerPawn.getRole();
+            City currentCity = playerPawn.getLocation();
+
+            currentCity.getCityUnits().remove(playerPawn);
+            destination.getCityUnits().add(playerPawn);
+            playerPawn.setLocation(destination);
+
+            if (playerRole.getRoleType() == RoleType.Medic) {
+                medicEnterCity(destination);
+            }
+
+            currentPlayer.incrementActionTaken();
+            return discardPlayerCard(currentPlayer, toDiscard);
+        }
+        else {
+            return 1;
+        }
+    }
+
+    // Returns 0 if successful, 1 if failed
+    // @Pre: currentPlayer has actions remaining and the CityCard for the city in which their pawn is currently, unless they are the
+    // Operations Expert, in their hand and has selected to build a research station.
+    public int playBuildResearchStation(){
+        Player currentPlayer = currentGame.getCurrentPlayer();
+        Pawn playerPawn = currentPlayer.getPawn();
+        RoleType playerRole = playerPawn.getRole().getRoleType();
+        City currentCity = playerPawn.getLocation();
+
+        ResearchStation newStation = getGame().getUnusedResearchStation();
+        if (newStation != null) {
+            currentCity.getCityUnits().add(newStation);
+            newStation.setLocation(currentCity);
+            if (!playerRole.equals(RoleType.OperationsExpert)){
+                ArrayList<PlayerCard> cardsInHand = currentPlayer.getCardsInHand();
+                for (PlayerCard c : cardsInHand){
+                    if (c.getCardName().equals(currentCity.getName().toString())){
+                        discardPlayerCard(currentPlayer, c);
+                        break;
+                    }
+                    else{
+                        return 1;
+                    }
+                }
+            }
+            currentPlayer.incrementActionTaken();
+            return 0;
+        }
+        else {
+            // -------------------------------TO DO: MUST HANDLE WHEN NO MORE UNUSED RESEARCH STATIONS -------------------------------------
+            return 1;
+        }
+    }
+
+    // Returns 0 if successful, 1 if failed
+    // @Pre: currentPlayer has actions remaining, is Operations Expert, is in a city with a research station, has selected a CityCard from
+    // from their hand to discard, and has selected a destination city.
+    public int playMoveAsOperationsExpert(CityCard toDiscard, City destination){
+        if (currentGame.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayingActions) {
+            Player currentPlayer = currentGame.getCurrentPlayer();
+            Pawn playerPawn = currentPlayer.getPawn();
+            Role playerRole = playerPawn.getRole();
+            City currentCity = playerPawn.getLocation();
+
+            currentCity.getCityUnits().remove(playerPawn);
+            destination.getCityUnits().add(playerPawn);
+            playerPawn.setLocation(destination);
+
+            currentPlayer.incrementActionTaken();
+            return discardPlayerCard(currentPlayer, toDiscard);
+        }
+        else {
+            return 1;
+        }
+    }
 }
