@@ -1,21 +1,27 @@
 package pandemic;
 
+import java.util.stream.Collectors;
+
 public class AirLiftEventCard extends EventCard {
 
 	public AirLiftEventCard(GameManager gm){
 		super(gm, EventCardName.AirLift);
 	}
-	
-	@Override
-	public void playEventCard() {
-		// TODO 
-		// Move any 1 pawn to any city. Get permission before moving another player's pawn
-		
-		if (gameManager.getCurrentPlayerTurnStatus().equals(CurrentPlayerTurnStatus.PlayerDiscardingCards)){
-			Player p = gameManager.getPlayerDiscardingCards();
-			gameManager.checkHandSize(p);
-		}
-		
-	}
 
+	// Returns 0 if successful, 1 if failed
+	// @Pre: Player who owns this card has prompted owner of pawnToMove and received permission to move it to destination
+	public int playEventCard(Player owner, Pawn pawnToMove, City destination) {
+		Role playerRole = pawnToMove.getRole();
+		City currentCity = pawnToMove.getLocation();
+
+		currentCity.getCityUnits().remove(pawnToMove);
+		destination.getCityUnits().add(pawnToMove);
+		pawnToMove.setLocation(destination);
+
+		if (playerRole.getRoleType() == RoleType.Medic) {
+			gameManager.medicEnterCity(destination);
+		}
+
+		return gameManager.discardPlayerCard(owner, this);
+	}
 }

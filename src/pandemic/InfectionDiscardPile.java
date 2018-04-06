@@ -48,4 +48,11 @@ public class InfectionDiscardPile implements Serializable {
     }
 
 
+	public boolean containsCard(InfectionCard c) {
+		return cardsInPile.contains(c);
+	}
+
+	public void removeCard(InfectionCard c) {
+		cardsInPile.remove(c);
+	}
 }

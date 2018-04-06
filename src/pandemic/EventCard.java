@@ -20,5 +20,5 @@ public abstract class EventCard implements PlayerCard{
         return name.toString();
     }
     
-    public abstract void playEventCard();
+//    public abstract void playEventCard();
 }

@@ -524,7 +524,7 @@ public class GameManager {
         }
     }
 
-    private void medicEnterCity(City city) {
+    public void medicEnterCity(City city) {
 	    for(DiseaseType d : DiseaseType.values()) {
                 if(d != DiseaseType.Purple) {
                     Disease disease = currentGame.getDiseaseByDiseaseType(d);
@@ -893,8 +893,46 @@ public class GameManager {
         return activePlayers.stream().filter(p -> p.getPlayerUserName().equals(username)).findFirst().orElse(null);
     }
 
-    // REMOVE AFTER TESTING
     public Game getGame(){
 	    return currentGame;
+    }
+
+    // Returns 0 if succesful, 1 if failed
+    // @Pre: currentPlayer has actions remaining, currentPlayer is in a city with a research station, toDiscard contains 5
+    // (or 4 if currentPlayer has Scientist role) cards of the color of toCure, and toCure is not already cured
+    public int playDiscoverCure(DiseaseType toCure, List<PlayerCard> toDiscard){
+        Player currentPlayer = currentGame.getCurrentPlayer();
+        if (currentGame.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayingActions) {
+            PlayerDiscardPile dp = currentGame.getPlayerDiscardPile();
+            for (PlayerCard c : toDiscard) {
+                currentPlayer.discardCard(c);
+                dp.addCard(c);
+            }
+            Disease d = currentGame.getDiseaseByDiseaseType(toCure);
+            d.setCured(true);
+            currentGame.checkIfEradicated(toCure);
+            currentPlayer.incrementActionTaken();
+
+            // Check if all diseases in game are cured:
+            boolean allDiseasesCured;
+            if (currentGame.getChallenge().equals(ChallengeKind.BioTerrorist) || currentGame.getChallenge().equals(ChallengeKind.Mutation)){
+                allDiseasesCured = currentGame.getDiseaseByDiseaseType(DiseaseType.Black).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Blue).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Red).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Yellow).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Purple).isCured();
+            }
+            else {
+                allDiseasesCured = currentGame.getDiseaseByDiseaseType(DiseaseType.Black).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Blue).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Red).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Yellow).isCured();
+            }
+            if (allDiseasesCured){
+                currentGame.setGamePhase(GamePhase.Completed);
+                notifyAllNonBTPlayersGameWon();
+            }
+            return 0;
+        }
+        else {
+            return 1;
+        }
+    }
+
+    private void notifyAllNonBTPlayersGameWon() {
+	    // TO DO
     }
 }

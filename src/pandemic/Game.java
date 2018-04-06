@@ -819,4 +819,17 @@ public class Game {
     public GamePhase getGamePhase() {
   	    return currentPhase;
     }
+
+    public ChallengeKind getChallenge(){
+  	    return settings.getChallenge();
+    }
+
+    public ResearchStation getUnusedResearchStation() {
+  	    if (!unusedResearchStations.isEmpty()){
+  	        return unusedResearchStations.get(0);
+        }
+        else {
+  	        return null;
+        }
+    }
 }
