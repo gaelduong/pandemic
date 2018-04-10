@@ -358,7 +358,7 @@ public class MenuLayout extends Parent {
 
             String usernameTFText = usernameTF.getText();
             try {
-                setPandemicClient(new PandemicClient(ipAddress.getText(), usernameTFText,  70));
+                setPandemicClient(new PandemicClient(ipAddress.getText(), usernameTFText,  1301));
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -583,13 +583,13 @@ public class MenuLayout extends Parent {
             gameManager =  new GameManager(3, 6, ChallengeKind.OriginalBaseGame);
 
             gameManager.createNewGame();
-            pandemicServer = new PandemicServer(this, gameManager.getGame(), 70);
+            pandemicServer = new PandemicServer(this, gameManager.getGame(), 1301);
             System.out.println("in try");
         } catch (IOException e) {
             e.printStackTrace();
         }
         try {
-            pandemicClient = new PandemicClient("127.0.0.1", "host", 70);
+            pandemicClient = new PandemicClient("127.0.0.1", "host", 1301);
             GUI pandemicHostClientGUI = new GUI("host", pandemicClient);
             pandemicClient.setGUI(pandemicHostClientGUI);
 
