@@ -6,6 +6,8 @@ public class OneQuietNightEventCard extends EventCard {
 		super(gm, EventCardName.OneQuietNight);
 	}
 
+	// Returns 0 if successful, 1 if failed
+	// Pre: eventCardEnabled == true
 	public int playEventCard(Player owner) {
 		// Skip the next infect cities step (at the end of a turn)
 		gameManager.setOneQuietNight(true);

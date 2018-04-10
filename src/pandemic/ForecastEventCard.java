@@ -9,7 +9,7 @@ public class ForecastEventCard extends EventCard{
 	}
 
 	// Returns 0 if successful, 1 if failed
-	// @Pre: Player has viewed top 6 cards of Infection Deck. rearrangedCards is the order that the Player has chosen for these cards.
+	// Pre: eventCardPlayable == true, Player has viewed top 6 cards of Infection Deck. rearrangedCards is the order that the Player has chosen for these cards.
 	public int playEventCard(Player owner, List<InfectionCard> rearrangedCards) {
 		InfectionDeck iDeck = gameManager.getGame().getInfectionDeck();
 		for (int i = 0; i < 6; i++){

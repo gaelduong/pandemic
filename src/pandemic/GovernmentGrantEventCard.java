@@ -7,8 +7,8 @@ public class GovernmentGrantEventCard extends EventCard {
 	}
 
 	// Returns 0 if successful, 1 otherwise
-	// @Pre: Player has selected a targetCity to add one research station to. targetCity does not already have a research station on it.
-	// ------------- TO DO: MUST HANDLE WHEN NO NEW RESEARCH STATIONS REMAINING --------------------------
+	// Pre: eventCardEnabled == true, Player has selected a targetCity to add one research station to, targetCity does not
+	// already have a research station on it, and there are unused research stations.
 	public int playEventCard(Player owner, City targetCity) {
 		ResearchStation newStation = gameManager.getGame().getUnusedResearchStation();
 		if (newStation != null) {

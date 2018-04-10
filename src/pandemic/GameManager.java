@@ -128,12 +128,17 @@ public class GameManager {
 	    return neighborsDict.get(name);
     }
 
-	public void setResolvingEpidemic(boolean b){
-	    currentGame.setResolvingEpidemic(b);
+	public void setEventCardsEnabled(boolean b){
+	    currentGame.setEventCardsEnabled(b);
 	}
 	
 	public int getInfectionRate(){
-	    return currentGame.getInfectionRate();
+	    if (currentGame.getCommercialTravelBanActive()){
+	        return 1;
+        }
+        else {
+            return currentGame.getInfectionRate();
+        }
 	}
 	
 	public void increaseInfectionRate(){
@@ -186,7 +191,6 @@ public class GameManager {
 	
 	public int endTurn(){
 	// MUST BE MODIFIED TO HANDLE OTB CHALLENGES (i.e. Mutations, Bioterrorist win/lose)
-	//	currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.ActionsCompleted);
 		int status = 0;
         currentGame.setGamePhase(GamePhase.TurnPlayerCards);
 		Player p = currentGame.getCurrentPlayer();
@@ -202,39 +206,18 @@ public class GameManager {
 			PlayerCard playerCard1 = pd.drawCard();
 			PlayerCard playerCard2 = pd.drawCard();
 			if (playerCard1 instanceof EpidemicCard){
-
-
-			    //FOR TESTING:
                 System.out.println("Epidemic occurring...");
-
-
-
 				((EpidemicCard) playerCard1).resolveEpidemic();
-
-
-
-                // FOR TESTING:
                 System.out.println("Epidemic resolved");
                 status = 1;
-
 			}
 			else {
 				p.addToHand(playerCard1);
 				checkHandSize(p);
 			}
 			if (playerCard2 instanceof EpidemicCard){
-
-
-			    // FOR TESTING:
                 System.out.println("Epidemic occurring...");
-
-
-
 				((EpidemicCard) playerCard2).resolveEpidemic();
-
-
-
-				// FOR TESTING:
                 System.out.println("Epidemic resolved");
                 status = 1;
 			}
@@ -247,26 +230,17 @@ public class GameManager {
 
 		if (currentGame.getOneQuietNight()){
 			currentGame.setOneQuietNight(false);
-			// must set up next player's turn
 		}
 		else {
+		    setEventCardsEnabled(false);
 		    int currentInfectionRate = currentGame.getInfectionRate();
 
 		    for(int i = 0; i < currentInfectionRate; i++) {
 		        CityInfectionCard card = (CityInfectionCard) currentGame.getInfectionDeck().drawCard();
 		        City cardCity = currentGame.getCityByName(card.getCityName());
 
-
-
-
-                // FOR TESTING:
                 System.out.println("InfectionCard drawn: " + card.getCityName());
 
-
-
-
-
-                // NOT FOR TESTING: DO NOT REMOVE!:
                 infectNextCity(cardCity);
 
                 DiseaseType cityDiseaseType = regionToDiseaseTypeDict.get(cardCity.getRegion());
@@ -282,8 +256,7 @@ public class GameManager {
                 }
             }
 
-
-
+            setEventCardsEnabled(true);
 
 		}
 
@@ -293,6 +266,10 @@ public class GameManager {
 		// MUST MAKE SURE current player is at the head of the queue
 		activePlayers.addLast(activePlayers.removeFirst());
 		setCurrentPlayer(activePlayers.getFirst());
+		if (activePlayers.getFirst().equals(currentGame.getCommercialTravelBanPlayedBy())){
+		    currentGame.setCommercialTravelBanActive(false);
+		    currentGame.setCommercialTravelBanPlayedBy(null);
+        }
 		return status;
 		
 	}
@@ -898,7 +875,7 @@ public class GameManager {
     }
 
     // Returns 0 if succesful, 1 if failed
-    // @Pre: currentPlayer has actions remaining, currentPlayer is in a city with a research station, toDiscard contains 5
+    // Pre: currentPlayer has actions remaining, currentPlayer is in a city with a research station, toDiscard contains 5
     // (or 4 if currentPlayer has Scientist role) cards of the color of toCure, and toCure is not already cured
     public int playDiscoverCure(DiseaseType toCure, List<PlayerCard> toDiscard){
         Player currentPlayer = currentGame.getCurrentPlayer();
@@ -937,15 +914,15 @@ public class GameManager {
     }
 
     // Returns 0 if successful, 1 if failed
-    // @Pre: currentPlayer has actions remaining and is currently in a city with a research station and selected another city with a
+    // Pre: currentPlayer has actions remaining and is currently in a city with a research station and selected another city with a
     // research station as destination
     public int playShuttleFlight(City destination){
-        if (currentGame.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayingActions) {
-            Player currentPlayer = currentGame.getCurrentPlayer();
-            Pawn playerPawn = currentPlayer.getPawn();
-            Role playerRole = playerPawn.getRole();
-            City currentCity = playerPawn.getLocation();
+	    Player currentPlayer = currentGame.getCurrentPlayer();
+	    Pawn playerPawn = currentPlayer.getPawn();
+	    Role playerRole = playerPawn.getRole();
+	    City currentCity = playerPawn.getLocation();
 
+	    if (currentCity.getCityUnits().contains(playerPawn)){
             currentCity.getCityUnits().remove(playerPawn);
             destination.getCityUnits().add(playerPawn);
             playerPawn.setLocation(destination);
@@ -963,15 +940,15 @@ public class GameManager {
     }
 
     // Return 0 if successful, 1 if failed
-    // @Pre: the player has actions remaining and selected CityCard toDiscard, which is the city their pawn is currently in, from their hand and has selected
+    // Pre: the player has actions remaining and selected CityCard toDiscard, which is the city their pawn is currently in, from their hand and has selected
     // a destination city
     public int playCharterFlight(CityCard toDiscard, City destination){
-        if (currentGame.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayingActions) {
-            Player currentPlayer = currentGame.getCurrentPlayer();
-            Pawn playerPawn = currentPlayer.getPawn();
-            Role playerRole = playerPawn.getRole();
-            City currentCity = playerPawn.getLocation();
+	    Player currentPlayer = currentGame.getCurrentPlayer();
+	    Pawn playerPawn = currentPlayer.getPawn();
+	    Role playerRole = playerPawn.getRole();
+	    City currentCity = playerPawn.getLocation();
 
+	    if (currentCity.getCityUnits().contains(playerPawn)){
             currentCity.getCityUnits().remove(playerPawn);
             destination.getCityUnits().add(playerPawn);
             playerPawn.setLocation(destination);
@@ -989,7 +966,23 @@ public class GameManager {
     }
 
     // Returns 0 if successful, 1 if failed
-    // @Pre: currentPlayer has actions remaining and the CityCard for the city in which their pawn is currently, unless they are the
+    // Pre: player has selected to build a Research station (either as an action or with Government Grant Event Card) and has been prompted
+    // to select a research station to remove from the board as there are no unused stations remaining
+    public int removeResearchStation(ResearchStation toRemove){
+	    City source = toRemove.getLocation();
+	    if (source.getCityUnits().contains(toRemove)){
+	        source.getCityUnits().remove(toRemove);
+	        currentGame.addUnusedResearchStation(toRemove);
+	        toRemove.setLocation(null);
+	        return 0;
+        }
+        else {
+	        return 1;
+        }
+    }
+
+    // Returns 0 if successful, 1 if failed
+    // Pre: CurrentPlayerTurnStatus is PlayingActions, currentPlayer has actions remaining and the CityCard for the city in which their pawn is currently, unless they are the
     // Operations Expert, in their hand and has selected to build a research station.
     public int playBuildResearchStation(){
         Player currentPlayer = currentGame.getCurrentPlayer();
@@ -1001,14 +994,13 @@ public class GameManager {
         if (newStation != null) {
             currentCity.getCityUnits().add(newStation);
             newStation.setLocation(currentCity);
-            if (!playerRole.equals(RoleType.OperationsExpert)){
+            if (!playerRole.equals(RoleType.OperationsExpert)) {
                 ArrayList<PlayerCard> cardsInHand = currentPlayer.getCardsInHand();
-                for (PlayerCard c : cardsInHand){
-                    if (c.getCardName().equals(currentCity.getName().toString())){
+                for (PlayerCard c : cardsInHand) {
+                    if (c.getCardName().equals(currentCity.getName().toString())) {
                         discardPlayerCard(currentPlayer, c);
                         break;
-                    }
-                    else{
+                    } else {
                         return 1;
                     }
                 }
@@ -1017,21 +1009,21 @@ public class GameManager {
             return 0;
         }
         else {
-            // -------------------------------TO DO: MUST HANDLE WHEN NO MORE UNUSED RESEARCH STATIONS -------------------------------------
             return 1;
         }
     }
 
     // Returns 0 if successful, 1 if failed
-    // @Pre: currentPlayer has actions remaining, is Operations Expert, is in a city with a research station, has selected a CityCard from
-    // from their hand to discard, and has selected a destination city.
+    // Pre: CurrentPlayerTurnStatus is PlayingActions, currentPlayer has actions remaining, is Operations Expert, is in a city with a
+    // research station, has selected a CityCard from, their hand to discard, and has selected a destination city, and there are
+    // unused research stations.
     public int playMoveAsOperationsExpert(CityCard toDiscard, City destination){
-        if (currentGame.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayingActions) {
-            Player currentPlayer = currentGame.getCurrentPlayer();
-            Pawn playerPawn = currentPlayer.getPawn();
-            Role playerRole = playerPawn.getRole();
-            City currentCity = playerPawn.getLocation();
+	    Player currentPlayer = currentGame.getCurrentPlayer();
+	    Pawn playerPawn = currentPlayer.getPawn();
+	    Role playerRole = playerPawn.getRole();
+	    City currentCity = playerPawn.getLocation();
 
+	    if (currentCity.getCityUnits().contains(playerPawn)) {
             currentCity.getCityUnits().remove(playerPawn);
             destination.getCityUnits().add(playerPawn);
             playerPawn.setLocation(destination);
@@ -1040,7 +1032,141 @@ public class GameManager {
             return discardPlayerCard(currentPlayer, toDiscard);
         }
         else {
+	        return 1;
+        }
+    }
+
+    // Returns 0 if successful, 1 if failed
+    // Pre: CurrentPlayerTurnStatus is PlayingActions, currentPlayer has actions remaining, is Dispatcher, has selected another Player's pawn,
+    // selected a destination city that contains other pawns, and has received permission from the other Player
+    public int playDispatcherMovePawnToAnyCity(Pawn target, City destination){
+        Player currentPlayer = currentGame.getCurrentPlayer();
+        City source = target.getLocation();
+
+        if (source.getCityUnits().contains(target)) {
+            source.getCityUnits().remove(target);
+            destination.getCityUnits().add(target);
+            target.setLocation(destination);
+
+            if(target.getRole().getRoleType() == RoleType.Medic) {
+                medicEnterCity(destination);
+            }
+
+            currentPlayer.incrementActionTaken();
+            return 0;
+        }
+        else {
             return 1;
         }
+    }
+
+    // Returns 0 if successful, 1 if failed
+    // Pre: CurrentPlayerTurnStatus is PlayingActions, currentPlayer has actions remaining, is Dispatcher, has selected another Player's pawn,
+    // selected a destination city that neighbors that pawn's current city, and has received permission from the other Player
+    public int playDispatcherDriveFerry(Pawn target, City destination){
+	    return playDispatcherMovePawnToAnyCity(target, destination);
+    }
+
+    // Returns 0 if successful, 1 if failed
+    // Pre: CurrentPlayerTurnStatus is PlayingActions, currentPlayer has actions remaining, is Dispatcher, has selected another Player's pawn,
+    // selected a destination city for which they hold the CityCard in their hand, and has received permission from the other Player
+    public int playDispatcherDirectFlight(Pawn target, CityCard card){
+        Player currentPlayer = currentGame.getCurrentPlayer();
+        City source = target.getLocation();
+        City destination = getCityByName(card.getCityName());
+
+        if (source.getCityUnits().contains(target)) {
+            source.getCityUnits().remove(target);
+            destination.getCityUnits().add(target);
+            target.setLocation(destination);
+
+            if(target.getRole().getRoleType() == RoleType.Medic) {
+                medicEnterCity(destination);
+            }
+
+            currentPlayer.incrementActionTaken();
+            return discardPlayerCard(currentPlayer, card);
+        }
+        else {
+            return 1;
+        }
+    }
+
+
+    // Returns 0 if successful, 1 if failed
+    // Pre: CurrentPlayerTurnStatus is PlayingActions, currentPlayer has actions remaining, is Dispatcher, has selected another Player's pawn,
+    // has the CityCard for the city the pawn is currently in, has selected a destination city, and has received permission from the other
+    // Player
+    public int playDispatcherCharterFlight(Pawn target, CityCard card, City destination){
+        Player currentPlayer = currentGame.getCurrentPlayer();
+        City source = target.getLocation();
+
+        if (source.getCityUnits().contains(target)) {
+            source.getCityUnits().remove(target);
+            destination.getCityUnits().add(target);
+            target.setLocation(destination);
+
+            if(target.getRole().getRoleType() == RoleType.Medic) {
+                medicEnterCity(destination);
+            }
+
+            currentPlayer.incrementActionTaken();
+            return discardPlayerCard(currentPlayer, card);
+        }
+        else {
+            return 1;
+        }
+    }
+
+    // Returns 0 if successful, 1 if failed
+    // Pre: CurrentPlayerTurnStatus is PlayingActions, currentPlayer has actions remaining, is Dispatcher, has selected another Player's
+    // pawn that is currently in a city with a research station, has selected a destination city that has a research station, and has
+    // received permission from the other Player
+    public int playDispatcherShuttleFlight(Pawn target, City destination){
+        return playDispatcherMovePawnToAnyCity(target, destination);
+    }
+
+    // Returns 0 if successful, 1 if failed
+    // Pre: CurrentPlayerTurnStatus is PlayingActions, currentPlayer has actions remaining, is ContingencyPlanner, does not already have
+    // an EventCard recovered, has viewed all EventCards in PlayerDiscardPile, and has selected one of these Event Cards
+    public int playContingencyPlannerRecoverEventCard(EventCard card){
+        Player currentPlayer = currentGame.getCurrentPlayer();
+        ArrayList<PlayerCard> dPile = currentGame.getPlayerDiscardPile().getCardsInPile();
+        if (dPile.contains(card)){
+            dPile.remove(card);
+            currentPlayer.incrementActionTaken();
+            return currentGame.setContingencyPlannerEventCard(card);
+        }
+        else {
+            return 1;
+        }
+    }
+
+    // Returns 0 if successful, 1 if failed
+    // Pre: CurrentPlayerTurnStatus is PlayingActions and the Contingency Planner player has played their extra Event Card
+    // Post: The Event Card that was played is removed from the game and the contingencyPlannerEventCard is null
+    public int playContingencyPlannerEventCard(){
+        EventCard playedCard = currentGame.getContingencyPlannerEventCard();
+        if (playedCard != null){
+            ArrayList<PlayerCard> dPile = currentGame.getPlayerDiscardPile().getCardsInPile();
+            if (dPile.contains(playedCard)) {
+                dPile.remove(playedCard);
+                return currentGame.setContingencyPlannerEventCard(null);
+            }
+            else {
+                return 1;
+            }
+        }
+        else {
+            return 1;
+        }
+    }
+
+    public void setCommercialTravelBanActive(boolean b){
+	    currentGame.setCommercialTravelBanActive(b);
+    }
+
+    public void setCommercialTravelBanPlayedBy(Player p){
+	    currentGame.setCommercialTravelBanPlayedBy(p);
     }
 }

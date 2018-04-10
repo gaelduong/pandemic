@@ -21,7 +21,7 @@ abstract class EpidemicCard implements PlayerCard{
 	}
 	
 	protected void increaseInfectIntensify(){
-		myGameManager.setResolvingEpidemic(true);
+		myGameManager.setEventCardsEnabled(false);
 		// Increase:
 		int currentInfectionRate = myGameManager.getInfectionRate();
 		if (currentInfectionRate < 4) {
@@ -45,7 +45,7 @@ abstract class EpidemicCard implements PlayerCard{
 		myGameManager.shuffleInfectionDiscardPile();
 		myGameManager.combineInfectionDeckAndPile();
 		
-		myGameManager.setResolvingEpidemic(false);
+		myGameManager.setEventCardsEnabled(true);
 	}
 	
 	public abstract void resolveEpidemic();

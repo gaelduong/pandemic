@@ -40,8 +40,6 @@ public class Game {
   	private PlayerDeck myPlayerDeck;
   	private PlayerDiscardPile myPlayerDiscardPile;
 
-  	private boolean resolvingEpidemic;
-
   	private LinkedList<Integer> infectionRateMeter;
   	private int currentInfectionRate;
   	private boolean lastInfectionMarkerReached;
@@ -52,6 +50,11 @@ public class Game {
 	private CurrentPlayerTurnStatus currentPlayerTurnStatus;
 	private Player playerDiscardingCards;
 	private boolean oneQuietNightActivated;
+	private EventCard contingencyPlannerEventCard;
+	private boolean eventCardsEnabled;
+	private boolean commercialTravelBanActive;
+	private Player commercialTravelBanPlayedBy;
+
   	
   	public Game(GameSettings settings, GameManager gameManager) {
   	    //this.currentPlayer = currentPlayer;
@@ -121,6 +124,7 @@ public class Game {
 
         currentPhase = GamePhase.ReadyToJoin;
         currentPlayerTurnStatus = CurrentPlayerTurnStatus.PlayingActions;
+        eventCardsEnabled = true;
     }
 
     public boolean checkIfEradicated(DiseaseType d) {
@@ -494,8 +498,12 @@ public class Game {
         return createdCities;
     }
 
-  	public void setResolvingEpidemic(boolean b){
-  	    resolvingEpidemic = b;
+    public boolean getEventCardsEnabled(){
+  	    return eventCardsEnabled;
+    }
+
+  	public void setEventCardsEnabled(boolean b){
+  	    eventCardsEnabled = b;
 	}
 
 	public int getInfectionRate(){
@@ -831,5 +839,44 @@ public class Game {
         else {
   	        return null;
         }
+    }
+
+    public void addUnusedResearchStation(ResearchStation rs){
+  	    unusedResearchStations.add(rs);
+    }
+
+    public EventCard getContingencyPlannerEventCard(){
+  	    return contingencyPlannerEventCard;
+    }
+
+    // Returns 0 if successful, 1 if failed
+    public int setContingencyPlannerEventCard(EventCard card){
+  	    if (contingencyPlannerEventCard == null){
+  	        contingencyPlannerEventCard = card;
+  	        return 0;
+        }
+        else if (card == null) {
+            contingencyPlannerEventCard = null;
+            return 0;
+        }
+        else {
+  	        return 1;
+        }
+    }
+
+    public boolean getCommercialTravelBanActive(){
+  	    return commercialTravelBanActive;
+    }
+
+    public Player getCommercialTravelBanPlayedBy(){
+  	    return commercialTravelBanPlayedBy;
+    }
+
+    public void setCommercialTravelBanActive(boolean b){
+  	    commercialTravelBanActive = b;
+    }
+
+    public void setCommercialTravelBanPlayedBy(Player p){
+  	    commercialTravelBanPlayedBy = p;
     }
 }

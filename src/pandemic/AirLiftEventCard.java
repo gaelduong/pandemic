@@ -9,7 +9,7 @@ public class AirLiftEventCard extends EventCard {
 	}
 
 	// Returns 0 if successful, 1 if failed
-	// @Pre: Player who owns this card has prompted owner of pawnToMove and received permission to move it to destination
+	// Pre: eventCardsEnabled == true, Player who owns this card has prompted owner of pawnToMove and received permission to move it to destination
 	public int playEventCard(Player owner, Pawn pawnToMove, City destination) {
 		Role playerRole = pawnToMove.getRole();
 		City currentCity = pawnToMove.getLocation();
