@@ -192,6 +192,9 @@ public class GameManager {
 	public int endTurn(){
 	// MUST BE MODIFIED TO HANDLE OTB CHALLENGES (i.e. Mutations, Bioterrorist win/lose)
 		int status = 0;
+		if (currentGame.getMobileHospitalActive()){
+		    currentGame.setMobileHospitalActive(false);
+        }
         currentGame.setGamePhase(GamePhase.TurnPlayerCards);
 		Player p = currentGame.getCurrentPlayer();
 		p.setActionsTaken(0);
@@ -412,11 +415,10 @@ public class GameManager {
             if(currentPlayerRole.getRoleType() == RoleType.Medic)
                 medicEnterCity(city);
 
-            // OTB EXTENSION----
-        /*if(currentPlayerRole.getRoleType() == RoleType.ContainmentSpecialist) {
-
-
-        }*/
+            // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
+//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+//                    containmentSpecialistEnterCity(destination);
+//                }
 
             currentPlayer.incrementActionTaken();
             return 0;
@@ -452,11 +454,10 @@ public class GameManager {
             if(currentPlayerRole.getRoleType() == RoleType.Medic)
                 medicEnterCity(city);
 
-            // OTB EXTENSION----
-        /*if(currentPlayerRole.getRoleType() == RoleType.TroubleShooter) {
-
-
-        }*/
+            // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
+//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+//                    containmentSpecialistEnterCity(destination);
+//                }
 
             currentPlayer.incrementActionTaken();
             // MUST DISCARD CARD AFTER PLAY?
@@ -516,6 +517,25 @@ public class GameManager {
                 }
 	    }
 
+    }
+
+    public void containmentSpecialistEnterCity(City destination){
+        Player currentPlayer = currentGame.getCurrentPlayer();
+        if(destination.getNumOfDiseaseFlagsPlaced(DiseaseType.Red) >= 2){
+            destination.removeOneDiseaseFlag(DiseaseType.Red);
+        }
+        if(destination.getNumOfDiseaseFlagsPlaced(DiseaseType.Blue) >= 2){
+            destination.removeOneDiseaseFlag(DiseaseType.Blue);
+        }
+        if(destination.getNumOfDiseaseFlagsPlaced(DiseaseType.Yellow) >= 2){
+            destination.removeOneDiseaseFlag(DiseaseType.Yellow);
+        }
+        if(destination.getNumOfDiseaseFlagsPlaced(DiseaseType.Black) >= 2){
+            destination.removeOneDiseaseFlag(DiseaseType.Black);
+        }
+        if(destination.getNumOfDiseaseFlagsPlaced(DiseaseType.Purple) >= 2){
+            destination.removeOneDiseaseFlag(DiseaseType.Purple);
+        }
     }
     
     
@@ -930,6 +950,10 @@ public class GameManager {
             if (playerRole.getRoleType() == RoleType.Medic) {
                 medicEnterCity(destination);
             }
+            // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
+//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+//                    containmentSpecialistEnterCity(destination);
+//                }
 
             currentPlayer.incrementActionTaken();
             return 0;
@@ -956,6 +980,10 @@ public class GameManager {
             if (playerRole.getRoleType() == RoleType.Medic) {
                 medicEnterCity(destination);
             }
+            // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
+//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+//                    containmentSpecialistEnterCity(destination);
+//                }
 
             currentPlayer.incrementActionTaken();
             return discardPlayerCard(currentPlayer, toDiscard);
@@ -1051,6 +1079,10 @@ public class GameManager {
             if(target.getRole().getRoleType() == RoleType.Medic) {
                 medicEnterCity(destination);
             }
+            // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
+//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+//                    containmentSpecialistEnterCity(destination);
+//                }
 
             currentPlayer.incrementActionTaken();
             return 0;
@@ -1083,6 +1115,10 @@ public class GameManager {
             if(target.getRole().getRoleType() == RoleType.Medic) {
                 medicEnterCity(destination);
             }
+            // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
+//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+//                    containmentSpecialistEnterCity(destination);
+//                }
 
             currentPlayer.incrementActionTaken();
             return discardPlayerCard(currentPlayer, card);
@@ -1109,6 +1145,10 @@ public class GameManager {
             if(target.getRole().getRoleType() == RoleType.Medic) {
                 medicEnterCity(destination);
             }
+            // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
+//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+//                    containmentSpecialistEnterCity(destination);
+//                }
 
             currentPlayer.incrementActionTaken();
             return discardPlayerCard(currentPlayer, card);
@@ -1169,4 +1209,76 @@ public class GameManager {
     public void setCommercialTravelBanPlayedBy(Player p){
 	    currentGame.setCommercialTravelBanPlayedBy(p);
     }
+
+    public boolean getMobileHospitalActive(){
+	    return currentGame.getMobileHospitalActive();
+    }
+
+    public void setMobileHospitalActive(boolean b){
+	    currentGame.setMobileHospitalActive(b);
+    }
+
+    // Returns 0 if successful, 1 if failed
+    // Pre: CurrentPlayerTurnStatus is PlayingActions, currentPlayer has actions remaining, played MobileHospitalEventCard earlier in this
+    // turn, selected a neighboring city to drive/ferry to, and selected a Disease Flag to remove in that city if there are any. If the
+    // destination city does not have any Disease Flags, then flag == null
+    public int playDriveFerryMobileHospital(City destination, DiseaseFlag flag ){
+        Player currentPlayer = currentGame.getCurrentPlayer();
+
+        if (currentGame.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayingActions) {
+            Pawn currentPlayerPawn = currentPlayer.getPawn();
+            Role currentPlayerRole = currentPlayerPawn.getRole();
+            City currentPlayerCity = currentPlayerPawn.getLocation();
+
+            if (currentPlayer.getActionsTaken() == 4) {
+                currentPlayer.setActionsTaken(0);
+                return 1;
+            }
+
+            if ((currentPlayerCity.getConnections().stream().filter(conn -> conn.getEnd1() == destination || conn.getEnd2() == destination)
+                    .collect(Collectors.toList())).isEmpty()) {
+                return 1;
+            }
+
+            currentPlayerCity.getCityUnits().remove(currentPlayerPawn);
+            destination.getCityUnits().add(currentPlayerPawn);
+            currentPlayerPawn.setLocation(destination);
+
+            if (currentPlayerRole.getRoleType() == RoleType.Medic)
+                medicEnterCity(destination);
+            // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
+//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+//                    containmentSpecialistEnterCity(destination);
+//                }
+
+            if (flag != null) {
+                // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
+//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+//                    containmentSpecialistEnterCity(destination);
+//                }
+                DiseaseType diseaseType = flag.getDiseaseType();
+                Disease disease = currentGame.getDiseaseByDiseaseType(diseaseType);
+                boolean cured = disease.isCured();
+
+                if (currentPlayer.getActionsTaken() == 4) {
+                    currentPlayer.setActionsTaken(0);
+                    return 1;
+                }
+
+                currentGame.getDiseaseSupplyByDiseaseType(diseaseType).add(destination.removeOneDiseaseFlag(diseaseType));
+
+                if (cured && currentGame.checkIfEradicated(diseaseType)) {
+                    disease.setEradicated(true);
+                }
+
+                return 0;
+            }
+            currentPlayer.incrementActionTaken();
+            return 0;
+
+        } else {
+            return 1;
+        }
+    }
+
 }

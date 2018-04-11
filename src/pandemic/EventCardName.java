@@ -1,5 +1,5 @@
 package pandemic;
 
 public enum EventCardName {
-    ResilientPopulation, OneQuietNight, Forecast, AirLift, GovernmentGrant, BorrowedTime, CommercialTravelBan
+    ResilientPopulation, OneQuietNight, Forecast, AirLift, GovernmentGrant, BorrowedTime, CommercialTravelBan, MobileHospital
 }
