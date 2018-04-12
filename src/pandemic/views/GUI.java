@@ -82,6 +82,11 @@ public class GUI extends JFrame
 		put("directFlight",false);
 		put("treatDisease",false);
 		put("shareKnowledge",false);
+
+		put("charterFlight",false);
+		put("shuttleFlight",false);
+		put("buildResearch",false);
+		put("discoverCure",false);
 	}};
 	private CityName cityNameSelected= null;
 
@@ -127,8 +132,7 @@ public class GUI extends JFrame
 	/*Pawn controlled by user*/
 	private JLabel controlPawn;
 
-	private JLabel p1Pawn;
-	private JLabel p2Pawn;
+	private JLabel researchStation = new JLabel("/pandemic/resources/researchStation.png");
 
 
 	/*Cities - idea: store each city's position (x,y) in itself (label text) (no need to create a new list for positions)  */
@@ -355,6 +359,9 @@ public class GUI extends JFrame
 	/*Discard card button */
 	private JLabel discardCardButton;
 
+	/*Discover cure button*/
+	private JLabel discoverCureButton = new JLabel();
+
 	/*Action buttons*/
 	private JButton btnDriveFerry = new JButton("Drive");;
 	private JButton btnDirectFlight = new JButton("<html>Direct <br> Flight</html>");;
@@ -422,6 +429,20 @@ public class GUI extends JFrame
 	private JLabel pinkPawnProf = new JLabel("/pandemic/resources/Pawns/pinkPawn.png");
 
 	private ArrayList<JLabel> profPawns = new ArrayList<JLabel>();
+
+	private JLabel showRole = new JLabel();
+
+	private boolean profPawnClicked = false;
+	private Map<JLabel,Boolean> profPawnOptions = new HashMap<JLabel,Boolean>()
+	{{
+		put(orangePawnProf,false);
+		put(greenPawnProf,false);
+		put(bluePawnProf,false);
+		put(purplePawnProf,false);
+		put(yellowPawnProf,false);
+		put(whitePawnProf,false);
+		put(pinkPawnProf,false);
+	}};
 
 	/*Target icon*/
 	private final String targetIconPath = "/pandemic/resources/target.png";
@@ -649,7 +670,72 @@ public class GUI extends JFrame
 
 	}};
 
-	private Map<String, JLabel> mapInfectionCardLabels = new HashMap<String,JLabel>()
+/*
+	private Map<String, JLabel> mapPlayerCardPaths = new HashMap<String,JLabel>()
+    {{
+
+        put("/pandemic/resources/CityCards/SanFrancisco.png", SanFranciscoCardLabel);
+        put("/pandemic/resources/CityCards/Chicago.png",ChicagoCardLabel);
+        put("/pandemic/resources/CityCards/Montreal.png",MontrealCardLabel);
+        put("/pandemic/resources/CityCards/NewYork.png",NewYorkCardLabel);//
+        put("/pandemic/resources/CityCards/Atlanta.png",AtlantaCardLabel);
+        put("/pandemic/resources/CityCards/Washington.png",WashingtonCardLabel);//
+        put("/pandemic/resources/CityCards/London.png",LondonCardLabel);//
+        put("/pandemic/resources/CityCards/Essen.png",EssenCardLabel);
+        put("/pandemic/resources/CityCards/StPetersburg.png",StPetersburgCardLabel);//
+        put("/pandemic/resources/CityCards/Madrid.png",MadridCardLabel);
+        put("/pandemic/resources/CityCards/Paris.png",ParisCardLabel);
+        put("/pandemic/resources/CityCards/Milan.png",MilanCardLabel);
+
+        put("/pandemic/resources/CityCards/LosAngeles.png",LosAngelesCardLabel);
+        put("/pandemic/resources/CityCards/MexicoCity.png",MexicoCityCardLabel);
+        put("/pandemic/resources/CityCards/Miami.png",MiamiCardLabel);
+        put("/pandemic/resources/CityCards/Bogota.png",BogotaCardLabel);
+        put("/pandemic/resources/CityCards/Lima.png",LimaCardLabel);
+        put("/pandemic/resources/CityCards/Santiago.png",SantiagoCardLabel);
+        put("/pandemic/resources/CityCards/BuenosAires.png",BuenosAiresCardLabel);
+        put("/pandemic/resources/CityCards/SaoPaulo.png",SaoPauloCardLabel);
+        put("/pandemic/resources/CityCards/Lagos.png",LagosCardLabel);
+        put("/pandemic/resources/CityCards/Kinshasa.png",KinshasaCardLabel);
+        put("/pandemic/resources/CityCards/Johannesburg.png",JohannesburgCardLabel);
+        put("/pandemic/resources/CityCards/Khartoum.png",KhartoumCardLabel);
+
+        put("/pandemic/resources/CityCards/Algiers.png",AlgiersCardLabel);
+        put("/pandemic/resources/CityCards/Istanbul.png",IstanbulCardLabel);
+        put("/pandemic/resources/CityCards/Moscow.png",MoscowCardLabel);
+        put("/pandemic/resources/CityCards/Cairo.png",CairoCardLabel);
+        put("/pandemic/resources/CityCards/Baghdad.png",BaghdadCardLabel);
+        put("/pandemic/resources/CityCards/Tehran.png",TehranCardLabel);
+        put("/pandemic/resources/CityCards/Riyadh.png",RiyadhCardLabel);
+        put("/pandemic/resources/CityCards/Karachi.png",KarachiCardLabel);
+        put("/pandemic/resources/CityCards/Delhi.png",DelhiCardLabel);
+        put("/pandemic/resources/CityCards/Mumbai.png",MumbaiCardLabel);
+        put("/pandemic/resources/CityCards/Kolkata.png",KolkataCardLabel);
+        put("/pandemic/resources/CityCards/Chennai.png",ChennaiCardLabel);
+
+        put("/pandemic/resources/CityCards/Jakarta.png",JakartaCardLabel);//
+        put("/pandemic/resources/CityCards/Bangkok.png",BangkokCardLabel);//
+        put("/pandemic/resources/CityCards/HongKong.png",HongKongCardLabel);//
+        put("/pandemic/resources/CityCards/Shanghai.png",ShanghaiCardLabel);//
+        put("/pandemic/resources/CityCards/Beijing.png",BeijingCardLabel);//
+        put("/pandemic/resources/CityCards/Seoul.png",SeoulCardLabel);//
+        put("/pandemic/resources/CityCards/Tokyo.png",TokyoCardLabel);//
+        put("/pandemic/resources/CityCards/Osaka.png",OsakaCardLabel);//
+        put("/pandemic/resources/CityCards/Taipei.png",TaipeiCardLabel);//
+        put("/pandemic/resources/CityCards/Manila.png",ManilaCardLabel);//
+        put("/pandemic/resources/CityCards/HoChiMinhCity.png",HoChiMinhCityCardLabel);//
+        put("/pandemic/resources/CityCards/Sydney.png",SydneyCardLabel);//
+
+        put("/pandemic/resources/CityCards/AirLift.png",AirLiftCardLabel);
+        put("/pandemic/resources/CityCards/Forecast.png",ForecastCardLabel);
+        put("/pandemic/resources/CityCards/OneQuietNight.png",OneQuietNightCardLabel);
+        put("/pandemic/resources/CityCards/GovernmentGrant.png",GovernmentGrantCardLabel);
+        put("/pandemic/resources/CityCards/ResilientPopulation.png",ResilientPopulationCardLabel);
+        put("/pandemic/resources/CityCards/BasicEpidemicCard.png",BasicEpidemicCardLabel);
+    }};
+*/
+
+    private Map<String, JLabel> mapInfectionCardLabels = new HashMap<String,JLabel>()
 	{{
 		put("SanFrancisco",SanFranciscoInfectionLabel);
 		put("Chicago",ChicagoInfectionLabel);
@@ -779,8 +865,8 @@ public class GUI extends JFrame
 		this.userRole = getUserRole();
 		//this.currentUserCity = gs.getPositionMap().get(userRole);
 
-        System.out.println("userRole in constructor server: " + userRole );
-        System.out.println("IN constructor: " + cubesInCity);
+       // System.out.println("userRole in constructor server: " + userRole );
+        //System.out.println("IN constructor: " + cubesInCity);
 
 
         /*This method is responsible for creating all the event listeners*/
@@ -834,61 +920,27 @@ public class GUI extends JFrame
 		String currentPlayer = gs.getCurrentPlayer();
 		if(currentPlayer != null && username.equals(currentPlayer) && gs.getCurrentPlayerActionsRemaining() > 0) {
 //			//Drive Ferry
-//			//btnDriveFerry.setIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/icon.png")));
-//			btnDriveFerry.setBounds(11, 370, 90, 40);
-//			btnDriveFerry.setFont(new Font("Dialog", Font.PLAIN, 12));
-//			contentPane.add(btnDriveFerry);
-//			contentPane.setComponentZOrder(btnDriveFerry, 1);
 			btnDriveFerry.setVisible(true);
 //
 //			//Direct Flight
-//			//btnDirectFlight.setIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/icon.png")));
-//			btnDirectFlight.setBounds(97, 370, 90, 40);
-//			btnDirectFlight.setFont(new Font("Dialog", Font.PLAIN, 12));
-//			contentPane.add(btnDirectFlight);
-//			contentPane.setComponentZOrder(btnDriveFerry, 1);
 			btnDirectFlight.setVisible(true);
 //
 //			//Charter Flight
-//			btnCharterFlight.setBounds(11, 407, 90, 40);
-//			btnCharterFlight.setFont(new Font("Dialog", Font.PLAIN, 12));
-//			contentPane.add(btnCharterFlight);
-//			contentPane.setComponentZOrder(btnCharterFlight, 1);
 			btnCharterFlight.setVisible(true);
 //
 //			//Shuttle Flight
-//			btnShuttleFlight.setBounds(97, 407, 90, 40);
-//			btnShuttleFlight.setFont(new Font("Dialog", Font.PLAIN, 12));
-//			contentPane.setComponentZOrder(btnShuttleFlight, 1);
-//			contentPane.add(btnShuttleFlight);
 			btnShuttleFlight.setVisible(true);
 //
 //			//Treat Disease
-//			btnTreatDisease.setBounds(97, 445, 90, 40);
-//			btnTreatDisease.setFont(new Font("Dialog", Font.PLAIN, 12));
-//			contentPane.add(btnTreatDisease);
-//			contentPane.setComponentZOrder(btnTreatDisease, 1);
 			btnTreatDisease.setVisible(true);
 //
 //			//Discover Cure
-//			btnDiscoverCure.setBounds(97, 482, 90, 40);
-//			btnDiscoverCure.setFont(new Font("Dialog", Font.PLAIN, 12));
-//			contentPane.add(btnDiscoverCure);
-//			contentPane.setComponentZOrder(btnDiscoverCure, 1);
 			btnDiscoverCure.setVisible(true);
 //
 //			//Build Research
-//			btnBuildResearch.setBounds(11, 445, 90, 40);
-//			btnBuildResearch.setFont(new Font("Dialog", Font.PLAIN, 12));
-//			contentPane.add(btnBuildResearch);
-//			contentPane.setComponentZOrder(btnBuildResearch, 1);
 			btnBuildResearch.setVisible(true);
 //
 //			//Share Knowledge
-//			btnShareKnowledge.setBounds(11, 482, 90, 40);
-//			btnShareKnowledge.setFont(new Font("Dialog", Font.PLAIN, 12));
-//			contentPane.add(btnShareKnowledge);
-//			contentPane.setComponentZOrder(btnShareKnowledge, 1);
 			btnShareKnowledge.setVisible(true);
 		}
 		else {
@@ -1037,7 +1089,7 @@ public class GUI extends JFrame
 //		contentPane.add(declineButton);
 
 
-
+		//loadAllPlayerCards();
 		loadTopBar();
 		loadPlayerCards();
 		loadPlayerDiscardCards();
@@ -1048,7 +1100,7 @@ public class GUI extends JFrame
 		/*----------Set up pawns ----------*/
 		loadPawns();
 		loadProfPawns();
-		loadAllPlayerCards();
+		//
 
 		/*----------Set up controlPawn------*/
 		loadControlPawn();
@@ -1062,6 +1114,9 @@ public class GUI extends JFrame
 
 		//----------Set up disease cubes on map---------
 		loadCubesOnMap();
+
+		//------Display research stations------
+		loadResearchStation();
 
 
 //		cardsContainer.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/cardsContainer.png")).getImage().getScaledInstance(809, 191, Image.SCALE_SMOOTH)));
@@ -1090,14 +1145,17 @@ public class GUI extends JFrame
 			if(cityCardLabel != null)
 			{
 				contentPane.setComponentZOrder(cityCardLabel,1);
-				cityCardLabel.setVisible(true);
+				//cityCardLabel.setVisible(true);
 			}
 		}
 
 		for(JLabel diseaseCubes : cityDiseaseCubes){
 			contentPane.setComponentZOrder(diseaseCubes, 1);
-			diseaseCubes.setVisible(true);
+			//diseaseCubes.setVisible(true);
 		}
+
+		revalidate();
+		repaint();
 	}
 
 	public void createNewEventWrapper() {
@@ -1111,6 +1169,24 @@ public class GUI extends JFrame
 
 	private void initComponents()
 	{
+		//Load player cards
+		for(JLabel label : mapPlayerCardLabels.values())
+		{
+			//System.out.println(entry.getKey());
+			label.setIcon(new ImageIcon(new ImageIcon(GUI.class
+					.getResource(label.getText()))
+					.getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
+			label.setVisible(false);
+		}
+
+		for(JLabel label : mapInfectionCardLabels.values())
+		{
+			label.setIcon(new ImageIcon(new ImageIcon(GUI.class
+					.getResource(label.getText()))
+					.getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
+			label.setVisible(false);
+		}
+
 		/*------Set up JFrame and contentPane-----*/
 		setTitle("Pandemic");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -1223,7 +1299,7 @@ public class GUI extends JFrame
 		map.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				System.out.println(MouseInfo.getPointerInfo().getLocation());
+				//System.out.println(MouseInfo.getPointerInfo().getLocation());
 			}});
 
 		JLabel mapLines = new JLabel();
@@ -1387,7 +1463,7 @@ public class GUI extends JFrame
 		outbreakMeterCount.setOpaque(true);
 
 		//Display User role
-		System.out.println("username  in lcp: " + username);
+		//System.out.println("username  in lcp: " + username);
 		//userRoleLabel.setFont(new Font("Lao MN", Font.PLAIN, 12));
 		userRoleLabel.setForeground(Color.WHITE);
 		contentPane.add(userRoleLabel);
@@ -1409,7 +1485,7 @@ public class GUI extends JFrame
 		contentPane.setComponentZOrder(actionsRemaining, 1);
 		contentPane.setComponentZOrder(playerDeck, 1);
 		contentPane.setComponentZOrder(infectionDeck, 1);
-		contentPane.setComponentZOrder(playerDiscard, 2);
+		contentPane.setComponentZOrder(playerDiscard, 100);
 		contentPane.setComponentZOrder(infectionDiscard, 2);
 		contentPane.setComponentZOrder(cardsContainer, 2);
 		contentPane.setComponentZOrder(map, 4);
@@ -1421,7 +1497,7 @@ public class GUI extends JFrame
 			contentPane.setComponentZOrder(cityName, 2);
 		}
 		contentPane.setComponentZOrder(btnEndTurn,1);
-		contentPane.setComponentZOrder(genericBox, 1);
+		contentPane.setComponentZOrder(genericBox, 0);
 		contentPane.setComponentZOrder(topBar, 2);
 		contentPane.setComponentZOrder(redRemaining, 1);
 		contentPane.setComponentZOrder(blueRemaining, 1);
@@ -1433,6 +1509,7 @@ public class GUI extends JFrame
 		contentPane.setComponentZOrder(controlPawn, 1);
 
 
+
 	}
 
 	private void createEvents()
@@ -1440,7 +1517,7 @@ public class GUI extends JFrame
 		/*Create event listeners for each city*/
 		for(JLabel city: citiesLabels)
 		{
-            System.out.println("city (in createEvents): "+ city.getText() +  " " + citiesLabels.size());
+           // System.out.println("city (in createEvents): "+ city.getText() +  " " + citiesLabels.size());
 			/*Mouse entered, cursor change to pointer*/
 			city.addMouseListener(new MouseAdapter() {
 			@Override
@@ -1466,12 +1543,12 @@ public class GUI extends JFrame
 		                break; //breaking because its one to one map
 		            }
 		        }
-		        System.out.println("City Clicked: " + cityNameSelected);
-                System.out.println("mouse event: " + e.getClickCount());
+		       // System.out.println("City Clicked: " + cityNameSelected);
+                //System.out.println("mouse event: " + e.getClickCount());
 
 		        if(moves.get("drive") &&
 						gs.getPositionMap().get(userRole).getNeighbors().stream().anyMatch(city -> city.getName().equals(cityNameSelected)) ){
-		        System.out.println("yey" + moves.get("drive"));
+		        //System.out.println("yey" + moves.get("drive"));
 
 		        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
 		          new UpdateRequest(
@@ -1482,6 +1559,16 @@ public class GUI extends JFrame
 			         new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.DIRECT_FLIGHT)));
 
 		        }
+		        else if(moves.get("charterFlight")){
+					//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+						//	new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.CHARTER_FLIGHT)));
+				}
+				else if(moves.get("shuttleFlight")){
+					//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+					//	new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.SHUTTLE_FLIGHT)));
+				}
+
+
 
 				//mapPawnLabels.get(userRole).setLocation(city.getX(),city.getY()-20);
 			}
@@ -1492,15 +1579,41 @@ public class GUI extends JFrame
 			public void mouseReleased(MouseEvent e)
 			{
 				client.sendMessageToServer(ServerCommands.ANSWER_CONSENT_PROMPT.name(), true);
+				genericBox.setVisible(false);
 				acceptButton.setVisible(false);
+				declineButton.setVisible(false);
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+				setCursor(cursor);
+			}
+			/*Mouse exit, pointer to cursor*/
+			public void mouseExited(MouseEvent e)
+			{
+				Cursor cursor = Cursor.getDefaultCursor();
+				setCursor(cursor);
 			}
 		});
 
 		declineButton.addMouseListener(new MouseAdapter(){
 			public void mouseReleased(MouseEvent e)
 			{
+				genericBox.setVisible(false);
+				acceptButton.setVisible(false);
 				declineButton.setVisible(false);
 				client.sendMessageToServer(ServerCommands.ANSWER_CONSENT_PROMPT.name(), false);
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+				setCursor(cursor);
+			}
+			/*Mouse exit, pointer to cursor*/
+			public void mouseExited(MouseEvent e)
+			{
+				Cursor cursor = Cursor.getDefaultCursor();
+				setCursor(cursor);
 			}
 		});
 
@@ -1508,6 +1621,17 @@ public class GUI extends JFrame
 			public void mouseReleased(MouseEvent e)
 			{
 				discardCardButton.setVisible(false);
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+				setCursor(cursor);
+			}
+			/*Mouse exit, pointer to cursor*/
+			public void mouseExited(MouseEvent e)
+			{
+				Cursor cursor = Cursor.getDefaultCursor();
+				setCursor(cursor);
 			}
 		});
 
@@ -1549,8 +1673,12 @@ public class GUI extends JFrame
 		btnEndTurn.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e)
 			{
+				//System.out.println("End turn pressed");
 				btnEndTurn.setVisible(false);
+				showInfectCities();
+
 				client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.END_TURN)));
+				//showInfectCities();
 			}
 		});
 
@@ -1558,6 +1686,7 @@ public class GUI extends JFrame
 		//Drive Ferry button
 		btnDriveFerry.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				//System.out.println("Drive ferry pressed");
 				resetMovesSelected(moves);
 				for(Boolean b: moves.values()) System.out.println(b);
 				moves.put("drive",true);
@@ -1565,7 +1694,7 @@ public class GUI extends JFrame
 				loadDriveAndFlightMessage();
 				hideTreatDiseaseOptions();
 				displayTargetsDrive();
-				System.out.println(citiesLabels.size());
+				//System.out.println(citiesLabels.size());
 				}
 
 			private void displayTargetsDrive() {
@@ -1596,6 +1725,11 @@ public class GUI extends JFrame
 		//Charter Flight button
 		btnCharterFlight.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				resetMovesSelected(moves);
+				moves.put("charterFlight",true);
+				resetDisplayOptions(displayOptions);
+				loadDriveAndFlightMessage();
+				hideTreatDiseaseOptions();
 
 			}
 		});
@@ -1603,6 +1737,8 @@ public class GUI extends JFrame
 		//Shuttle Flight button
 		btnShuttleFlight.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				resetMovesSelected(moves);
+				moves.put("shuttleFlight",true);
 
 			}
 		});
@@ -1610,6 +1746,8 @@ public class GUI extends JFrame
 		//Build Research button
 		btnBuildResearch.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				resetMovesSelected(moves);
+				moves.put("buildResearch",true);
 
 			}
 		});
@@ -1617,17 +1755,22 @@ public class GUI extends JFrame
 		//TreatDisease button
 		btnTreatDisease.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				//System.out.println("BtnTreatDisease pressed! 1");
 				resetMovesSelected(moves);
 				resetDisplayOptions(displayOptions);
+				//System.out.println("BtnTreatDisease pressed! 2");
 				loadTreatDiseaseMessage();
+				//System.out.println("BtnTreatDisease pressed! 3");
 
-				System.out.println("Action Listener Added");
+
 			}
 		});
 
 		//Discover a cure button
 		btnDiscoverCure.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				resetMovesSelected(moves);
+				moves.put("discoverCure",true);
 
 			}
 		});
@@ -1635,6 +1778,10 @@ public class GUI extends JFrame
 		//Share Knowledge button
 		btnShareKnowledge.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				resetMovesSelected(moves);
+				moves.put("shareKnowledge",true);
+
+				//Russel's code
 				String currentPlayer = getGameState().getCurrentPlayer();
 
 				List<String> playerList = getGameState().getUserMap().entrySet().stream()
@@ -1646,7 +1793,7 @@ public class GUI extends JFrame
 				dialog.setOnOk(ev -> {
 					final List<String> chosenItems = dialog.getSelectedItems();
 					String sharingKnowlegeTarget = chosenItems.get(0);
-					System.out.println("Sharing knowledge with " + sharingKnowlegeTarget);
+					//System.out.println("Sharing knowledge with " + sharingKnowlegeTarget);
 					client.sendMessageToServer(ServerCommands.INITIATE_CONSENT_REQUIRING_MOVE.name(),
 							getGameState().getUserMap().get(Utils.getEnum(RoleType.class, sharingKnowlegeTarget)), "Player " + currentPlayer + " wants to share knowlegdge with you.",
 							new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_CARD,
@@ -1669,28 +1816,79 @@ public class GUI extends JFrame
 
 		for(JLabel j : profPawns){
 			j.addMouseListener(new MouseAdapter(){
-				public void mouseReleased(MouseEvent e){
-
+				public void mouseReleased(MouseEvent e)
+				{
+					//reset all profpawnclick = false
+					resetProfPawnSelected(profPawnOptions, j);
+					//set currentprofpawn click = true or false;
+					profPawnOptions.put(j, !profPawnOptions.get(j));
+					//get key = role type of j
 					RoleType key = null;
 					JLabel value = j;
-					for(Map.Entry entry: mapPawnProf.entrySet()){
-						if(value.equals(entry.getValue())){
+					for (Map.Entry entry : mapPawnProf.entrySet()) {
+						if (value.equals(entry.getValue())) {
 							key = (RoleType) entry.getKey();
 							break; //breaking because its one to one map
 						}
 					}
-					List<PlayerCard> cardsInHand = gs.getCardMap().get(key);
-					int i = 0;
-					for(PlayerCard card : cardsInHand){
-						JLabel cityCardLabel = mapPlayerCardLabels.get(card.getCardName());
-						if(cityCardLabel != null){
-							cityCardLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(cityCardLabel.getText())).getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
-							cityCardLabel.setBounds(202+115*i,55,100,140);
-							//contentPane.add(cityCardLabel);
-							i++;
+					for (Map.Entry<RoleType, List<PlayerCard>> entry : gs.getCardMap().entrySet())
+					{
+						// only load other players' hands, don't load current user's hand
+						if (!entry.getKey().equals(userRole)) {
+							//List<PlayerCard> cardsInHand = gs.getCardMap().get(key);
+							List<PlayerCard> cardsInHand = entry.getValue();
+							int i = 0;
+							for (PlayerCard card : cardsInHand) {
+								JLabel cityCardLabel = mapPlayerCardLabels.get(card.getCardName());
+								if (cityCardLabel != null) {
+									//cityCardLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(cityCardLabel.getText())).getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
+									cityCardLabel.setBounds(202 + 115 * i, 55, 100, 140);
+									contentPane.add(cityCardLabel);
+									contentPane.setComponentZOrder(cityCardLabel, 0);
+									i++;
+									//if it's not the profpawn selected then hide
+									if (entry.getKey() != key) {
+										cityCardLabel.setVisible(false);
+									}
+									//else if it's the profpawn selected, then show if profpawnselected = true, otherwise hide
+									else {
+										if (profPawnOptions.get(j) == false) cityCardLabel.setVisible(false);
+										else if (profPawnOptions.get(j) == true) cityCardLabel.setVisible(true);
+									}
+								}
+							}
+						}
+
+					}
+				}
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+					setCursor(cursor);
+
+					RoleType key = null;
+					JLabel value = j;
+					for (Map.Entry entry : mapPawnProf.entrySet()) {
+						if (value.equals(entry.getValue())) {
+							key = (RoleType) entry.getKey();
+							break; //breaking because its one to one map
 						}
 					}
+					showRole.setText(key.toString());
+					showRole.setForeground(Color.WHITE);
+					showRole.setBounds(20,30,120,20);
+					showRole.setVisible(true);
+					contentPane.add(showRole);
+					contentPane.setComponentZOrder(showRole,0);
 
+				}
+				/*Mouse exit, pointer to cursor*/
+				public void mouseExited(MouseEvent e)
+				{
+					Cursor cursor = Cursor.getDefaultCursor();
+					setCursor(cursor);
+
+					showRole.setVisible(false);
 				}
 			});
 		}
@@ -1724,6 +1922,7 @@ public class GUI extends JFrame
 			cubes.setVisible(false);
 		}
 		cityDiseaseCubes.clear();
+
 		for(JLabel city : citiesLabels)
 		{
 			//get city names
@@ -1759,6 +1958,7 @@ public class GUI extends JFrame
 
 					cubeLabel.setBounds(cubePos[i][0], cubePos[i][1], 90, 16);
 					contentPane.add(cubeLabel);
+					contentPane.setComponentZOrder(cubeLabel,2);
 					cubeLabel.setVisible(true);
 					cityDiseaseCubes.add(cubeLabel);
 
@@ -1840,6 +2040,39 @@ public class GUI extends JFrame
 //			}
 //		}
 //	}
+
+	private void loadResearchStation()
+	{
+
+		//get list<City> from gs
+		//draw a station on each list[i], i.e City
+/*
+		for (City atCity : gs.getResearchStationsPositions())
+		{
+			JLabel cityLabel = mapCityLabels.get(atCity.getName());
+
+			//System.out.println(entry.getKey() + "/" + entry.getValue());
+
+
+			int rsX =  getCityPosition(cityLabel.getText())[0];
+			int rsY =  getCityPosition(cityLabel.getText())[1];
+
+			JLabel rsLabel = new JLabel("/pandemic/resources/researchStation.png");
+
+
+			rsLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(rsLabel.getText())).getImage().getScaledInstance(citySize-2, citySize-2, Image.SCALE_SMOOTH)));
+			rsLabel.setBounds(rsX, rsY, citySize-2, citySize-2);
+			contentPane.add(rsLabel);
+			contentPane.setComponentZOrder(rsLabel, 1);
+			rsLabel.setVisible(true);
+
+		}
+		*/
+
+
+
+
+	}
 	private void loadAllPlayerCards()
 	{
 		for(Entry<String, JLabel> entry: mapPlayerCardLabels.entrySet())
@@ -1856,9 +2089,9 @@ public class GUI extends JFrame
 		int i = 0;
 		for(RoleType r : gs.getUserMap().keySet()){
 			if (!r.equals(userRole)) {
-				System.out.println(mapPawnProf.get(r));
+				//System.out.println(mapPawnProf.get(r));
 				profPawns2.add(mapPawnProf.get(r));
-				mapPawnProf.get(r).setBounds(10 + 10 * i, 10, 26, 30);
+				mapPawnProf.get(r).setBounds(10 + 30 * i, 10, 26, 30);
 				mapPawnProf.get(r).setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(mapPawnProf.get(r).getText())).getImage().getScaledInstance(26, 30, Image.SCALE_SMOOTH)));
 
 				//System.out.println("Icon path: " +new ImageIcon(new ImageIcon(GUI.class.getResource(mapPawnProf.get(r).getText())).getImage().getScaledInstance(80, 106, Image.SCALE_SMOOTH) ));
@@ -1910,7 +2143,7 @@ public class GUI extends JFrame
 	{
 
 //		//Display
-        System.out.println("username  in lcp: " + username);
+        //System.out.println("username  in lcp: " + username);
 		userRoleLabel.setText("Role: " + userRole.toString());
 //		//userRoleLabel.setFont(new Font("Lao MN", Font.PLAIN, 12));
 //		userRoleLabel.setForeground(Color.WHITE);
@@ -1952,28 +2185,28 @@ public class GUI extends JFrame
         }
 
 		int i = 1;
-        System.out.println("gs : " + gs);
-        System.out.println("gs.getCardMap: " +gs.getCardMap());
-        System.out.println("gs.getUserMap: " +gs.getUserMap());
+       // System.out.println("gs : " + gs);
+       // System.out.println("gs.getCardMap: " +gs.getCardMap());
+       // System.out.println("gs.getUserMap: " +gs.getUserMap());
         //System.out.println("gs.getCardMap.get(userRole): " +gs.getCardMap().get(userRole));
-        System.out.println("CARD MAP: ");
+        System.out.println("CARD MAP TEST: ");
 
         for (Map.Entry<RoleType, List<PlayerCard>> entry : gs.getCardMap().entrySet())
         {
-            System.out.println(entry.getKey() + "/");
-            System.out.println("Cards:");
+            System.out.println(entry.getKey() + ":");
+           // System.out.println("Cards:");
             entry.getValue().forEach(c -> System.out.println("          "+ c.getCardName() + " " + c.getCardType()));
         }
 
-        System.out.println("username: " +username);
-        System.out.println("userRole: " + userRole);
+       // System.out.println("username: " +username);
+       // System.out.println("userRole: " + userRole);
 		for(PlayerCard cityCard : gs.getCardMap().get(userRole))
 		{
 
 			JLabel cityCardLabel = mapPlayerCardLabels.get(cityCard.getCardName());
 			if(cityCardLabel != null)
 			{
-				System.out.println(cityCardLabel.getText());
+				/*System.out.println(cityCardLabel.getText());
                 URL resource = GUI.class.getResource(cityCardLabel.getText());
 
                 if(resource == null) {
@@ -1982,9 +2215,10 @@ public class GUI extends JFrame
                 }
 
                 cityCardLabel.setIcon(new ImageIcon(new ImageIcon(resource).getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
+                */
 				cityCardLabel.setBounds(202+115*i,585,100,140);
 				contentPane.add(cityCardLabel);
-//				contentPane.setComponentZOrder(cityCardLabel,1);
+				contentPane.setComponentZOrder(cityCardLabel,1);
 				cityCardLabel.setVisible(true);
 				i++;
 			}
@@ -2002,19 +2236,24 @@ public class GUI extends JFrame
 
 	private void loadPlayerDiscardCards()
 	{
-		System.out.println("CARDS IN PLAYER DISCARD PILE: " + gs.getPlayerDiscardPile().getCardsInPile());
-		System.out.println("PLAYER DISCARD PILE: " + gs.getPlayerDiscardPile());
+		//System.out.println("CARDS IN PLAYER DISCARD PILE: " + gs.getPlayerDiscardPile().getCardsInPile());
+		//System.out.println("PLAYER DISCARD PILE: " + gs.getPlayerDiscardPile());
+		int i = 1;
+		int k=0;
 		for(PlayerCard cityCard : gs.getPlayerDiscardPile().getCardsInPile())
 		{
 
 			JLabel cityCardLabel = mapPlayerCardLabels.get(cityCard.getCardName());
+			//System.out.println(cityCard.getCardName());
 			if(cityCardLabel != null)
 			{
-				cityCardLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(cityCardLabel.getText())).getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
-				cityCardLabel.setBounds(106, 56, 100, 130);
+				//cityCardLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(cityCardLabel.getText())).getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
+				cityCardLabel.setBounds(108, 60, 90, 120);
 				contentPane.add(cityCardLabel);
-				contentPane.setComponentZOrder(cityCardLabel,1);
+				contentPane.setComponentZOrder(cityCardLabel,i);
 				cityCardLabel.setVisible(true);
+				k++;
+				i++;
 			}
 
 		}
@@ -2023,21 +2262,58 @@ public class GUI extends JFrame
 
 	private void loadInfectionDiscardCards()
 	{
-	//	int i = 0;
+		int i = 1;
+		//int k = 0;
 		for(InfectionCard cityCard : gs.getInfectionDiscardPile().getCards())
 		{
 			JLabel cityCardLabel = mapInfectionCardLabels.get(cityCard.getCardName());
 			if(cityCardLabel != null)
 			{
-				cityCardLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(cityCardLabel.getText())).getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
-				cityCardLabel.setBounds(102,185,100,140);
+				//cityCardLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(cityCardLabel.getText())).getImage().getScaledInstance(100, 140, Image.SCALE_SMOOTH)));
+				cityCardLabel.setBounds(108,190,90,120);
 				contentPane.add(cityCardLabel);
-				contentPane.setComponentZOrder(cityCardLabel,1);
+				contentPane.setComponentZOrder(cityCardLabel,i);
 				cityCardLabel.setVisible(true);
+				//k++;
+				i++;
 
 			}
 
 		}
+
+	}
+
+	private void showInfectCities()
+	{
+		//wait 3 seconds before infect (after end turn pressed)
+		/*
+		try {
+			sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		System.out.println("2 last cards: " + gs.getInfectionDiscardPile().getCards().get(0).getCardName() + " " + gs.getInfectionDiscardPile().getCards().get(1).getCardName() );
+		//show 2 cards in the middle of the screen + message : "Infect cities"
+		for(int i=0;i < gs.getCurrentInfectionRate(); i++)
+		{
+			JLabel infectionCardLabel = mapInfectionCardLabels.get(gs.getInfectionDiscardPile().getCards().get(i).getCardName());
+			infectionCardLabel.setBounds(400+i*130, 200,100,140);
+			contentPane.add(infectionCardLabel);
+			contentPane.setComponentZOrder(infectionCardLabel,0);
+			infectionCardLabel.setVisible(true);
+		}
+
+		//set timer 3 seconds
+		try {
+			sleep(5000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		*/
+		//move them back to infectionDiscardPile
+
+
+
 
 	}
 
@@ -2138,35 +2414,42 @@ public class GUI extends JFrame
 	}
 
 	private void loadTreatDiseaseMessage() {
+        System.out.println("Inside loadtreatMessage-Before looping diseasecubesmap");
         //current position of user
-        optionRedDisease.setBounds(586, 130, 68, 36);
+        optionRedDisease.setBounds(586, 130, 150, 36);
 		contentPane.setComponentZOrder(optionRedDisease,0);
-        optionBlueDisease.setBounds(586, 210, 68, 36);
+        optionBlueDisease.setBounds(586, 210, 150, 36);
 		contentPane.setComponentZOrder(optionBlueDisease,0);
-        optionYellowDisease.setBounds(586, 300, 68, 36);
+        optionYellowDisease.setBounds(586, 300, 150, 36);
 		contentPane.setComponentZOrder(optionYellowDisease,0);
-        optionBlackDisease.setBounds(586, 390, 68, 36);
+        optionBlackDisease.setBounds(586, 390, 150, 36);
 		contentPane.setComponentZOrder(optionBlackDisease,0);
 
         //cubesTuples.forEach(p-> System.out.println("yo" + p.getKey()));
       //  System.out.println( cubesInCity + " shalalala");
 		for (Pair<DiseaseType, Integer> d : this.cubesInCity = gs.getDiseaseCubesMap().get(gs.getPositionMap().get(userRole).getName())) {
+			System.out.println("Check treat disease message: " + d.getKey().toString() + " " + d.getValue());
             JLabel t = new JLabel();
             if (d.getKey().equals(DiseaseType.Red)) {
                 t = optionRedDisease;
                 optionRedDisease.setVisible(true);
+				System.out.println("red should appear");
             } else if (d.getKey().equals(DiseaseType.Blue)) {
                 t = optionBlueDisease;
                 optionBlueDisease.setVisible(true);
+				System.out.println("blue should appear");
             } else if (d.getKey().equals(DiseaseType.Yellow)) {
                 t = optionYellowDisease;
                 optionYellowDisease.setVisible(true);
+				System.out.println("yellow should appear");
             } else if (d.getKey().equals(DiseaseType.Black)) {
                 t = optionBlackDisease;
                 optionBlackDisease.setVisible(true);
+				System.out.println("black should appear");
             }
 
             t.setText("" + d.getKey());
+            //t.setSize(150,50);
             //chooseCube.setBounds(586, 256, 68, 36);
             t.setForeground(Color.WHITE);
             String path = "";
@@ -2191,17 +2474,22 @@ public class GUI extends JFrame
             }
 
             t.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(path)).getImage().getScaledInstance(35, 35, Image.SCALE_SMOOTH)));
-
+			contentPane.setComponentZOrder(t,0);
             //contentPane.add(t);
 
 
         }
+		System.out.println("treat disease message clicked");
         genericBox.setText("");
-//		contentPane.setComponentZOrder(genericBox,1);
+		genericBox.setBackground(Color.BLACK);
+		genericBox.setBounds(486, 100, 300, 400);
+		genericBox.setVisible(true);
+		genericBox.setOpaque(true);
+		//contentPane.setComponentZOrder(genericBox,1);
 //        genericBox.setVisible(true);
 //        genericBox.setForeground(Color.WHITE);
 //        genericBox.setBackground(Color.BLACK);
-//        genericBox.setBounds(486, 100, 300, 400);
+
 //        genericBox.setOpaque(true);
     }
 
@@ -2238,19 +2526,21 @@ public class GUI extends JFrame
 
 	private void loadGenericMessageBox(){
 		if(username.equals(gs.getCurrentPlayer())) {
-//			genericBox.setForeground(Color.WHITE);
-//			genericBox.setOpaque(false);
 			genericBox.setText("YOUR TURN");
-//			genericBox.setBounds(600, 520, 200, 50);
-			genericBox.setVisible(true);
+
 		}
 		else {
-//			genericBox.setForeground(Color.WHITE);
-//			genericBox.setOpaque(false);
 			genericBox.setText(gs.getCurrentPlayer() + "'s turn.");
-//			genericBox.setBounds(600,520,200,50);
-			genericBox.setVisible(true);
 		}
+		genericBox.setBackground(null);
+		genericBox.setOpaque(false);
+		genericBox.setBounds(600, 520, 200, 50);
+		genericBox.setVisible(true);
+	}
+
+	private void loadDiscoverCureButton()
+	{
+
 	}
 
 	private void loadShareKnowledgeMessage()
@@ -2313,6 +2603,14 @@ public class GUI extends JFrame
 
 	}
 
+	private void resetProfPawnSelected(Map<JLabel, Boolean> profPawnOptions, JLabel jSelected)
+	{
+		for(JLabel j : profPawnOptions.keySet())
+		{
+			if(j != jSelected) profPawnOptions.put(j,false);
+		}
+	}
+
 	private RoleType getUserRole()
 	{
 		RoleType userRole= null;
@@ -2325,8 +2623,8 @@ public class GUI extends JFrame
             }
         }
 
-        System.out.println("userRole in getUserRole: " + userRole);
-        System.out.println("username in getUserRole: " + username);
+       // System.out.println("userRole in getUserRole: " + userRole);
+       // System.out.println("username in getUserRole: " + username);
 
         return userRole;
 	}
@@ -2364,13 +2662,17 @@ public class GUI extends JFrame
 
 		acceptButton.setText("Accept");
 		acceptButton.setBackground(Color.GREEN);
-		acceptButton.setBounds(486,300,50,50);
+		acceptButton.setBounds(486,300,50,30);
 		acceptButton.setOpaque(true);
+		//contentPane.add(acceptButton);
+		contentPane.setComponentZOrder(acceptButton,0);
 
 		declineButton.setText("Decline");
 		declineButton.setBackground(Color.RED);
-		declineButton.setBounds(550,300,50,50);
+		declineButton.setBounds(550,300,50,30);
 		declineButton.setOpaque(true);
+		//contentPane.add(declineButton);
+		contentPane.setComponentZOrder(declineButton,0);
 
 	}
 	public void drawReceiveMessage(String message, MessageType type)
@@ -2382,6 +2684,7 @@ public class GUI extends JFrame
 		genericBox.setOpaque(true);
 
 		genericBox.setVisible(true);
+		contentPane.setComponentZOrder(genericBox,0);
 
 		/*acceptButton.setText("OK");
 		acceptButton.setBackground(Color.GREEN);
@@ -2390,7 +2693,7 @@ public class GUI extends JFrame
 
         System.out.println("draw receive message drawn.");
         try {
-            sleep(15000);
+            sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -2401,9 +2704,12 @@ public class GUI extends JFrame
 		discardCardButton.setVisible(true);
 		discardCardButton.setText("Discard");
 		discardCardButton.setBackground(Color.ORANGE);
-		discardCardButton.setBounds(486,300,50,50);
+		discardCardButton.setBounds(486,300,50,30);
 		discardCardButton.setOpaque(true);
+		contentPane.setComponentZOrder(discardCardButton,0);
 	}
+
+
 
 }
 
