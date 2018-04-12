@@ -54,6 +54,7 @@ public class Game {
 	private boolean eventCardsEnabled;
 	private boolean commercialTravelBanActive;
 	private Player commercialTravelBanPlayedBy;
+	private boolean mobileHospitalActive;
 
   	
   	public Game(GameSettings settings, GameManager gameManager) {
@@ -878,5 +879,13 @@ public class Game {
 
     public void setCommercialTravelBanPlayedBy(Player p){
   	    commercialTravelBanPlayedBy = p;
+    }
+
+    public boolean getMobileHospitalActive(){
+  	    return mobileHospitalActive;
+    }
+
+    public void setMobileHospitalActive(boolean b){
+  	    mobileHospitalActive = b;
     }
 }
