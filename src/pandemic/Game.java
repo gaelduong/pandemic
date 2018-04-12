@@ -16,6 +16,7 @@ public class Game {
   	private Player currentPlayer;
 
   	private ArrayList<ResearchStation> unusedResearchStations;
+  	private List<ResearchStation> allResearchStations;
   	private Disease blueDisease;
   	private Disease blackDisease;
   	private Disease redDisease;
@@ -294,9 +295,11 @@ public class Game {
     private void initializeGameUnits() {
 
         //    - initialize ResearchStations
+        allResearchStations = new ArrayList<ResearchStation>();
         unusedResearchStations = new ArrayList<ResearchStation>();
   	    for(int i = 0; i < 6; i++) {
   	        ResearchStation rs = new ResearchStation();
+  	        allResearchStations.add(rs);
   	        unusedResearchStations.add(rs);
         }
         //    - placing research station in Atlanta
@@ -818,9 +821,15 @@ public class Game {
             curedDiseases.add(purpleDisease.getDiseaseType());
         }
 
+        final List<City> researchStationLocations = new ArrayList<City>();
+        for (ResearchStation rs : allResearchStations){
+            if (rs.getLocation() != null){
+                researchStationLocations.add(rs.getLocation());
+            }
+        }
 
         return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, remainingDiseaseCubesMap,
-                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName(), infectionsRemaining);
+                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName(), infectionsRemaining, researchStationLocations);
     }
 
     public GameManager getGameManager() {
