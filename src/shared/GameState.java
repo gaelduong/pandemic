@@ -27,6 +27,7 @@ public class GameState implements Serializable {
     private final int currentPlayerActionsRemaining;
     private final ArrayList<DiseaseType> curedDiseases;
     private final String currentPlayerName;
+    private final int infectionsRemaining;
 
 
 
@@ -36,7 +37,7 @@ public class GameState implements Serializable {
     public GameState(Map<RoleType, String> userMap, Map<RoleType, List<PlayerCard>> cardMap, Map<RoleType, City> positionMap,
                      Map<CityName, List<Pair<DiseaseType, Integer>>> diseaseCubesMap, Map<DiseaseType, Integer> remainingDiseaseCubesMap,
                      InfectionDiscardPile infectionDiscardPile, PlayerDiscardPile playerDiscardPile, int currentInfectionRate, int currentOutbreakMeter, int actionsRemaining, ArrayList<DiseaseType> diseases,
-                     String currentPlayerName) {
+                     String currentPlayerName, int infectionsRemaining) {
         this.userMap = userMap;
         this.cardMap = cardMap;
         this.positionMap = positionMap;
@@ -49,6 +50,7 @@ public class GameState implements Serializable {
         this.currentPlayerActionsRemaining = actionsRemaining;
         this.curedDiseases = diseases;
         this.currentPlayerName = currentPlayerName;
+        this.infectionsRemaining = infectionsRemaining;
     }
 
     /**
@@ -108,6 +110,10 @@ public class GameState implements Serializable {
 
     public String getCurrentPlayer(){
         return currentPlayerName;
+    }
+
+    public int getInfectionsRemaining(){
+        return infectionsRemaining;
     }
 
 }

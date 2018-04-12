@@ -55,6 +55,7 @@ public class Game {
 	private boolean commercialTravelBanActive;
 	private Player commercialTravelBanPlayedBy;
 	private boolean mobileHospitalActive;
+	private int infectionsRemaining;
 
   	
   	public Game(GameSettings settings, GameManager gameManager) {
@@ -813,12 +814,13 @@ public class Game {
         if(blackDisease.isCured()){
             curedDiseases.add(blackDisease.getDiseaseType());
         }
-//        if(purpleDisease.isCured()){
-//            curedDiseases.add(purpleDisease.getDiseaseType());
-//        }
+        if(purpleDisease.isCured()){
+            curedDiseases.add(purpleDisease.getDiseaseType());
+        }
+
 
         return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, remainingDiseaseCubesMap,
-                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName());
+                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName(), infectionsRemaining);
     }
 
     public GameManager getGameManager() {
@@ -887,5 +889,17 @@ public class Game {
 
     public void setMobileHospitalActive(boolean b){
   	    mobileHospitalActive = b;
+    }
+
+    public int getInfectionsRemaining(){
+  	    return infectionsRemaining;
+    }
+
+    public void setInfectionsRemaining(int i){
+  	    infectionsRemaining = i;
+    }
+
+    public void decrementInfectionsRemaining(){
+  	    infectionsRemaining = infectionsRemaining - 1;
     }
 }
