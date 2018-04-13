@@ -59,6 +59,8 @@ public class Game {
     private int infectionsRemaining;
     private boolean archivistActionUsed;
     private boolean epidemiologistActionUsed;
+    private boolean fieldOperativeActionUsed;
+    private ArrayList<DiseaseFlag> fieldOperativeSamples;
 
   	
   	public Game(GameSettings settings, GameManager gameManager) {
@@ -845,7 +847,7 @@ public class Game {
         }
 
         return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, remainingDiseaseCubesMap,
-                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName(), researchStationLocations, eventCardsEnabled, currentPlayerTurnStatus, archivistActionUsed, epidemiologistActionUsed);
+                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName(), researchStationLocations, eventCardsEnabled, currentPlayerTurnStatus, archivistActionUsed, epidemiologistActionUsed, fieldOperativeActionUsed, fieldOperativeSamples);
     }
 
     public GameManager getGameManager() {
@@ -942,5 +944,53 @@ public class Game {
 
     public void setEpidemiologistActionUsed(boolean b){
   	    epidemiologistActionUsed = b;
+    }
+
+    public ArrayList<DiseaseFlag> getFieldOperativeSamples(){
+  	    return fieldOperativeSamples;
+    }
+
+    public void addSample(DiseaseFlag sample){
+  	    sample.setLocation(null);
+  	    fieldOperativeSamples.add(sample);
+    }
+
+    public void returnSampleToSupply(DiseaseFlag sample){
+  	    fieldOperativeSamples.remove(sample);
+  	    switch(sample.getDiseaseType()) {
+            case Blue :
+                blueUnusedDiseaseFlags.add(sample);
+                sample.setUsed(false);
+                sample.setLocation(null);
+                break;
+            case Black :
+                blackUnusedDiseaseFlags.add(sample);
+                sample.setUsed(false);
+                sample.setLocation(null);
+                break;
+            case Red :
+                redUnusedDiseaseFlags.add(sample);
+                sample.setUsed(false);
+                sample.setLocation(null);
+                break;
+            case Yellow :
+                yellowUnusedDiseaseFlags.add(sample);
+                sample.setUsed(false);
+                sample.setLocation(null);
+                break;
+            case Purple :
+                purpleUnusedDiseaseFlags.add(sample);
+                sample.setUsed(false);
+                sample.setLocation(null);
+                break;
+        }
+    }
+
+    public boolean getFieldOperativeActionUsed(){
+  	    return fieldOperativeActionUsed;
+    }
+
+    public void setFieldOperativeActionUsed(boolean b){
+        fieldOperativeActionUsed = b;
     }
 }

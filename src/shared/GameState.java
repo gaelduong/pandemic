@@ -32,6 +32,8 @@ public class GameState implements Serializable {
     private final CurrentPlayerTurnStatus turnStatus;
     private final boolean archivistActionUsed;
     private final boolean epidemiologistActionUsed;
+    private final boolean fieldOperativeActionUsed;
+    private final ArrayList<DiseaseFlag> fieldOperativeSamples;
 
 
     /**
@@ -40,7 +42,8 @@ public class GameState implements Serializable {
     public GameState(Map<RoleType, String> userMap, Map<RoleType, List<PlayerCard>> cardMap, Map<RoleType, City> positionMap,
                      Map<CityName, List<Pair<DiseaseType, Integer>>> diseaseCubesMap, Map<DiseaseType, Integer> remainingDiseaseCubesMap,
                      InfectionDiscardPile infectionDiscardPile, PlayerDiscardPile playerDiscardPile, int currentInfectionRate, int currentOutbreakMeter, int actionsRemaining, ArrayList<DiseaseType> diseases,
-                     String currentPlayerName, ArrayList<City> researchStations, boolean eventCardsEnabled, CurrentPlayerTurnStatus status, boolean aActionUsed, boolean eActionUsed) {
+                     String currentPlayerName, ArrayList<City> researchStations, boolean eventCardsEnabled, CurrentPlayerTurnStatus status, boolean aActionUsed, boolean eActionUsed, boolean fOActionUsed,
+                     ArrayList<DiseaseFlag> fOSamples) {
         this.userMap = userMap;
         this.cardMap = cardMap;
         this.positionMap = positionMap;
@@ -58,6 +61,8 @@ public class GameState implements Serializable {
         this.turnStatus= status;
         this.archivistActionUsed = aActionUsed;
         this.epidemiologistActionUsed = eActionUsed;
+        this.fieldOperativeActionUsed = fOActionUsed;
+        this.fieldOperativeSamples = fOSamples;
     }
 
     /**
@@ -137,5 +142,13 @@ public class GameState implements Serializable {
 
     public boolean getEpidemiologistActionUsed(){
         return epidemiologistActionUsed;
+    }
+
+    public boolean getFieldOperativeActionUsed(){
+        return fieldOperativeActionUsed;
+    }
+
+    public ArrayList<DiseaseFlag> getFieldOperativeSamples(){
+        return fieldOperativeSamples;
     }
 }

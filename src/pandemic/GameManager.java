@@ -333,12 +333,10 @@ public class GameManager {
             }
         }
         if (currentGame.getInfectionsRemaining() == 0){
-            if (currentGame.getCurrentPlayer().getRoleType().equals(RoleType.Archivist)){
-                currentGame.setArchivistActionUsed(false);
-            }
-            if (currentGame.getCurrentPlayer().getRoleType().equals(RoleType.Epidemiologist)){
-                currentGame.setEpidemiologistActionUsed(false);
-            }
+            // Reset once-per-turn action flags
+            currentGame.setArchivistActionUsed(false);
+            currentGame.setEpidemiologistActionUsed(false);
+            currentGame.setFieldOperativeActionUsed(false);
             // SET NEXT PLAYER TO CURRENT PLAYER
             // MUST MAKE SURE current player is at the head of the queue
             currentGame.setGamePhase(GamePhase.TurnActions);
@@ -1261,6 +1259,63 @@ public class GameManager {
         else {
             return 1;
         }
+    }
+
+    // Pre: CurrentPlayerTurnStatus is PlayingActions, currentPlayer is FieldOperative, currentPlayer has actions remaining,
+    // !fieldOperativeActionUsed, currentPlayer has selected a DiseaseFlag from the city they are currently in
+    public int playFieldOperativeCollectSample(DiseaseFlag sample){
+        if (!currentGame.getFieldOperativeActionUsed()){
+            currentGame.addSample(sample);
+            currentGame.setFieldOperativeActionUsed(true);
+            getCurrentPlayer().incrementActionTaken();
+            return 0;
+        }
+        else {
+            return 1;
+        }
+    }
+
+    // Pre: CurrentPlayerTurnStatus is PlayingActions, FieldOperative Player has selected a disease flag sample to return to the supply
+    public void playFieldOperativeReturnSample(DiseaseFlag sample){
+	    currentGame.returnSampleToSupply(sample);
+    }
+
+    // Pre: CurrentPlayerTurnStatus is PlayingActions, currentPlayer is FieldOperative, currentPlayer has actions remaining,
+    // currentPlayer is in a City with a Research Station, currentPlayer has selected 3 cards of same colour from hand and 3
+    // Disease Flag samples of this colour
+    public int playFieldOperativeDiscoverCure(List<CityCard> cards, List<DiseaseFlag> samples){
+        DiseaseType dType = getDiseaseTypeByRegion(cards.get(0).getRegion());
+	    for (CityCard c : cards){
+	        if (!getDiseaseTypeByRegion(c.getRegion()).equals(dType)){
+	            return 1;
+            }
+            discardPlayerCard(getCurrentPlayer(), c);
+        }
+        for (DiseaseFlag f : samples){
+	        if (!f.getDiseaseType().equals(dType)){
+	            return 1;
+            }
+            currentGame.returnSampleToSupply(f);
+        }
+
+        Disease d = currentGame.getDiseaseByDiseaseType(dType);
+        d.setCured(true);
+        currentGame.checkIfEradicated(dType);
+        getCurrentPlayer().incrementActionTaken();
+
+        // Check if all diseases in game are cured:
+        boolean allDiseasesCured;
+        if (currentGame.getChallenge().equals(ChallengeKind.BioTerrorist) || currentGame.getChallenge().equals(ChallengeKind.Mutation)){
+            allDiseasesCured = currentGame.getDiseaseByDiseaseType(DiseaseType.Black).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Blue).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Red).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Yellow).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Purple).isCured();
+        }
+        else {
+            allDiseasesCured = currentGame.getDiseaseByDiseaseType(DiseaseType.Black).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Blue).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Red).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Yellow).isCured();
+        }
+        if (allDiseasesCured){
+            currentGame.setGamePhase(GamePhase.Completed);
+            notifyAllNonBTPlayersGameWon();
+        }
+        return 0;
     }
 
     public void setCommercialTravelBanActive(boolean b){

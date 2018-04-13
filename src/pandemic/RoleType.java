@@ -6,5 +6,5 @@ public enum RoleType implements Serializable {
 
     ContingencyPlanner, Dispatcher, Medic, OperationsExpert, QuarantineSpecialist,
     Researcher, Scientist,
-    ContainmentSpecialist, Generalist, Archivist, Epidemiologist
+    ContainmentSpecialist, Generalist, Archivist, Epidemiologist, FieldOperative
 }
