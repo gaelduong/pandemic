@@ -149,8 +149,6 @@ public class UpdateRequest implements Serializable {
         } else {
             System.err.println("ERROR - passed player user name does not correspond to current player");
         }
-
-        //TODO omer link to backend commands
     }
 
     @SuppressWarnings("unchecked")
