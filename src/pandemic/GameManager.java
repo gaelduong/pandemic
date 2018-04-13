@@ -1318,6 +1318,23 @@ public class GameManager {
         return 0;
     }
 
+    // Pre: CurrentPlayerTurnStatus is PlayingActions, currentPlayer is Troubleshooter, currentPlayer has actions remaining, currentPlayer
+    // has CityCard for destination City in their hand
+    public int playTroubleShooterDirectFlight(City destination){
+        Player currentPlayer = currentGame.getCurrentPlayer();
+        if (currentGame.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayingActions) {
+            Pawn currentPlayerPawn = currentPlayer.getPawn();
+            City currentPlayerCity = currentPlayerPawn.getLocation();
+            currentPlayerCity.getCityUnits().remove(currentPlayerPawn);
+            destination.getCityUnits().add(currentPlayerPawn);
+            currentPlayerPawn.setLocation(destination);
+            currentPlayer.incrementActionTaken();
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
     public void setCommercialTravelBanActive(boolean b){
 	    currentGame.setCommercialTravelBanActive(b);
     }
