@@ -70,7 +70,7 @@ public class PostCondition implements Serializable {
          * You may leave this parameter empty (no parameter) or send null if there are < 6 research stations already.
          *
          * <br><br><b>Arguments required:</b><br>
-         * {@link String cityNameToRemove_Optional}
+         * String cityLocationToBuild, String cityNameToRemove_Optional
          */
         BUILD_RESEARCH_STATION,
 

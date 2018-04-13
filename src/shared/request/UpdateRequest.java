@@ -189,7 +189,8 @@ public class UpdateRequest implements Serializable {
     }
 
     private void executeBuildResearchStation(Game game, String playerUsername, List arguments) {
-        final String cityNameToRemove_Optional = arguments.size() == 1 ? (String)arguments.get(0) : null;
+        final String cityLocationToBuild = (String)arguments.get(0);
+        final String cityNameToRemove_Optional = arguments.size() == 2 ? (String)arguments.get(1) : null;
         //TODO omer link with back-end commands
     }
 
