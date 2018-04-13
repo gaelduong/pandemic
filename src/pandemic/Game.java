@@ -57,6 +57,8 @@ public class Game {
 	private boolean mobileHospitalActive;
     private ArrayList<ResearchStation> allResearchStations;
     private int infectionsRemaining;
+    private boolean archivistActionUsed;
+    private boolean epidemiologistActionUsed;
 
   	
   	public Game(GameSettings settings, GameManager gameManager) {
@@ -352,8 +354,19 @@ public class Game {
     public void initializePlayerPawns(){
         unusedRoles = new ArrayList<Role>() {
             {
-                for(RoleType r : RoleType.values()) {
-                    add(new Role(r));
+                if(settings.getChallenge().equals(ChallengeKind.OriginalBaseGame)){
+                    add(new Role(RoleType.ContingencyPlanner));
+                    add(new Role(RoleType.OperationsExpert));
+                    add(new Role(RoleType.Dispatcher));
+                    add(new Role(RoleType.QuarantineSpecialist));
+                    add(new Role(RoleType.Researcher));
+                    add(new Role(RoleType.Medic));
+                    add(new Role(RoleType.Scientist));
+                }
+                else {
+                    for (RoleType r : RoleType.values()) {
+                        add(new Role(r));
+                    }
                 }
             }
         };
@@ -832,7 +845,7 @@ public class Game {
         }
 
         return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, remainingDiseaseCubesMap,
-                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName(), researchStationLocations, eventCardsEnabled, currentPlayerTurnStatus);
+                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName(), researchStationLocations, eventCardsEnabled, currentPlayerTurnStatus, archivistActionUsed, epidemiologistActionUsed);
     }
 
     public GameManager getGameManager() {
@@ -913,5 +926,21 @@ public class Game {
 
     public void decrementInfectionsRemaining(){
   	    infectionsRemaining = infectionsRemaining - 1;
+    }
+
+    public boolean getArchivistActionUsed(){
+  	    return archivistActionUsed;
+    }
+
+    public void setArchivistActionUsed(boolean b){
+  	    archivistActionUsed = b;
+    }
+
+    public boolean getEpidemiologistActionUsed(){
+  	    return epidemiologistActionUsed;
+    }
+
+    public void setEpidemiologistActionUsed(boolean b){
+  	    epidemiologistActionUsed = b;
     }
 }

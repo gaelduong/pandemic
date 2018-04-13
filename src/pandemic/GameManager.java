@@ -333,6 +333,12 @@ public class GameManager {
             }
         }
         if (currentGame.getInfectionsRemaining() == 0){
+            if (currentGame.getCurrentPlayer().getRoleType().equals(RoleType.Archivist)){
+                currentGame.setArchivistActionUsed(false);
+            }
+            if (currentGame.getCurrentPlayer().getRoleType().equals(RoleType.Epidemiologist)){
+                currentGame.setEpidemiologistActionUsed(false);
+            }
             // SET NEXT PLAYER TO CURRENT PLAYER
             // MUST MAKE SURE current player is at the head of the queue
             currentGame.setGamePhase(GamePhase.TurnActions);
@@ -350,8 +356,9 @@ public class GameManager {
 	// Checks if Player has too many cards in hand. Must resolve issue if Player has too many cards.
 	public void checkHandSize(Player p){
 		int numCardsInHand = p.getHandSize();
-		// For OTB, must check if Player is Generalist
-		if (numCardsInHand > 7){
+		// For OTB, must check if Player is Archivist
+        RoleType playerRole = p.getRoleType();
+		if ((playerRole.equals(RoleType.Archivist) && numCardsInHand > 8) || (!playerRole.equals(RoleType.Archivist) && numCardsInHand > 7)){
 			currentGame.setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus.PlayerDiscardingCards);
 			currentGame.setPlayerDiscardingCards(p);
 			promptDiscardCards(p);
@@ -1208,6 +1215,48 @@ public class GameManager {
             else {
                 return 1;
             }
+        }
+        else {
+            return 1;
+        }
+    }
+
+    // Pre: CurrentPlayerTurnStatus is PlayingActions, currentPlayer is Archivist, currentPlayer has actions remaining, !archivistActionUsed,
+    // the CityCard for the, City that the Archivist is currently in is in the PlayerDiscardPile, and the currentPlayer has selected to
+    // recover this card
+    public int playArchivistRecoverCard(){
+	    Player currentPlayer = currentGame.getCurrentPlayer();
+	    City currentCity = currentPlayer.getPawn().getLocation();
+	    PlayerCard card = null;
+	    for (PlayerCard c : currentGame.getPlayerDiscardPile().getCardsInPile()){
+	        if (c.getCardName().equals(currentCity.getName().toString())){
+	            card = c;
+	            break;
+            }
+        }
+        if (card != null){
+	        currentGame.getPlayerDiscardPile().getCardsInPile().remove(card);
+	        currentPlayer.addToHand(card);
+	        checkHandSize(currentPlayer);
+	        currentGame.setArchivistActionUsed(true);
+	        currentPlayer.incrementActionTaken();
+	        return 0;
+        }
+        else {
+	        return 1;
+        }
+    }
+
+    // Pre: CurrentPlayerTurnStatus is PlayingActions, currentPlayer is Epidemiologist, currentPlayer has actions remaining,
+    // !epidemiologistActionUsed, currentPlayer is in same City as owner, card is in owner's hand, and owner has given
+    // permission
+    public int playEpidemiologistTakeCard(Player owner, CityCard card){
+        if (owner.isInHand(card)){
+            owner.discardCard(card);
+            getCurrentPlayer().addToHand(card);
+            checkHandSize(getCurrentPlayer());
+            currentGame.setEpidemiologistActionUsed(true);
+            return 0;
         }
         else {
             return 1;
