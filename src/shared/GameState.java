@@ -28,6 +28,12 @@ public class GameState implements Serializable {
     private final ArrayList<DiseaseType> curedDiseases;
     private final String currentPlayerName;
     private final ArrayList<City> researchStationLocations;
+    private final boolean eventCardsEnabled;
+    private final CurrentPlayerTurnStatus turnStatus;
+    private final boolean archivistActionUsed;
+    private final boolean epidemiologistActionUsed;
+    private final boolean fieldOperativeActionUsed;
+    private final ArrayList<DiseaseFlag> fieldOperativeSamples;
 
 
     /**
@@ -36,7 +42,8 @@ public class GameState implements Serializable {
     public GameState(Map<RoleType, String> userMap, Map<RoleType, List<PlayerCard>> cardMap, Map<RoleType, City> positionMap,
                      Map<CityName, List<Pair<DiseaseType, Integer>>> diseaseCubesMap, Map<DiseaseType, Integer> remainingDiseaseCubesMap,
                      InfectionDiscardPile infectionDiscardPile, PlayerDiscardPile playerDiscardPile, int currentInfectionRate, int currentOutbreakMeter, int actionsRemaining, ArrayList<DiseaseType> diseases,
-                     String currentPlayerName, ArrayList<City> researchStations) {
+                     String currentPlayerName, ArrayList<City> researchStations, boolean eventCardsEnabled, CurrentPlayerTurnStatus status, boolean aActionUsed, boolean eActionUsed, boolean fOActionUsed,
+                     ArrayList<DiseaseFlag> fOSamples) {
         this.userMap = userMap;
         this.cardMap = cardMap;
         this.positionMap = positionMap;
@@ -50,6 +57,12 @@ public class GameState implements Serializable {
         this.curedDiseases = diseases;
         this.currentPlayerName = currentPlayerName;
         this.researchStationLocations = researchStations;
+        this.eventCardsEnabled = eventCardsEnabled;
+        this.turnStatus= status;
+        this.archivistActionUsed = aActionUsed;
+        this.epidemiologistActionUsed = eActionUsed;
+        this.fieldOperativeActionUsed = fOActionUsed;
+        this.fieldOperativeSamples = fOSamples;
     }
 
     /**
@@ -113,5 +126,29 @@ public class GameState implements Serializable {
 
     public ArrayList<City> getResearchStationLocations(){
         return researchStationLocations;
+    }
+
+    public boolean getEventCardsEnabled(){
+        return eventCardsEnabled;
+    }
+
+    public CurrentPlayerTurnStatus getTurnStatus(){
+        return turnStatus;
+    }
+
+    public boolean getArchivistActionUsed(){
+        return archivistActionUsed;
+    }
+
+    public boolean getEpidemiologistActionUsed(){
+        return epidemiologistActionUsed;
+    }
+
+    public boolean getFieldOperativeActionUsed(){
+        return fieldOperativeActionUsed;
+    }
+
+    public ArrayList<DiseaseFlag> getFieldOperativeSamples(){
+        return fieldOperativeSamples;
     }
 }

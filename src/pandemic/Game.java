@@ -58,6 +58,10 @@ public class Game {
 	private boolean mobileHospitalActive;
     private ArrayList<ResearchStation> allResearchStations;
     private int infectionsRemaining;
+    private boolean archivistActionUsed;
+    private boolean epidemiologistActionUsed;
+    private boolean fieldOperativeActionUsed;
+    private ArrayList<DiseaseFlag> fieldOperativeSamples;
 
   	
   	public Game(GameSettings settings, GameManager gameManager) {
@@ -231,7 +235,7 @@ public class Game {
                     p.addToHand(myPlayerDeck.drawCard());
                 }
             }
-            else if (gameManager.getActivePlayers().size() == 4){
+            else if (gameManager.getActivePlayers().size() >= 4){
                 // Each player begins with 2 cards
                 for(int i = 0; i < 2; i++){
                     p.addToHand(myPlayerDeck.drawCard());
@@ -354,8 +358,19 @@ public class Game {
     public void initializePlayerPawns(){
         unusedRoles = new ArrayList<Role>() {
             {
-                for(RoleType r : RoleType.values()) {
-                    add(new Role(r));
+                if(settings.getChallenge().equals(ChallengeKind.OriginalBaseGame)){
+                    add(new Role(RoleType.ContingencyPlanner));
+                    add(new Role(RoleType.OperationsExpert));
+                    add(new Role(RoleType.Dispatcher));
+                    add(new Role(RoleType.QuarantineSpecialist));
+                    add(new Role(RoleType.Researcher));
+                    add(new Role(RoleType.Medic));
+                    add(new Role(RoleType.Scientist));
+                }
+                else {
+                    for (RoleType r : RoleType.values()) {
+                        add(new Role(r));
+                    }
                 }
             }
         };
@@ -803,8 +818,12 @@ public class Game {
                                                      .collect(Collectors.toMap(d -> d,
                                                                                d -> getDiseaseSupplyByDiseaseType(d).size()));
 
-        // MUST MODIFY TO HANDLE GENERALIST
-        int actionsRemaining = 4 - currentPlayer.getActionsTaken();
+        int actionsRemaining;
+        if (currentPlayer.getRoleType().equals(RoleType.Generalist)) {
+            actionsRemaining = 5 - currentPlayer.getActionsTaken();
+        } else {
+            actionsRemaining = 4 - currentPlayer.getActionsTaken();
+        }
 
         ArrayList<DiseaseType> curedDiseases = new ArrayList<DiseaseType>();
         if(blueDisease.isCured()){
@@ -830,7 +849,7 @@ public class Game {
         }
 
         return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, remainingDiseaseCubesMap,
-                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName(), researchStationLocations);
+                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName(), researchStationLocations, eventCardsEnabled, currentPlayerTurnStatus, archivistActionUsed, epidemiologistActionUsed, fieldOperativeActionUsed, fieldOperativeSamples);
     }
 
     public GameManager getGameManager() {
@@ -912,6 +931,69 @@ public class Game {
     public void decrementInfectionsRemaining(){
   	    infectionsRemaining = infectionsRemaining - 1;
     }
+  
+    public boolean getArchivistActionUsed(){
+  	    return archivistActionUsed;
+    }
+
+    public void setArchivistActionUsed(boolean b){
+  	    archivistActionUsed = b;
+    }
+
+    public boolean getEpidemiologistActionUsed(){
+  	    return epidemiologistActionUsed;
+    }
+
+    public void setEpidemiologistActionUsed(boolean b){
+  	    epidemiologistActionUsed = b;
+    }
+
+    public ArrayList<DiseaseFlag> getFieldOperativeSamples(){
+  	    return fieldOperativeSamples;
+    }
+
+    public void addSample(DiseaseFlag sample){
+  	    sample.setLocation(null);
+  	    fieldOperativeSamples.add(sample);
+    }
+
+    public void returnSampleToSupply(DiseaseFlag sample){
+  	    fieldOperativeSamples.remove(sample);
+  	    switch(sample.getDiseaseType()) {
+            case Blue :
+                blueUnusedDiseaseFlags.add(sample);
+                sample.setUsed(false);
+                sample.setLocation(null);
+                break;
+            case Black :
+                blackUnusedDiseaseFlags.add(sample);
+                sample.setUsed(false);
+                sample.setLocation(null);
+                break;
+            case Red :
+                redUnusedDiseaseFlags.add(sample);
+                sample.setUsed(false);
+                sample.setLocation(null);
+                break;
+            case Yellow :
+                yellowUnusedDiseaseFlags.add(sample);
+                sample.setUsed(false);
+                sample.setLocation(null);
+                break;
+            case Purple :
+                purpleUnusedDiseaseFlags.add(sample);
+                sample.setUsed(false);
+                sample.setLocation(null);
+                break;
+        }
+    }
+
+    public boolean getFieldOperativeActionUsed(){
+  	    return fieldOperativeActionUsed;
+    }
+
+    public void setFieldOperativeActionUsed(boolean b){
+        fieldOperativeActionUsed = b;
 
     public GameCardRemover getMyGameCardRemover() {
         return myGameCardRemover;
