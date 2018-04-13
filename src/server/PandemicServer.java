@@ -69,13 +69,17 @@ public class PandemicServer extends Server {
                         System.out.println("This game has already started!");
                     }
                     break;
+
+                case SEND_CHAT_MESSAGE:
+                    //TODO russell store msgs and broadcast to clients
+                    break;
             }
         } else {
 
             if(game.getGameManager().isGameLost())
-                sendMessageToClients(ClientCommands.RECEIVE_GAME_LOST.name(), MessageType.GAME_LOST, "GAME LOST!");
+                sendMessageToClients(ClientCommands.RECEIVE_GAME_MESSAGE.name(), MessageType.GAME_LOST, "GAME LOST!");
             else
-                sendMessageToClients(ClientCommands.RECEIVE_GAME_WON.name(), MessageType.GAME_WON, "GAME WON!");
+                sendMessageToClients(ClientCommands.RECEIVE_GAME_MESSAGE.name(), MessageType.GAME_WON, "GAME WON!");
 
             //STOP THE SERVER THREAD HERE?
         }
@@ -152,7 +156,7 @@ public class PandemicServer extends Server {
         if (updateRequest.isRequestValid()) {
 
             if(updateRequest.executeRequest(game, playerUsername) == 1)
-                sendMessageToClients(ClientCommands.RECEIVE_MESSAGE.name(), MessageType.INFORMATION, "An epidemic has occured.");
+                sendMessageToClients(ClientCommands.RECEIVE_GAME_MESSAGE.name(), MessageType.INFORMATION, "An epidemic has occured.");
 
             sendMessageToClients(ClientCommands.RECEIVE_UPDATED_GAMESTATE.name(), g.generateCondensedGameState());
             ret = true;
@@ -171,7 +175,7 @@ public class PandemicServer extends Server {
                     return false;
                 }
 
-                sendMessage(clientToDiscardSocket, ClientCommands.RECEIVE_DISCARD_CARD.name(), MessageType.DISCARD_CARD,
+                sendMessage(clientToDiscardSocket, ClientCommands.RECEIVE_GAME_MESSAGE.name(), MessageType.DISCARD_CARD,
                                                         "You have too many cards. Please discard a card.");
             }
 

@@ -14,7 +14,6 @@ public class PandemicClient extends Client {
 
     private GUI gui;
     private String clientName;
-    //private int numOfPlayersConnectedToServer;
 
     public PandemicClient(String hostName, String clientName, int port) throws IOException {
         super(hostName, port);
@@ -42,7 +41,7 @@ public class PandemicClient extends Client {
                 GUICommandLinker.handleReceiveConsentRequest(gui, consentPrompt);
                 break;
 
-            case RECEIVE_MESSAGE:
+            case RECEIVE_GAME_MESSAGE:
                 final MessageType messageType = (MessageType)message.get(1);
                 final String messageText = (String)message.get(2);
                 GUICommandLinker.handleReceiveMessage(gui, messageType, messageText);
@@ -53,30 +52,12 @@ public class PandemicClient extends Client {
                 System.out.println("RECEIVED GAME STATE client: " + clientName + " gui: " + gui);
                 GUICommandLinker.handleReceiveUpdatedGS(gui, newGS);
                 break;
-            case RECEIVE_GAME_WON:
-                final MessageType messageTypeGameWon = (MessageType)message.get(1);
-                final String messageTextGameWon = (String)message.get(2);
-                GUICommandLinker.handleReceiveMessage(gui, messageTypeGameWon, messageTextGameWon);
-                break;
-            case RECEIVE_GAME_LOST:
-                final MessageType messageTypeGameLost = (MessageType)message.get(1);
-                final String messageTextGameLost = (String)message.get(2);
-                GUICommandLinker.handleReceiveMessage(gui, messageTypeGameLost, messageTextGameLost);
-                break;
-            case RECEIVE_DISCARD_CARD:
-                final MessageType messageTypeDiscardCard = (MessageType)message.get(1);
-                final String messageTextDiscardCard = (String)message.get(2);
-                GUICommandLinker.handleReceiveMessage(gui, messageTypeDiscardCard, messageTextDiscardCard);
-                break;
-            //case RECEIVE_NUM_OF_PLAYERS:
-            //    numOfPlayersConnectedToServer = (int) message.get(1);
-            //    break;
 
-
+            case RECEIVE_CHAT_MESSAGE:
+                final String playerName = (String)message.get(1);
+                final String chat = (String)message.get(2);
+                GUICommandLinker.handleReceiveNewChatMessage(gui, playerName, chat);
+                break;
         }
     }
-
-    //public int getNumOfPlayersConnectedToServer() {
-     //   return numOfPlayersConnectedToServer;
-    //}
 }

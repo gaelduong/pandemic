@@ -21,11 +21,16 @@ public enum ClientCommands implements Serializable{
 
     /**
      * This command receives a message from the server with type {@link shared.MessageType}
+     * Supported message types can inform the client of every enum:
+     * INFORMATION,
+     * GAME_WON,
+     * GAME_LOST,
+     * DISCARD_CARD
      *
      * <b>Parameters:</b>
      * MessageType type, String message
      */
-    RECEIVE_MESSAGE,
+    RECEIVE_GAME_MESSAGE,
 
     /**
      * This command receives a message to prompt the user with explaining the request
@@ -37,37 +42,12 @@ public enum ClientCommands implements Serializable{
     RECEIVE_CONSENT_REQUEST,
 
     /**
-     * This command receives a message to inform the player that the game has been won,
-     * receiving a message of type {@link shared.MessageType}
-     *
+     * This command receives a chat message from another user.
      *
      * <b>Parameters:</b>
-     * MessageType GAME_WON, String gameWon
+     * String playerName, String message
      */
-    RECEIVE_GAME_WON,
-
-    /**
-     * This command receives a message to inform the player that the game has been lost.
-     * receiving a message of type {@link shared.MessageType}
-     *
-     *
-     * <b>Parameters:</b>
-     * MessageType GAME_LOST, String gameLost
-     */
-    RECEIVE_GAME_LOST,
-
-    /**
-     * This command receives a message to inform the player that they need to discard cards.
-     * receiving a message of type {@link shared.MessageType}
-     *
-     * <b>Parameters:</b>
-     * MessageType DISCARD_CARD, String discardCard
-     */
-    RECEIVE_DISCARD_CARD,
-
-    //RECEIVE_NUM_OF_PLAYERS,
-
-
+    RECEIVE_CHAT_MESSAGE,
 
 
 }

@@ -57,7 +57,7 @@ public class PostCondition implements Serializable {
          * The server will check the player curing the disease is at a ResearchStation.
          *
          * <br><br><b>Arguments required:</b><br>
-         * {@link pandemic.DiseaseType} diseaseType, List<{@link PlayerCardSimple}> cardsToDiscard
+         * List<{@link pandemic.CityCard}> cardsToDiscard
          */
         DISCOVER_CURE,
 
@@ -65,9 +65,12 @@ public class PostCondition implements Serializable {
          * This action builds a research station at the player's current position and discards cards if necessary.
          * <br>
          * The server will handle discarding cards if the player's role is not OperationsExpert.
-         * The server will handle the fact that there can only be at most 6 stations on the board.
          *
-         * <br><br><b>Arguments required:</b> NONE
+         * The cityNameToRemove_Optional argument is the name of one of 6 existing research stations to remove.
+         * You may leave this parameter empty (no parameter) or send null if there are < 6 research stations already.
+         *
+         * <br><br><b>Arguments required:</b><br>
+         * {@link String cityNameToRemove_Optional}
          */
         BUILD_RESEARCH_STATION,
 

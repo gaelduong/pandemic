@@ -18,7 +18,6 @@ public class GUICommandLinker {
      * command to the server with the argument 'true' if Accept and 'false' if Decline.
      */
     public static void handleReceiveConsentRequest(GUI gui, String consentPrompt) {
-      //TODO gael
         gui.drawAcceptDeclineMessageBox(consentPrompt);
     }
 
@@ -27,18 +26,27 @@ public class GUICommandLinker {
      * tell the severity of the message (use this for painting differences if you want).
      */
     public static void handleReceiveMessage(GUI gui, MessageType type, String message) {
-        //TODO gael
     	gui.drawReceiveMessage(message,type);
         System.out.println("receive message!!");
-    	if(type == MessageType.DISCARD_CARD)
-             gui.enableDiscardCardButton();
+        switch (type) {
+            case GAME_WON:
+                //might want to do something special here?
+                break;
+            case GAME_LOST:
+                //might want to do something special here?
+                break;
+            case INFORMATION:
+                break;
+            case DISCARD_CARD:
+                gui.enableDiscardCardButton();
+                break;
+        }
     }
 
     /**
      * This method receives the new updated GS from the server
      */
     public static void handleReceiveUpdatedGS(GUI gui, GameState gs) {
-        //TODO gael
         if (gui == null) {
             System.err.println("gui is null");
             return;
@@ -48,6 +56,13 @@ public class GUICommandLinker {
         System.out.println("GameState: " + gs);
     	gui.setGameState(gs);
     	gui.draw();
+    }
+
+    /**
+     * This method is called when the client receives a new chat message from a player
+     */
+    public static void handleReceiveNewChatMessage(GUI gui, String playerName, String message) {
+        //TODO gael
     }
 
 }

@@ -80,7 +80,7 @@ public class UpdateRequest implements Serializable {
                 break;
 
             case BUILD_RESEARCH_STATION:
-                executeBuildResearchStation(game, playerUsername);
+                executeBuildResearchStation(game, playerUsername, arguments);
                 break;
 
             case END_TURN:
@@ -107,10 +107,6 @@ public class UpdateRequest implements Serializable {
 
         if(cardSource instanceof Player)
             ((Player) cardSource).discardCard(cardToMoveObj);
-
-
-
-        //(should we consider being thread-safe?)
     }
 
     private void executeMovePlayerPos(Game game, String playerUsername, List arguments) {
@@ -142,7 +138,7 @@ public class UpdateRequest implements Serializable {
                         break;
                     case SHUTTLE_FLIGHT:
                         break;
-                        //TODO to fill in later
+                        //TODO more flight options to fill in later
 
                 }
             } catch (NullPointerException e) {
@@ -154,21 +150,20 @@ public class UpdateRequest implements Serializable {
             System.err.println("ERROR - passed player user name does not correspond to current player");
         }
 
-        //TODO link to backend commands (should we consider being thread-safe?)
+        //TODO omer link to backend commands
     }
 
+    @SuppressWarnings("unchecked")
     private void executeDiscoverCure(Game game, String playerUsername, List arguments) {
         final GameManager gameManager = game.getGameManager();
-        final DiseaseType diseaseType = (DiseaseType)arguments.get(0);
-        @SuppressWarnings("unchecked")
-        final List<PlayerCardSimple> cardsToDiscard = (List<PlayerCardSimple>)arguments.get(1);
+        final List<CityCard> cardToDiscard = (List<CityCard>)arguments.get(0);
 
-        //TODO link to backend commands (should we consider being thread-safe?)
+        //TODO omer link to backend commands
     }
 
     private void executeTreatDisease(Game game, String playerUsername, List arguments) {
         final GameManager gameManager = game.getGameManager();
-        final DiseaseType diseaseType = (DiseaseType) arguments.get(1);
+        final DiseaseType diseaseType = (DiseaseType) arguments.get(0);
 
         if (game.getCurrentPlayer().getPlayerUserName().equals(playerUsername)) {
             City currentPlayerPos = game.getCurrentPlayer().getPawn().getLocation();
@@ -193,17 +188,14 @@ public class UpdateRequest implements Serializable {
         } else {
             System.err.println("ERROR - passed player user name does not correspond to current player");
         }
-
-
-        //  (should we consider being thread-safe?)
     }
 
-    private void executeBuildResearchStation(Game game, String playerUsername) {
-        //TODO link to backend commands (should we consider being thread-safe?)
+    private void executeBuildResearchStation(Game game, String playerUsername, List arguments) {
+        final String cityNameToRemove_Optional = arguments.size() == 1 ? (String)arguments.get(0) : null;
+        //TODO omer link with back-end commands
     }
 
     private int executeEndTurn(Game game) {
-        //(should we consider being thread-safe?)
         final GameManager gameManager = game.getGameManager();
         return gameManager.endTurn();
 
