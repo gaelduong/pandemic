@@ -111,4 +111,7 @@ public class GameState implements Serializable {
         return currentPlayerName;
     }
 
+    public ArrayList<City> getResearchStationLocations(){
+        return researchStationLocations;
+    }
 }
