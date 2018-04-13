@@ -28,6 +28,8 @@ public class GameState implements Serializable {
     private final ArrayList<DiseaseType> curedDiseases;
     private final String currentPlayerName;
     private final ArrayList<City> researchStationLocations;
+    private final boolean eventCardsEnabled;
+    private final CurrentPlayerTurnStatus turnStatus;
 
 
     /**
@@ -36,7 +38,7 @@ public class GameState implements Serializable {
     public GameState(Map<RoleType, String> userMap, Map<RoleType, List<PlayerCard>> cardMap, Map<RoleType, City> positionMap,
                      Map<CityName, List<Pair<DiseaseType, Integer>>> diseaseCubesMap, Map<DiseaseType, Integer> remainingDiseaseCubesMap,
                      InfectionDiscardPile infectionDiscardPile, PlayerDiscardPile playerDiscardPile, int currentInfectionRate, int currentOutbreakMeter, int actionsRemaining, ArrayList<DiseaseType> diseases,
-                     String currentPlayerName, ArrayList<City> researchStations) {
+                     String currentPlayerName, ArrayList<City> researchStations, boolean eventCardsEnabled, CurrentPlayerTurnStatus status) {
         this.userMap = userMap;
         this.cardMap = cardMap;
         this.positionMap = positionMap;
@@ -50,6 +52,8 @@ public class GameState implements Serializable {
         this.curedDiseases = diseases;
         this.currentPlayerName = currentPlayerName;
         this.researchStationLocations = researchStations;
+        this.eventCardsEnabled = eventCardsEnabled;
+        this.turnStatus= status;
     }
 
     /**
@@ -113,5 +117,13 @@ public class GameState implements Serializable {
 
     public ArrayList<City> getResearchStationLocations(){
         return researchStationLocations;
+    }
+
+    public boolean getEventCardsEnabled(){
+        return eventCardsEnabled;
+    }
+
+    public CurrentPlayerTurnStatus getTurnStatus(){
+        return turnStatus;
     }
 }

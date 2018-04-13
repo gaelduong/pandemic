@@ -5,5 +5,6 @@ import java.io.Serializable;
 public enum RoleType implements Serializable {
 
     ContingencyPlanner, Dispatcher, Medic, OperationsExpert, QuarantineSpecialist,
-    Researcher, Scientist
+    Researcher, Scientist,
+    ContainmentSpecialist, Generalist
 }

@@ -229,7 +229,7 @@ public class Game {
                     p.addToHand(myPlayerDeck.drawCard());
                 }
             }
-            else if (gameManager.getActivePlayers().size() == 4){
+            else if (gameManager.getActivePlayers().size() >= 4){
                 // Each player begins with 2 cards
                 for(int i = 0; i < 2; i++){
                     p.addToHand(myPlayerDeck.drawCard());
@@ -801,8 +801,12 @@ public class Game {
                                                      .collect(Collectors.toMap(d -> d,
                                                                                d -> getDiseaseSupplyByDiseaseType(d).size()));
 
-        // MUST MODIFY TO HANDLE GENERALIST
-        int actionsRemaining = 4 - currentPlayer.getActionsTaken();
+        int actionsRemaining;
+        if (currentPlayer.getRoleType().equals(RoleType.Generalist)) {
+            actionsRemaining = 5 - currentPlayer.getActionsTaken();
+        } else {
+            actionsRemaining = 4 - currentPlayer.getActionsTaken();
+        }
 
         ArrayList<DiseaseType> curedDiseases = new ArrayList<DiseaseType>();
         if(blueDisease.isCured()){
@@ -828,7 +832,7 @@ public class Game {
         }
 
         return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, remainingDiseaseCubesMap,
-                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName(), researchStationLocations);
+                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName(), researchStationLocations, eventCardsEnabled, currentPlayerTurnStatus);
     }
 
     public GameManager getGameManager() {

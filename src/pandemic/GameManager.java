@@ -416,13 +416,13 @@ public class GameManager {
             Role currentPlayerRole = currentPlayerPawn.getRole();
             City currentPlayerCity = currentPlayerPawn.getLocation();
 
-            if(currentPlayer.getActionsTaken() == 4) {
+            if ((currentPlayer.getRoleType().equals(RoleType.Generalist) && currentPlayer.getActionsTaken() == 5) || (!currentPlayer.getRoleType().equals(RoleType.Generalist) && currentPlayer.getActionsTaken() == 4)) {
                 currentPlayer.setActionsTaken(0);
                 return 1;
-}
+            }
 
             if ((currentPlayerCity.getConnections().stream().filter(conn -> conn.getEnd1() == city || conn.getEnd2() == city)
-                                          .collect(Collectors.toList())).isEmpty()) {
+                    .collect(Collectors.toList())).isEmpty()) {
                 return 1;
             }
 
@@ -430,13 +430,13 @@ public class GameManager {
             city.getCityUnits().add(currentPlayerPawn);
             currentPlayerPawn.setLocation(city);
 
-            if(currentPlayerRole.getRoleType() == RoleType.Medic)
+            if (currentPlayerRole.getRoleType() == RoleType.Medic) {
                 medicEnterCity(city);
+            }
 
-            // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
-//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
-//                    containmentSpecialistEnterCity(destination);
-//                }
+            if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+                containmentSpecialistEnterCity(city);
+            }
 
             currentPlayer.incrementActionTaken();
             return 0;
@@ -456,7 +456,7 @@ public class GameManager {
             City currentPlayerCity = currentPlayerPawn.getLocation();
             City city = currentGame.getCityByName(card.getCityName());
 
-            if(currentPlayer.getActionsTaken() == 4) {
+            if ((currentPlayer.getRoleType().equals(RoleType.Generalist) && currentPlayer.getActionsTaken() == 5) || (!currentPlayer.getRoleType().equals(RoleType.Generalist) && currentPlayer.getActionsTaken() == 4)) {
                 currentPlayer.setActionsTaken(0);
                 return 1;
             }
@@ -472,10 +472,9 @@ public class GameManager {
             if(currentPlayerRole.getRoleType() == RoleType.Medic)
                 medicEnterCity(city);
 
-            // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
-//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
-//                    containmentSpecialistEnterCity(destination);
-//                }
+            if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+                containmentSpecialistEnterCity(city);
+            }
 
             currentPlayer.incrementActionTaken();
             // MUST DISCARD CARD AFTER PLAY?
@@ -496,7 +495,7 @@ public class GameManager {
             Disease disease = currentGame.getDiseaseByDiseaseType(diseaseType);
             boolean cured = disease.isCured();
 
-            if(currentPlayer.getActionsTaken() == 4) {
+            if ((currentPlayer.getRoleType().equals(RoleType.Generalist) && currentPlayer.getActionsTaken() == 5) || (!currentPlayer.getRoleType().equals(RoleType.Generalist) && currentPlayer.getActionsTaken() == 4)) {
                 currentPlayer.setActionsTaken(0);
                 return 1;
             }
@@ -968,10 +967,9 @@ public class GameManager {
             if (playerRole.getRoleType() == RoleType.Medic) {
                 medicEnterCity(destination);
             }
-            // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
-//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
-//                    containmentSpecialistEnterCity(destination);
-//                }
+            if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+                containmentSpecialistEnterCity(destination);
+            }
 
             currentPlayer.incrementActionTaken();
             return 0;
@@ -998,10 +996,9 @@ public class GameManager {
             if (playerRole.getRoleType() == RoleType.Medic) {
                 medicEnterCity(destination);
             }
-            // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
-//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
-//                    containmentSpecialistEnterCity(destination);
-//                }
+            if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+                containmentSpecialistEnterCity(destination);
+            }
 
             currentPlayer.incrementActionTaken();
             return discardPlayerCard(currentPlayer, toDiscard);
@@ -1097,10 +1094,9 @@ public class GameManager {
             if(target.getRole().getRoleType() == RoleType.Medic) {
                 medicEnterCity(destination);
             }
-            // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
-//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
-//                    containmentSpecialistEnterCity(destination);
-//                }
+            if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+                containmentSpecialistEnterCity(destination);
+            }
 
             currentPlayer.incrementActionTaken();
             return 0;
@@ -1133,10 +1129,9 @@ public class GameManager {
             if(target.getRole().getRoleType() == RoleType.Medic) {
                 medicEnterCity(destination);
             }
-            // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
-//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
-//                    containmentSpecialistEnterCity(destination);
-//                }
+            if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+                containmentSpecialistEnterCity(destination);
+            }
 
             currentPlayer.incrementActionTaken();
             return discardPlayerCard(currentPlayer, card);
@@ -1163,10 +1158,9 @@ public class GameManager {
             if(target.getRole().getRoleType() == RoleType.Medic) {
                 medicEnterCity(destination);
             }
-            // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
-//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
-//                    containmentSpecialistEnterCity(destination);
-//                }
+            if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+                containmentSpecialistEnterCity(destination);
+            }
 
             currentPlayer.incrementActionTaken();
             return discardPlayerCard(currentPlayer, card);
@@ -1248,7 +1242,7 @@ public class GameManager {
             Role currentPlayerRole = currentPlayerPawn.getRole();
             City currentPlayerCity = currentPlayerPawn.getLocation();
 
-            if (currentPlayer.getActionsTaken() == 4) {
+            if ((currentPlayer.getRoleType().equals(RoleType.Generalist) && currentPlayer.getActionsTaken() == 5) || (!currentPlayer.getRoleType().equals(RoleType.Generalist) && currentPlayer.getActionsTaken() == 4)) {
                 currentPlayer.setActionsTaken(0);
                 return 1;
             }
@@ -1264,21 +1258,16 @@ public class GameManager {
 
             if (currentPlayerRole.getRoleType() == RoleType.Medic)
                 medicEnterCity(destination);
-            // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
-//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
-//                    containmentSpecialistEnterCity(destination);
-//                }
+            if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+                containmentSpecialistEnterCity(destination);
+            }
 
             if (flag != null) {
-                // -------UNCOMMENT ONCE CONTAINMENT SPECIALIST IS ADDED ---------------
-//                if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
-//                    containmentSpecialistEnterCity(destination);
-//                }
                 DiseaseType diseaseType = flag.getDiseaseType();
                 Disease disease = currentGame.getDiseaseByDiseaseType(diseaseType);
                 boolean cured = disease.isCured();
 
-                if (currentPlayer.getActionsTaken() == 4) {
+                if ((currentPlayer.getRoleType().equals(RoleType.Generalist) && currentPlayer.getActionsTaken() == 5) || (!currentPlayer.getRoleType().equals(RoleType.Generalist) && currentPlayer.getActionsTaken() == 4)) {
                     currentPlayer.setActionsTaken(0);
                     return 1;
                 }
