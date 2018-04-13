@@ -216,6 +216,9 @@ public class UpdateRequest implements Serializable {
                 case DISCARD_PILE:
                     result = game.getPlayerDiscardPile();
                     break;
+                case REMOVE_FROM_GAME:
+                    result = game.getMyGameCardRemover();
+                    break;
             }
         } else {
             result = game.getGameManager().getActivePlayers().stream()

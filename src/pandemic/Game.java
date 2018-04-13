@@ -39,6 +39,7 @@ public class Game {
   	private InfectionDiscardPile myInfectionDiscardPile;
   	private PlayerDeck myPlayerDeck;
   	private PlayerDiscardPile myPlayerDiscardPile;
+  	private GameCardRemover myGameCardRemover;
 
   	private LinkedList<Integer> infectionRateMeter;
   	private int currentInfectionRate;
@@ -184,6 +185,7 @@ public class Game {
   	    myInfectionDeck = new InfectionDeck();
   	    myPlayerDiscardPile = new PlayerDiscardPile();
   	    myInfectionDiscardPile = new InfectionDiscardPile();
+        myGameCardRemover = new GameCardRemover(this);
 
   	    // - populating PlayerDeck and InfectionDeck with CityCards and CityInfectionCards respectively
         for(CityName cName : CityName.values()) {
@@ -909,5 +911,9 @@ public class Game {
 
     public void decrementInfectionsRemaining(){
   	    infectionsRemaining = infectionsRemaining - 1;
+    }
+
+    public GameCardRemover getMyGameCardRemover() {
+        return myGameCardRemover;
     }
 }
