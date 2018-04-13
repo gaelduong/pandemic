@@ -55,6 +55,7 @@ public class Game {
 	private boolean commercialTravelBanActive;
 	private Player commercialTravelBanPlayedBy;
 	private boolean mobileHospitalActive;
+    private ArrayList<ResearchStation> allResearchStations;
 
   	
   	public Game(GameSettings settings, GameManager gameManager) {
@@ -294,8 +295,10 @@ public class Game {
 
         //    - initialize ResearchStations
         unusedResearchStations = new ArrayList<ResearchStation>();
+        allResearchStations = new ArrayList<ResearchStation>();
   	    for(int i = 0; i < 6; i++) {
   	        ResearchStation rs = new ResearchStation();
+            allResearchStations.add(rs);
   	        unusedResearchStations.add(rs);
         }
         //    - placing research station in Atlanta
@@ -816,9 +819,15 @@ public class Game {
 //        if(purpleDisease.isCured()){
 //            curedDiseases.add(purpleDisease.getDiseaseType());
 //        }
+        final ArrayList<City> researchStationLocations = new ArrayList<City>();
+        for (ResearchStation rs : allResearchStations){
+            if (rs.getLocation() != null){
+                researchStationLocations.add(rs.getLocation());
+            }
+        }
 
         return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, remainingDiseaseCubesMap,
-                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName());
+                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName(), researchStationLocations);
     }
 
     public GameManager getGameManager() {
