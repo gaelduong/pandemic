@@ -44,14 +44,17 @@ public class PandemicServer extends Server {
 
             switch (command) {
                 case ANSWER_CONSENT_PROMPT:
+                    //TODO russell track to game log
                     answerConsentPrompt(client, message);
                     break;
 
                 case SEND_UPDATE_REQUEST:
+                    //TODO russell track to game log
                     sendUpdateRequest(client, message);
                     break;
 
                 case INITIATE_CONSENT_REQUIRING_MOVE:
+                    //TODO russell track to game log
                     initiateConsentReqMove(message);
                     break;
 

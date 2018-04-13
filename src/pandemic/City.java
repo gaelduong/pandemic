@@ -67,7 +67,6 @@ public class City implements Serializable {
         return toRemove;
     }
 
-    //TODO get a list of all disease tuples (disease, qty)
     public List<Pair<DiseaseType, Integer>> getDiseaseFlags() {
 	    List<Pair<DiseaseType, Integer>> result = new ArrayList<Pair<DiseaseType, Integer>>();
 
