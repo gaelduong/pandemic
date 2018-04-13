@@ -21,40 +21,46 @@ public class GameURs {
     /**
      * Creates a drive/ferry update request, which the player drives to the target city
      */
-    public static UpdateRequest getDriveFerryUR(String playerUserName, String cityName) {
-        return new UpdateRequest(
-                new PostCondition(
-                        PostCondition.ACTION.MOVE_PLAYER_POS,
-                        playerUserName, //source
-                        cityName,       //destination
-                        TravelType.DRIVE_FERRY
-                )
+    public static void sendDriveFerryUR(Client client, String playerUserName, String cityName) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+            new UpdateRequest(
+                    new PostCondition(
+                            PostCondition.ACTION.MOVE_PLAYER_POS,
+                            playerUserName, //source
+                            cityName,       //destination
+                            TravelType.DRIVE_FERRY
+                    )
+            )
         );
     }
 
     /**
      * Creates a drive update request, which the player drives to the target city
      */
-    public static UpdateRequest getDirectFlightUR(String playerUserName, String cityName) {
-        return new UpdateRequest(
-                new PostCondition(
-                        PostCondition.ACTION.MOVE_PLAYER_POS,
-                        playerUserName, //source
-                        cityName,       //destination
-                        TravelType.DIRECT_FLIGHT
-                )
+    public static void sendDirectFlightUR(Client client, String playerUserName, String cityName) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+            new UpdateRequest(
+                    new PostCondition(
+                            PostCondition.ACTION.MOVE_PLAYER_POS,
+                            playerUserName, //source
+                            cityName,       //destination
+                            TravelType.DIRECT_FLIGHT
+                    )
+            )
         );
     }
 
     /**
      * Creates an update request to treat a disease in the player's current city
      */
-    public static UpdateRequest getTreatDiseaseUR(DiseaseType diseaseType) {
-        return new UpdateRequest(
-                new PostCondition(
-                        PostCondition.ACTION.TREAT_DISEASE,
-                        diseaseType
-                )
+    public static void sendTreatDiseaseUR(Client client, DiseaseType diseaseType) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+            new UpdateRequest(
+                    new PostCondition(
+                            PostCondition.ACTION.TREAT_DISEASE,
+                            diseaseType
+                    )
+            )
         );
     }
 
@@ -62,12 +68,14 @@ public class GameURs {
      * Creates an update request that discovers the cure for a certain DiseaseType
      * and discards the inputted list of cards
      */
-    public static UpdateRequest getDiscoverCureUR(List<CityCard> cityCardsToDiscard) {
-        return new UpdateRequest(
+    public static void sendDiscoverCureUR(Client client, List<CityCard> cityCardsToDiscard) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+            new UpdateRequest(
                 new PostCondition(
                         PostCondition.ACTION.DISCOVER_CURE,
                         cityCardsToDiscard
                 )
+            )
         );
     }
 
