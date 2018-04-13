@@ -562,7 +562,6 @@ public class MenuLayout extends Parent {
     }
 
     public void updateCreateLabel(String newPlayerName) {
-	    //TODO
         if (newPlayerName.equals("host")) return;
 
         Platform.runLater(() -> {
