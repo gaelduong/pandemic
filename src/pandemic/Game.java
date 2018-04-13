@@ -56,6 +56,7 @@ public class Game {
 	private Player commercialTravelBanPlayedBy;
 	private boolean mobileHospitalActive;
     private ArrayList<ResearchStation> allResearchStations;
+    private int infectionsRemaining;
 
   	
   	public Game(GameSettings settings, GameManager gameManager) {
@@ -896,5 +897,17 @@ public class Game {
 
     public void setMobileHospitalActive(boolean b){
   	    mobileHospitalActive = b;
+    }
+
+    public int getInfectionsRemaining(){
+  	    return infectionsRemaining;
+    }
+
+    public void setInfectionsRemaining(int i){
+  	    infectionsRemaining = i;
+    }
+
+    public void decrementInfectionsRemaining(){
+  	    infectionsRemaining = infectionsRemaining - 1;
     }
 }

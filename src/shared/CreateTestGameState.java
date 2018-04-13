@@ -42,16 +42,16 @@ public class CreateTestGameState {
         // Forcing outbreak in Bangkok and Los Angeles:
         City bangkok = gameManager.getCityByName(CityName.Bangkok);
         City losAngeles = gameManager.getCityByName(CityName.LosAngeles);
-        gameManager.infectNextCity(bangkok);
-        gameManager.infectNextCity(bangkok);
-        gameManager.infectNextCity(bangkok);
-        gameManager.infectNextCity(bangkok);
-        gameManager.infectNextCity(losAngeles);
-        gameManager.infectNextCity(losAngeles);
-        gameManager.infectNextCity(losAngeles);
-        gameManager.infectNextCity(losAngeles);
-        City chennai = gameManager.getCityByName(CityName.Chennai);
-        gameManager.infectNextCity(chennai);
+//        gameManager.infectNextCity(bangkok);
+//        gameManager.infectNextCity(bangkok);
+//        gameManager.infectNextCity(bangkok);
+//        gameManager.infectNextCity(bangkok);
+//        gameManager.infectNextCity(losAngeles);
+//        gameManager.infectNextCity(losAngeles);
+//        gameManager.infectNextCity(losAngeles);
+//        gameManager.infectNextCity(losAngeles);
+//        City chennai = gameManager.getCityByName(CityName.Chennai);
+//        gameManager.infectNextCity(chennai);
 
 
         GameState gameStateTest = gameManager.getGame().generateCondensedGameState();
