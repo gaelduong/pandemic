@@ -315,6 +315,14 @@ public class GameManager {
                     currentGame.setGamePhase(GamePhase.Completed);
                     return 0;
                 }
+
+                // If Virulent Strain Challenge active and ChronicEffectEpidemicCard has been drawn, must check its effect:
+                if (currentGame.getChronicEffectActive() && cityDiseaseType == getVirulentStrain() && city.getNumOfDiseaseFlagsPlaced(getVirulentStrain()) == 0 && diseaseFlags.size() < 2){
+                    //NOTIFY ALL PLAYERS LOST
+                    currentGame.setGamePhase(GamePhase.Completed);
+                    return 0;
+                }
+
                 Disease cityDisease = currentGame.getDiseaseByDiseaseType(cityDiseaseType);
                 boolean qsOrMedicPreventingInfectionInCity = currentGame.isQuarantineSpecialistInCity(city) || (currentGame.isMedicInCity(city) && cityDisease.isCured());
                 boolean diseaseEradicated = currentGame.checkIfEradicated(cityDiseaseType);
@@ -462,6 +470,10 @@ public class GameManager {
                 containmentSpecialistEnterCity(city);
             }
 
+            if (currentGame.getGovernmentInterferenceActive()){
+                currentGame.setGovernmentInterferenceSatisfied(false);
+            }
+
             currentPlayer.incrementActionTaken();
             return 0;
         } else {
@@ -500,6 +512,10 @@ public class GameManager {
                 containmentSpecialistEnterCity(city);
             }
 
+            if (currentGame.getGovernmentInterferenceActive()){
+                currentGame.setGovernmentInterferenceSatisfied(false);
+            }
+
             currentPlayer.incrementActionTaken();
             // MUST DISCARD CARD AFTER PLAY?
             return 0;
@@ -531,6 +547,10 @@ public class GameManager {
             } else {
                 currentGame.getDiseaseSupplyByDiseaseType(diseaseType).add(city.removeOneDiseaseFlag(diseaseType));
                 currentPlayer.incrementActionTaken();
+            }
+
+            if (currentGame.getGovernmentInterferenceActive() && diseaseType.equals(currentGame.getVirulentStrain())){
+                currentGame.setGovernmentInterferenceSatisfied(true);
             }
 
             if(cured && currentGame.checkIfEradicated(diseaseType)) {
@@ -991,8 +1011,12 @@ public class GameManager {
             if (playerRole.getRoleType() == RoleType.Medic) {
                 medicEnterCity(destination);
             }
-            if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+            if (playerRole.getRoleType().equals(RoleType.ContainmentSpecialist)){
                 containmentSpecialistEnterCity(destination);
+            }
+
+            if (currentGame.getGovernmentInterferenceActive()){
+                currentGame.setGovernmentInterferenceSatisfied(false);
             }
 
             currentPlayer.incrementActionTaken();
@@ -1020,8 +1044,12 @@ public class GameManager {
             if (playerRole.getRoleType() == RoleType.Medic) {
                 medicEnterCity(destination);
             }
-            if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+            if (playerRole.getRoleType().equals(RoleType.ContainmentSpecialist)){
                 containmentSpecialistEnterCity(destination);
+            }
+
+            if (currentGame.getGovernmentInterferenceActive()){
+                currentGame.setGovernmentInterferenceSatisfied(false);
             }
 
             currentPlayer.incrementActionTaken();
@@ -1118,8 +1146,12 @@ public class GameManager {
             if(target.getRole().getRoleType() == RoleType.Medic) {
                 medicEnterCity(destination);
             }
-            if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+            if (target.getRole().getRoleType().equals(RoleType.ContainmentSpecialist)){
                 containmentSpecialistEnterCity(destination);
+            }
+
+            if (currentGame.getGovernmentInterferenceActive()){
+                currentGame.setGovernmentInterferenceSatisfied(false);
             }
 
             currentPlayer.incrementActionTaken();
@@ -1153,8 +1185,12 @@ public class GameManager {
             if(target.getRole().getRoleType() == RoleType.Medic) {
                 medicEnterCity(destination);
             }
-            if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+            if (target.getRole().getRoleType().equals(RoleType.ContainmentSpecialist)){
                 containmentSpecialistEnterCity(destination);
+            }
+
+            if (currentGame.getGovernmentInterferenceActive()){
+                currentGame.setGovernmentInterferenceSatisfied(false);
             }
 
             currentPlayer.incrementActionTaken();
@@ -1182,8 +1218,12 @@ public class GameManager {
             if(target.getRole().getRoleType() == RoleType.Medic) {
                 medicEnterCity(destination);
             }
-            if (currentPlayer.getRoleType().equals(RoleType.ContainmentSpecialist)){
+            if (target.getRole().getRoleType().equals(RoleType.ContainmentSpecialist)){
                 containmentSpecialistEnterCity(destination);
+            }
+
+            if (currentGame.getGovernmentInterferenceActive()){
+                currentGame.setGovernmentInterferenceSatisfied(false);
             }
 
             currentPlayer.incrementActionTaken();
@@ -1347,6 +1387,11 @@ public class GameManager {
             currentPlayerCity.getCityUnits().remove(currentPlayerPawn);
             destination.getCityUnits().add(currentPlayerPawn);
             currentPlayerPawn.setLocation(destination);
+
+            if (currentGame.getGovernmentInterferenceActive()){
+                currentGame.setGovernmentInterferenceSatisfied(false);
+            }
+
             currentPlayer.incrementActionTaken();
             return 0;
         } else {
@@ -1516,5 +1561,21 @@ public class GameManager {
 
     public void setComplexMolecularStructureActive(boolean b){
 	    currentGame.setComplexMolecularStructureActive(b);
+    }
+
+    public boolean getGovernmentInterferenceActive(){
+	    return currentGame.getGovernmentInterferenceActive();
+    }
+
+    public void setGovernmentInterferenceActive(boolean b){
+	    currentGame.setGovernmentInterferenceActive(b);
+    }
+
+    public void setGovernmentInterferenceSatisfied(boolean b){
+	    currentGame.setGovernmentInterferenceSatisfied(b);
+    }
+
+    public void setChronicEffectActive(boolean b){
+	    currentGame.setChronicEffectActive(b);
     }
 }

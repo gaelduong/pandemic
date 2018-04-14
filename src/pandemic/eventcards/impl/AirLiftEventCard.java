@@ -23,8 +23,12 @@ public class AirLiftEventCard extends EventCard {
 		if (playerRole.getRoleType() == RoleType.Medic) {
 			gameManager.medicEnterCity(destination);
 		}
-		if (gameManager.getCurrentPlayer().getRoleType().equals(RoleType.ContainmentSpecialist)){
+		if (playerRole.getRoleType().equals(RoleType.ContainmentSpecialist)){
 			gameManager.containmentSpecialistEnterCity(destination);
+		}
+
+		if (gameManager.getGovernmentInterferenceActive()){
+			gameManager.setGovernmentInterferenceSatisfied(false);
 		}
 
 		return gameManager.discardPlayerCard(owner, this);

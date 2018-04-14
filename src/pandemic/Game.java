@@ -69,6 +69,9 @@ public class Game {
     private boolean rateEffectActive;
     private boolean rateEffectAffectedInfection;
     private boolean complexMolecularStructureActive;
+    private boolean governmentInterferenceActive;
+    private boolean governmentInterferenceSatisfied;
+    private boolean chronicEffectActive;
 
 
     public Game(GameSettings settings, GameManager gameManager) {
@@ -1027,7 +1030,10 @@ public class Game {
         }
 
         return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, remainingDiseaseCubesMap,
-                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName(), researchStationLocations, eventCardsEnabled, currentPlayerTurnStatus, archivistActionUsed, epidemiologistActionUsed, fieldOperativeActionUsed, fieldOperativeSamples, complexMolecularStructureActive);
+                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases,
+                currentPlayer.getPlayerUserName(), researchStationLocations, eventCardsEnabled, currentPlayerTurnStatus, archivistActionUsed,
+                epidemiologistActionUsed, fieldOperativeActionUsed, fieldOperativeSamples, complexMolecularStructureActive,
+                governmentInterferenceActive, governmentInterferenceSatisfied, infectionsRemaining);
     }
 
     public GameManager getGameManager() {
@@ -1297,6 +1303,29 @@ public class Game {
   	    complexMolecularStructureActive = b;
     }
 
+    public boolean getGovernmentInterferenceActive(){
+        return governmentInterferenceActive;
+    }
+
+    public void setGovernmentInterferenceActive(boolean b){
+        governmentInterferenceActive = b;
+    }
+
+    public boolean getGovernmentInterferenceSatisfied(){
+        return governmentInterferenceSatisfied;
+    }
+
+    public void setGovernmentInterferenceSatisfied(boolean b){
+        governmentInterferenceSatisfied = b;
+    }
+
+    public boolean getChronicEffectActive(){
+        return chronicEffectActive;
+    }
+
+    public void setChronicEffectActive(boolean b){
+        chronicEffectActive = b;
+    }
 }
 
 
