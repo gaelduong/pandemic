@@ -323,6 +323,10 @@ public class GameManager {
                     return 0;
                 }
 
+                if (currentGame.getChronicEffectActive() && cityDiseaseType == getVirulentStrain() && city.getNumOfDiseaseFlagsPlaced(getVirulentStrain()) == 0 && diseaseFlags.size() >= 2){
+                    currentGame.setChronicEffectInfection(true);
+                }
+
                 Disease cityDisease = currentGame.getDiseaseByDiseaseType(cityDiseaseType);
                 boolean qsOrMedicPreventingInfectionInCity = currentGame.isQuarantineSpecialistInCity(city) || (currentGame.isMedicInCity(city) && cityDisease.isCured());
                 boolean diseaseEradicated = currentGame.checkIfEradicated(cityDiseaseType);

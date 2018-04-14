@@ -72,6 +72,7 @@ public class Game {
     private boolean governmentInterferenceActive;
     private boolean governmentInterferenceSatisfied;
     private boolean chronicEffectActive;
+    private boolean chronicEffectInfection;
 
 
     public Game(GameSettings settings, GameManager gameManager) {
@@ -778,6 +779,37 @@ public class Game {
                         System.out.println("    " + d + ": " + c.getNumOfDiseaseFlagsPlaced(d));
                     }
 
+                    if (chronicEffectInfection && freshFlags.size() >= 1) {
+                        DiseaseFlag flag2;
+                        try {
+                            flag2 = freshFlags.remove(0);
+                        } catch (NullPointerException e) {
+                            //FOR TESTING, SHOULD NOT HAPPEN
+                            System.out.println("ERROR -- diseaseFlags not sufficient");
+                            return;
+                        }
+
+
+                        // FOR TESTING:
+                        System.out.println("Infecting " + c.getName());
+                        System.out.println("Number of disease cubes in city before infecting:");
+                        for (DiseaseType d : DiseaseType.values()) {
+                            System.out.println("    " + d + ": " + c.getNumOfDiseaseFlagsPlaced(d));
+                        }
+
+
+                        c.getCityUnits().add(flag2);
+                        flag2.setUsed(true);
+
+
+                        // FOR TESTING:
+                        System.out.println("Number of disease cubes in city after infecting:");
+                        for (DiseaseType d : DiseaseType.values()) {
+                            System.out.println("    " + d + ": " + c.getNumOfDiseaseFlagsPlaced(d));
+
+                            chronicEffectInfection = false;
+                        }
+                    }
 
                 } else {
                     gameManager.notifyAllPlayersGameLost();
@@ -1325,6 +1357,10 @@ public class Game {
 
     public void setChronicEffectActive(boolean b){
         chronicEffectActive = b;
+    }
+
+    public void setChronicEffectInfection(boolean b){
+        chronicEffectInfection = b;
     }
 }
 

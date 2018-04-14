@@ -163,4 +163,8 @@ public class GameState implements Serializable {
     public boolean getComplexMolecularStructureActive(){
         return complexMolecularStructureActive;
     }
+
+    public int getInfectionsRemaining(){
+        return infectionsRemaining;
+    }
 }
