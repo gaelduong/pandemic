@@ -6,6 +6,7 @@ import pandemic.CityCard;
 import pandemic.DiseaseType;
 import pandemic.RoleType;
 import server.ServerCommands;
+import shared.CardTargetType;
 import shared.PlayerCardSimple;
 import shared.TravelType;
 import shared.request.PostCondition;
@@ -18,20 +19,23 @@ import java.util.List;
  */
 public class GameURs {
 
+    public static UpdateRequest getMovePlayerMPosUR(String playerUserName, String cityName, TravelType travelType) {
+        return new UpdateRequest(
+                new PostCondition(
+                        PostCondition.ACTION.MOVE_PLAYER_POS,
+                        playerUserName, //source
+                        cityName,       //destination
+                        travelType
+                )
+        );
+    }
+
     /**
      * Creates a drive/ferry update request, which the player drives to the target city
      */
     public static void sendDriveFerryUR(Client client, String playerUserName, String cityName) {
         client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
-            new UpdateRequest(
-                    new PostCondition(
-                            PostCondition.ACTION.MOVE_PLAYER_POS,
-                            playerUserName, //source
-                            cityName,       //destination
-                            TravelType.DRIVE_FERRY
-                    )
-            )
-        );
+                getMovePlayerMPosUR(playerUserName, cityName, TravelType.DRIVE_FERRY));
     }
 
     /**
@@ -39,14 +43,80 @@ public class GameURs {
      */
     public static void sendDirectFlightUR(Client client, String playerUserName, String cityName) {
         client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
-            new UpdateRequest(
-                    new PostCondition(
-                            PostCondition.ACTION.MOVE_PLAYER_POS,
-                            playerUserName, //source
-                            cityName,       //destination
-                            TravelType.DIRECT_FLIGHT
-                    )
-            )
+                getMovePlayerMPosUR(playerUserName, cityName, TravelType.DIRECT_FLIGHT));
+    }
+
+    /**
+     * Creates a shuttle flight request.
+     * Assumes the caller of this method makes sure this method call is valid.
+     */
+    public static void sendShuttleFlightUR(Client client, String playerUserName, String cityName) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+                getMovePlayerMPosUR(playerUserName, cityName, TravelType.SHUTTLE_FLIGHT));
+    }
+
+    /**
+     * Creates a charter flight update request. Discards the cardToDiscardCityName and moves the player to cityName.
+     * Assumes the caller of this method makes sure this method call is valid.
+     */
+    public static void sendCharterFlightUR(Client client, String cardToDiscardCityName, String cityName, String playerUserName, RoleType playerRole) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+                new UpdateRequest(
+                        new PostCondition(
+                                PostCondition.ACTION.MOVE_CARD,
+                                new PlayerCardSimple(CardType.CityCard, cardToDiscardCityName),
+                                playerRole.name(),                         //source
+                                CardTargetType.DISCARD_PILE         //destination
+                        ),
+                        new PostCondition(
+                                PostCondition.ACTION.MOVE_PLAYER_POS,
+                                playerUserName,
+                                cityName,
+                                TravelType.CHARTER_FLIGHT
+                        )
+                )
+        );
+    }
+
+    /**
+     * This action discovers the cure for a certain DiseaseType and discards the inputted list of cards.
+     * <br>
+     * The server will check the player curing the disease is at a ResearchStation.
+     *
+     * <br><br><b>Arguments required:</b><br>
+     * List<{@link pandemic.CityCard}> cardsToDiscard
+     */
+    public static void sendDiscoverCure(Client client, List<CityCard> cardsToDiscard) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+                new UpdateRequest(
+                        new PostCondition(
+                                PostCondition.ACTION.DISCOVER_CURE,
+                                cardsToDiscard
+                        )
+                )
+        );
+    }
+
+    /**
+     * This action builds a research station at the player's current position and discards cards if necessary.
+     * <br>
+     * The server will handle discarding cards if the player's role is not OperationsExpert.
+     *
+     * The cityNameToRemove_Optional argument is the name of one of 6 existing research stations to remove.
+     * You may leave this parameter empty (no parameter) or send null if there are < 6 research stations already.
+     *
+     * <br><br><b>Arguments required:</b><br>
+     * String cityLocationToBuild, String cityNameToRemove_Optional
+     */
+    public static void sendBuildResearchStation(Client client, String cityLocationToBuild, String cityNameToRemove_Optional) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+                new UpdateRequest(
+                        new PostCondition(
+                                PostCondition.ACTION.BUILD_RESEARCH_STATION,
+                                cityLocationToBuild,
+                                cityNameToRemove_Optional
+                        )
+                )
         );
     }
 
@@ -91,6 +161,9 @@ public class GameURs {
     public static void sendShareKnowledgeConsentRequest(Client client,
                                                         String consentPrompt, String receivingPlayerName, String cityCardName,
                                                         RoleType givingPlayerRole, RoleType receivingPlayerRole) {
+        System.out.printf("consentPrompt: %s, receivingPlayerName: %s, cityCardName: %s, givingPlayerRole: %s, receivingPlayerRole: %s\n",
+                consentPrompt, receivingPlayerName, cityCardName, givingPlayerRole, receivingPlayerRole);
+
         client.sendMessageToServer(
                 ServerCommands.INITIATE_CONSENT_REQUIRING_MOVE.name(),
                             receivingPlayerName, consentPrompt,
@@ -98,8 +171,8 @@ public class GameURs {
                                     new PostCondition(
                                             PostCondition.ACTION.MOVE_CARD,
                                             new PlayerCardSimple(CardType.CityCard, cityCardName),
-                                            givingPlayerRole,
-                                            receivingPlayerRole
+                                            givingPlayerRole.name(),
+                                            receivingPlayerRole.name()
                                     )
                             )
                  );
