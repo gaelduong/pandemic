@@ -51,6 +51,7 @@ public class MenuLayout extends Parent {
     //GUI frame;
     GameManager gameManager;
     boolean backButtonNotPressed = true;
+    CreateGameObjectData tracker;
 
     Label playerc1;
     Label playerc2 ;
@@ -64,7 +65,7 @@ public class MenuLayout extends Parent {
 	public MenuLayout(PandemicServer ps, PandemicClient pc) {
         pandemicServer = ps;
         pandemicClient = pc;
-		CreateGameObjectData tracker = new CreateGameObjectData();
+        tracker = new CreateGameObjectData();
 
         VBox mainMenu = new VBox(10);
         VBox optionsMenu = new VBox(10);
@@ -262,19 +263,19 @@ public class MenuLayout extends Parent {
 
         	if(difficulties.getValue().equals("Introductory"))
         	{
-        		tracker.difficulty = 0;
+        		tracker.difficulty = 4;
         	}
         	else if (difficulties.getValue().equals("Standard"))
         	{
-        		tracker.difficulty = 1;
+        		tracker.difficulty = 5;
         	}
         	else if (difficulties.getValue().equals("Heroic"))
         	{
-        		tracker.difficulty = 2;
+        		tracker.difficulty = 6;
         	}
         	else if(difficulties.getValue().equals("Legendary"))
         	{
-        		tracker.difficulty = 3;
+        		tracker.difficulty = 7;
         	}	
         	// print tracker for good measure
         	//magicalPrintingFunction(tracker);
@@ -579,7 +580,29 @@ public class MenuLayout extends Parent {
         try {
             //User hostUser = new User("HOST", "kjsheofh", "127.0.0.1");
             //Player hostPlayer = new Player(hostUser);
-            gameManager =  new GameManager(3, 6, ChallengeKind.OriginalBaseGame);
+
+            int numEpCards = tracker.difficulty;
+            ChallengeKind challenge;
+
+            if (tracker.virulent == 1){
+                if (tracker.mutation == 1){
+                    challenge = ChallengeKind.VirulentStrainAndMutation;
+                }
+                else if (tracker.bioTerrorist == 1){
+                    challenge = ChallengeKind.VirulentStrainAndBioTerrorist;
+                } else {
+                    challenge = ChallengeKind.VirulentStrain;
+                }
+            } else if (tracker.mutation == 1){
+                challenge = ChallengeKind.Mutation;
+            } else if (tracker.bioTerrorist == 1){
+                challenge = ChallengeKind.BioTerrorist;
+            } else {
+                challenge = ChallengeKind.OriginalBaseGame;
+            }
+
+
+            gameManager =  new GameManager(3, numEpCards, challenge);
 
             gameManager.createNewGame();
             pandemicServer = new PandemicServer(this, gameManager.getGame(), 1301);
