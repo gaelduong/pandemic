@@ -1,4 +1,4 @@
-package pandemic.eventcards;
+package pandemic.eventcards.impl;
 
 import pandemic.GameManager;
 import pandemic.InfectionCard;

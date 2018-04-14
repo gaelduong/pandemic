@@ -1,6 +1,8 @@
-package pandemic.eventcards;
+package pandemic.eventcards.impl;
 
 import pandemic.*;
+import pandemic.eventcards.EventCard;
+import pandemic.eventcards.EventCardName;
 
 public class GovernmentGrantEventCard extends EventCard {
 

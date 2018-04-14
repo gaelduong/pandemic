@@ -1,21 +1,21 @@
-package pandemic.eventcards;
+package pandemic.eventcards.impl;
 
 import pandemic.GameManager;
 import pandemic.Player;
 import pandemic.eventcards.EventCard;
 import pandemic.eventcards.EventCardName;
 
-public class MobileHospitalEventCard extends EventCard {
+public class BorrowedTimeEventCard extends EventCard {
 
-    public MobileHospitalEventCard(GameManager gm){
-        super(gm, EventCardName.MobileHospital);
+    public BorrowedTimeEventCard(GameManager gm){
+        super(gm, EventCardName.BorrowedTime);
     }
 
     // Returns 0 if successful, 1 if failed
     // Pre: eventCardsEnabled == true, the currentPlayer has selected to play this card, endTurn has not yet begun
     public int playEventCard(){
         Player currentPlayer = gameManager.getCurrentPlayer();
-        gameManager.setMobileHospitalActive(true);
+        currentPlayer.setActionsTaken(currentPlayer.getActionsTaken() - 2);
         return gameManager.discardPlayerCard(currentPlayer, this);
     }
 }
