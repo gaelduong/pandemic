@@ -1,5 +1,7 @@
 package pandemic;
 
+import pandemic.eventcards.EventCard;
+
 import java.util.*;
 import java.util.stream.Collectors;
 

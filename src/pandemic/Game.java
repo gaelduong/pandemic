@@ -1,6 +1,8 @@
 package pandemic;
 
 import javafx.util.Pair;
+import pandemic.eventcards.*;
+import pandemic.eventcards.impl.*;
 import shared.GameState;
 
 import java.util.*;
@@ -10,18 +12,18 @@ import java.util.stream.Collectors;
 public class Game {
 
     private GameManager gameManager;
-  	private GameBoard myGameBoard;
-  	private GamePhase currentPhase;
-  	private GameSettings settings;
-  	private Player currentPlayer;
+    private GameBoard myGameBoard;
+    private GamePhase currentPhase;
+    private GameSettings settings;
+    private Player currentPlayer;
 
-  	private ArrayList<ResearchStation> unusedResearchStations;
-  	private Disease blueDisease;
-  	private Disease blackDisease;
-  	private Disease redDisease;
-  	private Disease yellowDisease;
-  	private Disease purpleDisease;
-  	private ArrayList<DiseaseFlag> blueUnusedDiseaseFlags;
+    private ArrayList<ResearchStation> unusedResearchStations;
+    private Disease blueDisease;
+    private Disease blackDisease;
+    private Disease redDisease;
+    private Disease yellowDisease;
+    private Disease purpleDisease;
+    private ArrayList<DiseaseFlag> blueUnusedDiseaseFlags;
     private ArrayList<DiseaseFlag> blackUnusedDiseaseFlags;
     private ArrayList<DiseaseFlag> redUnusedDiseaseFlags;
     private ArrayList<DiseaseFlag> yellowUnusedDiseaseFlags;
@@ -30,32 +32,32 @@ public class Game {
     private HashMap<DiseaseType, Disease> diseaseTypeToDiseaseDict;
     private HashMap<DiseaseType, ConnectionStatus> diseaseTypeToConnectionStatusDict;
     private ArrayList<Role> unusedRoles;
-  	private ArrayList<Pawn> inGamePawns;
-  	private Random randomRoleGenerator;
-  	private Random randomPawnGenerator;
+    private ArrayList<Pawn> inGamePawns;
+    private Random randomRoleGenerator;
+    private Random randomPawnGenerator;
 
 
-  	private InfectionDeck myInfectionDeck;
-  	private InfectionDiscardPile myInfectionDiscardPile;
-  	private PlayerDeck myPlayerDeck;
-  	private PlayerDiscardPile myPlayerDiscardPile;
-  	private GameCardRemover myGameCardRemover;
+    private InfectionDeck myInfectionDeck;
+    private InfectionDiscardPile myInfectionDiscardPile;
+    private PlayerDeck myPlayerDeck;
+    private PlayerDiscardPile myPlayerDiscardPile;
+    private GameCardRemover myGameCardRemover;
 
-  	private LinkedList<Integer> infectionRateMeter;
-  	private int currentInfectionRate;
-  	private boolean lastInfectionMarkerReached;
+    private LinkedList<Integer> infectionRateMeter;
+    private int currentInfectionRate;
+    private boolean lastInfectionMarkerReached;
 
 
-  	private int outBreakMeterReading;
+    private int outBreakMeterReading;
 
-	private CurrentPlayerTurnStatus currentPlayerTurnStatus;
-	private Player playerDiscardingCards;
-	private boolean oneQuietNightActivated;
-	private EventCard contingencyPlannerEventCard;
-	private boolean eventCardsEnabled;
-	private boolean commercialTravelBanActive;
-	private Player commercialTravelBanPlayedBy;
-	private boolean mobileHospitalActive;
+    private CurrentPlayerTurnStatus currentPlayerTurnStatus;
+    private Player playerDiscardingCards;
+    private boolean oneQuietNightActivated;
+    private EventCard contingencyPlannerEventCard;
+    private boolean eventCardsEnabled;
+    private boolean commercialTravelBanActive;
+    private Player commercialTravelBanPlayedBy;
+    private boolean mobileHospitalActive;
     private ArrayList<ResearchStation> allResearchStations;
     private int infectionsRemaining;
     private boolean archivistActionUsed;
@@ -68,15 +70,15 @@ public class Game {
     private boolean rateEffectAffectedInfection;
     private boolean complexMolecularStructureActive;
 
-  	
-  	public Game(GameSettings settings, GameManager gameManager) {
-  	    //this.currentPlayer = currentPlayer;
-  	    this.settings = settings;
-  	    this.gameManager = gameManager;
-  	    randomRoleGenerator = new Random();
-  	    randomPawnGenerator = new Random();
 
-  	    infectionRateMeter = new LinkedList<Integer>() {
+    public Game(GameSettings settings, GameManager gameManager) {
+        //this.currentPlayer = currentPlayer;
+        this.settings = settings;
+        this.gameManager = gameManager;
+        randomRoleGenerator = new Random();
+        randomPawnGenerator = new Random();
+
+        infectionRateMeter = new LinkedList<Integer>() {
             {
                 add(2);
                 add(2);
@@ -88,9 +90,9 @@ public class Game {
             }
         };
 
-  	    lastInfectionMarkerReached = false;
+        lastInfectionMarkerReached = false;
 
-  	     diseaseTypeToConnectionStatusDict = new HashMap<DiseaseType, ConnectionStatus>() {
+        diseaseTypeToConnectionStatusDict = new HashMap<DiseaseType, ConnectionStatus>() {
             {
                 put(DiseaseType.Blue, ConnectionStatus.BlueDiseaseOutbreak);
                 put(DiseaseType.Black, ConnectionStatus.BlackDiseaseOutbreak);
@@ -101,9 +103,9 @@ public class Game {
         };
 
 
-	}
+    }
 
-	public void initializeGame() {
+    public void initializeGame() {
         //    - initialize myGameBoard
         myGameBoard = new GameBoard(initializeGameBoard());
         myGameBoard.printGameBoard();
@@ -141,41 +143,38 @@ public class Game {
     }
 
     public boolean checkIfEradicated(DiseaseType d) {
-  	    return myGameBoard.isNotPresentOnBoard(d) &&
+        return myGameBoard.isNotPresentOnBoard(d) &&
                 diseaseTypeToDiseaseDict.get(d).isCured();
     }
 
     private void infectInitialCities() {
-  	    currentInfectionRate = infectionRateMeter.get(0);
-  	    int numOfDiseaseFlags;
-  	    for(int i = 1; i <= 9; i++) {
-  	        CityInfectionCard card = (CityInfectionCard) myInfectionDeck.drawCard();
-  	        CityName cardName = card.getCityName();
-  	        DiseaseType cardDisease = gameManager.getDiseaseTypeByRegion(card.getRegion());
-  	        ArrayList<DiseaseFlag> diseaseFlagsSupply = diseaseTypeToSupplyDict.get(cardDisease);
-  	        City cardCity = myGameBoard.getCityByName(cardName);
+        currentInfectionRate = infectionRateMeter.get(0);
+        int numOfDiseaseFlags;
+        for (int i = 1; i <= 9; i++) {
+            CityInfectionCard card = (CityInfectionCard) myInfectionDeck.drawCard();
+            CityName cardName = card.getCityName();
+            DiseaseType cardDisease = gameManager.getDiseaseTypeByRegion(card.getRegion());
+            ArrayList<DiseaseFlag> diseaseFlagsSupply = diseaseTypeToSupplyDict.get(cardDisease);
+            City cardCity = myGameBoard.getCityByName(cardName);
 
 
-
-  	        // FOR TESTING:
-  	        System.out.println(".....infecting initial city name: " + cardName + ", card disease: " + cardDisease + "........");
-
+            // FOR TESTING:
+            System.out.println(".....infecting initial city name: " + cardName + ", card disease: " + cardDisease + "........");
 
 
-
-  	        if(i <= 3) {
-  	            numOfDiseaseFlags = 3;
-            } else if(i <= 6) {
-  	            numOfDiseaseFlags = 2;
+            if (i <= 3) {
+                numOfDiseaseFlags = 3;
+            } else if (i <= 6) {
+                numOfDiseaseFlags = 2;
             } else {
-  	            numOfDiseaseFlags = 1;
+                numOfDiseaseFlags = 1;
             }
 
-            for(int j = 0; j < numOfDiseaseFlags; j++) {
-  	            DiseaseFlag flag = diseaseFlagsSupply.remove(0);
-  	            cardCity.getCityUnits().add(flag);
-  	            flag.setLocation(cardCity);
-  	            flag.setUsed(true);
+            for (int j = 0; j < numOfDiseaseFlags; j++) {
+                DiseaseFlag flag = diseaseFlagsSupply.remove(0);
+                cardCity.getCityUnits().add(flag);
+                flag.setLocation(cardCity);
+                flag.setUsed(true);
             }
             myInfectionDiscardPile.addCard(card);
 
@@ -183,21 +182,21 @@ public class Game {
     }
 
     private void printDecksAndDiscardPiles() {
-  	    myPlayerDeck.printDeck();
-  	    myInfectionDeck.printDeck();
-  	    myPlayerDiscardPile.printPile();
-  	    myInfectionDiscardPile.printPile();
+        myPlayerDeck.printDeck();
+        myInfectionDeck.printDeck();
+        myPlayerDiscardPile.printPile();
+        myInfectionDiscardPile.printPile();
     }
 
     private void initializeCardDecks() {
-  	    myPlayerDeck = new PlayerDeck();
-  	    myInfectionDeck = new InfectionDeck();
-  	    myPlayerDiscardPile = new PlayerDiscardPile();
-  	    myInfectionDiscardPile = new InfectionDiscardPile();
+        myPlayerDeck = new PlayerDeck();
+        myInfectionDeck = new InfectionDeck();
+        myPlayerDiscardPile = new PlayerDiscardPile();
+        myInfectionDiscardPile = new InfectionDiscardPile();
         myGameCardRemover = new GameCardRemover(this);
 
-  	    // - populating PlayerDeck and InfectionDeck with CityCards and CityInfectionCards respectively
-        for(CityName cName : CityName.values()) {
+        // - populating PlayerDeck and InfectionDeck with CityCards and CityInfectionCards respectively
+        for (CityName cName : CityName.values()) {
             Region cRegion = gameManager.getRegionByCityName(cName);
             myPlayerDeck.addCard(new CityCard(cName, cRegion));
             myInfectionDeck.addCard(new CityInfectionCard(cName, cRegion));
@@ -227,22 +226,20 @@ public class Game {
 //        myPlayerDeck.getDeck().add(0, cardAtl);
         myPlayerDeck.printDeck();
 
-  	    for(Player p : gameManager.getActivePlayers()){
-            if (gameManager.getActivePlayers().size() == 2){
+        for (Player p : gameManager.getActivePlayers()) {
+            if (gameManager.getActivePlayers().size() == 2) {
                 // Each player begins with 4 cards
-                for(int i = 0; i < 4; i++){
+                for (int i = 0; i < 4; i++) {
                     p.addToHand(myPlayerDeck.drawCard());
                 }
-            }
-            else if (gameManager.getActivePlayers().size() == 3){
+            } else if (gameManager.getActivePlayers().size() == 3) {
                 // Each player begins with 3 cards
-                for(int i = 0; i < 3; i++){
+                for (int i = 0; i < 3; i++) {
                     p.addToHand(myPlayerDeck.drawCard());
                 }
-            }
-            else if (gameManager.getActivePlayers().size() >= 4){
+            } else if (gameManager.getActivePlayers().size() >= 4) {
                 // Each player begins with 2 cards
-                for(int i = 0; i < 2; i++){
+                for (int i = 0; i < 2; i++) {
                     p.addToHand(myPlayerDeck.drawCard());
                 }
             }
@@ -251,7 +248,7 @@ public class Game {
         // - shuffling in Epidemic cards based on settings
         List<PlayerCard> epidemicCards = new ArrayList<PlayerCard>();
         int numOfEpidemicCards = settings.getNumOfEpidemicCards();
-        for(int i = 0; i < numOfEpidemicCards; i++) {
+        for (int i = 0; i < numOfEpidemicCards; i++) {
             epidemicCards.add(new BasicEpidemicCard(gameManager));
         }
 
@@ -260,12 +257,6 @@ public class Game {
 
         myPlayerDeck.insertAndShuffleEpidemicCards(epidemicCards, 1);
         myPlayerDeck.printDeck();
-
-
-
-
-//        // REMOVE AFTER TESTING HIDDEN POCKET EPIDEMIC CARD
-//        myPlayerDeck.getDeck().add(0,new HiddenPocketEpidemicCard(gameManager));
 
 
 
@@ -285,7 +276,7 @@ public class Game {
     public void printGameUnits() {
         System.out.println("PRINTING GAME UNITS.....");
         System.out.println("    Disease Flag supplies:");
-        for(DiseaseType d : DiseaseType.values()) {
+        for (DiseaseType d : DiseaseType.values()) {
             if (d != DiseaseType.Purple) {
                 System.out.println("        disease d:" + d);
                 System.out.println("            number of unused disease flags: " + diseaseTypeToSupplyDict.get(d).size());
@@ -314,16 +305,16 @@ public class Game {
         //    - initialize ResearchStations
         unusedResearchStations = new ArrayList<ResearchStation>();
         allResearchStations = new ArrayList<ResearchStation>();
-  	    for(int i = 0; i < 6; i++) {
-  	        ResearchStation rs = new ResearchStation();
+        for (int i = 0; i < 6; i++) {
+            ResearchStation rs = new ResearchStation();
             allResearchStations.add(rs);
-  	        unusedResearchStations.add(rs);
+            unusedResearchStations.add(rs);
         }
         //    - placing research station in Atlanta
         ResearchStation atlResearchStation = unusedResearchStations.remove(0);
-  	    City atlCity = myGameBoard.getCityByName(CityName.Atlanta);
-  	    atlResearchStation.setLocation(atlCity);
-  	    atlCity.getCityUnits().add(atlResearchStation);
+        City atlCity = myGameBoard.getCityByName(CityName.Atlanta);
+        atlResearchStation.setLocation(atlCity);
+        atlCity.getCityUnits().add(atlResearchStation);
 
         //    - initialize Diseases & DiseaseFlags
         blueDisease = new Disease(DiseaseType.Blue);
@@ -354,10 +345,10 @@ public class Game {
             }
         };
 
-        for(DiseaseType d : DiseaseType.values()) {
-            if(d != DiseaseType.Purple) {
+        for (DiseaseType d : DiseaseType.values()) {
+            if (d != DiseaseType.Purple) {
                 ArrayList<DiseaseFlag> diseaseFlagsSupply = diseaseTypeToSupplyDict.get(d);
-                for(int j = 0; j < 24; j++) {
+                for (int j = 0; j < 24; j++) {
                     diseaseFlagsSupply.add(new DiseaseFlag(d));
                 }
             }
@@ -366,10 +357,10 @@ public class Game {
 
     }
 
-    public void initializePlayerPawns(){
+    public void initializePlayerPawns() {
         unusedRoles = new ArrayList<Role>() {
             {
-                if(settings.getChallenge().equals(ChallengeKind.OriginalBaseGame)){
+                if (settings.getChallenge().equals(ChallengeKind.OriginalBaseGame)) {
                     add(new Role(RoleType.ContingencyPlanner));
                     add(new Role(RoleType.OperationsExpert));
                     add(new Role(RoleType.Dispatcher));
@@ -377,8 +368,7 @@ public class Game {
                     add(new Role(RoleType.Researcher));
                     add(new Role(RoleType.Medic));
                     add(new Role(RoleType.Scientist));
-                }
-                else {
+                } else {
                     for (RoleType r : RoleType.values()) {
                         add(new Role(r));
                     }
@@ -389,7 +379,7 @@ public class Game {
         City atlCity = myGameBoard.getCityByName(CityName.Atlanta);
         inGamePawns = new ArrayList<Pawn>();
         int numOfPlayers = settings.getNumOfPlayers();
-        for(int k = 0; k < numOfPlayers; k++) {
+        for (int k = 0; k < numOfPlayers; k++) {
             Pawn playerPawn = new Pawn(getRandomUnassignedRole());
             inGamePawns.add(playerPawn);
             playerPawn.setLocation(atlCity);
@@ -418,29 +408,29 @@ public class Game {
     }
 
     public Disease getDiseaseByDiseaseType(DiseaseType d) {
-  	    return diseaseTypeToDiseaseDict.get(d);
+        return diseaseTypeToDiseaseDict.get(d);
     }
 
     public ArrayList<DiseaseFlag> getDiseaseSupplyByDiseaseType(DiseaseType d) {
-  	    return diseaseTypeToSupplyDict.get(d);
+        return diseaseTypeToSupplyDict.get(d);
     }
 
     public Pawn getRandomUnassignedPawn() {
 
         int count = 0;
-  	    Pawn p = inGamePawns.get(count);
-  	    while(p.isAssigned() && count < inGamePawns.size()){
+        Pawn p = inGamePawns.get(count);
+        while (p.isAssigned() && count < inGamePawns.size()) {
             //System.out.println("getrand")
             p = inGamePawns.get(count);
             count++;
         }
         System.out.println("Unassigned pawn found: " + p.getRole().getRoleType());
-  	    return p;
+        return p;
     }
 
     private Role getRandomUnassignedRole() {
-  	    int index = randomRoleGenerator.nextInt(unusedRoles.size());
-  	    return unusedRoles.remove(index);
+        int index = randomRoleGenerator.nextInt(unusedRoles.size());
+        return unusedRoles.remove(index);
     }
 
     private void checkAndCreateNeighbors(ArrayList<City> createdCities, City c) {
@@ -448,15 +438,15 @@ public class Game {
         City createdCityNeighbor = null;
         ArrayList<CityName> cNeighborNames = gameManager.getCityNeighborNames(c.getName());
 
-        for(CityName nName : cNeighborNames) {
+        for (CityName nName : cNeighborNames) {
             //System.out.println("        neighbor name: " + nName);
             try {
                 createdCityNeighbor = createdCities.stream().filter(n -> (n.getName() == nName)).findAny().orElse(null);
-            } catch(NullPointerException e) {
+            } catch (NullPointerException e) {
 
             }
 
-            if(createdCityNeighbor == null) {
+            if (createdCityNeighbor == null) {
                 //System.out.println("            neighbor not created yet!");
                 City cNeighbor = new City(nName, gameManager.getRegionByCityName(nName));
                 Connection cConnection = new Connection(c, cNeighbor);
@@ -470,19 +460,19 @@ public class Game {
                 //check if neighbor already added to city neighbors list
                 CityName createdCityNeighborName = createdCityNeighbor.getName();
                 City createdCityNeighborInCList = c.getNeighbors().stream()
-                                                                  .filter(nL -> (nL.getName() == createdCityNeighborName))
-                                                                  .findAny().orElse(null);
+                        .filter(nL -> (nL.getName() == createdCityNeighborName))
+                        .findAny().orElse(null);
                 City createdCityNeighborInNList = createdCityNeighbor.getNeighbors().stream()
                         .filter(nL -> (nL.getName() == c.getName()))
                         .findAny().orElse(null);
 
                 Connection cConnection = new Connection(c, createdCityNeighbor);
-                if(createdCityNeighborInCList == null) {
+                if (createdCityNeighborInCList == null) {
                     c.getNeighbors().add(createdCityNeighbor);
                     c.getConnections().add(cConnection);
                 }
 
-                if(createdCityNeighborInNList == null) {
+                if (createdCityNeighborInNList == null) {
                     createdCityNeighbor.getNeighbors().add(c);
                     createdCityNeighbor.getConnections().add(cConnection);
                 }
@@ -497,20 +487,20 @@ public class Game {
         ArrayList<City> createdCities = new ArrayList<City>();
         ArrayList<CityName> citiesNamesInRegion;
 
-        for(Region r : Region.values()) {
+        for (Region r : Region.values()) {
 
             citiesNamesInRegion = gameManager.getCityNamesByRegion(r);
             City createdCity = null;
 
-            for(CityName name : citiesNamesInRegion) {
+            for (CityName name : citiesNamesInRegion) {
 
                 try {
                     createdCity = createdCities.stream().filter(c -> (c.getName() == name)).findAny().orElse(null);
-                } catch(NullPointerException e) {
+                } catch (NullPointerException e) {
 
                 }
 
-                if(createdCity == null) {
+                if (createdCity == null) {
                     //System.out.println("Creating city " + name + ".......");
                     City c = new City(name, r);
                     createdCities.add(c);
@@ -531,91 +521,91 @@ public class Game {
         return createdCities;
     }
 
-    public boolean getEventCardsEnabled(){
-  	    return eventCardsEnabled;
+    public boolean getEventCardsEnabled() {
+        return eventCardsEnabled;
     }
 
-  	public void setEventCardsEnabled(boolean b){
-  	    eventCardsEnabled = b;
-	}
-
-	public int getInfectionRate(){
-  	    return currentInfectionRate;
-	}
-
-	public void increaseInfectionRate(){
-
-		if (!lastInfectionMarkerReached){
-		    infectionRateMeter.addLast(infectionRateMeter.removeFirst());
-			currentInfectionRate = infectionRateMeter.getFirst();
-		}
-
-		if(currentInfectionRate == 4 && !lastInfectionMarkerReached)
-		    lastInfectionMarkerReached = true;
-	}
-
-	public InfectionDeck getInfectionDeck(){
-  	    return myInfectionDeck;
-	}
-
-	public InfectionDiscardPile getInfectionDiscardPile() {
-  	    return myInfectionDiscardPile;
-	}
-
-	public City getCityByName(CityName cn){
-  	    return myGameBoard.getCityByName(cn);
-	}
-
-	public void setGamePhase(GamePhase phase){
-  	    currentPhase = phase;
-	}
-
-	public Player getCurrentPlayer(){
-  	    return currentPlayer;
-	}
-
-	public PlayerDeck getPlayerDeck(){
-  	    return myPlayerDeck;
-	}
-
-	public void printGameBoard() {
-  	    myGameBoard.printGameBoard();
-    }
-	
-	public CurrentPlayerTurnStatus getCurrentPlayerTurnStatus(){
-  	    return currentPlayerTurnStatus;
-	}
-	
-	public void setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus status){
-  	    currentPlayerTurnStatus = status;
-	}
-
-	public PlayerDiscardPile getPlayerDiscardPile(){
-  	    return myPlayerDiscardPile;
-	}
-	
-	public Player getPlayerDiscardingCards(){
-  	    return playerDiscardingCards;
-	}
-	
-	public void setPlayerDiscardingCards(Player p){
-  	    playerDiscardingCards = p;
-	}
-	
-	public boolean getOneQuietNight(){
-  	    return oneQuietNightActivated;
-	}
-	
-	public void setOneQuietNight(boolean b){
-  	    oneQuietNightActivated = b;
-	}
-
-	public boolean isQuarantineSpecialistInCity(City c) {
-  	    return myGameBoard.isQuarantineSpecialistInCity(c);
+    public void setEventCardsEnabled(boolean b) {
+        eventCardsEnabled = b;
     }
 
-    public boolean isMedicInCity(City c){
-  	    return myGameBoard.isMedicInCity(c);
+    public int getInfectionRate() {
+        return currentInfectionRate;
+    }
+
+    public void increaseInfectionRate() {
+
+        if (!lastInfectionMarkerReached) {
+            infectionRateMeter.addLast(infectionRateMeter.removeFirst());
+            currentInfectionRate = infectionRateMeter.getFirst();
+        }
+
+        if (currentInfectionRate == 4 && !lastInfectionMarkerReached)
+            lastInfectionMarkerReached = true;
+    }
+
+    public InfectionDeck getInfectionDeck() {
+        return myInfectionDeck;
+    }
+
+    public InfectionDiscardPile getInfectionDiscardPile() {
+        return myInfectionDiscardPile;
+    }
+
+    public City getCityByName(CityName cn) {
+        return myGameBoard.getCityByName(cn);
+    }
+
+    public void setGamePhase(GamePhase phase) {
+        currentPhase = phase;
+    }
+
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    public PlayerDeck getPlayerDeck() {
+        return myPlayerDeck;
+    }
+
+    public void printGameBoard() {
+        myGameBoard.printGameBoard();
+    }
+
+    public CurrentPlayerTurnStatus getCurrentPlayerTurnStatus() {
+        return currentPlayerTurnStatus;
+    }
+
+    public void setCurrentPlayerTurnStatus(CurrentPlayerTurnStatus status) {
+        currentPlayerTurnStatus = status;
+    }
+
+    public PlayerDiscardPile getPlayerDiscardPile() {
+        return myPlayerDiscardPile;
+    }
+
+    public Player getPlayerDiscardingCards() {
+        return playerDiscardingCards;
+    }
+
+    public void setPlayerDiscardingCards(Player p) {
+        playerDiscardingCards = p;
+    }
+
+    public boolean getOneQuietNight() {
+        return oneQuietNightActivated;
+    }
+
+    public void setOneQuietNight(boolean b) {
+        oneQuietNightActivated = b;
+    }
+
+    public boolean isQuarantineSpecialistInCity(City c) {
+        return myGameBoard.isQuarantineSpecialistInCity(c);
+    }
+
+    public boolean isMedicInCity(City c) {
+        return myGameBoard.isMedicInCity(c);
     }
 
     public int getOutBreakMeterReading() {
@@ -623,18 +613,18 @@ public class Game {
     }
 
     public void incrementOutbreakMeter() {
-  	    outBreakMeterReading++;
+        outBreakMeterReading++;
     }
 
     public void infectAndResolveOutbreaks(DiseaseType cityDiseaseType, Disease cityDisease,
                                           boolean gameStatus, LinkedList<City> Q) {
-  	    while(gameStatus && !Q.isEmpty() ) {
-  	        City c = Q.removeFirst();
-  	        int numberOfDiseaseFlagsPlaced = c.getNumOfDiseaseFlagsPlaced(cityDiseaseType);
+        while (gameStatus && !Q.isEmpty()) {
+            City c = Q.removeFirst();
+            int numberOfDiseaseFlagsPlaced = c.getNumOfDiseaseFlagsPlaced(cityDiseaseType);
             ArrayList<DiseaseFlag> freshFlags = diseaseTypeToSupplyDict.get(cityDiseaseType);
 
-  	        if(numberOfDiseaseFlagsPlaced == 3) {
-  	            //OUTBREAK
+            if (numberOfDiseaseFlagsPlaced == 3) {
+                //OUTBREAK
                 incrementOutbreakMeter();
                 if (slipperySlopeActive && cityDiseaseType.equals(virulentStrain)) {
                     incrementOutbreakMeter();
@@ -645,54 +635,53 @@ public class Game {
                 System.out.println("Incrementing Outbreak Meter");
 
 
-
                 ArrayList<City> neighbors = c.getNeighbors();
 
-                for(City connCity : neighbors) {
-                    if(freshFlags.size() >= 1) {
+                for (City connCity : neighbors) {
+                    if (freshFlags.size() >= 1) {
                         int dFlagCount = connCity.getNumOfDiseaseFlagsPlaced(cityDiseaseType);
                         ArrayList<Connection> connections = connCity.getConnections();
                         Connection conn = connections.stream()
-                               .filter(cNeigh -> cNeigh.getEnd1().getName().equals(c.getName()) ||
+                                .filter(cNeigh -> cNeigh.getEnd1().getName().equals(c.getName()) ||
                                         cNeigh.getEnd2().getName().equals(c.getName()))
                                 .findAny().orElse(null);
 //
 //                        ConnectionStatus diseaseTypeConnectionStatus = diseaseTypeToConnectionStatusDict.get(cityDiseaseType);
 
                         boolean alreadyAffectedByOutbreak = false;
-                        for(Connection connection : connections){
-                            if(connection.getStatus() == diseaseTypeToConnectionStatusDict.get(cityDiseaseType)){
+                        for (Connection connection : connections) {
+                            if (connection.getStatus() == diseaseTypeToConnectionStatusDict.get(cityDiseaseType)) {
                                 alreadyAffectedByOutbreak = true;
                                 break;
                             }
                         }
 
-                        if(conn != null) {
-                            if(dFlagCount == 3
+                        if (conn != null) {
+                            if (dFlagCount == 3
                                     && !alreadyAffectedByOutbreak) {
                                 // Chain reaction outbreak is occurring.
-                                    Q.addLast(connCity);
-                                    conn.setConnectionStatus(cityDiseaseType);
+                                Q.addLast(connCity);
+                                conn.setConnectionStatus(cityDiseaseType);
 
 
-                                    // FOR TESTING:
-                                    System.out.println(connCity.getName() + " is also outbreaking.");
+                                // FOR TESTING:
+                                System.out.println(connCity.getName() + " is also outbreaking.");
 
 
-                            } else if(dFlagCount < 3
+                            } else if (dFlagCount < 3
                                     && !alreadyAffectedByOutbreak) {
 
                                 boolean qsOrMedicPreventingInfectionInCity = isQuarantineSpecialistInCity(connCity) || (isMedicInCity(connCity) && cityDisease.isCured());
                                 boolean diseaseEradicated = checkIfEradicated(cityDiseaseType);
                                 boolean qsPresentInNeighbor = false;
                                 ArrayList<City> cityNeighbors = connCity.getNeighbors();
-                                for(City a : cityNeighbors) {
+                                for (City a : cityNeighbors) {
                                     qsPresentInNeighbor = isQuarantineSpecialistInCity(a);
-                                    if( qsPresentInNeighbor) break;
+                                    if (qsPresentInNeighbor) break;
                                 }
                                 boolean infectionPrevented = qsOrMedicPreventingInfectionInCity || diseaseEradicated || qsPresentInNeighbor;
 
-                                if(!infectionPrevented) {
+                                if (!infectionPrevented) {
                                     DiseaseFlag flag;
                                     try {
                                         flag = freshFlags.remove(0);
@@ -750,13 +739,13 @@ public class Game {
                 boolean diseaseEradicated = checkIfEradicated(cityDiseaseType);
                 boolean qsPresentInNeighbor = false;
                 ArrayList<City> cityNeighbors = c.getNeighbors();
-                for(City a : cityNeighbors) {
+                for (City a : cityNeighbors) {
                     qsPresentInNeighbor = isQuarantineSpecialistInCity(a);
-                    if( qsPresentInNeighbor) break;
+                    if (qsPresentInNeighbor) break;
                 }
                 boolean infectionPrevented = qsOrMedicPreventingInfectionInCity || diseaseEradicated || qsPresentInNeighbor;
 
-                if(!infectionPrevented && freshFlags.size() >= 1) {
+                if (!infectionPrevented && freshFlags.size() >= 1) {
                     DiseaseFlag flag;
                     try {
                         flag = freshFlags.remove(0);
@@ -786,15 +775,14 @@ public class Game {
                     }
 
 
-                }
-                else{
+                } else {
                     gameManager.notifyAllPlayersGameLost();
                     setGamePhase(GamePhase.Completed);
                     System.out.println("Ran out of disease cubes.");
                 }
             }
             gameStatus = (getOutBreakMeterReading() < 8) && (freshFlags.size() >= 1);
-            if (!gameStatus){
+            if (!gameStatus) {
                 gameManager.notifyAllPlayersGameLost();
                 setGamePhase(GamePhase.Completed);
                 System.out.println("Ran out of disease cubes or Outbreak meter maxed out");
@@ -979,12 +967,12 @@ public class Game {
     }
 
     // TO TEST
-	public void setCurrentPlayer(Player p){
-  	    currentPlayer = p;
-	}
+    public void setCurrentPlayer(Player p) {
+        currentPlayer = p;
+    }
 
-	//the ultimate functional programming test
-	public GameState generateCondensedGameState() {
+    //the ultimate functional programming test
+    public GameState generateCondensedGameState() {
         final Map<RoleType, String> userMap
                 = gameManager.getActivePlayers().stream().collect(Collectors.toMap(Player::getRoleType, Player::getPlayerUserName));
 
@@ -998,14 +986,14 @@ public class Game {
                 = gameManager.getActivePlayers().stream().collect(Collectors.toMap(Player::getRoleType, p -> myGameBoard.getCityByName(p.getPawn().getLocation().getName())));
 
 
-        final Map<CityName, List<Pair<DiseaseType,Integer>>> diseaseCubesMap
+        final Map<CityName, List<Pair<DiseaseType, Integer>>> diseaseCubesMap
                 = myGameBoard.getCitiesOnBoard().stream().collect(Collectors.toMap(City::getName, City::getDiseaseFlags));
         System.out.println("GAMESTATE DISEASE CUBES: " + diseaseCubesMap);
 
         final Map<DiseaseType, Integer> remainingDiseaseCubesMap
                 = Arrays.stream(DiseaseType.values()).filter(d -> d != DiseaseType.Purple)
-                                                     .collect(Collectors.toMap(d -> d,
-                                                                               d -> getDiseaseSupplyByDiseaseType(d).size()));
+                .collect(Collectors.toMap(d -> d,
+                        d -> getDiseaseSupplyByDiseaseType(d).size()));
 
         int actionsRemaining;
         if (currentPlayer.getRoleType().equals(RoleType.Generalist)) {
@@ -1015,24 +1003,24 @@ public class Game {
         }
 
         ArrayList<DiseaseType> curedDiseases = new ArrayList<DiseaseType>();
-        if(blueDisease.isCured()){
+        if (blueDisease.isCured()) {
             curedDiseases.add(blueDisease.getDiseaseType());
         }
-        if(redDisease.isCured()){
+        if (redDisease.isCured()) {
             curedDiseases.add(redDisease.getDiseaseType());
         }
-        if(yellowDisease.isCured()){
+        if (yellowDisease.isCured()) {
             curedDiseases.add(yellowDisease.getDiseaseType());
         }
-        if(blackDisease.isCured()){
+        if (blackDisease.isCured()) {
             curedDiseases.add(blackDisease.getDiseaseType());
         }
 //        if(purpleDisease.isCured()){
 //            curedDiseases.add(purpleDisease.getDiseaseType());
 //        }
         final ArrayList<City> researchStationLocations = new ArrayList<City>();
-        for (ResearchStation rs : allResearchStations){
-            if (rs.getLocation() != null){
+        for (ResearchStation rs : allResearchStations) {
+            if (rs.getLocation() != null) {
                 researchStationLocations.add(rs.getLocation());
             }
         }
@@ -1046,130 +1034,127 @@ public class Game {
     }
 
     public GamePhase getGamePhase() {
-  	    return currentPhase;
+        return currentPhase;
     }
 
-    public ChallengeKind getChallenge(){
-  	    return settings.getChallenge();
+    public ChallengeKind getChallenge() {
+        return settings.getChallenge();
     }
 
     public ResearchStation getUnusedResearchStation() {
-  	    if (!unusedResearchStations.isEmpty()){
-  	        return unusedResearchStations.get(0);
-        }
-        else {
-  	        return null;
+        if (!unusedResearchStations.isEmpty()) {
+            return unusedResearchStations.get(0);
+        } else {
+            return null;
         }
     }
 
-    public void addUnusedResearchStation(ResearchStation rs){
-  	    unusedResearchStations.add(rs);
+    public void addUnusedResearchStation(ResearchStation rs) {
+        unusedResearchStations.add(rs);
     }
 
-    public EventCard getContingencyPlannerEventCard(){
-  	    return contingencyPlannerEventCard;
+    public EventCard getContingencyPlannerEventCard() {
+        return contingencyPlannerEventCard;
     }
 
     // Returns 0 if successful, 1 if failed
-    public int setContingencyPlannerEventCard(EventCard card){
-  	    if (contingencyPlannerEventCard == null){
-  	        contingencyPlannerEventCard = card;
-  	        return 0;
-        }
-        else if (card == null) {
+    public int setContingencyPlannerEventCard(EventCard card) {
+        if (contingencyPlannerEventCard == null) {
+            contingencyPlannerEventCard = card;
+            return 0;
+        } else if (card == null) {
             contingencyPlannerEventCard = null;
             return 0;
+        } else {
+            return 1;
         }
-        else {
-  	        return 1;
-        }
     }
 
-    public boolean getCommercialTravelBanActive(){
-  	    return commercialTravelBanActive;
+    public boolean getCommercialTravelBanActive() {
+        return commercialTravelBanActive;
     }
 
-    public Player getCommercialTravelBanPlayedBy(){
-  	    return commercialTravelBanPlayedBy;
+    public Player getCommercialTravelBanPlayedBy() {
+        return commercialTravelBanPlayedBy;
     }
 
-    public void setCommercialTravelBanActive(boolean b){
-  	    commercialTravelBanActive = b;
+    public void setCommercialTravelBanActive(boolean b) {
+        commercialTravelBanActive = b;
     }
 
-    public void setCommercialTravelBanPlayedBy(Player p){
-  	    commercialTravelBanPlayedBy = p;
+    public void setCommercialTravelBanPlayedBy(Player p) {
+        commercialTravelBanPlayedBy = p;
     }
 
-    public boolean getMobileHospitalActive(){
-  	    return mobileHospitalActive;
+    public boolean getMobileHospitalActive() {
+        return mobileHospitalActive;
     }
 
-    public void setMobileHospitalActive(boolean b){
-  	    mobileHospitalActive = b;
+    public void setMobileHospitalActive(boolean b) {
+        mobileHospitalActive = b;
     }
 
-    public int getInfectionsRemaining(){
-  	    return infectionsRemaining;
+    public int getInfectionsRemaining() {
+        return infectionsRemaining;
     }
 
-    public void setInfectionsRemaining(int i){
-  	    infectionsRemaining = i;
+    public void setInfectionsRemaining(int i) {
+        infectionsRemaining = i;
     }
 
-    public void decrementInfectionsRemaining(){
-  	    infectionsRemaining = infectionsRemaining - 1;
-    }
-  
-    public boolean getArchivistActionUsed(){
-  	    return archivistActionUsed;
+    public void decrementInfectionsRemaining() {
+        infectionsRemaining = infectionsRemaining - 1;
     }
 
-    public void setArchivistActionUsed(boolean b){
-  	    archivistActionUsed = b;
+    public boolean getArchivistActionUsed() {
+        return archivistActionUsed;
     }
 
-    public boolean getEpidemiologistActionUsed(){
-  	    return epidemiologistActionUsed;
+    public void setArchivistActionUsed(boolean b) {
+        archivistActionUsed = b;
     }
 
-    public void setEpidemiologistActionUsed(boolean b){
-  	    epidemiologistActionUsed = b;
+    public boolean getEpidemiologistActionUsed() {
+        return epidemiologistActionUsed;
     }
 
-    public ArrayList<DiseaseFlag> getFieldOperativeSamples(){
-  	    return fieldOperativeSamples;
+    public void setEpidemiologistActionUsed(boolean b) {
+        epidemiologistActionUsed = b;
     }
 
-    public void addSample(DiseaseFlag sample){
-  	    sample.setLocation(null);
-  	    fieldOperativeSamples.add(sample);
+    public ArrayList<DiseaseFlag> getFieldOperativeSamples() {
+        return fieldOperativeSamples;
     }
 
-    public void returnSampleToSupply(DiseaseFlag sample){
-  	    fieldOperativeSamples.remove(sample);
-  	    switch(sample.getDiseaseType()) {
-            case Blue :
+    public void addSample(DiseaseFlag sample) {
+        sample.setLocation(null);
+        fieldOperativeSamples.add(sample);
+    }
+
+    public void returnSampleToSupply(DiseaseFlag sample) {
+        fieldOperativeSamples.remove(sample);
+        switch (sample.getDiseaseType()) {
+            case Blue:
                 blueUnusedDiseaseFlags.add(sample);
                 sample.setUsed(false);
                 sample.setLocation(null);
                 break;
-            case Black :
+            case Black:
                 blackUnusedDiseaseFlags.add(sample);
                 sample.setUsed(false);
                 sample.setLocation(null);
                 break;
-            case Red :
+            case Red:
                 redUnusedDiseaseFlags.add(sample);
                 sample.setUsed(false);
                 sample.setLocation(null);
                 break;
-            case Yellow :
+            case Yellow:
                 yellowUnusedDiseaseFlags.add(sample);
                 sample.setUsed(false);
                 sample.setLocation(null);
                 break;
-            case Purple :
+            case Purple:
                 purpleUnusedDiseaseFlags.add(sample);
                 sample.setUsed(false);
                 sample.setLocation(null);
@@ -1177,8 +1162,8 @@ public class Game {
         }
     }
 
-    public boolean getFieldOperativeActionUsed(){
-  	    return fieldOperativeActionUsed;
+    public boolean getFieldOperativeActionUsed() {
+        return fieldOperativeActionUsed;
     }
 
     public void setFieldOperativeActionUsed(boolean b) {
@@ -1312,3 +1297,4 @@ public class Game {
     }
 
 }
+
