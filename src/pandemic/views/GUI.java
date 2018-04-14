@@ -860,7 +860,7 @@ public class GUI extends JFrame
 
 	private void initComponents()
 	{
-/*
+
 		//Load player cards
 		for(JLabel label : mapPlayerCardLabels.values())
 		{
