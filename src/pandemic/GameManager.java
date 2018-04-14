@@ -91,8 +91,8 @@ public class GameManager {
         p.setRole(playerPawn.getRole());
         playerPawn.getRole().setAssigned(true);
         playerPawn.setAssigned(true);
-        //City atlCity = currentGame.getGameManager().getCityByName(CityName.Atlanta);
-        //atlCity.getCityUnits().add(playerPawn);
+        City atlCity = currentGame.getGameManager().getCityByName(CityName.Atlanta);
+        atlCity.getCityUnits().add(playerPawn);
 
         if(activePlayers.isEmpty()) {
             hostPlayer = p;
@@ -191,6 +191,14 @@ public class GameManager {
 
 	public int endTurn(){
 	// MUST BE MODIFIED TO HANDLE OTB CHALLENGES (i.e. Mutations, Bioterrorist win/lose)
+
+
+        // REMOVE AFTER TESTING HIDDEN POCKET EPIDEMIC CARD
+//        setVirulentStrain();
+//        System.out.println("Virulent Strain: " + currentGame.getVirulentStrain());
+//        setVirulentStrainIsEradicated(true);
+
+
 		int status = 0;
 		if (currentGame.getMobileHospitalActive()){
 		    currentGame.setMobileHospitalActive(false);
@@ -230,6 +238,7 @@ public class GameManager {
 			}
 			currentGame.setGamePhase(GamePhase.TurnInfection);
 			currentGame.setInfectionsRemaining(currentGame.getInfectionRate());
+
 		}
 
 //		if (currentGame.getOneQuietNight()){
@@ -291,6 +300,12 @@ public class GameManager {
                 System.out.println("InfectionCard drawn: " + card.getCityName());
 
                 DiseaseType cityDiseaseType = regionToDiseaseTypeDict.get(city.getRegion());
+
+                if (cityDiseaseType.equals(currentGame.getVirulentStrain()) && !currentGame.getDiseaseByDiseaseType(cityDiseaseType).isEradicated() && currentGame.getRateEffectActive() && !currentGame.getRateEffectAffectedInfection()){
+                    currentGame.setInfectionsRemaining(currentGame.getInfectionsRemaining() + 1);
+                    currentGame.setRateEffectAffectedInfection(true);
+                }
+
                 ArrayList<DiseaseFlag> diseaseFlags = currentGame.getDiseaseSupplyByDiseaseType(cityDiseaseType);
                 boolean gameStatus = (currentGame.getOutBreakMeterReading() < 8) && diseaseFlags.size() >= 1;
                 if (!gameStatus) {
@@ -337,6 +352,8 @@ public class GameManager {
             currentGame.setArchivistActionUsed(false);
             currentGame.setEpidemiologistActionUsed(false);
             currentGame.setFieldOperativeActionUsed(false);
+
+            currentGame.setRateEffectAffectedInfection(false);
             // SET NEXT PLAYER TO CURRENT PLAYER
             // MUST MAKE SURE current player is at the head of the queue
             currentGame.setGamePhase(GamePhase.TurnActions);
@@ -1409,4 +1426,93 @@ public class GameManager {
         }
     }
 
+
+    public void setSlipperySlopeActive(boolean b){
+	    currentGame.setSlipperySlopeActive(b);
+    }
+
+    public DiseaseType getVirulentStrain(){
+	    return currentGame.getVirulentStrain();
+    }
+
+    public void setVirulentStrain(){
+	    currentGame.setVirulentStrain();
+    }
+
+    public boolean isVirulentStrainEradicated(){
+	    return currentGame.checkIfEradicated(currentGame.getVirulentStrain());
+    }
+
+    public void setRateEffectActive(boolean b){
+	    currentGame.setRateEffectActive(b);
+    }
+
+    public boolean infectionDiscardPileContainsVirulentStrain(){
+	    for (InfectionCard card : currentGame.getInfectionDiscardPile().getCards()){
+            if (card.getCardType().equals(CardType.CityInfectionCard)) {
+                CityInfectionCard c = (CityInfectionCard)card;
+                DiseaseType cityDiseaseType = regionToDiseaseTypeDict.get(c.getRegion());
+                if (cityDiseaseType.equals(currentGame.getVirulentStrain())){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public void setVirulentStrainIsEradicated(boolean b){
+	    if(currentGame.getVirulentStrain() != null) {
+            Disease vStrain = currentGame.getDiseaseByDiseaseType(currentGame.getVirulentStrain());
+            vStrain.setEradicated(false);
+        }
+    }
+
+    public int infectVirulentStrainCitiesInInfectionDiscardPile(){
+        for (InfectionCard card : currentGame.getInfectionDiscardPile().getCards()){
+            if (card.getCardType().equals(CardType.CityInfectionCard)) {
+                CityInfectionCard c = (CityInfectionCard)card;
+                DiseaseType cityDiseaseType = regionToDiseaseTypeDict.get(c.getRegion());
+                if (cityDiseaseType.equals(currentGame.getVirulentStrain())){
+                    City city = currentGame.getCityByName(c.getCityName());
+                    ArrayList<DiseaseFlag> diseaseFlags = currentGame.getDiseaseSupplyByDiseaseType(cityDiseaseType);
+                    boolean gameStatus = (currentGame.getOutBreakMeterReading() < 8) && diseaseFlags.size() >= 1;
+                    if (!gameStatus) {
+                        //NOTIFY ALL PLAYERS LOST
+                        currentGame.setGamePhase(GamePhase.Completed);
+                        return 0;
+                    }
+                    Disease cityDisease = currentGame.getDiseaseByDiseaseType(cityDiseaseType);
+                    boolean qsOrMedicPreventingInfectionInCity = currentGame.isQuarantineSpecialistInCity(city) || (currentGame.isMedicInCity(city) && cityDisease.isCured());
+                    boolean qsPresentInNeighbor = false;
+
+                    ArrayList<City> cityNeighbors = city.getNeighbors();
+                    LinkedList<City> Q = new LinkedList<>();
+                    Q.addLast(city);
+
+                    for (City neighbor : cityNeighbors) {
+                        qsPresentInNeighbor = currentGame.isQuarantineSpecialistInCity(neighbor);
+                        if (qsPresentInNeighbor) break;
+                    }
+
+                    boolean infectStatus = qsOrMedicPreventingInfectionInCity || qsPresentInNeighbor;
+                    if (!infectStatus) {
+                        currentGame.infectAndResolveOutbreaksForHiddenPocket(cityDiseaseType, cityDisease, gameStatus, Q);
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    public void infectUncountedPopulations(){
+	    currentGame.infectUncountedPopulations();
+    }
+
+    public void resolveUnacceptableLoss(){
+	    currentGame.resolveUnacceptableLoss();
+    }
+
+    public void setComplexMolecularStructureActive(boolean b){
+	    currentGame.setComplexMolecularStructureActive(b);
+    }
 }

@@ -62,6 +62,11 @@ public class Game {
     private boolean epidemiologistActionUsed;
     private boolean fieldOperativeActionUsed;
     private ArrayList<DiseaseFlag> fieldOperativeSamples;
+    private boolean slipperySlopeActive;
+    private DiseaseType virulentStrain;
+    private boolean rateEffectActive;
+    private boolean rateEffectAffectedInfection;
+    private boolean complexMolecularStructureActive;
 
   	
   	public Game(GameSettings settings, GameManager gameManager) {
@@ -216,10 +221,10 @@ public class Game {
 
     public void dealCardsAndShuffleInEpidemicCards() {
 
-        CityCard cardAtl = (CityCard) myPlayerDeck.getDeck().stream()
-                .filter(c -> c.getCardType() == CardType.CityCard && c.getCardName().equals("Atlanta"))
-                .findAny().orElse(null);
-        myPlayerDeck.getDeck().add(0, cardAtl);
+//        CityCard cardAtl = (CityCard) myPlayerDeck.getDeck().stream()
+//                .filter(c -> c.getCardType() == CardType.CityCard && c.getCardName().equals("Atlanta"))
+//                .findAny().orElse(null);
+//        myPlayerDeck.getDeck().add(0, cardAtl);
         myPlayerDeck.printDeck();
 
   	    for(Player p : gameManager.getActivePlayers()){
@@ -255,6 +260,12 @@ public class Game {
 
         myPlayerDeck.insertAndShuffleEpidemicCards(epidemicCards, 1);
         myPlayerDeck.printDeck();
+
+
+
+
+//        // REMOVE AFTER TESTING HIDDEN POCKET EPIDEMIC CARD
+//        myPlayerDeck.getDeck().add(0,new HiddenPocketEpidemicCard(gameManager));
 
 
 
@@ -625,6 +636,9 @@ public class Game {
   	        if(numberOfDiseaseFlagsPlaced == 3) {
   	            //OUTBREAK
                 incrementOutbreakMeter();
+                if (slipperySlopeActive && cityDiseaseType.equals(virulentStrain)) {
+                    incrementOutbreakMeter();
+                }
 
                 // FOR TESTING:
                 System.out.println(c.getName() + " is outbreaking");
@@ -789,6 +803,181 @@ public class Game {
 
     }
 
+    // For HiddenPocketEpidemicCard. This method infects cities with the Virulent Strain when it is eradicated.
+    public void infectAndResolveOutbreaksForHiddenPocket(DiseaseType cityDiseaseType, Disease cityDisease,
+                                                        boolean gameStatus, LinkedList<City> Q){
+        while(gameStatus && !Q.isEmpty() ) {
+            City c = Q.removeFirst();
+            int numberOfDiseaseFlagsPlaced = c.getNumOfDiseaseFlagsPlaced(cityDiseaseType);
+            ArrayList<DiseaseFlag> freshFlags = diseaseTypeToSupplyDict.get(cityDiseaseType);
+
+            if(numberOfDiseaseFlagsPlaced == 3) {
+                //OUTBREAK
+                incrementOutbreakMeter();
+                if (slipperySlopeActive && cityDiseaseType.equals(virulentStrain)) {
+                    incrementOutbreakMeter();
+                }
+
+                // FOR TESTING:
+                System.out.println(c.getName() + " is outbreaking");
+                System.out.println("Incrementing Outbreak Meter");
+
+
+
+                ArrayList<City> neighbors = c.getNeighbors();
+
+                for(City connCity : neighbors) {
+                    if(freshFlags.size() >= 1) {
+                        int dFlagCount = connCity.getNumOfDiseaseFlagsPlaced(cityDiseaseType);
+                        ArrayList<Connection> connections = connCity.getConnections();
+                        Connection conn = connections.stream()
+                                .filter(cNeigh -> cNeigh.getEnd1().getName().equals(c.getName()) ||
+                                        cNeigh.getEnd2().getName().equals(c.getName()))
+                                .findAny().orElse(null);
+//
+//                        ConnectionStatus diseaseTypeConnectionStatus = diseaseTypeToConnectionStatusDict.get(cityDiseaseType);
+
+                        boolean alreadyAffectedByOutbreak = false;
+                        for(Connection connection : connections){
+                            if(connection.getStatus() == diseaseTypeToConnectionStatusDict.get(cityDiseaseType)){
+                                alreadyAffectedByOutbreak = true;
+                                break;
+                            }
+                        }
+
+                        if(conn != null) {
+                            if(dFlagCount == 3
+                                    && !alreadyAffectedByOutbreak) {
+                                // Chain reaction outbreak is occurring.
+                                Q.addLast(connCity);
+                                conn.setConnectionStatus(cityDiseaseType);
+
+
+                                // FOR TESTING:
+                                System.out.println(connCity.getName() + " is also outbreaking.");
+
+
+                            } else if(dFlagCount < 3
+                                    && !alreadyAffectedByOutbreak) {
+
+                                boolean qsOrMedicPreventingInfectionInCity = isQuarantineSpecialistInCity(connCity) || (isMedicInCity(connCity) && cityDisease.isCured());
+                                boolean qsPresentInNeighbor = false;
+                                ArrayList<City> cityNeighbors = connCity.getNeighbors();
+                                for(City a : cityNeighbors) {
+                                    qsPresentInNeighbor = isQuarantineSpecialistInCity(a);
+                                    if( qsPresentInNeighbor) break;
+                                }
+                                boolean infectionPrevented = qsOrMedicPreventingInfectionInCity || qsPresentInNeighbor;
+
+                                if(!infectionPrevented) {
+                                    DiseaseFlag flag;
+                                    try {
+                                        flag = freshFlags.remove(0);
+                                    } catch (NullPointerException e) {
+                                        //FOR TESTING, SHOULD NOT HAPPEN
+                                        System.out.println("ERROR -- diseaseFlags not sufficient");
+                                        return;
+                                    }
+
+
+                                    // FOR TESTING:
+                                    System.out.println("Outbreak spread to " + connCity.getName());
+                                    System.out.println("Number of disease cubes in city before outbreak:");
+                                    for (DiseaseType d : DiseaseType.values()) {
+                                        System.out.println("    " + d + ": " + connCity.getNumOfDiseaseFlagsPlaced(d));
+                                    }
+
+
+                                    connCity.getCityUnits().add(flag);
+                                    flag.setUsed(true);
+
+
+                                    // FOR TESTING:
+                                    System.out.println("Number of disease cubes in city after outbreak:");
+                                    for (DiseaseType d : DiseaseType.values()) {
+                                        System.out.println("    " + d + ": " + connCity.getNumOfDiseaseFlagsPlaced(d));
+                                    }
+
+
+                                }
+
+
+
+
+                                // FOR TESTING:
+                                else {
+                                    System.out.println("Outbreak prevented from spreading to " + connCity.getName());
+                                }
+
+
+
+
+                            }
+                        }
+                    } else {
+                        gameManager.notifyAllPlayersGameLost();
+                        setGamePhase(GamePhase.Completed);
+                        System.out.println("Ran out of disease cubes.");
+                        break;
+                    }
+                }
+
+            } else {
+                boolean qsOrMedicPreventingInfectionInCity = isQuarantineSpecialistInCity(c) || (isMedicInCity(c) && cityDisease.isCured());
+                boolean qsPresentInNeighbor = false;
+                ArrayList<City> cityNeighbors = c.getNeighbors();
+                for(City a : cityNeighbors) {
+                    qsPresentInNeighbor = isQuarantineSpecialistInCity(a);
+                    if( qsPresentInNeighbor) break;
+                }
+                boolean infectionPrevented = qsOrMedicPreventingInfectionInCity || qsPresentInNeighbor;
+
+                if(!infectionPrevented && freshFlags.size() >= 1) {
+                    DiseaseFlag flag;
+                    try {
+                        flag = freshFlags.remove(0);
+                    } catch (NullPointerException e) {
+                        //FOR TESTING, SHOULD NOT HAPPEN
+                        System.out.println("ERROR -- diseaseFlags not sufficient");
+                        return;
+                    }
+
+
+                    // FOR TESTING:
+                    System.out.println("Infecting " + c.getName());
+                    System.out.println("Number of disease cubes in city before infecting:");
+                    for (DiseaseType d : DiseaseType.values()) {
+                        System.out.println("    " + d + ": " + c.getNumOfDiseaseFlagsPlaced(d));
+                    }
+
+
+                    c.getCityUnits().add(flag);
+                    flag.setUsed(true);
+
+
+                    // FOR TESTING:
+                    System.out.println("Number of disease cubes in city after infecting:");
+                    for (DiseaseType d : DiseaseType.values()) {
+                        System.out.println("    " + d + ": " + c.getNumOfDiseaseFlagsPlaced(d));
+                    }
+
+
+                }
+                else{
+                    gameManager.notifyAllPlayersGameLost();
+                    setGamePhase(GamePhase.Completed);
+                    System.out.println("Ran out of disease cubes.");
+                }
+            }
+            gameStatus = (getOutBreakMeterReading() < 8) && (freshFlags.size() >= 1);
+            if (!gameStatus){
+                gameManager.notifyAllPlayersGameLost();
+                setGamePhase(GamePhase.Completed);
+                System.out.println("Ran out of disease cubes or Outbreak meter maxed out");
+            }
+        }
+    }
+
     // TO TEST
 	public void setCurrentPlayer(Player p){
   	    currentPlayer = p;
@@ -849,7 +1038,7 @@ public class Game {
         }
 
         return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, remainingDiseaseCubesMap,
-                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName(), researchStationLocations, eventCardsEnabled, currentPlayerTurnStatus, archivistActionUsed, epidemiologistActionUsed, fieldOperativeActionUsed, fieldOperativeSamples);
+                myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases, currentPlayer.getPlayerUserName(), researchStationLocations, eventCardsEnabled, currentPlayerTurnStatus, archivistActionUsed, epidemiologistActionUsed, fieldOperativeActionUsed, fieldOperativeSamples, complexMolecularStructureActive);
     }
 
     public GameManager getGameManager() {
@@ -992,10 +1181,134 @@ public class Game {
   	    return fieldOperativeActionUsed;
     }
 
-    public void setFieldOperativeActionUsed(boolean b){
+    public void setFieldOperativeActionUsed(boolean b) {
         fieldOperativeActionUsed = b;
+    }
+
+    public boolean getSlipperySlopeActive() {
+        return slipperySlopeActive;
+    }
+
+    public void setSlipperySlopeActive(boolean b){
+  	    slipperySlopeActive = b;
+    }
+
+    public DiseaseType getVirulentStrain(){
+  	    return virulentStrain;
+    }
+
+    // Should only be called at most once per game, when first Virulent Strain Epidemic Card is drawn
+    public void setVirulentStrain(){
+        int numBlueFlags = 0;
+        int numBlackFlags = 0;
+        int numRedFlags = 0;
+        int numYellowFlags = 0;
+        int maxNumFlags = 0;
+
+        for (City c : myGameBoard.getCitiesOnBoard()){
+            numBlueFlags = numBlueFlags + c.getNumOfDiseaseFlagsPlaced(DiseaseType.Blue);
+            if (numBlueFlags > maxNumFlags) {
+               maxNumFlags = numBlueFlags;
+            }
+            numBlackFlags = numBlackFlags + c.getNumOfDiseaseFlagsPlaced(DiseaseType.Black);
+            if (numBlackFlags > maxNumFlags){
+                maxNumFlags = numBlackFlags;
+            }
+            numRedFlags = numRedFlags + c.getNumOfDiseaseFlagsPlaced(DiseaseType.Red);
+            if (numRedFlags > maxNumFlags){
+                maxNumFlags = numRedFlags;
+            }
+            numYellowFlags = numYellowFlags + c.getNumOfDiseaseFlagsPlaced(DiseaseType.Yellow);
+            if (numYellowFlags > maxNumFlags){
+                maxNumFlags = numYellowFlags;
+            }
+        }
+
+        if (maxNumFlags == numBlueFlags){
+            virulentStrain = DiseaseType.Blue;
+        } else if (maxNumFlags == numBlackFlags){
+            virulentStrain = DiseaseType.Black;
+        } else if (maxNumFlags == numRedFlags){
+            virulentStrain = DiseaseType.Red;
+        } else if (maxNumFlags == numYellowFlags){
+            virulentStrain = DiseaseType.Yellow;
+        }
+    }
+
+    public boolean getRateEffectActive(){
+  	    return rateEffectActive;
+    }
+
+    public void setRateEffectActive(boolean b){
+  	    rateEffectActive = b;
+    }
+
+    public boolean getRateEffectAffectedInfection(){
+  	    return rateEffectAffectedInfection;
+    }
+
+    public void setRateEffectAffectedInfection(boolean b){
+  	    rateEffectAffectedInfection = b;
+    }
 
     public GameCardRemover getMyGameCardRemover() {
         return myGameCardRemover;
     }
+
+    public void infectUncountedPopulations(){
+        ArrayList<DiseaseFlag> freshFlags = diseaseTypeToSupplyDict.get(virulentStrain);
+  	    for (City c : myGameBoard.getCitiesOnBoard()){
+  	        if (c.getNumOfDiseaseFlagsPlaced(virulentStrain) == 1){
+                boolean qsOrMedicPreventingInfectionInCity = isQuarantineSpecialistInCity(c) || (isMedicInCity(c) && getDiseaseByDiseaseType(virulentStrain).isCured());
+                boolean qsPresentInNeighbor = false;
+                ArrayList<City> cityNeighbors = c.getNeighbors();
+                for(City a : cityNeighbors) {
+                    qsPresentInNeighbor = isQuarantineSpecialistInCity(a);
+                    if( qsPresentInNeighbor) break;
+                }
+                boolean infectionPrevented = qsOrMedicPreventingInfectionInCity || qsPresentInNeighbor;
+
+                if(!infectionPrevented && freshFlags.size() >= 1) {
+                    DiseaseFlag flag;
+                    try {
+                        flag = freshFlags.remove(0);
+                    } catch (NullPointerException e) {
+                        //FOR TESTING, SHOULD NOT HAPPEN
+                        System.out.println("ERROR -- diseaseFlags not sufficient");
+                        return;
+                    }
+                    c.getCityUnits().add(flag);
+                    flag.setUsed(true);
+                }
+                else{
+                    gameManager.notifyAllPlayersGameLost();
+                    setGamePhase(GamePhase.Completed);
+                    System.out.println("Ran out of disease cubes.");
+                }
+            }
+        }
+    }
+
+    public void resolveUnacceptableLoss(){
+        ArrayList<DiseaseFlag> freshFlags = diseaseTypeToSupplyDict.get(virulentStrain);
+        if(freshFlags.size() >= 4){
+            freshFlags.remove(0);
+            freshFlags.remove(0);
+            freshFlags.remove(0);
+            freshFlags.remove(0);
+        } else {
+            while (freshFlags.size() > 0){
+                freshFlags.remove(0);
+            }
+        }
+    }
+
+    public boolean getComplexMolecularStructureActive(){
+  	    return complexMolecularStructureActive;
+    }
+
+    public void setComplexMolecularStructureActive(boolean b){
+  	    complexMolecularStructureActive = b;
+    }
+
 }

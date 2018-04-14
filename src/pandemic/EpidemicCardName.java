@@ -1,5 +1,5 @@
 package pandemic;
 
 public enum EpidemicCardName {
-    BasicEpidemicCard
+    BasicEpidemicCard, SlipperySlope, RateEffect, HiddenPocket, UncountedPopulations, UnacceptableLoss, ComplexMolecularStructure
 }
