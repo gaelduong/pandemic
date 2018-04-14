@@ -1,6 +1,9 @@
-package pandemic;
+package pandemic.eventcards;
 
-public class BorrowedTimeEventCard extends EventCard{
+import pandemic.GameManager;
+import pandemic.Player;
+
+public class BorrowedTimeEventCard extends EventCard {
 
     public BorrowedTimeEventCard(GameManager gm){
         super(gm, EventCardName.BorrowedTime);

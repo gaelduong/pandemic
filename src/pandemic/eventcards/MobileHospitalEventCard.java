@@ -1,6 +1,11 @@
-package pandemic;
+package pandemic.eventcards;
 
-public class MobileHospitalEventCard extends EventCard{
+import pandemic.GameManager;
+import pandemic.Player;
+import pandemic.eventcards.EventCard;
+import pandemic.eventcards.EventCardName;
+
+public class MobileHospitalEventCard extends EventCard {
 
     public MobileHospitalEventCard(GameManager gm){
         super(gm, EventCardName.MobileHospital);

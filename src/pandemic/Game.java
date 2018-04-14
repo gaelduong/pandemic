@@ -1,6 +1,7 @@
 package pandemic;
 
 import javafx.util.Pair;
+import pandemic.eventcards.*;
 import shared.GameState;
 
 import java.util.*;

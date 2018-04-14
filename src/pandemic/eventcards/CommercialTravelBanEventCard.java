@@ -1,4 +1,7 @@
-package pandemic;
+package pandemic.eventcards;
+
+import pandemic.GameManager;
+import pandemic.Player;
 
 public class CommercialTravelBanEventCard extends EventCard{
 
