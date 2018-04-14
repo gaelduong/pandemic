@@ -635,6 +635,7 @@ public class Game {
                 System.out.println("Incrementing Outbreak Meter");
 
 
+
                 ArrayList<City> neighbors = c.getNeighbors();
 
                 for (City connCity : neighbors) {
@@ -952,18 +953,20 @@ public class Game {
 
                 }
                 else{
+                } else {
                     gameManager.notifyAllPlayersGameLost();
                     setGamePhase(GamePhase.Completed);
                     System.out.println("Ran out of disease cubes.");
                 }
             }
             gameStatus = (getOutBreakMeterReading() < 8) && (freshFlags.size() >= 1);
-            if (!gameStatus){
+            if (!gameStatus) {
                 gameManager.notifyAllPlayersGameLost();
                 setGamePhase(GamePhase.Completed);
                 System.out.println("Ran out of disease cubes or Outbreak meter maxed out");
             }
         }
+
     }
 
     // TO TEST
@@ -1297,4 +1300,5 @@ public class Game {
     }
 
 }
+
 
