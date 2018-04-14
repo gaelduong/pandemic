@@ -250,10 +250,77 @@ public class Game {
         }
 
         // - shuffling in Epidemic cards based on settings
-        List<PlayerCard> epidemicCards = new ArrayList<PlayerCard>();
+        List<PlayerCard> epidemicCards = new ArrayList<>();
         int numOfEpidemicCards = settings.getNumOfEpidemicCards();
-        for (int i = 0; i < numOfEpidemicCards; i++) {
-            epidemicCards.add(new BasicEpidemicCard(gameManager));
+
+
+        List<EpidemicCard> allVirulentStrainEpidemicCards = new ArrayList<>();
+        switch (settings.getChallenge()) {
+            case OriginalBaseGame:
+                for (int i = 0; i < numOfEpidemicCards; i++) {
+                    epidemicCards.add(new BasicEpidemicCard(gameManager));
+                }
+                break;
+            case VirulentStrain:
+                allVirulentStrainEpidemicCards.add(new SlipperySlopeEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new RateEffectEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new HiddenPocketEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new UncountedPopulationsEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new UnacceptableLossEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new ChronicEffectEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new ComplexMolecularStructureEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new GovernmentInterferenceEpidemicCard(gameManager));
+
+                Collections.shuffle(allVirulentStrainEpidemicCards);
+                for (int i = 0; i < numOfEpidemicCards; i++) {
+                    epidemicCards.add(allVirulentStrainEpidemicCards.get(i));
+                }
+                break;
+            case VirulentStrainAndMutation:
+                allVirulentStrainEpidemicCards.add(new SlipperySlopeEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new RateEffectEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new HiddenPocketEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new UncountedPopulationsEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new UnacceptableLossEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new ChronicEffectEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new ComplexMolecularStructureEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new GovernmentInterferenceEpidemicCard(gameManager));
+
+                Collections.shuffle(allVirulentStrainEpidemicCards);
+                for (int i = 0; i < numOfEpidemicCards; i++) {
+                    epidemicCards.add(allVirulentStrainEpidemicCards.get(i));
+                }
+                break;
+            case VirulentStrainAndBioTerrorist:
+                allVirulentStrainEpidemicCards.add(new SlipperySlopeEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new RateEffectEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new HiddenPocketEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new UncountedPopulationsEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new UnacceptableLossEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new ChronicEffectEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new ComplexMolecularStructureEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new GovernmentInterferenceEpidemicCard(gameManager));
+
+                Collections.shuffle(allVirulentStrainEpidemicCards);
+                for (int i = 0; i < numOfEpidemicCards; i++) {
+                    epidemicCards.add(allVirulentStrainEpidemicCards.get(i));
+                }
+                break;
+            case Mutation:
+                for (int i = 0; i < numOfEpidemicCards; i++) {
+                    epidemicCards.add(new BasicEpidemicCard(gameManager));
+                }
+                break;
+            case BioTerrorist:
+                for (int i = 0; i < numOfEpidemicCards; i++) {
+                    epidemicCards.add(new BasicEpidemicCard(gameManager));
+                }
+                break;
+            case OnTheBrinkNoChallenges:
+                for (int i = 0; i < numOfEpidemicCards; i++) {
+                    epidemicCards.add(new BasicEpidemicCard(gameManager));
+                }
+                break;
         }
 
         /*System.out.println("......PlayerDeck before Epidemic Cards inserted (size: " + myPlayerDeck.getDeckSize()+ ")....");
@@ -358,6 +425,21 @@ public class Game {
             }
         }
 
+        boolean purpleDiseaseChallenge = settings.getChallenge().equals(ChallengeKind.Mutation)
+                || settings.getChallenge().equals(ChallengeKind.BioTerrorist)
+                || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndMutation)
+                || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndBioTerrorist);
+
+        if(purpleDiseaseChallenge){
+            purpleDisease = new Disease(DiseaseType.Purple);
+            purpleUnusedDiseaseFlags = new ArrayList<DiseaseFlag>();
+            diseaseTypeToSupplyDict.put(purpleDisease.getDiseaseType(), purpleUnusedDiseaseFlags);
+            diseaseTypeToDiseaseDict.put(purpleDisease.getDiseaseType(), purpleDisease);
+            ArrayList<DiseaseFlag> diseaseFlagsSupply = diseaseTypeToSupplyDict.get(purpleDisease.getDiseaseType());
+            for (int j = 0; j < 12; j++) {
+                diseaseFlagsSupply.add(new DiseaseFlag(purpleDisease.getDiseaseType()));
+            }
+        }
 
     }
 
@@ -374,7 +456,9 @@ public class Game {
                     add(new Role(RoleType.Scientist));
                 } else {
                     for (RoleType r : RoleType.values()) {
-                        add(new Role(r));
+                        if (!r.equals(RoleType.BioTerrorist)) {
+                            add(new Role(r));
+                        }
                     }
                 }
             }
