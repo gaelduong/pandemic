@@ -71,6 +71,7 @@ public class Game {
     private boolean complexMolecularStructureActive;
     private boolean governmentInterferenceActive;
     private boolean governmentInterferenceSatisfied;
+    private boolean chronicEffectActive;
 
 
     public Game(GameSettings settings, GameManager gameManager) {
@@ -1032,7 +1033,7 @@ public class Game {
                 myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases,
                 currentPlayer.getPlayerUserName(), researchStationLocations, eventCardsEnabled, currentPlayerTurnStatus, archivistActionUsed,
                 epidemiologistActionUsed, fieldOperativeActionUsed, fieldOperativeSamples, complexMolecularStructureActive,
-                governmentInterferenceActive, governmentInterferenceSatisfied);
+                governmentInterferenceActive, governmentInterferenceSatisfied, infectionsRemaining);
     }
 
     public GameManager getGameManager() {
@@ -1316,6 +1317,14 @@ public class Game {
 
     public void setGovernmentInterferenceSatisfied(boolean b){
         governmentInterferenceSatisfied = b;
+    }
+
+    public boolean getChronicEffectActive(){
+        return chronicEffectActive;
+    }
+
+    public void setChronicEffectActive(boolean b){
+        chronicEffectActive = b;
     }
 }
 

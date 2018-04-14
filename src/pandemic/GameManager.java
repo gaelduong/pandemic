@@ -315,6 +315,14 @@ public class GameManager {
                     currentGame.setGamePhase(GamePhase.Completed);
                     return 0;
                 }
+
+                // If Virulent Strain Challenge active and ChronicEffectEpidemicCard has been drawn, must check its effect:
+                if (currentGame.getChronicEffectActive() && cityDiseaseType == getVirulentStrain() && city.getNumOfDiseaseFlagsPlaced(getVirulentStrain()) == 0 && diseaseFlags.size() < 2){
+                    //NOTIFY ALL PLAYERS LOST
+                    currentGame.setGamePhase(GamePhase.Completed);
+                    return 0;
+                }
+
                 Disease cityDisease = currentGame.getDiseaseByDiseaseType(cityDiseaseType);
                 boolean qsOrMedicPreventingInfectionInCity = currentGame.isQuarantineSpecialistInCity(city) || (currentGame.isMedicInCity(city) && cityDisease.isCured());
                 boolean diseaseEradicated = currentGame.checkIfEradicated(cityDiseaseType);
@@ -1565,5 +1573,9 @@ public class GameManager {
 
     public void setGovernmentInterferenceSatisfied(boolean b){
 	    currentGame.setGovernmentInterferenceSatisfied(b);
+    }
+
+    public void setChronicEffectActive(boolean b){
+	    currentGame.setChronicEffectActive(b);
     }
 }
