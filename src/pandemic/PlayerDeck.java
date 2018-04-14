@@ -64,6 +64,7 @@ public class PlayerDeck implements CardSource {
             }
             newCardDeck.addAll(sublist);
         }
+
         cardsInDeck.clear();
 	    cardsInDeck.addAll(newCardDeck);
     }

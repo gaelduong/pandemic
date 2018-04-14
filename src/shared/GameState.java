@@ -34,6 +34,7 @@ public class GameState implements Serializable {
     private final boolean epidemiologistActionUsed;
     private final boolean fieldOperativeActionUsed;
     private final ArrayList<DiseaseFlag> fieldOperativeSamples;
+    private final boolean complexMolecularStructureActive;
 
 
     /**
@@ -43,7 +44,7 @@ public class GameState implements Serializable {
                      Map<CityName, List<Pair<DiseaseType, Integer>>> diseaseCubesMap, Map<DiseaseType, Integer> remainingDiseaseCubesMap,
                      InfectionDiscardPile infectionDiscardPile, PlayerDiscardPile playerDiscardPile, int currentInfectionRate, int currentOutbreakMeter, int actionsRemaining, ArrayList<DiseaseType> diseases,
                      String currentPlayerName, ArrayList<City> researchStations, boolean eventCardsEnabled, CurrentPlayerTurnStatus status, boolean aActionUsed, boolean eActionUsed, boolean fOActionUsed,
-                     ArrayList<DiseaseFlag> fOSamples) {
+                     ArrayList<DiseaseFlag> fOSamples, boolean cMSActive) {
         this.userMap = userMap;
         this.cardMap = cardMap;
         this.positionMap = positionMap;
@@ -63,6 +64,7 @@ public class GameState implements Serializable {
         this.epidemiologistActionUsed = eActionUsed;
         this.fieldOperativeActionUsed = fOActionUsed;
         this.fieldOperativeSamples = fOSamples;
+        this.complexMolecularStructureActive = cMSActive;
     }
 
     /**
@@ -150,5 +152,9 @@ public class GameState implements Serializable {
 
     public ArrayList<DiseaseFlag> getFieldOperativeSamples(){
         return fieldOperativeSamples;
+    }
+
+    public boolean getComplexMolecularStructureActive(){
+        return complexMolecularStructureActive;
     }
 }
