@@ -217,7 +217,7 @@ public class UpdateRequest implements Serializable {
                     result = game.getPlayerDiscardPile();
                     break;
                 case REMOVE_FROM_GAME:
-                    result = game.getMyGameCardRemover();
+                    //result = game.getMyGameCardRemover();
                     break;
             }
         } else {

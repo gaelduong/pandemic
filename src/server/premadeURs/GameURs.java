@@ -121,7 +121,7 @@ public class GameURs {
      * Sends a message to the server that the current player would like to end his turn.
      * @param client the client object
      */
-    public static void sendEndTurnRequest(Client client, boolean acceptPrompt) {
+    public static void sendEndTurnRequest(Client client) {
         client.sendMessageToServer(
                 ServerCommands.SEND_UPDATE_REQUEST.name(),
                 new UpdateRequest(
