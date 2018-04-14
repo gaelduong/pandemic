@@ -951,8 +951,6 @@ public class Game {
                     }
 
 
-                }
-                else{
                 } else {
                     gameManager.notifyAllPlayersGameLost();
                     setGamePhase(GamePhase.Completed);
