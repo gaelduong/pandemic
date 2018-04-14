@@ -4,5 +4,5 @@ import java.io.Serializable;
 
 public enum CardType implements Serializable {
 
-    CityCard, CityInfectionCard, EventCard, BasicEpidemicCard, VirulentStrainEpidemicCard
+    CityCard, CityInfectionCard, EventCard, BasicEpidemicCard, VirulentStrainEpidemicCard, MutationCard
 }

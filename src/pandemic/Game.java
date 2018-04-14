@@ -215,6 +215,11 @@ public class Game {
         myPlayerDeck.shuffleDeck();
         myInfectionDeck.shuffleDeck();
 
+        if (getChallenge() == ChallengeKind.Mutation || getChallenge() == ChallengeKind.VirulentStrainAndMutation){
+            myInfectionDiscardPile.addCard(new MutationCard(gameManager));
+            myInfectionDiscardPile.addCard(new MutationCard(gameManager));
+        }
+
         // Dealing cards to Players:
 
 
