@@ -137,8 +137,12 @@ public class UpdateRequest implements Serializable {
                         game.getPlayerDiscardPile().acceptCard(card);
                         break;
                     case SHUTTLE_FLIGHT:
+                        //TODO omer
                         break;
-                        //TODO more flight options to fill in later
+
+                    case CHARTER_FLIGHT:
+                        //TODO omer
+                        break;
 
                 }
             } catch (NullPointerException e) {
