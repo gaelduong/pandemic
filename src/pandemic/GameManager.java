@@ -264,7 +264,7 @@ public class GameManager {
         return 0;
     }
 
-    public int infectCitiesForMutationThreatens(){
+    public int infectCitiesForMutationSpreads(){
         if (!currentGame.getDiseaseByDiseaseType(DiseaseType.Purple).isEradicated()) {
             for (int i = 0; i < 3; i++) {
                 CityInfectionCard card = (CityInfectionCard) currentGame.getInfectionDeck().drawLastCard();
@@ -334,6 +334,72 @@ public class GameManager {
         currentGame.infectMutationIntensifies();
     }
 
+    public int infectCitiesForMutationThreatens(){
+        if (!currentGame.getDiseaseByDiseaseType(DiseaseType.Purple).isEradicated()) {
+            CityInfectionCard card = (CityInfectionCard) currentGame.getInfectionDeck().drawLastCard();
+            City city = currentGame.getCityByName(card.getCityName());
+            System.out.println("InfectionCard drawn: " + card.getCityName());
+            DiseaseType cityDiseaseType = DiseaseType.Purple;
+
+            if (cityDiseaseType.equals(currentGame.getVirulentStrain()) && !currentGame.getDiseaseByDiseaseType(cityDiseaseType).isEradicated() && currentGame.getRateEffectActive() && !currentGame.getRateEffectAffectedInfection()) {
+                currentGame.setInfectionsRemaining(currentGame.getInfectionsRemaining() + 1);
+                currentGame.setRateEffectAffectedInfection(true);
+            }
+
+            ArrayList<DiseaseFlag> diseaseFlags = currentGame.getDiseaseSupplyByDiseaseType(cityDiseaseType);
+            boolean gameStatus = (currentGame.getOutBreakMeterReading() < 8) && diseaseFlags.size() >= 1;
+            if (!gameStatus) {
+                //NOTIFY ALL PLAYERS LOST
+                currentGame.setGamePhase(GamePhase.Completed);
+                return 0;
+            }
+
+            // If Virulent Strain Challenge active and ChronicEffectEpidemicCard has been drawn, must check its effect:
+            if (currentGame.getChronicEffectActive() && cityDiseaseType == getVirulentStrain() && city.getNumOfDiseaseFlagsPlaced(getVirulentStrain()) == 0 && diseaseFlags.size() < 2) {
+                //NOTIFY ALL PLAYERS LOST
+                currentGame.setGamePhase(GamePhase.Completed);
+                return 0;
+            }
+
+            if (currentGame.getChronicEffectActive() && cityDiseaseType == getVirulentStrain() && city.getNumOfDiseaseFlagsPlaced(getVirulentStrain()) == 0 && diseaseFlags.size() >= 2) {
+                currentGame.setChronicEffectInfection(true);
+            }
+
+            Disease cityDisease = currentGame.getDiseaseByDiseaseType(cityDiseaseType);
+            boolean qsOrMedicPreventingInfectionInCity = currentGame.isQuarantineSpecialistInCity(city) || (currentGame.isMedicInCity(city) && cityDisease.isCured());
+            boolean diseaseEradicated = currentGame.checkIfEradicated(cityDiseaseType);
+            boolean qsPresentInNeighbor = false;
+
+            ArrayList<City> cityNeighbors = city.getNeighbors();
+            LinkedList<City> Q = new LinkedList<>();
+            Q.addLast(city);
+
+            for (City c : cityNeighbors) {
+                qsPresentInNeighbor = currentGame.isQuarantineSpecialistInCity(c);
+                if (qsPresentInNeighbor) break;
+            }
+
+            boolean infectStatus = qsOrMedicPreventingInfectionInCity || qsPresentInNeighbor || diseaseEradicated;
+
+            // FOR TESTING:
+            if (qsOrMedicPreventingInfectionInCity) {
+                System.out.println("Quarantine Specialist or Medic preventing infection in this city.");
+            } else if (qsPresentInNeighbor) {
+                System.out.println("Quarantine Specialist in neighboring city.");
+            } else if (diseaseEradicated) {
+                System.out.println("Disease is eradicated.");
+            }
+
+            if (!infectStatus) {
+                currentGame.infectAndResolveOutbreaks(cityDiseaseType, cityDisease, gameStatus, Q);
+                currentGame.infectAndResolveOutbreaks(cityDiseaseType, cityDisease, gameStatus, Q);
+                currentGame.infectAndResolveOutbreaks(cityDiseaseType, cityDisease, gameStatus, Q);
+            }
+            currentGame.getInfectionDiscardPile().addCard(card);
+        }
+        return 0;
+    }
+
 	public void shuffleInfectionDiscardPile(){
 		InfectionDiscardPile idp = currentGame.getInfectionDiscardPile();
 		idp.shuffle();
@@ -382,6 +448,11 @@ public class GameManager {
                 System.out.println("Epidemic resolved");
                 status = playerCard1.getCardName() + " is occurring...";
 			}
+			else if (playerCard1 instanceof MutationEventCard){
+			    System.out.println("Mutation Event occurring...");
+                ((MutationEventCard) playerCard1).resolveMutationEvent();
+                status = playerCard1.getCardName();
+            }
 			else {
 				p.addToHand(playerCard1);
 				checkHandSize(p);
@@ -392,6 +463,11 @@ public class GameManager {
                 System.out.println("Epidemic resolved");
                 status = playerCard2.getCardName() + " is occurring...";
 			}
+            else if (playerCard2 instanceof MutationEventCard){
+                System.out.println("Mutation Event occurring...");
+                ((MutationEventCard) playerCard2).resolveMutationEvent();
+                status = playerCard2.getCardName();
+            }
 			else {
 				p.addToHand(playerCard2);
 				checkHandSize(p);
@@ -518,7 +594,9 @@ public class GameManager {
 
                     if (!infectStatus) {
                         currentGame.infectAndResolveOutbreaks(cityDiseaseType, cityDisease, gameStatus, Q);
-                        if(currentGame.isBioTChallengeActive()) {
+                        if(currentGame.isBioTChallengeActive()
+                                || currentGame.getChallenge() == ChallengeKind.Mutation
+                                || currentGame.getChallenge() == ChallengeKind.VirulentStrainAndMutation) {
                             boolean diseaseEradicatedPurple = currentGame.checkIfEradicated(DiseaseType.Purple);
                             if (city.containsPurpleDisease() && !diseaseEradicatedPurple) {
                                 Disease purpleDisease = currentGame.getDiseaseByDiseaseType(DiseaseType.Purple);
@@ -797,6 +875,16 @@ public class GameManager {
 
             if(cured && currentGame.checkIfEradicated(diseaseType)) {
                 disease.setEradicated(true);
+            }
+
+            // Check if all diseases in game are cured:
+            boolean allBasicDiseasesCured = false;
+            if (currentGame.getChallenge().equals(ChallengeKind.BioTerrorist) || currentGame.getChallenge().equals(ChallengeKind.Mutation) || currentGame.getChallenge().equals(ChallengeKind.VirulentStrainAndMutation)){
+                allBasicDiseasesCured = currentGame.getDiseaseByDiseaseType(DiseaseType.Black).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Blue).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Red).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Yellow).isCured();
+            }
+            if (allBasicDiseasesCured && currentGame.allFlagsRemoved(DiseaseType.Purple)){
+                currentGame.setGamePhase(GamePhase.Completed);
+                notifyAllNonBTPlayersGameWon();
             }
 
             return 0;
@@ -1215,13 +1303,19 @@ public class GameManager {
 
             // Check if all diseases in game are cured:
             boolean allDiseasesCured;
-            if (currentGame.getChallenge().equals(ChallengeKind.BioTerrorist) || currentGame.getChallenge().equals(ChallengeKind.Mutation)){
+            boolean allBasicDiseasesCured = false;
+            if (currentGame.getChallenge().equals(ChallengeKind.BioTerrorist) || currentGame.getChallenge().equals(ChallengeKind.Mutation) || currentGame.getChallenge().equals(ChallengeKind.VirulentStrainAndMutation)){
                 allDiseasesCured = currentGame.getDiseaseByDiseaseType(DiseaseType.Black).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Blue).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Red).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Yellow).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Purple).isCured();
+                allBasicDiseasesCured = currentGame.getDiseaseByDiseaseType(DiseaseType.Black).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Blue).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Red).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Yellow).isCured();
             }
             else {
                 allDiseasesCured = currentGame.getDiseaseByDiseaseType(DiseaseType.Black).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Blue).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Red).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Yellow).isCured();
             }
             if (allDiseasesCured){
+                currentGame.setGamePhase(GamePhase.Completed);
+                notifyAllNonBTPlayersGameWon();
+            }
+            else if (allBasicDiseasesCured && currentGame.allFlagsRemoved(DiseaseType.Purple)){
                 currentGame.setGamePhase(GamePhase.Completed);
                 notifyAllNonBTPlayersGameWon();
             }

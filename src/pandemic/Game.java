@@ -262,6 +262,13 @@ public class Game {
             }
         }
 
+        if (settings.getChallenge() == ChallengeKind.Mutation || settings.getChallenge() == ChallengeKind.VirulentStrainAndMutation){
+            myPlayerDeck.addCard(new MutationIntensifiesEventCard(gameManager));
+            myPlayerDeck.addCard(new MutationSpreadsEventCard(gameManager));
+            myPlayerDeck.addCard(new MutationIntensifiesEventCard(gameManager));
+            myPlayerDeck.shuffleDeck();
+        }
+
         // - shuffling in Epidemic cards based on settings
         List<PlayerCard> epidemicCards = new ArrayList<>();
         int numOfEpidemicCards = settings.getNumOfEpidemicCards();
@@ -1119,6 +1126,10 @@ public class Game {
 
     }
 
+    public void infectCitiesForMutationSpreads(){
+
+    }
+
     // TO TEST
     public void setCurrentPlayer(Player p) {
         currentPlayer = p;
@@ -1488,6 +1499,18 @@ public class Game {
                 freshFlags.remove(0);
             }
         }
+    }
+
+    public boolean allFlagsRemoved(DiseaseType d){
+        boolean noFlagsRemaining = true;
+        ArrayList<City> citiesOnBoard = myGameBoard.getCitiesOnBoard();
+        for(City c : citiesOnBoard){
+            if (c.getNumOfDiseaseFlagsPlaced(d) != 0){
+                noFlagsRemaining = false;
+                break;
+            }
+        }
+        return noFlagsRemaining;
     }
 
     public boolean getComplexMolecularStructureActive(){
