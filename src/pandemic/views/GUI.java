@@ -1629,6 +1629,10 @@ public class GUI extends JFrame {
 						//GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
 					}
 
+					else if (moves.get("OEMoveToAnyCity")){
+						// TO DO: must pick a CityCard to discard, then call playMoveAsOperationsExpert(CityCard, destination)
+					}
+
 
 					//mapPawnLabels.get(userRole).setLocation(city.getX(),city.getY()-20);
 				}
@@ -1879,6 +1883,35 @@ public class GUI extends JFrame {
 				btnDiscoverCure1.setVisible(!btnDiscoverCure1.isVisible());
 				btnBuildResearch1.setVisible(!btnBuildResearch1.isVisible());
 				btnShareKnowledge1.setVisible(!btnShareKnowledge1.isVisible());
+
+				if (userRole == RoleType.OperationsExpert) {
+					btnDriveFerry1.setText("Role Action: Move to Any City");
+					btnDriveFerry1.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent e) {
+
+							if (btnDriveFerry1.getForeground().equals(Color.BLACK)) {
+								showHideOtherActionButtons(actionBtns, btnDriveFerry1);
+								moves.put("OEMoveToAnyCity", !moves.get("OEMoveToAnyCity"));
+								showHideTargetsMoveToAnyCity();
+								//System.out.println("Drive ferry pressed");
+								//resetMovesSelected(moves);
+								//resetDisplayOptions(displayOptions);
+								//loadDriveAndFlightMessage();
+								//hideTreatDiseaseOptions();
+
+								//System.out.println(citiesLabels.size());
+							}
+
+						}
+
+						private void showHideTargetsMoveToAnyCity() {
+							targetsCharterFlight.forEach(t -> {
+								contentPane.setComponentZOrder(t, 1);
+								t.setVisible(!t.isVisible());
+							});
+						}
+					});
+				}
 
 			}
 		});
@@ -2493,7 +2526,7 @@ public class GUI extends JFrame {
 
 			JLabel playerCardLabel = mapPlayerCardLabels.get(playerCard.getCardName());
 			if (playerCardLabel != null) {
-				/*System.out.println(cityCardLabel.getText());
+				/*\System.out.println(cityCardLabel.getText());
                 URL resource = GUI.class.getResource(cityCardLabel.getText());
 
                 if(resource == null) {
@@ -2968,23 +3001,10 @@ public class GUI extends JFrame {
 
 	private void loadBtnEndTurn() {
 		if (username.equals(gs.getCurrentPlayer()) && gs.getInfectionsRemaining() == 0) {
-//			btnEndTurn.setText("END TURN");
-//			btnEndTurn.setBounds(11, 530, 176, 20);
-//			btnEndTurn.setBackground(Color.RED);
-//			btnEndTurn.setForeground(Color.WHITE);
-//
-//			contentPane.add(btnEndTurn);
-//			contentPane.setComponentZOrder(btnEndTurn,1);
 			btnEndTurn.setEnabled(true);
 			btnEndTurn.setBackground(Color.RED);
 		} else {
-//			btnEndTurn.setText("END TURN");
-////			btnEndTurn.setBounds(11, 530, 176, 20);
-////			btnEndTurn.setBackground(Color.RED);
-////			btnEndTurn.setForeground(Color.WHITE);
-////
-////			contentPae.add(btnEndTurn);
-////			contentPane.setComponentZOrder(btnEndTurn,1);
+
 			btnEndTurn.setEnabled(false);
 			btnEndTurn.setBackground(Color.DARK_GRAY);
 		}

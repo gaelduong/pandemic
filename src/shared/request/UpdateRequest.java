@@ -242,7 +242,23 @@ public class UpdateRequest implements Serializable {
     private void executeBuildResearchStation(Game game, String playerUsername, List arguments) {
         final String cityLocationToBuild = (String)arguments.get(0);
         final String cityNameToRemove_Optional = arguments.size() == 2 ? (String)arguments.get(1) : null;
-        //TODO omer link with back-end commands
+//        if (arguments.size() == 2){
+//            CityName cityNameToRemoveFrom = Utils.getEnum(CityName.class, cityNameToRemove_Optional);
+//            City cityToRemoveFrom = game.getCityByName(cityNameToRemoveFrom);
+//            ResearchStation toRemove = null;
+//            for (Unit u : cityToRemoveFrom.getCityUnits()){
+//                if (u.getUnitType().equals(UnitType.ResearchStation)){
+//                    toRemove = (ResearchStation) u;
+//                    break;
+//                }
+//            }
+//            if (toRemove != null) {
+//                game.getGameManager().removeResearchStation(toRemove);
+//            }
+//        }
+
+       game.getGameManager().playBuildResearchStation();
+
     }
 
     private String executeEndTurn(Game game) {
