@@ -1439,6 +1439,43 @@ public class Game {
         }
     }
 
+    public void infectMutationIntensifies(){
+        ArrayList<DiseaseFlag> freshFlags = diseaseTypeToSupplyDict.get(DiseaseType.Purple);
+        for (City c : myGameBoard.getCitiesOnBoard()){
+            if (c.getNumOfDiseaseFlagsPlaced(DiseaseType.Purple) == 0){
+                boolean qsOrMedicPreventingInfectionInCity = isQuarantineSpecialistInCity(c) || (isMedicInCity(c));
+                boolean qsPresentInNeighbor = false;
+                ArrayList<City> cityNeighbors = c.getNeighbors();
+                for(City a : cityNeighbors) {
+                    qsPresentInNeighbor = isQuarantineSpecialistInCity(a);
+                    if( qsPresentInNeighbor) break;
+                }
+                boolean infectionPrevented = qsOrMedicPreventingInfectionInCity || qsPresentInNeighbor;
+
+                if(!infectionPrevented && freshFlags.size() >= 2) {
+                    DiseaseFlag flag1;
+                    DiseaseFlag flag2;
+                    try {
+                        flag1 = freshFlags.remove(0);
+                        flag2 = freshFlags.remove(0);
+                    } catch (NullPointerException e) {
+                        //FOR TESTING, SHOULD NOT HAPPEN
+                        System.out.println("ERROR -- diseaseFlags not sufficient");
+                        return;
+                    }
+                    c.getCityUnits().add(flag1);
+                    flag1.setUsed(true);
+                    c.getCityUnits().add(flag2);
+                }
+                else{
+                    gameManager.notifyAllPlayersGameLost();
+                    setGamePhase(GamePhase.Completed);
+                    System.out.println("Ran out of disease cubes.");
+                }
+            }
+        }
+    }
+
     public void resolveUnacceptableLoss(){
         ArrayList<DiseaseFlag> freshFlags = diseaseTypeToSupplyDict.get(virulentStrain);
         if(freshFlags.size() >= 4){

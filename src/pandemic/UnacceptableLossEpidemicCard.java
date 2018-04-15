@@ -36,4 +36,8 @@ public class UnacceptableLossEpidemicCard extends EpidemicCard{
 
         myGameManager.setEventCardsEnabled(true);
     }
+
+    public String getCardName() {
+        return "Unacceptable Loss Epidemic";
+    }
 }

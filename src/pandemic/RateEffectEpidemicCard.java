@@ -15,4 +15,8 @@ public class RateEffectEpidemicCard extends EpidemicCard{
 
         myGameManager.setRateEffectActive(true);
     }
+
+    public String getCardName() {
+        return "Rate Effect Epidemic";
+    }
 }

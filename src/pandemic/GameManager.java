@@ -330,6 +330,10 @@ public class GameManager {
         return 0;
     }
 
+    public void infectCitiesForMutationIntensifies(){
+        currentGame.infectMutationIntensifies();
+    }
+
 	public void shuffleInfectionDiscardPile(){
 		InfectionDiscardPile idp = currentGame.getInfectionDiscardPile();
 		idp.shuffle();
@@ -354,7 +358,7 @@ public class GameManager {
 //        System.out.println("Virulent Strain: " + currentGame.getVirulentStrain());
 //        setVirulentStrainIsEradicated(true);
 
-
+        System.out.println("\t\t IN END TURN!!!");
 		String status = "";
 		if (currentGame.getMobileHospitalActive()){
 		    currentGame.setMobileHospitalActive(false);
@@ -445,10 +449,12 @@ public class GameManager {
 
 
     public int infectNextCity(){
+        System.out.println("IN INFECT NEXT CITY!!!!");
         if (currentGame.getInfectionsRemaining() > 0) {
             if (currentGame.getOneQuietNight()) {
                 currentGame.setOneQuietNight(false);
             } else {
+                System.out.println("DRAWING CARD IN INFECTING CITIES");
                 setEventCardsEnabled(false);
                 InfectionCard cardDrawn = currentGame.getInfectionDeck().drawCard();
                 if (cardDrawn instanceof MutationCard) {
@@ -510,11 +516,11 @@ public class GameManager {
                         System.out.println("Disease is eradicated.");
                     }
 
-                    if (!infectStatus) {
+                    if (!infectStatus && currentGame.isBioTChallengeActive()) {
                         currentGame.infectAndResolveOutbreaks(cityDiseaseType, cityDisease, gameStatus, Q);
                         boolean diseaseEradicatedPurple = currentGame.checkIfEradicated(DiseaseType.Purple);
 
-                        if (currentGame.isBioTChallengeActive() && city.containsPurpleDisease() && !diseaseEradicatedPurple) {
+                        if (city.containsPurpleDisease() && !diseaseEradicatedPurple) {
                             Disease purpleDisease = currentGame.getDiseaseByDiseaseType(DiseaseType.Purple);
                             ArrayList<DiseaseFlag> diseaseFlagsPurple = currentGame.getDiseaseSupplyByDiseaseType(DiseaseType.Purple);
                             boolean gameStatusPurple = (currentGame.getOutBreakMeterReading() < 8) && diseaseFlags.size() >= 1;

@@ -88,7 +88,9 @@ public class PostCondition implements Serializable {
          */
         EVENT_CARD,
 
-        BIOT_TURN
+        BIOT_TURN,
+
+        INFECT_NEXT_CITY
     }
 
     public PostCondition(ACTION action, Object... arguments) {

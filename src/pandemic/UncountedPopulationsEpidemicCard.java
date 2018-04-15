@@ -36,4 +36,8 @@ public class UncountedPopulationsEpidemicCard extends EpidemicCard{
 
         myGameManager.setEventCardsEnabled(true);
     }
+
+    public String getCardName() {
+        return "Uncounted Populations Epidemic";
+    }
 }
