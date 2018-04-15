@@ -10,7 +10,17 @@ import java.io.Serializable;
  */
 public class PreCondition implements Serializable {
 
+
+    /**
+     * We don't need to use a precondition since the UpdateRequests cannot be performed on an inconsistent gamestate.
+     *
+     * Consider the following example:
+     * A requests share knowledge to B. and before B accepts, C does something to change the gamestate (maybe an event card).
+     * Then B accepts. and sent an update request on an inconsistent game state.
+     *
+     * This cannot occur, because the GUI would refresh the gamestate when C alters it, removing B's option to share knowledge.
+     */
     public boolean isSatisifed() {
-        return false;   //TODO
+        return true;
     }
 }
