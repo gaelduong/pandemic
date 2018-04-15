@@ -302,6 +302,12 @@ public class GUI extends JFrame {
 	private JButton btnEndTurn = new JButton("END TURN");
 
 	private JButton btnInfectNextCity = new JButton("INFECT NEXT");
+
+	private JButton discardOptionButton = new JButton();
+
+	private JButton playEventOptionButton = new JButton();
+
+
 	//private ArrayList<JLabel> optionsTreatDisease = new ArrayList<JLabel>(Arrays.asList(genericBox));
 	private ArrayList<ArrayList<JLabel>> displayOptions = new ArrayList<ArrayList<JLabel>>
 			(Arrays.asList(targetsDrive, targetsDirectFlight, targetsShuttleFlight));
@@ -343,9 +349,8 @@ public class GUI extends JFrame {
 	/*Discard card button */
 	private JLabel discardCardButton;
 
-	private JButton discardOptionButton = new JButton();
-	private JButton playEventOptionButton = new JButton();
-	private JButton optionDiscardButton = new JButton();
+	private JButton discardButton = new JButton();
+
 
 	/*Discover cure button*/
 	private JLabel discoverCureButton = new JLabel();
@@ -355,6 +360,8 @@ public class GUI extends JFrame {
 	private PlayerCard playerCardToDiscard = null;
 
 	/*Action buttons*/
+	private JLabel moreButton = new JLabel("More...");
+
 	private JButton btnDriveFerry = new JButton("Drive");
 	;
 	private JButton btnDirectFlight = new JButton("<html>Direct <br> Flight</html>");
@@ -366,6 +373,18 @@ public class GUI extends JFrame {
 	private JButton btnTreatDisease = new JButton("<html>Treat <br> Disease</html>");
 	private JButton btnShareKnowledge = new JButton("<html>Share<br> Knowledge</html>");
 	private JButton btnDiscoverCure = new JButton("<html>Discover <br> a Cure</html>");
+
+	private JButton btnDriveFerry1 = new JButton();
+	;
+	private JButton btnDirectFlight1 = new JButton();
+	;
+	private JButton btnCharterFlight1 = new JButton();
+	private JButton btnShuttleFlight1 = new JButton();
+	;
+	private JButton btnBuildResearch1 = new JButton();
+	private JButton btnTreatDisease1 = new JButton();
+	private JButton btnShareKnowledge1 = new JButton();
+	private JButton btnDiscoverCure1 = new JButton();
 
 	private List<JButton> actionBtns = new ArrayList<JButton>
 			(Arrays.asList(btnDriveFerry, btnDirectFlight, btnCharterFlight, btnShuttleFlight,
@@ -771,6 +790,16 @@ public class GUI extends JFrame {
 //
 //			//Share Knowledge
 			btnShareKnowledge.setVisible(true);
+//=====================
+			btnDriveFerry1.setVisible(false);
+			btnDirectFlight1.setVisible(false);
+			btnCharterFlight1.setVisible(false);
+			btnShuttleFlight1.setVisible(false);
+			btnTreatDisease1.setVisible(false);
+			btnDiscoverCure1.setVisible(false);
+			btnBuildResearch1.setVisible(false);
+			btnShareKnowledge1.setVisible(false);
+
 		} else {
 			btnDriveFerry.setVisible(false);
 			btnDirectFlight.setVisible(false);
@@ -781,6 +810,20 @@ public class GUI extends JFrame {
 			btnBuildResearch.setVisible(false);
 			btnShareKnowledge.setVisible(false);
 			btnDiscoverCure.setVisible(false);
+
+			//=====================
+			moreButton.setVisible(false);
+
+			btnDriveFerry1.setVisible(false);
+			btnDirectFlight1.setVisible(false);
+			btnCharterFlight1.setVisible(false);
+			btnShuttleFlight1.setVisible(false);
+			btnTreatDisease1.setVisible(false);
+			btnDiscoverCure1.setVisible(false);
+			btnBuildResearch1.setVisible(false);
+			btnShareKnowledge1.setVisible(false);
+
+
 		}
 
 		actionBtns.forEach(b -> b.setForeground(Color.BLACK));
@@ -836,8 +879,7 @@ public class GUI extends JFrame {
 		loadTargetsRS();
 //		loadGenericMessageBox();
 
-		//if (gs.getCardMap().get(userRole).size() > 7)
-			loadTooManyCardsMessage();
+		if (gs.getCardMap().get(userRole).size() > 7) loadTooManyCardsMessage();
 
 
 
@@ -1027,6 +1069,11 @@ public class GUI extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
+		moreButton.setBounds(11,350,90,10);
+		moreButton.setForeground(Color.WHITE);
+		moreButton.setVisible(true);
+		contentPane.add(moreButton);
+
 		// -------Set up action buttons --------
 		//Drive Ferry
 		//btnDriveFerry.setIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/icon.png")));
@@ -1095,9 +1142,78 @@ public class GUI extends JFrame {
 		btnShareKnowledge.setVisible(false);
 		btnShareKnowledge.setFocusPainted(false);
 
+		//==========EMPTY BUTTONS=====
+		//Drive Ferry
+		//btnDriveFerry1.setIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/icon.png")));
+		btnDriveFerry1.setBounds(11, 370, 90, 40);
+		btnDriveFerry1.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		btnDriveFerry1.setBackground(new Color(173, 188, 204));
+		contentPane.add(btnDriveFerry1);
+		btnDriveFerry1.setVisible(false);
+		btnDriveFerry1.setFocusPainted(false);
+		//btnDriveFerry1.setFont(new Font("Tahoma", Font.BOLD, 12));
+
+		//Direct Flight
+		//btnDirectFlight1.setIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/icon.png")));
+		btnDirectFlight1.setBounds(100, 370, 90, 40);
+		btnDirectFlight1.setFont(new Font("Dialog", Font.PLAIN, 12));
+		btnDirectFlight1.setBackground(new Color(173, 188, 204));
+		contentPane.add(btnDirectFlight1);
+		btnDirectFlight1.setVisible(false);
+		btnDirectFlight1.setFocusPainted(false);
+
+		//Charter Flight
+		btnCharterFlight1.setBounds(11, 407, 90, 40);
+		btnCharterFlight1.setFont(new Font("Dialog", Font.PLAIN, 12));
+		btnCharterFlight1.setBackground(new Color(173, 188, 204));
+		contentPane.add(btnCharterFlight1);
+		btnCharterFlight1.setVisible(false);
+		btnCharterFlight1.setFocusPainted(false);
+
+		//Shuttle Flight
+		btnShuttleFlight1.setBounds(100, 407, 90, 40);
+		btnShuttleFlight1.setFont(new Font("Dialog", Font.PLAIN, 12));
+		btnShuttleFlight1.setBackground(new Color(173, 188, 204));
+		contentPane.add(btnShuttleFlight1);
+		btnShuttleFlight1.setVisible(false);
+		btnShuttleFlight1.setFocusPainted(false);
+
+		//Treat Disease
+		btnTreatDisease1.setBounds(100, 445, 90, 40);
+		btnTreatDisease1.setFont(new Font("Dialog", Font.PLAIN, 12));
+		btnTreatDisease1.setBackground(new Color(173, 188, 204));
+		contentPane.add(btnTreatDisease1);
+		btnTreatDisease1.setVisible(false);
+		btnTreatDisease1.setFocusPainted(false);
+
+		//Discover Cure
+		btnDiscoverCure1.setBounds(100, 482, 90, 40);
+		btnDiscoverCure1.setFont(new Font("Dialog", Font.PLAIN, 12));
+		btnDiscoverCure1.setBackground(new Color(173, 188, 204));
+		contentPane.add(btnDiscoverCure1);
+		btnDiscoverCure1.setVisible(false);
+		btnDiscoverCure1.setFocusPainted(false);
+
+		//Build Research
+		btnBuildResearch1.setBounds(11, 445, 90, 40);
+		btnBuildResearch1.setFont(new Font("Dialog", Font.PLAIN, 12));
+		btnBuildResearch1.setBackground(new Color(173, 188, 204));
+		contentPane.add(btnBuildResearch1);
+		btnBuildResearch1.setVisible(false);
+		btnBuildResearch1.setFocusPainted(false);
+
+		//Share Knowledge
+		btnShareKnowledge1.setBounds(11, 482, 90, 40);
+		btnShareKnowledge1.setFont(new Font("Dialog", Font.PLAIN, 12));
+		btnShareKnowledge1.setBackground(new Color(173, 188, 204));
+		contentPane.add(btnShareKnowledge1);
+		btnShareKnowledge1.setVisible(false);
+		btnShareKnowledge1.setFocusPainted(false);
+
+
 		/*-------Set up Actions remaining-------*/
 
-		actionsRemaining.setBounds(19, 348, 131, 16);
+		actionsRemaining.setBounds(19, 330, 131, 16);
 		actionsRemaining.setForeground(Color.WHITE);
 		contentPane.add(actionsRemaining);
 		actionsRemaining.setVisible(true);
@@ -1217,31 +1333,28 @@ public class GUI extends JFrame {
 
 
 
-		discardOptionButton.setText("DISCARD A CARD");
-		discardOptionButton.setBounds(511, 310, 106, 20);
-		discardOptionButton.setBackground(Color.BLACK);
-		discardOptionButton.setForeground(Color.WHITE);
 
 
 		discardOptionButton.setFocusPainted(false);
 
 		playEventOptionButton.setText("PLAY EVENT CARD");
 		playEventOptionButton.setBounds(501, 530, 106, 20);
-		playEventOptionButton.setBackground(Color.BLACK);
+		playEventOptionButton.setBackground(Color.cyan);
 		playEventOptionButton.setForeground(Color.WHITE);
 
 
 		playEventOptionButton.setFocusPainted(false);
 
 		contentPane.add(discardOptionButton);
+		contentPane.add(discardButton);
 		contentPane.add(playEventOptionButton);
 
 		contentPane.setComponentZOrder(discardOptionButton,0);
-		contentPane.setComponentZOrder(playEventOptionButton,0);
+		//contentPane.setComponentZOrder(playEventOptionButton,0);
 
 
-		discardOptionButton.setVisible(true);
-		playEventOptionButton.setVisible(true);
+		discardOptionButton.setVisible(false);
+		playEventOptionButton.setVisible(false);
 
 
 
@@ -1281,6 +1394,15 @@ public class GUI extends JFrame {
 		contentPane.add(btnInfectNextCity);
 		btnInfectNextCity.setEnabled(false);
 		btnInfectNextCity.setFocusPainted(false);
+
+		discardOptionButton.setText("DISCARD");
+		discardOptionButton.setBounds(11, 570, 206, 20);
+		discardOptionButton.setBackground(Color.ORANGE);
+		discardOptionButton.setForeground(Color.WHITE);
+		contentPane.add(discardOptionButton);
+		discardOptionButton.setEnabled(false);
+		discardOptionButton.setFocusPainted(false);
+
 
 		// Generic message box
 		genericBox.setForeground(Color.WHITE);
@@ -1379,6 +1501,18 @@ public class GUI extends JFrame {
 		contentPane.setComponentZOrder(btnDiscoverCure, 1);
 		contentPane.setComponentZOrder(btnBuildResearch, 1);
 		contentPane.setComponentZOrder(btnShareKnowledge, 1);
+
+		//=====
+		contentPane.setComponentZOrder(btnDriveFerry1, 0);
+		contentPane.setComponentZOrder(btnDirectFlight1, 0);
+		contentPane.setComponentZOrder(btnCharterFlight1, 0);
+		contentPane.setComponentZOrder(btnShuttleFlight1, 0);
+		contentPane.setComponentZOrder(btnTreatDisease1, 0);
+		contentPane.setComponentZOrder(btnDiscoverCure1, 0);
+		contentPane.setComponentZOrder(btnBuildResearch1, 0);
+		contentPane.setComponentZOrder(btnShareKnowledge1, 0);
+		//=======
+
 		contentPane.setComponentZOrder(actionsRemaining, 1);
 		contentPane.setComponentZOrder(playerDeck, 1);
 		contentPane.setComponentZOrder(infectionDeck, 1);
@@ -1452,7 +1586,7 @@ public class GUI extends JFrame {
 					} else if (moves.get("charterFlight")) {
 						//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
 						//	new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.CHARTER_FLIGHT)));
-					} else if (moves.get("shuttleFlight")) {
+					} else if (moves.get("shuÅttleFlight")) {
 						//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
 						//	new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.SHUTTLE_FLIGHT)));
 					} else if (moves.get("buildResearch")) {
@@ -1676,8 +1810,8 @@ public class GUI extends JFrame {
 		discardOptionButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				discardOptionButton.setVisible(false);
-				playEventOptionButton.setVisible(false);
+				discardOptionButton.setEnabled(false);
+				playEventOptionButton.setEnabled(false);
 				moves.put("discard",true);
 
 
@@ -1688,9 +1822,9 @@ public class GUI extends JFrame {
 
 		playEventOptionButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				discardOptionButton.setVisible(false);
-				playEventOptionButton.setVisible(false);
-				moves.put("discard",true);
+				discardOptionButton.setEnabled(false);
+				playEventOptionButton.setEnabled(false);
+				moves.put("playEventCard",true);
 
 
 
@@ -1699,6 +1833,21 @@ public class GUI extends JFrame {
 		});
 
 		/*-------Events for 8 buttons-------*/
+
+		moreButton.addMouseListener(new MouseAdapter() {
+			public void mouseReleased(MouseEvent e) {
+				btnDriveFerry1.setVisible(!btnDriveFerry1.isVisible());
+				btnDirectFlight1.setVisible(!btnDirectFlight1.isVisible());
+				btnCharterFlight1.setVisible(!btnCharterFlight1.isVisible());
+				btnShuttleFlight1.setVisible(!btnShuttleFlight1.isVisible());
+				btnTreatDisease1.setVisible(!btnTreatDisease1.isVisible());
+				btnDiscoverCure1.setVisible(!btnDiscoverCure1.isVisible());
+				btnBuildResearch1.setVisible(!btnBuildResearch1.isVisible());
+				btnShareKnowledge1.setVisible(!btnShareKnowledge1.isVisible());
+
+			}
+		});
+
 		//Drive Ferry button
 		btnDriveFerry.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1914,6 +2063,64 @@ public class GUI extends JFrame {
 					});
 					dialog.show();
 				}
+			}
+		});
+
+		//=========EVENT LISTENERS FOR EMPTY BUTTONS
+		//Drive Ferry button
+		btnDriveFerry1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+			}
+		});
+
+		//Direct Flight button
+		btnDirectFlight1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+			}
+		});
+
+		//Charter Flight button
+		btnCharterFlight1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+			}
+
+		});
+
+		//Shuttle Flight button
+		btnShuttleFlight1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+
+		//Build Research button
+		btnBuildResearch1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+			}
+		});
+
+		//TreatDisease button
+		btnTreatDisease1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+			}
+		});
+
+		//Discover a cure button
+		btnDiscoverCure1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+			}
+
+		});
+
+		//Share Knowledge button
+		btnShareKnowledge1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
 			}
 		});
 
@@ -2309,7 +2516,11 @@ public class GUI extends JFrame {
 							//card down => discardButtion go away
 							//set playerCardToDiscard (CityCard) = that card
 
-							loadPlayerCards();
+
+							//loadPlayerCards();
+							contentPane.add(discardButton);
+							contentPane.setComponentZOrder(discardButton,0);
+							discardButton.setVisible(true);
 
 							if (playerCardLabel.getY() < 585)
 							{
@@ -2320,6 +2531,10 @@ public class GUI extends JFrame {
 							{
 								playerCardLabel.setLocation(playerCardLabel.getX(), playerCardLabel.getY() - 20);
 								playerCardToDiscard = playerCard;
+
+
+
+
 							}
 							System.out.println("Selected card to discard " + playerCardToDiscard.getCardName());
 
@@ -2761,9 +2976,8 @@ public class GUI extends JFrame {
 	{
 		//a box with 2 buttons: discardOptionButton and playEventOptionButton
 
-		discardOptionButton.setVisible(true);
-		playEventOptionButton.setVisible(true);
-		optionDiscardButton.setVisible(true);
+		discardOptionButton.setEnabled(true);
+		playEventOptionButton.setEnabled(true);
 		//btnDriveFerry.setText(""+discardCardButton.isVisible());
 	}
 
