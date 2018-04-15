@@ -1,5 +1,18 @@
 package pandemic.views;
 
+import api.gui.ListDialog;
+import client.PandemicClient;
+import javafx.util.Pair;
+import pandemic.*;
+import server.PandemicServer;
+import server.premadeURs.GameURs;
+import shared.GameState;
+import shared.MessageType;
+import shared.Utils;
+
+import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -7,22 +20,11 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
+import static java.lang.Thread.sleep;
 
-import api.gui.ListDialog;
-import client.PandemicClient;
-import javafx.util.Pair;
-import pandemic.*;
 //import pandemic.GameManager;
 //import pandemic.Player;
 //import pandemic.User;
-import server.PandemicServer;
-import server.premade.GameURs;
-import shared.*;
-
-import static java.lang.Thread.sleep;
 
 /**
  * Purpose: Create & draw GUI components + event listeners

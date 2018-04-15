@@ -6,14 +6,12 @@ import client.ClientCommands;
 import pandemic.*;
 import pandemic.views.LobbyState;
 import pandemic.views.MenuLayout;
-import server.premade.ServerRequests;
 import shared.ConsentRequestBundle;
 import shared.MessageType;
 import shared.Utils;
 import shared.request.UpdateRequest;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;

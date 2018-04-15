@@ -1,4 +1,4 @@
-package server.premade;
+package server.premadeURs;
 
 import api.socketcomm.Client;
 import pandemic.CityName;

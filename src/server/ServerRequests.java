@@ -1,4 +1,4 @@
-package server.premade;
+package server;
 
 import api.socketcomm.Server;
 import client.ClientCommands;

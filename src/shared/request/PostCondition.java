@@ -87,7 +87,7 @@ public class PostCondition implements Serializable {
          * <br><br><b>Arguments required:</b><br>
          * EventCardName name, List arguments
          * <br>
-         *     (the arguments are encoded by the parameters specified in {@link server.premade.EventCardURs}
+         *     (the arguments are encoded by the parameters specified in {@link server.premadeURs.EventCardURs}
          */
         EVENT_CARD,
 
