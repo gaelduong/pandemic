@@ -1119,6 +1119,10 @@ public class Game {
 
     }
 
+    public void infectCitiesForMutationSpreads(){
+
+    }
+
     // TO TEST
     public void setCurrentPlayer(Player p) {
         currentPlayer = p;
