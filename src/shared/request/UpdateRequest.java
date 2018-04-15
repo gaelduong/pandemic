@@ -99,8 +99,18 @@ public class UpdateRequest implements Serializable {
             case BIOT_TURN:
                 executeBioTTurn(game, playerUsername, arguments);
                 break;
+
+            case INFECT_NEXT_CITY:
+                executeInfectNextCity(game, playerUsername);
+                break;
+
         }
         return status;
+    }
+
+    private void executeInfectNextCity(Game game, String playerUsername) {
+        final GameManager gameManager = game.getGameManager();
+        gameManager.infectNextCity();
     }
 
     private void executeMoveCard(Game game, String playerUsername, List arguments) {

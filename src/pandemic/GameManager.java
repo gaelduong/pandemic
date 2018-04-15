@@ -354,7 +354,7 @@ public class GameManager {
 //        System.out.println("Virulent Strain: " + currentGame.getVirulentStrain());
 //        setVirulentStrainIsEradicated(true);
 
-
+        System.out.println("\t\t IN END TURN!!!");
 		String status = "";
 		if (currentGame.getMobileHospitalActive()){
 		    currentGame.setMobileHospitalActive(false);
@@ -445,6 +445,7 @@ public class GameManager {
 
 
     public int infectNextCity(){
+        System.out.println("IN INFECT NEXT CITY!!!!");
         if (currentGame.getInfectionsRemaining() > 0) {
             if (currentGame.getOneQuietNight()) {
                 currentGame.setOneQuietNight(false);
