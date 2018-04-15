@@ -454,6 +454,7 @@ public class GameManager {
             if (currentGame.getOneQuietNight()) {
                 currentGame.setOneQuietNight(false);
             } else {
+                System.out.println("DRAWING CARD IN INFECTING CITIES");
                 setEventCardsEnabled(false);
                 InfectionCard cardDrawn = currentGame.getInfectionDeck().drawCard();
                 if (cardDrawn instanceof MutationCard) {
@@ -515,11 +516,11 @@ public class GameManager {
                         System.out.println("Disease is eradicated.");
                     }
 
-                    if (!infectStatus) {
+                    if (!infectStatus && currentGame.isBioTChallengeActive()) {
                         currentGame.infectAndResolveOutbreaks(cityDiseaseType, cityDisease, gameStatus, Q);
                         boolean diseaseEradicatedPurple = currentGame.checkIfEradicated(DiseaseType.Purple);
 
-                        if (currentGame.isBioTChallengeActive() && city.containsPurpleDisease() && !diseaseEradicatedPurple) {
+                        if (city.containsPurpleDisease() && !diseaseEradicatedPurple) {
                             Disease purpleDisease = currentGame.getDiseaseByDiseaseType(DiseaseType.Purple);
                             ArrayList<DiseaseFlag> diseaseFlagsPurple = currentGame.getDiseaseSupplyByDiseaseType(DiseaseType.Purple);
                             boolean gameStatusPurple = (currentGame.getOutBreakMeterReading() < 8) && diseaseFlags.size() >= 1;
