@@ -364,6 +364,7 @@ public class GUI extends JFrame {
 	private JLabel discoverCureButton = new JLabel();
 
 	private List<CityCard> discoverCureDiscardCards = new ArrayList<CityCard>();
+	private DiseaseType discoverCureDiseaseType;
 
 	private PlayerCard playerCardToDiscard = null;
 
@@ -1649,7 +1650,7 @@ public class GUI extends JFrame {
 				//(and probably the color? probably not necessary since you can get the color from the card)
 				//(and probably role? i.e userRole)
 
-				GameURs.sendDiscoverCureUR(client, discoverCureDiscardCards);
+				GameURs.sendDiscoverCureUR(client, discoverCureDiscardCards, discoverCureDiseaseType);
 
 
 			}
@@ -2627,8 +2628,10 @@ public class GUI extends JFrame {
 						//every card in the list must have the same color(region)
 						//otherwise return, i.e won't display cureButton
 						Region region = discoverCureDiscardCards.get(0).getRegion();
+						boolean containsPurpleDisease;
 						for (CityCard c : discoverCureDiscardCards) {
 							if (!c.getRegion().equals(region)) {
+								//if
 								discoverCureButton.setVisible(false);
 								return;
 							}
