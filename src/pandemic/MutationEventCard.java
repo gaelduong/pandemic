@@ -4,7 +4,7 @@ public abstract class MutationEventCard implements PlayerCard{
 
     protected CardType type = CardType.MutationEventCard;
     protected MutationEventCardName name;
-    protected GameManager gameManager;
+    protected transient GameManager gameManager;
 
     public MutationEventCard(MutationEventCardName pName, GameManager gm){
         name = pName;
