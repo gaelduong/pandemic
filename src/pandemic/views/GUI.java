@@ -854,12 +854,15 @@ public class GUI extends JFrame {
 			btnShareKnowledge1.setVisible(false);
 
 			Component[] components = contentPane.getComponents();
+			try {
+				for (int i = 0; i < components.length; i++) {
+					if (components[i].getClass().getName().equals("javax.swing.JButton")) {
 
-			for(int i = 0; i < components.length; i++) {
-				if (components[i].getClass().getName() == "javax.swing.JButton") {
-
-					((JButton) components[i]).setEnabled(true);
+						((JButton) components[i]).setEnabled(true);
+					}
 				}
+			} catch (ArrayIndexOutOfBoundsException e){
+				System.out.println("Caught the thing");
 			}
 
 		} else {
@@ -1129,7 +1132,7 @@ public class GUI extends JFrame {
 			Component[] components = contentPane.getComponents();
 
 			for(int i = 0; i < components.length; i++) {
-				if (components[i].getClass().getName() == "javax.swing.JButton"
+				if (components[i].getClass().getName().equals("javax.swing.JButton")
 						&& !((JButton)components[i]).getText().equals("DISCARD")
 						&& !((JButton)components[i]).getText().equals("PLAY EVENT CARD")) {
 					//System.out.println("yo");
@@ -1163,7 +1166,7 @@ public class GUI extends JFrame {
 
 	private void initComponents() {
 
-	/*	//Load player cards
+		//Load player cards
 		for(JLabel label : mapPlayerCardLabels.values())
 		{
 			//System.out.println(entry.getKey());
@@ -1765,7 +1768,6 @@ public class GUI extends JFrame {
 					} else if (moves.get("buildResearch")) {
 						GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
 
-						//GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
 					}
 
 					else if (moves.get("OEMoveToAnyCity")){
@@ -2702,7 +2704,11 @@ public class GUI extends JFrame {
 
 		// System.out.println("username: " +username);
 		// System.out.println("userRole: " + userRole);
+		System.out.println("Player card map: " + gs.getCardMap());
+		System.out.println("USER ROLE : " + userRole);
+		System.out.println("Player cards: " + gs.getCardMap().get(userRole));
 		for (PlayerCard playerCard : gs.getCardMap().get(userRole)) {
+			System.out.println("PlayerCard : " + playerCard.getCardName());
 
 			JLabel playerCardLabel = mapPlayerCardLabels.get(playerCard.getCardName());
 			if (playerCardLabel != null) {

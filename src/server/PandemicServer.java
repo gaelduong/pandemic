@@ -43,7 +43,7 @@ public class PandemicServer extends Server {
         PandemicServer.currentServer = this;
 
         long timerCheckRate = 1000; // check every second
-        long timeout = 5000; // 5 seconds
+        long timeout = 500000; // 500 seconds
         final TimerTask pingTimeout = new TimerTask() {
             @Override
             public void run() {

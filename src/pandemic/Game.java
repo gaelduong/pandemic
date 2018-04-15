@@ -407,6 +407,37 @@ public class Game {
         atlResearchStation.setLocation(atlCity);
         atlCity.getCityUnits().add(atlResearchStation);
 
+
+        // REMOVE AFTER TESTING
+        ResearchStation parisResearchStation = unusedResearchStations.remove(0);
+        City parisCity = myGameBoard.getCityByName(CityName.Paris);
+        parisResearchStation.setLocation(parisCity);
+        parisCity.getCityUnits().add(parisResearchStation);
+
+        ResearchStation tokyoResearchStation = unusedResearchStations.remove(0);
+        City tokyoCity = myGameBoard.getCityByName(CityName.Tokyo);
+        tokyoResearchStation.setLocation(tokyoCity);
+        tokyoCity.getCityUnits().add(tokyoResearchStation);
+
+        ResearchStation chennaiResearchStation = unusedResearchStations.remove(0);
+        City chennaiCity = myGameBoard.getCityByName(CityName.Chennai);
+        chennaiResearchStation.setLocation(chennaiCity);
+        chennaiCity.getCityUnits().add(chennaiResearchStation);
+
+        ResearchStation moscowResearchStation = unusedResearchStations.remove(0);
+        City moscowCity = myGameBoard.getCityByName(CityName.Moscow);
+        moscowResearchStation.setLocation(moscowCity);
+        moscowCity.getCityUnits().add(moscowResearchStation);
+
+        ResearchStation osakaResearchStation = unusedResearchStations.remove(0);
+        City osakaCity = myGameBoard.getCityByName(CityName.Osaka);
+        osakaResearchStation.setLocation(osakaCity);
+        osakaCity.getCityUnits().add(osakaResearchStation);
+
+
+
+
+
         //    - initialize Diseases & DiseaseFlags
         blueDisease = new Disease(DiseaseType.Blue);
         blackDisease = new Disease(DiseaseType.Black);
@@ -453,12 +484,11 @@ public class Game {
         if(purpleDiseaseChallenge){
             purpleDisease = new Disease(DiseaseType.Purple);
             purpleUnusedDiseaseFlags = new ArrayList<DiseaseFlag>();
+            for (int j = 0; j < 12; j++) {
+                purpleUnusedDiseaseFlags.add(new DiseaseFlag(purpleDisease.getDiseaseType()));
+            }
             diseaseTypeToSupplyDict.put(purpleDisease.getDiseaseType(), purpleUnusedDiseaseFlags);
             diseaseTypeToDiseaseDict.put(purpleDisease.getDiseaseType(), purpleDisease);
-            ArrayList<DiseaseFlag> diseaseFlagsSupply = diseaseTypeToSupplyDict.get(purpleDisease.getDiseaseType());
-            for (int j = 0; j < 12; j++) {
-                diseaseFlagsSupply.add(new DiseaseFlag(purpleDisease.getDiseaseType()));
-            }
         }
 
     }
@@ -1144,6 +1174,10 @@ public class Game {
 
     //the ultimate functional programming test
     public GameState generateCondensedGameState() {
+        System.out.println("----- ACTIVE PLAYER LIST IN GENERATE CONDESED GAME STATE ---- ");
+        gameManager.getActivePlayers().forEach(player -> System.out.println("PLAYER: " + player.getPlayerUserName()
+                + ", ROLETYPE: " + player.getRoleType()));
+        System.out.println("-------------------------------------------------------------");
         final Map<RoleType, String> userMap
                 = gameManager.getActivePlayers().stream().collect(Collectors.toMap(Player::getRoleType, Player::getPlayerUserName));
 
@@ -1161,10 +1195,15 @@ public class Game {
                 = myGameBoard.getCitiesOnBoard().stream().collect(Collectors.toMap(City::getName, City::getDiseaseFlags));
         System.out.println("GAMESTATE DISEASE CUBES: " + diseaseCubesMap);
 
-        final Map<DiseaseType, Integer> remainingDiseaseCubesMap
-                = Arrays.stream(DiseaseType.values()).filter(d -> d != DiseaseType.Purple)
-                .collect(Collectors.toMap(d -> d,
-                        d -> getDiseaseSupplyByDiseaseType(d).size()));
+        final Map<DiseaseType, Integer> remainingDiseaseCubesMap;
+        if (settings.getChallenge() == ChallengeKind.Mutation || settings.getChallenge() == ChallengeKind.VirulentStrainAndMutation
+                || settings.getChallenge() == ChallengeKind.BioTerrorist || settings.getChallenge() == ChallengeKind.VirulentStrainAndBioTerrorist) {
+            remainingDiseaseCubesMap = Arrays.stream(DiseaseType.values()).collect(Collectors.toMap(d -> d,
+                    d -> getDiseaseSupplyByDiseaseType(d).size()));
+        } else {
+            remainingDiseaseCubesMap = Arrays.stream(DiseaseType.values()).filter(d -> d != DiseaseType.Purple).collect(Collectors.toMap(d -> d,
+                    d -> getDiseaseSupplyByDiseaseType(d).size()));
+        }
 
         int actionsRemaining;
         if (currentPlayer.getRoleType().equals(RoleType.Generalist)) {
@@ -1196,11 +1235,21 @@ public class Game {
             }
         }
 
+        final Map<DiseaseType, Boolean> cures = new HashMap<DiseaseType, Boolean>();
+        cures.put(DiseaseType.Blue, getDiseaseByDiseaseType(DiseaseType.Blue).isCured());
+        cures.put(DiseaseType.Black, getDiseaseByDiseaseType(DiseaseType.Black).isCured());
+        cures.put(DiseaseType.Red, getDiseaseByDiseaseType(DiseaseType.Red).isCured());
+        cures.put(DiseaseType.Yellow, getDiseaseByDiseaseType(DiseaseType.Yellow).isCured());
+        if (settings.getChallenge() == ChallengeKind.Mutation || settings.getChallenge() == ChallengeKind.VirulentStrainAndMutation
+                || settings.getChallenge() == ChallengeKind.BioTerrorist || settings.getChallenge() == ChallengeKind.VirulentStrainAndBioTerrorist) {
+            cures.put(DiseaseType.Purple, getDiseaseByDiseaseType(DiseaseType.Purple).isCured());
+        }
+
         return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, remainingDiseaseCubesMap,
                 myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases,
                 currentPlayer.getPlayerUserName(), researchStationLocations, eventCardsEnabled, currentPlayerTurnStatus, archivistActionUsed,
                 epidemiologistActionUsed, fieldOperativeActionUsed, fieldOperativeSamples, complexMolecularStructureActive,
-                governmentInterferenceActive, governmentInterferenceSatisfied, infectionsRemaining);
+                governmentInterferenceActive, governmentInterferenceSatisfied, infectionsRemaining, cures);
     }
 
     public GameManager getGameManager() {
@@ -1460,7 +1509,7 @@ public class Game {
     public void infectMutationIntensifies(){
         ArrayList<DiseaseFlag> freshFlags = diseaseTypeToSupplyDict.get(DiseaseType.Purple);
         for (City c : myGameBoard.getCitiesOnBoard()){
-            if (c.getNumOfDiseaseFlagsPlaced(DiseaseType.Purple) == 0){
+            if (c.getNumOfDiseaseFlagsPlaced(DiseaseType.Purple) == 2){
                 boolean qsOrMedicPreventingInfectionInCity = isQuarantineSpecialistInCity(c) || (isMedicInCity(c));
                 boolean qsPresentInNeighbor = false;
                 ArrayList<City> cityNeighbors = c.getNeighbors();
@@ -1470,12 +1519,10 @@ public class Game {
                 }
                 boolean infectionPrevented = qsOrMedicPreventingInfectionInCity || qsPresentInNeighbor;
 
-                if(!infectionPrevented && freshFlags.size() >= 2) {
+                if(!infectionPrevented && freshFlags.size() >= 1) {
                     DiseaseFlag flag1;
-                    DiseaseFlag flag2;
                     try {
                         flag1 = freshFlags.remove(0);
-                        flag2 = freshFlags.remove(0);
                     } catch (NullPointerException e) {
                         //FOR TESTING, SHOULD NOT HAPPEN
                         System.out.println("ERROR -- diseaseFlags not sufficient");
@@ -1483,7 +1530,6 @@ public class Game {
                     }
                     c.getCityUnits().add(flag1);
                     flag1.setUsed(true);
-                    c.getCityUnits().add(flag2);
                 }
                 else{
                     gameManager.notifyAllPlayersGameLost();

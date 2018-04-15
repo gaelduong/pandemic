@@ -38,6 +38,7 @@ public class GameState implements Serializable {
     private final boolean governmentInterferenceActive;
     private final boolean isGovernmentInterferenceSatisfied;
     private final int infectionsRemaining;
+    private final Map<DiseaseType, Boolean> cureMap;
 
 
     /**
@@ -47,7 +48,7 @@ public class GameState implements Serializable {
                      Map<CityName, List<Pair<DiseaseType, Integer>>> diseaseCubesMap, Map<DiseaseType, Integer> remainingDiseaseCubesMap,
                      InfectionDiscardPile infectionDiscardPile, PlayerDiscardPile playerDiscardPile, int currentInfectionRate, int currentOutbreakMeter, int actionsRemaining, ArrayList<DiseaseType> diseases,
                      String currentPlayerName, ArrayList<City> researchStations, boolean eventCardsEnabled, CurrentPlayerTurnStatus status, boolean aActionUsed, boolean eActionUsed, boolean fOActionUsed,
-                     ArrayList<DiseaseFlag> fOSamples, boolean cMSActive, boolean gIActive, boolean gISatisfied, int iRemaining) {
+                     ArrayList<DiseaseFlag> fOSamples, boolean cMSActive, boolean gIActive, boolean gISatisfied, int iRemaining, Map<DiseaseType, Boolean> cures) {
         this.userMap = userMap;
         this.cardMap = cardMap;
         this.positionMap = positionMap;
@@ -71,6 +72,7 @@ public class GameState implements Serializable {
         this.governmentInterferenceActive = gIActive;
         this.isGovernmentInterferenceSatisfied = gISatisfied;
         this.infectionsRemaining = iRemaining;
+        this.cureMap = cures;
     }
 
     /**
@@ -166,5 +168,9 @@ public class GameState implements Serializable {
 
     public int getInfectionsRemaining(){
         return infectionsRemaining;
+    }
+
+    public Map<DiseaseType, Boolean> getCureMap(){
+        return cureMap;
     }
 }
