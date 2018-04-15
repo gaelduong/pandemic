@@ -12,14 +12,14 @@ import shared.Utils;
 import shared.request.UpdateRequest;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PandemicServer extends Server {
     private final Map<SocketBundle, String> clientMap;    //<socket, playerUserName>
-    private final Map<String, UpdateRequest> consentRequestMap; //<username, UR>
-    private final List<ConsentRequestBundle> pendingConsentRequests;
+    private final Map<String, ConsentRequestBundle> consentRequestMap; //<username, UR>
 
     private final MenuLayout menuLayout;
 
@@ -32,7 +32,6 @@ public class PandemicServer extends Server {
         this.menuLayout = menuLayout;
         this.clientMap = Collections.synchronizedMap(new HashMap<>());
         this.consentRequestMap = Collections.synchronizedMap(new HashMap<>());
-        this.pendingConsentRequests = Collections.synchronizedList(new ArrayList<>());
         this.updateRequestSemaphore = new Semaphore(1);
         this.connectionCheckTimer = new Timer();
         this.clientLastResponse = Collections.synchronizedMap(new HashMap<>());
@@ -103,7 +102,7 @@ public class PandemicServer extends Server {
 
                 case INITIATE_CONSENT_REQUIRING_MOVE:
                     //TODO russell track to game log
-                    initiateConsentReqMove(message);
+                    initiateConsentReqMove(client, message);
                     break;
 
                 case REGISTER_USERNAME: {
@@ -130,16 +129,15 @@ public class PandemicServer extends Server {
                     if (playerUserName.equals("host")) {
                         break;
                     } else if (!clientLastResponse.containsKey(playerUserName)) {
-                        System.out.printf("User '%s' isn't in list?\n", playerUserName);
+                        //System.out.printf("User '%s' isn't in list?\n", playerUserName);
                     } else {
                         // reset response time to zero since the user has responded to our ping
-                        System.out.printf("Got player pickback from '%s'\n", playerUserName);
+                        //System.out.printf("Got player pickback from '%s'\n", playerUserName);
                         clientLastResponse.put(playerUserName, (long) 0);
                     }
                     break;
                 }
                 case CLIENT_UPDATE_LOBBBY:
-                    //TODO russell store msgs and broadcast to clients
                     sendUpdatedLobbyState((LobbyState) message.get(1));
                     break;
             }
@@ -201,17 +199,15 @@ public class PandemicServer extends Server {
         }
 
         final boolean acceptedRequest = (Boolean) message.get(1);
-        if (consentRequestMap.containsKey(playerUsername) && consentRequestMap.get(playerUsername) != null) {
+        if (consentRequestMap.containsKey(playerUsername)) {
             if (acceptedRequest) {
-                System.out.printf("Player %s accepted the consent request!\n", playerUsername);
-                executeRequestAndPropagate(playerUsername, game, consentRequestMap.get(playerUsername));
-
+                executeRequestAndPropagate(consentRequestMap.get(playerUsername).getSourcePlayer(), game, consentRequestMap.get(playerUsername).getUr());
             }
             consentRequestMap.put(playerUsername, null);
         }
     }
 
-    private void initiateConsentReqMove(List<Object> message) {
+    private void initiateConsentReqMove(SocketBundle client, List<Object> message) {
         final String targetPlayerUsername = (String) message.get(1);
         final String consentPrompt = (String) message.get(2);
         final UpdateRequest consentUR = (UpdateRequest) message.get(3);
@@ -227,9 +223,16 @@ public class PandemicServer extends Server {
             return;
         }
 
+        final String playerUsername = clientMap.get(client);
+        if (playerUsername == null) {
+            System.err.printf("No player registered from %s! ERROR!\n", client.getSocket().getRemoteSocketAddress().toString());
+            System.out.println("client map (in sendUpdateRequest): " + clientMap);
+            return;
+        }
+
         if (consentRequestMap.get(targetPlayerUsername) == null) {  //only one consent per person at a time
             Server.sendMessage(targetPlayerSocket, ClientCommands.RECEIVE_CONSENT_REQUEST.name(), consentPrompt);
-            consentRequestMap.put(targetPlayerUsername, consentUR);
+            consentRequestMap.put(targetPlayerUsername, new ConsentRequestBundle(playerUsername, targetPlayerUsername, consentUR));
         }
     }
 

@@ -11,6 +11,7 @@ import shared.PlayerCardSimple;
 import shared.request.PostCondition;
 import shared.request.UpdateRequest;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -27,7 +28,7 @@ public class EventCardURs {
                         new PostCondition(
                                 PostCondition.ACTION.EVENT_CARD,
                                     name,
-                                    arguments
+                                    Arrays.asList(arguments)
                         )
                 )
         );

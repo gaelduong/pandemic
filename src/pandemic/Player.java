@@ -50,11 +50,12 @@ public class Player implements CardTarget, CardSource {
 	    cardsInHand.add(pc);
 	}
 
+	@Override
     public void acceptCard(Card card) {
         addToHand(card);
     }
 
-
+    @Override
     public Card getCard(PlayerCardSimple card) {
 
 	    CardType pcsCardType;
