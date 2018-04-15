@@ -1174,6 +1174,10 @@ public class Game {
 
     //the ultimate functional programming test
     public GameState generateCondensedGameState() {
+        System.out.println("----- ACTIVE PLAYER LIST IN GENERATE CONDESED GAME STATE ---- ");
+        gameManager.getActivePlayers().forEach(player -> System.out.println("PLAYER: " + player.getPlayerUserName()
+                + ", ROLETYPE: " + player.getRoleType()));
+        System.out.println("-------------------------------------------------------------");
         final Map<RoleType, String> userMap
                 = gameManager.getActivePlayers().stream().collect(Collectors.toMap(Player::getRoleType, Player::getPlayerUserName));
 
