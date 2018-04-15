@@ -66,13 +66,10 @@ public class MenuLayout extends Parent {
     GameManager gameManager;
     boolean backButtonNotPressed = true;
     CreateGameObjectData tracker;
-
+    String usernameTFText;
     Runnable startGameCallback;
 
-    Label playerc1;
-    Label playerc2 ;
-    Label playerc3;
-    Label playerc4;
+
     public LobbyChat lobbyChatClient;
     public LobbyChat lobbyChatServ;
     final AudioClip menuMusic = new AudioClip(new File("src/pandemic/resources/Music/AlienSwarmSoundtrackRybergBattle.wav").toURI().toString());
@@ -91,7 +88,7 @@ public class MenuLayout extends Parent {
         VBox createMenu = new VBox(10);
         VBox joinMenu = new VBox(10);
         VBox joinLobby = new VBox(10);
-        VBox createLobby = new VBox();
+        VBox createLobby = new VBox(10);
         int centerX = 512;
         
         mainMenu.setTranslateX(centerX-125);
@@ -376,9 +373,10 @@ public class MenuLayout extends Parent {
         btnJoinIP.setOnMouseClicked((MouseEvent event) -> {
             selectSound.play();
 
-            String usernameTFText = usernameTF.getText();
+            usernameTFText = usernameTF.getText();
+            lobbyChatClient.setUsername((usernameTFText));
             try {
-                setPandemicClient(new PandemicClient(ipAddress.getText(), usernameTFText,  1301));
+                setPandemicClient(new PandemicClient(ipAddress.getText(), usernameTF.getText(),  1301));
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -426,12 +424,17 @@ public class MenuLayout extends Parent {
             });
 
             startGameCallback = () -> {
+                System.out.println("hello22");
+                System.out.println("hello22");
+                System.out.println("hello22");
+                System.out.println("hello22");
+                System.out.println("hello22");
                 System.out.println(clientGUI.getGameState());
 
                 startGameSound.play();
                 menuMusic.stop();
                 backButtonNotPressed = true;
-                System.out.println("hello");
+                System.out.println("hello22");
 
                 EventQueue.invokeLater(() -> {
                     try {
@@ -550,6 +553,12 @@ public class MenuLayout extends Parent {
             tt.setOnFinished(evt -> {
                 getChildren().remove(createLobby);
             });
+
+            pandemicServer.close();
+            pandemicClient.close();
+            pandemicServer = null;
+            pandemicClient = null;
+
         });
 
 
@@ -558,8 +567,8 @@ public class MenuLayout extends Parent {
         createMenu.getChildren().addAll(difficulty, difficulties, challenge, btnMutation, btnVirulent, btnBioTerrorist, btnCardShowing, btnCreateGame, btnCreateBack);
         joinMenu.getChildren().addAll(username, usernameTF, enterIP, ipAddress, btnJoinIP, btnJoinBack);
 
-        lobbyChatServ = new LobbyChat(createLobby);
-        lobbyChatClient = new LobbyChat(joinLobby);
+        lobbyChatServ = new LobbyChat(createLobby, "host");
+        lobbyChatClient = new LobbyChat(joinLobby, usernameTFText);
         joinLobby.getChildren().addAll(waitingToStart, btnJoinLobbyBack);
         createLobby.getChildren().addAll(btnCreateGameNow, btnCreateLobbyBack);
 
@@ -587,7 +596,7 @@ public class MenuLayout extends Parent {
     {
         pandemicClient = c;
     }
-
+    /*
     public void removePlayerLabel(String playerName) {
         Platform.runLater(() -> {
             Label labels[] = {playerc2, playerc3, playerc4};
@@ -599,23 +608,9 @@ public class MenuLayout extends Parent {
                 x++;
             }
         });
-    }
+    }*/
 
-    public void updateCreateLabel(String newPlayerName) {
-        if (newPlayerName.equals("host")) return;
-
-
-        Platform.runLater(() -> {
-            if (playerc2.getText().toLowerCase().contains("waiting to connect"))
-                playerc2.setText("Player 2: " + newPlayerName);
-            else if (playerc3.getText().toLowerCase().contains("waiting to connect"))
-                playerc3.setText("Player 3: " + newPlayerName);
-            else if (playerc4.getText().toLowerCase().contains("waiting to connect"))
-                playerc4.setText("Player 4: " + newPlayerName);
-        });
-    }
-
-	public void setUpCreateGame(PandemicServer s, PandemicClient c)
+   	public void setUpCreateGame(PandemicServer s, PandemicClient c)
     {
         try {
             //User hostUser = new User("HOST", "kjsheofh", "127.0.0.1");

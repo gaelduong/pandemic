@@ -24,9 +24,10 @@ public class LobbyChat
     Label playerList = new Label();
     Label chatLabel = new Label(); // TODO: make not label
     TextField chatField = new TextField();
-
-    public LobbyChat(VBox box)
+    String username;
+    public LobbyChat(VBox box, String s)
     {
+        username = s;
         box.getChildren().addAll(playerList, chatLabel, chatField);
         chatField.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
@@ -34,7 +35,8 @@ public class LobbyChat
                 System.out.println(event.getCode());
                 if (event.getCode().equals(KeyCode.ENTER)) {
 
-                    sendMessage(chatField.getText());
+                    sendMessage(username+": "+chatField.getText());
+                    chatField.setText("");
                 }
             }
         });
@@ -48,7 +50,10 @@ public class LobbyChat
         state.addMessage(message);
         client.sendMessageToServer(ServerCommands.CLIENT_UPDATE_LOBBBY.name(), state);
     }
-
+    public void setUsername(String s)
+    {
+        username = s;
+    }
     public void update(LobbyState newState)
     {
 

@@ -3139,6 +3139,12 @@ public class GUI extends JFrame {
 
 	public void setGameState(GameState newGS)
 	{
+		if (this.gs == null)
+		{
+			// we received the initial game state, so we want to go
+			// to the game now
+			MenuLayout.startGame();
+		}
 		this.gs = newGS;
 		userRole = getUserRole();
         System.out.println("userRole in setGameState: " + userRole);
@@ -3146,12 +3152,7 @@ public class GUI extends JFrame {
         currentUserCity = gs.getPositionMap().get(userRole);
         createNewEventWrapper();
 
-		if (this.gs == null)
-		{
-			// we received the initial game state, so we want to go
-			// to the game now
-			MenuLayout.startGame();
-		}
+
 	}
 
 
