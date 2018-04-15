@@ -310,6 +310,7 @@ public class GUI extends JFrame {
 	private JLabel optionBlueDisease = new JLabel();
 	private JLabel optionYellowDisease = new JLabel();
 	private JLabel optionBlackDisease = new JLabel();
+	private JLabel optionPurpleDisease = new JLabel();
 
 
 	private JButton buildRSButton = new JButton();
@@ -415,6 +416,7 @@ public class GUI extends JFrame {
 	private JLabel blueRemaining;
 	private JLabel yellowRemaining;
 	private JLabel blackRemaining;
+	private JLabel purpleRemaining;
 
 	/*Player cards*/
 
@@ -877,6 +879,7 @@ public class GUI extends JFrame {
 		optionYellowDisease.setVisible(false);
 		optionBlackDisease.setVisible(false);
 		optionBlueDisease.setVisible(false);
+		optionPurpleDisease.setVisible(false);
 		treatDiseaseBox.setVisible(false);
 
 
@@ -1441,6 +1444,7 @@ public class GUI extends JFrame {
 		contentPane.add(optionYellowDisease);
 		contentPane.add(optionBlueDisease);
 		contentPane.add(optionBlackDisease);
+		contentPane.add(optionPurpleDisease);
 		contentPane.add(treatDiseaseBox);
 
 
@@ -1526,6 +1530,16 @@ public class GUI extends JFrame {
 		blackRemaining.setBounds(451, 6, 48, 16);
 		topBar.add(blackRemaining);
 		blackRemaining.setOpaque(true);
+
+		//purple cubes remaining
+		purpleRemaining = new JLabel();
+		purpleRemaining.setBackground(Color.BLACK);
+		purpleRemaining.setForeground(Color.WHITE);
+		purpleRemaining.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(purpleCubesRemPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
+		purpleRemaining.setBounds(451, 6, 48, 16);
+		topBar.add(purpleRemaining);
+		purpleRemaining.setOpaque(true);
+
 		;
 		//instruction
 		instruction = new JLabel("");
@@ -1607,6 +1621,7 @@ public class GUI extends JFrame {
 		contentPane.setComponentZOrder(blueRemaining, 1);
 		contentPane.setComponentZOrder(yellowRemaining, 1);
 		contentPane.setComponentZOrder(blackRemaining, 1);
+		contentPane.setComponentZOrder(purpleRemaining, 1);
 		contentPane.setComponentZOrder(infectionRate, 1);
 		contentPane.setComponentZOrder(outbreakMeterCount, 1);
 		contentPane.setComponentZOrder(userRoleLabel, 1);
@@ -1840,6 +1855,26 @@ public class GUI extends JFrame {
 			public void mouseReleased(MouseEvent e) {
 				hideTreatDiseaseOptions();
 				GameURs.sendTreatDiseaseUR(client, DiseaseType.Black);
+				//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Black)));
+			}
+
+			//cursor => pointer
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+				setCursor(cursor);
+			}
+
+			/*Mouse exit, pointer to cursor*/
+			public void mouseExited(MouseEvent e) {
+				Cursor cursor = Cursor.getDefaultCursor();
+				setCursor(cursor);
+			}
+		});
+		optionPurpleDisease.addMouseListener(new MouseAdapter() {
+			public void mouseReleased(MouseEvent e) {
+				hideTreatDiseaseOptions();
+				GameURs.sendTreatDiseaseUR(client, DiseaseType.Purple);
 				//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Black)));
 			}
 
@@ -2344,6 +2379,7 @@ public class GUI extends JFrame {
 		blueRemaining.setText("" + gs.getRemainingDiseaseCubesMap().get(DiseaseType.Blue));
 		yellowRemaining.setText("" + gs.getRemainingDiseaseCubesMap().get(DiseaseType.Yellow));
 		blackRemaining.setText("" + gs.getRemainingDiseaseCubesMap().get(DiseaseType.Black));
+		purpleRemaining.setText("" + gs.getRemainingDiseaseCubesMap().get(DiseaseType.Purple));
 		infectionRate.setText("" + gs.getCurrentInfectionRate());
 		outbreakMeterCount.setText("" + gs.getCurrentOutbreakMeter());
 	}
@@ -3031,6 +3067,8 @@ public class GUI extends JFrame {
 		contentPane.setComponentZOrder(optionYellowDisease, 0);
 		optionBlackDisease.setBounds(586, 390, 150, 36);
 		contentPane.setComponentZOrder(optionBlackDisease, 0);
+		optionPurpleDisease.setBounds(586, 390, 150, 36);
+		contentPane.setComponentZOrder(optionPurpleDisease, 0);
 
 		//cubesTuples.forEach(p-> System.out.println("yo" + p.getKey()));
 		//  System.out.println( cubesInCity + " shalalala");
@@ -3054,6 +3092,11 @@ public class GUI extends JFrame {
 				t = optionBlackDisease;
 				optionBlackDisease.setVisible(!optionBlackDisease.isVisible());
 				System.out.println("Option black should appear");
+			}
+			else if (d.getKey().equals(DiseaseType.Purple)) {
+				t = optionPurpleDisease;
+				optionPurpleDisease.setVisible(!optionPurpleDisease.isVisible());
+				System.out.println("Option purple should appear");
 			}
 			t.setLocation(586, 130 + i * 55);
 			t.setText("" + d.getKey());
@@ -3163,6 +3206,7 @@ public class GUI extends JFrame {
 		optionRedDisease.setVisible(false);
 		optionBlackDisease.setVisible(false);
 		optionYellowDisease.setVisible(false);
+		optionPurpleDisease.setVisible(false);
 		treatDiseaseBox.setVisible(false);
 	}
 
