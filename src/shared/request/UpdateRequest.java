@@ -1,12 +1,9 @@
 package shared.request;
 
-import api.socketcomm.Server;
-import client.ClientCommands;
 import pandemic.*;
 import pandemic.eventcards.EventCard;
 import pandemic.eventcards.EventCardName;
 import pandemic.eventcards.impl.*;
-import server.premade.ServerRequests;
 import shared.*;
 
 import java.awt.*;
@@ -223,8 +220,12 @@ public class UpdateRequest implements Serializable {
     private void executeDiscoverCure(Game game, String playerUsername, List arguments) {
         final GameManager gameManager = game.getGameManager();
         final List<CityCard> cardToDiscard = (List<CityCard>)arguments.get(0);
+
+        final List<PlayerCard> cardsToDiscard = (List<PlayerCard>)arguments.get(0);
+        final DiseaseType toCure = (DiseaseType)arguments.get(arguments.size());
+
+        gameManager.playDiscoverCure(toCure, cardsToDiscard);
         currentlyProcessedAction.setLog_actionResult("has discovered a cure for type " + cardToDiscard.get(0).getRegion().toString().toLowerCase() + "!");
-        //TODO omer link to backend commands
     }
 
     private void executeTreatDisease(Game game, String playerUsername, List arguments) {
@@ -259,8 +260,24 @@ public class UpdateRequest implements Serializable {
     private void executeBuildResearchStation(Game game, String playerUsername, List arguments) {
         final String cityLocationToBuild = (String)arguments.get(0);
         final String cityNameToRemove_Optional = arguments.size() == 2 ? (String)arguments.get(1) : null;
+
+        if (cityNameToRemove_Optional != null){
+            CityName cityNameToRemoveFrom = Utils.getEnum(CityName.class, cityNameToRemove_Optional);
+            City cityToRemoveFrom = game.getCityByName(cityNameToRemoveFrom);
+            ResearchStation toRemove = null;
+            for (Unit u : cityToRemoveFrom.getCityUnits()){
+                if (u.getUnitType().equals(UnitType.ResearchStation)){
+                    toRemove = (ResearchStation) u;
+                    break;
+                }
+            }
+            if (toRemove != null) {
+                game.getGameManager().removeResearchStation(toRemove);
+            }
+        }
+
+       game.getGameManager().playBuildResearchStation();
         currentlyProcessedAction.setLog_actionResult("has built a research station in " + cityLocationToBuild);
-        //TODO omer link with back-end commands
     }
 
     private String executeEndTurn(Game game) {
@@ -376,7 +393,8 @@ public class UpdateRequest implements Serializable {
         }
 
         if(bioTPlayer.getCardsInHandBioT().size() > 7) {
-            // TODO: omer must alert for discard
+            // TODO:
+            //      must alert for discard
         }
 
     }
@@ -437,10 +455,9 @@ public class UpdateRequest implements Serializable {
         final EventCardName name = (EventCardName) arguments.get(0);
         final List eventCardArgs = (List) arguments.get(1);
 
-        currentlyProcessedAction.setLog_actionResult("has played " + name + "!");
-
         final Player eventCardPlayer = game.getGameManager().getPlayerFromUsername(playerUsername);
         final EventCard eventCard = (EventCard)eventCardPlayer.getCard(new PlayerCardSimple(CardType.EventCard, name.toString()));
+
         switch (name) {
             case AirLift:
                 playAirLiftEC(game, eventCard, eventCardArgs);
@@ -528,5 +545,10 @@ public class UpdateRequest implements Serializable {
     private void setEpidemicOccured(String epidemicString) {
         epidemicOccured = true;
         this.epidemicString = epidemicString;
+    }
+
+    public List<String> getPrettyLogPrint() {
+        //TODO russell
+        return null;
     }
 }
