@@ -2953,7 +2953,7 @@ public class GUI extends JFrame {
 	}
 
 	private void loadBtnEndTurn() {
-		if (username.equals(gs.getCurrentPlayer())) {
+		if (username.equals(gs.getCurrentPlayer()) && gs.getInfectionsRemaining() == 0) {
 //			btnEndTurn.setText("END TURN");
 //			btnEndTurn.setBounds(11, 530, 176, 20);
 //			btnEndTurn.setBackground(Color.RED);
@@ -2978,7 +2978,7 @@ public class GUI extends JFrame {
 	}
 
 	private void loadInfectNextCityButton() {
-		if (gs.getInfectionsRemaining() != 0) {
+		if (username.equals(gs.getCurrentPlayer()) && gs.getInfectionsRemaining() != 0) {
 			btnInfectNextCity.setEnabled(true);
 			btnInfectNextCity.setBackground(Color.GREEN);
 		} else {

@@ -15,4 +15,8 @@ public class ChronicEffectEpidemicCard extends EpidemicCard{
 
         myGameManager.setChronicEffectActive(true);
     }
+
+    public String getCardName() {
+        return "Chronic Effect Epidemic";
+    }
 }

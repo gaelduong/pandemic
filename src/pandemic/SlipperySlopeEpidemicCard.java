@@ -15,4 +15,8 @@ public class SlipperySlopeEpidemicCard extends EpidemicCard{
 
         myGameManager.setSlipperySlopeActive(true);
     }
+
+    public String getCardName() {
+        return "Slippery Slope Epidemic";
+    }
 }
