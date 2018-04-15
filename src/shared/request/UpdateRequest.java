@@ -529,9 +529,4 @@ public class UpdateRequest implements Serializable {
         epidemicOccured = true;
         this.epidemicString = epidemicString;
     }
-
-    public List<String> getPrettyLogPrint() {
-        //TODO russell
-        return null;
-    }
 }
