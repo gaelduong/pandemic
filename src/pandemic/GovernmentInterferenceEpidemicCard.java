@@ -15,4 +15,8 @@ public class GovernmentInterferenceEpidemicCard extends EpidemicCard{
 
         myGameManager.setGovernmentInterferenceActive(true);
     }
+
+    public String getCardName() {
+        return "Government Interference Epidemic";
+    }
 }

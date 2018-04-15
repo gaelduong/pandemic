@@ -178,6 +178,14 @@ public class GUI extends JFrame {
 	private JLabel GovernmentGrantCardLabel = new JLabel("/pandemic/resources/PlayerCards/GovernmentGrantEventCard.png");
 	private JLabel ForecastCardLabel = new JLabel("/pandemic/resources/PlayerCards/ForecastEventCard.png");
 	private JLabel BasicEpidemicCardLabel = new JLabel("/pandemic/resources/PlayerCards/BasicEpidemic.png");
+	private JLabel BorrowedTimeLabel = new JLabel("/pandemic/resources/PlayerCards/BorrowedTimeEventCard.png");
+	private JLabel CommercialTravelBanLabel = new JLabel("/pandemic/resources/PlayerCards/CommercialTravelBanEventCard.png");
+	private JLabel MobileHospitalLabel = new JLabel("/pandemic/resources/PlayerCards/MobileHospitalEventCard.png");
+	private JLabel NewAssignmentLabel = new JLabel("/pandemic/resources/PlayerCards/NewAssignmentEventCard.png");
+	private JLabel RapidVaccineDeploymentLabel = new JLabel("/pandemic/resources/PlayerCards/RapidVaccineDeploymentEventCard.png");
+	private JLabel ReexaminedResearchLabel = new JLabel("/pandemic/resources/PlayerCards/ReexaminedResearchEventCard.png");
+	private JLabel RemoteTreatmentLabel = new JLabel("/pandemic/resources/PlayerCards/RemoteTreatmentEventCard.png");
+	private JLabel SpecialOrdersLabel = new JLabel("/pandemic/resources/PlayerCards/SpecialOrdersEventCard.png");
 
 	/*City Cards*/
 	private JLabel SanFranciscoCardLabel = new JLabel("/pandemic/resources/CityCards/SanFrancisco.png");
@@ -647,6 +655,12 @@ public class GUI extends JFrame {
 		put("GovernmentGrant", GovernmentGrantCardLabel);
 		put("ResilientPopulation", ResilientPopulationCardLabel);
 		put("BasicEpidemicCard", BasicEpidemicCardLabel);
+		put("CommercialTravelBan", CommercialTravelBanLabel);
+		put("NewAssignment", NewAssignmentLabel);
+		put("ReexaminedResearch", ReexaminedResearchLabel);
+		put("RemoteTreatment", RemoteTreatmentLabel);
+		put("SpecialOrders", SpecialOrdersLabel);
+		put("MobileHospital", MobileHospitalLabel);
 
 
 	}};
@@ -766,8 +780,10 @@ public class GUI extends JFrame {
 		if (gs == null)
 			return;
 		String currentPlayer = gs.getCurrentPlayer();
-		if (currentPlayer != null && username.equals(currentPlayer) && gs.getCurrentPlayerActionsRemaining() > 0) {
+		if (currentPlayer != null && username.equals(currentPlayer) && gs.getCurrentPlayerActionsRemaining() > 0 && gs.getInfectionsRemaining() == 0) {
 //			//Drive Ferry
+
+			moreButton.setVisible(true);
 			btnDriveFerry.setVisible(true);
 //
 //			//Direct Flight
@@ -822,6 +838,11 @@ public class GUI extends JFrame {
 			btnDiscoverCure1.setVisible(false);
 			btnBuildResearch1.setVisible(false);
 			btnShareKnowledge1.setVisible(false);
+
+			btnInfectNextCity.setEnabled(false);
+			btnInfectNextCity.setBackground(Color.DARK_GRAY);
+            btnEndTurn.setEnabled(false);
+            btnEndTurn.setBackground(Color.DARK_GRAY);
 
 
 		}
@@ -1638,7 +1659,7 @@ public class GUI extends JFrame {
 
 				//send server the city user is in
 
-				//GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  null);
+				GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  null);
 
 			}
 
@@ -1815,7 +1836,7 @@ public class GUI extends JFrame {
 				btnInfectNextCity.setBackground(Color.DARK_GRAY);
 
 
-				//GameURs.sendInfectNextCityRequest(client);
+				GameURs.sendInfectNextCity(client, username);
 
 			}
 
@@ -2138,12 +2159,6 @@ public class GUI extends JFrame {
 			}
 		});
 
-		btnEndTurn.addMouseListener(new MouseAdapter() {
-			public void mouseReleased(MouseEvent e) {
-				client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.END_TURN)));
-			}
-		});
-
 		for (JLabel j : profPawns) {
 			j.addMouseListener(new MouseAdapter() {
 				public void mouseReleased(MouseEvent e) {
@@ -2324,7 +2339,7 @@ public class GUI extends JFrame {
 
 		//get list<City> from gs
 		//draw a station on each list[i], i.e City
-/*
+
 		for (City atCity : gs.getResearchStationLocations())
 		{
             System.out.println();
@@ -2336,7 +2351,7 @@ public class GUI extends JFrame {
 			int rsX =  getCityPosition(cityLabel.getText())[0];
 			int rsY =  getCityPosition(cityLabel.getText())[1];
 
-			JLabel rsLabel = new JLabel("/pandemic/resources/researchStation.png");
+			JLabel rsLabel = new JLabel("/pandemic/resources/researchStation1.png");
 
 
 			rsLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(rsLabel.getText())).getImage().getScaledInstance(citySize-2, citySize-2, Image.SCALE_SMOOTH)));
@@ -2346,7 +2361,7 @@ public class GUI extends JFrame {
 			rsLabel.setVisible(true);
 
 		}
-*/
+
 
 
 	}
@@ -2952,7 +2967,7 @@ public class GUI extends JFrame {
 	}
 
 	private void loadBtnEndTurn() {
-		if (username.equals(gs.getCurrentPlayer())) {
+		if (username.equals(gs.getCurrentPlayer()) && gs.getInfectionsRemaining() == 0) {
 //			btnEndTurn.setText("END TURN");
 //			btnEndTurn.setBounds(11, 530, 176, 20);
 //			btnEndTurn.setBackground(Color.RED);
@@ -2977,7 +2992,7 @@ public class GUI extends JFrame {
 	}
 
 	private void loadInfectNextCityButton() {
-		if (gs.getInfectionsRemaining() != 0) {
+		if (username.equals(gs.getCurrentPlayer()) && gs.getInfectionsRemaining() != 0) {
 			btnInfectNextCity.setEnabled(true);
 			btnInfectNextCity.setBackground(Color.GREEN);
 		} else {

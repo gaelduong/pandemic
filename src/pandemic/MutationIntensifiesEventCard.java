@@ -7,6 +7,10 @@ public class MutationIntensifiesEventCard extends MutationEventCard{
     }
 
     public void resolveMutationEvent(){
-        //gameManager.infectCitiesForMutationThreatens();
+        gameManager.infectCitiesForMutationIntensifies();
+    }
+
+    public String getCardName(){
+        return "Mutation Intensifies!";
     }
 }
