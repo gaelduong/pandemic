@@ -1,13 +1,10 @@
-package server.premadeURs;
+package server.premade;
 
 import api.socketcomm.Client;
 import pandemic.CityName;
 import pandemic.InfectionCard;
-import pandemic.eventcards.EventCard;
 import pandemic.eventcards.EventCardName;
 import server.ServerCommands;
-import shared.CardTargetType;
-import shared.PlayerCardSimple;
 import shared.request.PostCondition;
 import shared.request.UpdateRequest;
 

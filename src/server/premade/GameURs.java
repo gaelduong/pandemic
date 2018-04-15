@@ -1,4 +1,4 @@
-package server.premadeURs;
+package server.premade;
 
 import api.socketcomm.Client;
 import pandemic.CardType;

@@ -6,6 +6,7 @@ import pandemic.*;
 import pandemic.eventcards.EventCard;
 import pandemic.eventcards.EventCardName;
 import pandemic.eventcards.impl.*;
+import server.premade.ServerRequests;
 import shared.*;
 
 import java.awt.*;
@@ -64,14 +65,15 @@ public class UpdateRequest implements Serializable {
                 setEpidemicOccured(epidemic);
 
             if (currentlyProcessedAction.isLogValid())
-                server.sendMessageToClients(ClientCommands.RECEIVE_GAME_LOG_MESSAGE.name(),
-                        currentlyProcessedAction.getLog_playerUserName(), currentlyProcessedAction.getLog_actionResult());
+                ServerRequests.sendGameLog(server, currentlyProcessedAction);
         });
 
         if(epidemicOccured)
             return epidemicString;
         return "";
     }
+
+
 
     private String executeAction(Game game, String playerUsername, PostCondition action) {
         String status = "";

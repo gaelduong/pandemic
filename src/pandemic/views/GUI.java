@@ -2,7 +2,6 @@ package pandemic.views;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;
@@ -13,8 +12,6 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
 import api.gui.ListDialog;
-import api.socketcomm.Client;
-import client.ClientCommands;
 import client.PandemicClient;
 import javafx.util.Pair;
 import pandemic.*;
@@ -22,11 +19,8 @@ import pandemic.*;
 //import pandemic.Player;
 //import pandemic.User;
 import server.PandemicServer;
-import server.ServerCommands;
-import server.premadeURs.GameURs;
+import server.premade.GameURs;
 import shared.*;
-import shared.request.PostCondition;
-import shared.request.UpdateRequest;
 
 import static java.lang.Thread.sleep;
 
