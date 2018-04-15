@@ -59,4 +59,11 @@ public enum ServerCommands implements Serializable {
      * String msg
      */
     SEND_CHAT_MESSAGE,
+
+    /**
+     * Client has responded to us asking for an update/ping
+     */
+    CLIENT_PING_RESPOND,
+
+    CLIENT_UPDATE_LOBBBY,
 }

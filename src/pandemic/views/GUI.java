@@ -3131,6 +3131,12 @@ public class GUI extends JFrame {
         currentUserCity = gs.getPositionMap().get(userRole);
         createNewEventWrapper();
 
+		if (this.gs == null)
+		{
+			// we received the initial game state, so we want to go
+			// to the game now
+			MenuLayout.startGame();
+		}
 	}
 
 

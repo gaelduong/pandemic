@@ -1,28 +1,16 @@
 package pandemic.views;
 
-import java.awt.BasicStroke;
-import java.io.File;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.*;
-
-import javax.swing.JFrame;
 
 import client.PandemicClient;
 import javafx.application.Application;
-import javafx.scene.media.AudioClip;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.animation.FadeTransition;
-import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import server.PandemicServer;
 
@@ -31,8 +19,7 @@ public class MenuGUI extends Application {
 	PandemicServer pandemicServer = null;
 	PandemicClient pandemicClient = null;
 
-	class Message extends Thread {
-
+	class ShutDownHook extends Thread {
 		public void run() {
 			pandemicServer.close();
 			pandemicClient.close();
@@ -69,7 +56,10 @@ public class MenuGUI extends Application {
 		ft.setToValue(1);
 		MenuLayout.setVisible(true);
 		ft.play();
-
+		primaryStage.setOnCloseRequest(event -> {
+			System.exit(0);
+			// Save file
+		});
 		primaryStage.setScene(s);
 		primaryStage.show();
 
