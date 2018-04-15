@@ -92,6 +92,14 @@ public class GUI extends JFrame {
 	private JLabel yellowPawn = new JLabel("/pandemic/resources/Pawns/yellowPawn.png");
 	private JLabel whitePawn = new JLabel("/pandemic/resources/Pawns/whitePawn.png");
 	private JLabel pinkPawn = new JLabel("/pandemic/resources/Pawns/pinkPawn.png");
+	private JLabel blackPawn = new JLabel("/pandemic/resources/Pawns/blackPawn.png");
+	private JLabel brownPawn = new JLabel("/pandemic/resources/Pawns/brownPawn.png");
+	private JLabel darkGreyPawn = new JLabel("/pandemic/resources/Pawns/darkGreyPawn.png");
+	private JLabel darkPinkPawn = new JLabel("/pandemic/resources/Pawns/darkPinkPawn.png");
+	private JLabel lightGreenPawn = new JLabel("/pandemic/resources/Pawns/lightGreenPawn.png");
+	private JLabel lightPurplePawn = new JLabel("/pandemic/resources/Pawns/lightPurplePawn.png");
+	private JLabel periwinklePawn = new JLabel("/pandemic/resources/Pawns/periwinklePawn.png");
+	private JLabel uglyYellowPawn = new JLabel("/pandemic/resources/Pawns/uglyYellowPawn.png");
 
 	/*Pawn controlled by user*/
 	private JLabel controlPawn;
@@ -418,20 +426,37 @@ public class GUI extends JFrame {
 	private JLabel yellowPawnProf = new JLabel("/pandemic/resources/Pawns/yellowPawn.png");
 	private JLabel whitePawnProf = new JLabel("/pandemic/resources/Pawns/whitePawn.png");
 	private JLabel pinkPawnProf = new JLabel("/pandemic/resources/Pawns/pinkPawn.png");
+	private JLabel blackPawnProf = new JLabel("/pandemic/resources/Pawns/blackPawn.png");
+	private JLabel brownPawnProf = new JLabel("/pandemic/resources/Pawns/brownPawn.png");
+	private JLabel darkGreyPawnProf = new JLabel("/pandemic/resources/Pawns/darkGreyPawn.png");
+	private JLabel darkPinkPawnProf = new JLabel("/pandemic/resources/Pawns/darkPinkPawn.png");
+	private JLabel lightGreenPawnProf = new JLabel("/pandemic/resources/Pawns/lightGreenPawn.png");
+	private JLabel lightPurplePawnProf = new JLabel("/pandemic/resources/Pawns/lightPurplePawn.png");
+	private JLabel periwinklePawnProf = new JLabel("/pandemic/resources/Pawns/periwinklePawn.png");
+	private JLabel uglyYellowPawnProf = new JLabel("/pandemic/resources/Pawns/uglyYellowPawn.png");
 
 	private ArrayList<JLabel> profPawns = new ArrayList<JLabel>();
 
 	private JLabel showRole = new JLabel();
 
 	private boolean profPawnClicked = false;
-	private Map<JLabel, Boolean> profPawnOptions = new HashMap<JLabel, Boolean>() {{
-		put(orangePawnProf, false);
-		put(greenPawnProf, false);
-		put(bluePawnProf, false);
-		put(purplePawnProf, false);
-		put(yellowPawnProf, false);
-		put(whitePawnProf, false);
-		put(pinkPawnProf, false);
+	private Map<JLabel,Boolean> profPawnOptions = new HashMap<JLabel,Boolean>()
+	{{
+		put(orangePawnProf,false);
+		put(greenPawnProf,false);
+		put(bluePawnProf,false);
+		put(purplePawnProf,false);
+		put(yellowPawnProf,false);
+		put(whitePawnProf,false);
+		put(pinkPawnProf,false);
+		put(blackPawnProf, false);
+		put(brownPawnProf, false);
+		put(darkGreyPawnProf, false);
+		put(darkPinkPawnProf, false);
+		put(lightGreenPawnProf, false);
+		put(lightPurplePawnProf, false);
+		put(periwinklePawnProf, false);
+		put(uglyYellowPawnProf, false);
 	}};
 
 	/*Target icon*/
@@ -467,14 +492,23 @@ public class GUI extends JFrame {
 	//================================================================================================
 	//================================================================================================
 	/*RoleType <---> PawnLabel*/
-	private Map<RoleType, JLabel> mapPawnLabels = new HashMap<RoleType, JLabel>() {{
-		put(RoleType.Medic, pinkPawn);
-		put(RoleType.Scientist, greenPawn);
-		put(RoleType.Researcher, yellowPawn);
-		put(RoleType.ContingencyPlanner, orangePawn);
-		put(RoleType.Dispatcher, purplePawn);
-		put(RoleType.OperationsExpert, bluePawn);
-		put(RoleType.QuarantineSpecialist, whitePawn);
+	private Map<RoleType,JLabel> mapPawnLabels = new HashMap<RoleType,JLabel>()
+	{{
+		put(RoleType.Medic,pinkPawn);
+		put(RoleType.Scientist,greenPawn);
+		put(RoleType.Researcher,yellowPawn);
+		put(RoleType.ContingencyPlanner,orangePawn);
+		put(RoleType.Dispatcher,purplePawn);
+		put(RoleType.OperationsExpert,bluePawn);
+		put(RoleType.QuarantineSpecialist,whitePawn);
+		put(RoleType.BioTerrorist, blackPawn);
+		put(RoleType.Colonel, lightGreenPawn);
+		put(RoleType.ContainmentSpecialist, brownPawn);
+		put(RoleType.Generalist, darkGreyPawn);
+		put(RoleType.Archivist, darkPinkPawn);
+		put(RoleType.Epidemiologist, lightPurplePawn);
+		put(RoleType.FieldOperative, periwinklePawn);
+		put(RoleType.Troubleshooter, uglyYellowPawn);
 	}};
 
 
@@ -652,14 +686,23 @@ public class GUI extends JFrame {
 		put("Sydney", SydneyInfectionLabel);//
 	}};
 
-	private Map<RoleType, JLabel> mapPawnProf = new HashMap<RoleType, JLabel>() {{
-		put(RoleType.Medic, pinkPawnProf);
-		put(RoleType.Scientist, greenPawnProf);
-		put(RoleType.Researcher, yellowPawnProf);
-		put(RoleType.ContingencyPlanner, orangePawnProf);
-		put(RoleType.Dispatcher, purplePawnProf);
-		put(RoleType.OperationsExpert, bluePawnProf);
-		put(RoleType.QuarantineSpecialist, whitePawnProf);
+	private Map<RoleType,JLabel> mapPawnProf = new HashMap<RoleType,JLabel>()
+	{{
+		put(RoleType.Medic,pinkPawnProf);
+		put(RoleType.Scientist,greenPawnProf);
+		put(RoleType.Researcher,yellowPawnProf);
+		put(RoleType.ContingencyPlanner,orangePawnProf);
+		put(RoleType.Dispatcher,purplePawnProf);
+		put(RoleType.OperationsExpert,bluePawnProf);
+		put(RoleType.QuarantineSpecialist,whitePawnProf);
+		put(RoleType.BioTerrorist, blackPawnProf);
+		put(RoleType.Colonel, lightGreenPawnProf);
+		put(RoleType.ContainmentSpecialist, brownPawnProf);
+		put(RoleType.Generalist, darkGreyPawnProf);
+		put(RoleType.Archivist, darkPinkPawnProf);
+		put(RoleType.Epidemiologist, lightPurplePawnProf);
+		put(RoleType.FieldOperative, periwinklePawnProf);
+		put(RoleType.Troubleshooter, uglyYellowPawnProf);
 	}};
 
 	private Map<Region, Integer> mapCardColors = new HashMap<Region, Integer>() {{
@@ -1992,9 +2035,13 @@ public class GUI extends JFrame {
 		outbreakMeterCount.setText("" + gs.getCurrentOutbreakMeter());
 	}
 
-	private void loadCubesOnMap() {
-		for (JLabel cubes : cityDiseaseCubes) {
+	private void loadCubesOnMap()	{
+		/*for(JLabel cubes : cityDiseaseCubes){
 			cubes.setVisible(false);
+		}*/
+
+		for(int i = 0; i < cityDiseaseCubes.size(); i++) {
+			cityDiseaseCubes.get(i).setVisible(false);
 		}
 		cityDiseaseCubes.clear();
 
