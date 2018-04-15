@@ -3,10 +3,14 @@ package client;
 import api.socketcomm.Client;
 import api.socketcomm.SocketBundle;
 import pandemic.views.GUI;
+import pandemic.views.LobbyState;
+import pandemic.views.MenuLayout;
+import server.ServerCommands;
 import shared.GameState;
 import shared.MessageType;
 import shared.Utils;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -53,10 +57,18 @@ public class PandemicClient extends Client {
                 GUICommandLinker.handleReceiveUpdatedGS(gui, newGS);
                 break;
 
-            case RECEIVE_CHAT_MESSAGE:
-                final String playerName = (String)message.get(1);
-                final String chat = (String)message.get(2);
-                GUICommandLinker.handleReceiveNewChatMessage(gui, playerName, chat);
+            case LOBBY_STATE_UPDATE:
+                System.out.println("client got updated lobby state");
+                // hack
+                if (MenuLayout.getInstance().getPandemicServer() != null) {
+                    MenuLayout.getInstance().lobbyChatServ.update((LobbyState)message.get(1));
+                } else {
+                    MenuLayout.getInstance().lobbyChatClient.update((LobbyState)message.get(1));
+                }
+                break;
+            case SERVER_WANTS_PINGBACK:
+                // just immediately respond
+                sendMessageToServer(ServerCommands.CLIENT_PING_RESPOND.name(), clientName);
                 break;
         }
     }

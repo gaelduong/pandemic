@@ -7,7 +7,6 @@ import pandemic.DiseaseType;
 import pandemic.RoleType;
 import server.ServerCommands;
 import shared.BioTActionType;
-import shared.CardTargetType;
 import shared.PlayerCardSimple;
 import shared.TravelType;
 import shared.request.PostCondition;
@@ -20,7 +19,7 @@ import java.util.List;
  */
 public class GameURs {
 
-    public static UpdateRequest getMovePlayerMPosUR(String playerUserName, String cityName, TravelType travelType) {
+    public static UpdateRequest getMovePlayerPosUR(String playerUserName, String cityName, TravelType travelType) {
         return new UpdateRequest(
                 new PostCondition(
                         PostCondition.ACTION.MOVE_PLAYER_POS,
@@ -31,8 +30,8 @@ public class GameURs {
         );
     }
 
-    public static UpdateRequest getMovePlayerMPosBioTUR(String playerUserName, String cityName, BioTActionType travelActionType,
-                                                        TravelType travelType) {
+    public static UpdateRequest getMovePlayerPosBioTUR(String playerUserName, String cityName, BioTActionType travelActionType,
+                                                       TravelType travelType) {
         return new UpdateRequest(
                 new PostCondition(
                         PostCondition.ACTION.BIOT_TURN,
@@ -49,12 +48,12 @@ public class GameURs {
      */
     public static void sendDriveFerryUR(Client client, String playerUserName, String cityName) {
         client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
-                getMovePlayerMPosUR(playerUserName, cityName, TravelType.DRIVE_FERRY));
+                getMovePlayerPosUR(playerUserName, cityName, TravelType.DRIVE_FERRY));
     }
 
     public static void sendDriveFerryBioTUR(Client client, String playerUserName, String cityName) {
         client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
-                getMovePlayerMPosBioTUR(playerUserName, cityName, BioTActionType.TRAVEL, TravelType.DRIVE_FERRY));
+                getMovePlayerPosBioTUR(playerUserName, cityName, BioTActionType.TRAVEL, TravelType.DRIVE_FERRY));
     }
 
     /**
@@ -62,12 +61,12 @@ public class GameURs {
      */
     public static void sendDirectFlightUR(Client client, String playerUserName, String cityName) {
         client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
-                getMovePlayerMPosUR(playerUserName, cityName, TravelType.DIRECT_FLIGHT));
+                getMovePlayerPosUR(playerUserName, cityName, TravelType.DIRECT_FLIGHT));
     }
 
     public static void sendDirectFlightBioTUR(Client client, String playerUserName, String cityName) {
         client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
-                getMovePlayerMPosBioTUR(playerUserName, cityName, BioTActionType.TRAVEL, TravelType.DIRECT_FLIGHT));
+                getMovePlayerPosBioTUR(playerUserName, cityName, BioTActionType.TRAVEL, TravelType.DIRECT_FLIGHT));
     }
 
     /**
@@ -76,7 +75,7 @@ public class GameURs {
      */
     public static void sendShuttleFlightUR(Client client, String playerUserName, String cityName) {
         client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
-                getMovePlayerMPosUR(playerUserName, cityName, TravelType.SHUTTLE_FLIGHT));
+                getMovePlayerPosUR(playerUserName, cityName, TravelType.SHUTTLE_FLIGHT));
     }
 
     /**
@@ -86,12 +85,6 @@ public class GameURs {
     public static void sendCharterFlightUR(Client client, String cardToDiscardCityName, String cityName, String playerUserName, RoleType playerRole) {
         client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
                 new UpdateRequest(
-                       /* new PostCondition(
-                                PostCondition.ACTION.MOVE_CARD,
-                                new PlayerCardSimple(CardType.CityCard, cardToDiscardCityName),
-                                playerRole.name(),                         //source
-                                CardTargetType.DISCARD_PILE         //destination
-                        ),*/
                         new PostCondition(
                                 PostCondition.ACTION.MOVE_PLAYER_POS,
                                 playerUserName,
@@ -188,7 +181,6 @@ public class GameURs {
                                                         RoleType givingPlayerRole, RoleType receivingPlayerRole) {
         System.out.printf("consentPrompt: %s, receivingPlayerName: %s, cityCardName: %s, givingPlayerRole: %s, receivingPlayerRole: %s\n",
                 consentPrompt, receivingPlayerName, cityCardName, givingPlayerRole, receivingPlayerRole);
-
         client.sendMessageToServer(
                 ServerCommands.INITIATE_CONSENT_REQUIRING_MOVE.name(),
                             receivingPlayerName, consentPrompt,
