@@ -12,12 +12,17 @@ import shared.Utils;
 import shared.request.UpdateRequest;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PandemicServer extends Server {
+    private static PandemicServer currentServer;
+
+    public static PandemicServer getInstance() {
+        return currentServer;
+    }
+
     private final Map<SocketBundle, String> clientMap;    //<socket, playerUserName>
     private final Map<String, ConsentRequestBundle> consentRequestMap; //<username, UR>
 
@@ -35,10 +40,11 @@ public class PandemicServer extends Server {
         this.updateRequestSemaphore = new Semaphore(1);
         this.connectionCheckTimer = new Timer();
         this.clientLastResponse = Collections.synchronizedMap(new HashMap<>());
+        PandemicServer.currentServer = this;
 
         long timerCheckRate = 1000; // check every second
         long timeout = 5000; // 5 seconds
-        this.connectionCheckTimer.scheduleAtFixedRate(new TimerTask() {
+        final TimerTask pingTimeout = new TimerTask() {
             @Override
             public void run() {
                 sendMessageToClients(ClientCommands.SERVER_WANTS_PINGBACK.name());
@@ -69,7 +75,8 @@ public class PandemicServer extends Server {
                     userTimedOut(bundleToRemove.get(), nameToRemove.get());
                 }
             }
-        }, 1000, timerCheckRate);
+        };
+        this.connectionCheckTimer.scheduleAtFixedRate(pingTimeout, 1000, timerCheckRate);
     }
 
     @Override
@@ -91,17 +98,14 @@ public class PandemicServer extends Server {
 
             switch (command) {
                 case ANSWER_CONSENT_PROMPT:
-                    //TODO russell track to game log
                     answerConsentPrompt(client, message);
                     break;
 
                 case SEND_UPDATE_REQUEST:
-                    //TODO russell track to game log
                     sendUpdateRequest(client, message);
                     break;
 
                 case INITIATE_CONSENT_REQUIRING_MOVE:
-                    //TODO russell track to game log
                     initiateConsentReqMove(client, message);
                     break;
 
@@ -200,8 +204,13 @@ public class PandemicServer extends Server {
 
         final boolean acceptedRequest = (Boolean) message.get(1);
         if (consentRequestMap.containsKey(playerUsername)) {
+            final ConsentRequestBundle consentRequestBundle = consentRequestMap.get(playerUsername);
+            ServerRequests.sendGameLog(consentRequestBundle.getTargetPlayer(),
+                "has " + (acceptedRequest ? "accepted" : "declined") + " the consent request from "
+                        + consentRequestBundle.getSourcePlayer());
+
             if (acceptedRequest) {
-                executeRequestAndPropagate(consentRequestMap.get(playerUsername).getSourcePlayer(), game, consentRequestMap.get(playerUsername).getUr());
+                executeRequestAndPropagate(consentRequestBundle.getSourcePlayer(), game, consentRequestBundle.getUr());
             }
             consentRequestMap.put(playerUsername, null);
         }
@@ -233,6 +242,7 @@ public class PandemicServer extends Server {
         if (consentRequestMap.get(targetPlayerUsername) == null) {  //only one consent per person at a time
             Server.sendMessage(targetPlayerSocket, ClientCommands.RECEIVE_CONSENT_REQUEST.name(), consentPrompt);
             consentRequestMap.put(targetPlayerUsername, new ConsentRequestBundle(playerUsername, targetPlayerUsername, consentUR));
+            ServerRequests.sendGameLog(playerUsername, "has initiated a consent request with " + targetPlayerUsername + "!");
         }
     }
 

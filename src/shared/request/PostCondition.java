@@ -14,6 +14,9 @@ public class PostCondition implements Serializable {
     private final ACTION action;
     private final List arguments;
 
+    private String log_playerUserName;  //who did the action
+    private String log_actionResult;    //description of what happened
+
     /**
      * The core effects that all update requests can be broken down into.
      */
@@ -104,5 +107,30 @@ public class PostCondition implements Serializable {
 
     public ACTION getActionType() {
         return action;
+    }
+
+    public String getLog_playerUserName() {
+        return log_playerUserName;
+    }
+
+    public void setLog_playerUserName(String log_playerUserName) {
+        this.log_playerUserName = log_playerUserName;
+    }
+
+    public String getLog_actionResult() {
+        return log_actionResult;
+    }
+
+    public void setLog_actionResult(String log_actionResult) {
+        if (!log_actionResult.endsWith("!") && !log_actionResult.endsWith(".") && !log_actionResult.endsWith("?")) {
+            log_actionResult += ".";
+        }
+
+        this.log_actionResult = log_actionResult;
+    }
+
+    public boolean isLogValid() {
+        return log_playerUserName != null && !log_playerUserName.isEmpty()
+                && log_actionResult != null && log_actionResult.length() > 1;
     }
 }
