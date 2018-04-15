@@ -768,6 +768,8 @@ public class GUI extends JFrame {
 		String currentPlayer = gs.getCurrentPlayer();
 		if (currentPlayer != null && username.equals(currentPlayer) && gs.getCurrentPlayerActionsRemaining() > 0) {
 //			//Drive Ferry
+
+			moreButton.setVisible(true);
 			btnDriveFerry.setVisible(true);
 //
 //			//Direct Flight
@@ -822,6 +824,11 @@ public class GUI extends JFrame {
 			btnDiscoverCure1.setVisible(false);
 			btnBuildResearch1.setVisible(false);
 			btnShareKnowledge1.setVisible(false);
+
+			btnInfectNextCity.setEnabled(false);
+			btnInfectNextCity.setBackground(Color.DARK_GRAY);
+            btnEndTurn.setEnabled(false);
+            btnEndTurn.setBackground(Color.DARK_GRAY);
 
 
 		}
@@ -1638,7 +1645,7 @@ public class GUI extends JFrame {
 
 				//send server the city user is in
 
-				//GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  null);
+				GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  null);
 
 			}
 
@@ -2138,12 +2145,6 @@ public class GUI extends JFrame {
 			}
 		});
 
-		btnEndTurn.addMouseListener(new MouseAdapter() {
-			public void mouseReleased(MouseEvent e) {
-				client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.END_TURN)));
-			}
-		});
-
 		for (JLabel j : profPawns) {
 			j.addMouseListener(new MouseAdapter() {
 				public void mouseReleased(MouseEvent e) {
@@ -2324,7 +2325,7 @@ public class GUI extends JFrame {
 
 		//get list<City> from gs
 		//draw a station on each list[i], i.e City
-/*
+
 		for (City atCity : gs.getResearchStationLocations())
 		{
             System.out.println();
@@ -2336,7 +2337,7 @@ public class GUI extends JFrame {
 			int rsX =  getCityPosition(cityLabel.getText())[0];
 			int rsY =  getCityPosition(cityLabel.getText())[1];
 
-			JLabel rsLabel = new JLabel("/pandemic/resources/researchStation.png");
+			JLabel rsLabel = new JLabel("/pandemic/resources/reasearchStation.png");
 
 
 			rsLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(rsLabel.getText())).getImage().getScaledInstance(citySize-2, citySize-2, Image.SCALE_SMOOTH)));
@@ -2346,7 +2347,7 @@ public class GUI extends JFrame {
 			rsLabel.setVisible(true);
 
 		}
-*/
+
 
 
 	}
