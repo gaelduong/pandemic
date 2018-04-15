@@ -12,7 +12,12 @@ public class ServerRequests {
      * Logs are displayed as:
      * playerName: action
      */
-    public static void sendGameLog(Server server, String playerName, String action) {
+    public static void sendGameLog(String playerName, String action) {
+        final Server server = PandemicServer.getInstance();
+        if (server == null) {
+            System.err.println("UNABLE TO SEND GAME LOG, SERVER NULL"); //shouldn't happen
+            return;
+        }
         server.sendMessageToClients(ClientCommands.RECEIVE_GAME_LOG_MESSAGE.name(), playerName, action);
     }
 
@@ -22,7 +27,7 @@ public class ServerRequests {
      * Logs are displayed as:
      * playerName: action
      */
-    public static void sendGameLog(Server server, PostCondition processedAction) {
-        sendGameLog(server, processedAction.getLog_playerUserName(), processedAction.getLog_actionResult());
+    public static void sendGameLog(PostCondition processedAction) {
+        sendGameLog(processedAction.getLog_playerUserName(), processedAction.getLog_actionResult());
     }
 }

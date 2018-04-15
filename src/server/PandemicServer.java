@@ -17,6 +17,12 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PandemicServer extends Server {
+    private static PandemicServer currentServer;
+
+    public static PandemicServer getInstance() {
+        return currentServer;
+    }
+
     private final Map<SocketBundle, String> clientMap;    //<socket, playerUserName>
     private final Map<String, ConsentRequestBundle> consentRequestMap; //<username, UR>
 
@@ -34,10 +40,11 @@ public class PandemicServer extends Server {
         this.updateRequestSemaphore = new Semaphore(1);
         this.connectionCheckTimer = new Timer();
         this.clientLastResponse = Collections.synchronizedMap(new HashMap<>());
+        PandemicServer.currentServer = this;
 
         long timerCheckRate = 1000; // check every second
         long timeout = 5000; // 5 seconds
-        this.connectionCheckTimer.scheduleAtFixedRate(new TimerTask() {
+        final TimerTask pingTimeout = new TimerTask() {
             @Override
             public void run() {
                 sendMessageToClients(ClientCommands.SERVER_WANTS_PINGBACK.name());
@@ -68,7 +75,8 @@ public class PandemicServer extends Server {
                     userTimedOut(bundleToRemove.get(), nameToRemove.get());
                 }
             }
-        }, 1000, timerCheckRate);
+        };
+        this.connectionCheckTimer.scheduleAtFixedRate(pingTimeout, 1000, timerCheckRate);
     }
 
     @Override
@@ -197,7 +205,7 @@ public class PandemicServer extends Server {
         final boolean acceptedRequest = (Boolean) message.get(1);
         if (consentRequestMap.containsKey(playerUsername)) {
             final ConsentRequestBundle consentRequestBundle = consentRequestMap.get(playerUsername);
-            ServerRequests.sendGameLog(this, consentRequestBundle.getTargetPlayer(),
+            ServerRequests.sendGameLog(consentRequestBundle.getTargetPlayer(),
                 "has " + (acceptedRequest ? "accepted" : "declined") + " the consent request from "
                         + consentRequestBundle.getSourcePlayer());
 
@@ -234,7 +242,7 @@ public class PandemicServer extends Server {
         if (consentRequestMap.get(targetPlayerUsername) == null) {  //only one consent per person at a time
             Server.sendMessage(targetPlayerSocket, ClientCommands.RECEIVE_CONSENT_REQUEST.name(), consentPrompt);
             consentRequestMap.put(targetPlayerUsername, new ConsentRequestBundle(playerUsername, targetPlayerUsername, consentUR));
-            ServerRequests.sendGameLog(this, playerUsername, "has initiated a consent request with " + targetPlayerUsername + "!");
+            ServerRequests.sendGameLog(playerUsername, "has initiated a consent request with " + targetPlayerUsername + "!");
         }
     }
 
@@ -266,7 +274,7 @@ public class PandemicServer extends Server {
         } catch (InterruptedException ignore) {}    //we don't interrupt
 
         if (updateRequest.isRequestValid()) {
-            String updateString = updateRequest.executeRequest(this, game, playerUsername);
+            String updateString = updateRequest.executeRequest(game, playerUsername);
             if(!updateString.equals(""))
                 sendMessageToClients(ClientCommands.RECEIVE_GAME_MESSAGE.name(), MessageType.INFORMATION, updateString);
 
