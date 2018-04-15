@@ -6,6 +6,7 @@ import client.ClientCommands;
 import pandemic.*;
 import pandemic.views.LobbyState;
 import pandemic.views.MenuLayout;
+import server.premade.ServerRequests;
 import shared.ConsentRequestBundle;
 import shared.MessageType;
 import shared.Utils;
@@ -91,7 +92,6 @@ public class PandemicServer extends Server {
 
             switch (command) {
                 case ANSWER_CONSENT_PROMPT:
-                    //TODO russell track to game log
                     answerConsentPrompt(client, message);
                     break;
 
@@ -100,7 +100,6 @@ public class PandemicServer extends Server {
                     break;
 
                 case INITIATE_CONSENT_REQUIRING_MOVE:
-                    //TODO russell track to game log
                     initiateConsentReqMove(client, message);
                     break;
 
@@ -199,8 +198,13 @@ public class PandemicServer extends Server {
 
         final boolean acceptedRequest = (Boolean) message.get(1);
         if (consentRequestMap.containsKey(playerUsername)) {
+            final ConsentRequestBundle consentRequestBundle = consentRequestMap.get(playerUsername);
+            ServerRequests.sendGameLog(this, consentRequestBundle.getTargetPlayer(),
+                "has " + (acceptedRequest ? "accepted" : "declined") + " the consent request from "
+                        + consentRequestBundle.getSourcePlayer());
+
             if (acceptedRequest) {
-                executeRequestAndPropagate(consentRequestMap.get(playerUsername).getSourcePlayer(), game, consentRequestMap.get(playerUsername).getUr());
+                executeRequestAndPropagate(consentRequestBundle.getSourcePlayer(), game, consentRequestBundle.getUr());
             }
             consentRequestMap.put(playerUsername, null);
         }
@@ -232,6 +236,7 @@ public class PandemicServer extends Server {
         if (consentRequestMap.get(targetPlayerUsername) == null) {  //only one consent per person at a time
             Server.sendMessage(targetPlayerSocket, ClientCommands.RECEIVE_CONSENT_REQUEST.name(), consentPrompt);
             consentRequestMap.put(targetPlayerUsername, new ConsentRequestBundle(playerUsername, targetPlayerUsername, consentUR));
+            ServerRequests.sendGameLog(this, playerUsername, "has initiated a consent request with " + targetPlayerUsername + "!");
         }
     }
 
