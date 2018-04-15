@@ -905,7 +905,12 @@ public class GUI extends JFrame {
 */
 
 		//----------GREY OUT BUTTONS-------------
+
+        City currCity = gs.getPositionMap().get(userRole);
+        String citName = currCity.getName().toString();
+
 		//grey out btnDiscoverCure if player doesn't have 5 (or 4 if scientist) cards of same color
+        //OR there's no RS in the city he's in
 
 		for (Region region : mapCardColors.keySet())
 			mapCardColors.put(region, 0);
@@ -935,10 +940,19 @@ public class GUI extends JFrame {
 				break;
 			}
 		}
+        boolean hasStationInCity = false;
+        for (City c : gs.getResearchStationLocations()) {
+            if (c.getName().toString().equals(citName)) {
+                hasStationInCity = true;
+                break;
+            }
+        }
+        if(!hasStationInCity) btnDiscoverCure.setEnabled(false);
 
 
-		City currCity = gs.getPositionMap().get(userRole);
-		String citName = currCity.getName().toString();
+
+
+
 
 		//grey out directFlight if player has no city card
 		//or if he has exactly one city card which matches his current position
