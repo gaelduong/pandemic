@@ -15,6 +15,6 @@ public class BasicEpidemicCard extends EpidemicCard implements PlayerCard {
     }
 
     public String getCardName() {
-        return type.toString();
+        return "Epidemic";
     }
 }

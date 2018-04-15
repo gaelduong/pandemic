@@ -40,4 +40,8 @@ public class HiddenPocketEpidemicCard extends EpidemicCard{
 
         myGameManager.setEventCardsEnabled(true);
     }
+
+    public String getCardName() {
+        return "Hidden Pocket Epidemic";
+    }
 }

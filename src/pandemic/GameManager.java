@@ -330,6 +330,10 @@ public class GameManager {
         return 0;
     }
 
+    public void infectCitiesForMutationIntensifies(){
+        currentGame.infectMutationIntensifies();
+    }
+
 	public void shuffleInfectionDiscardPile(){
 		InfectionDiscardPile idp = currentGame.getInfectionDiscardPile();
 		idp.shuffle();

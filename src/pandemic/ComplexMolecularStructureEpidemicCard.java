@@ -15,4 +15,8 @@ public class ComplexMolecularStructureEpidemicCard extends EpidemicCard{
 
         myGameManager.setComplexMolecularStructureActive(true);
     }
+
+    public String getCardName() {
+        return "Complex Molecular Structure Epidemic";
+    }
 }
