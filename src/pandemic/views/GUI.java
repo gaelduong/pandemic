@@ -802,6 +802,15 @@ public class GUI extends JFrame {
 			btnBuildResearch1.setVisible(false);
 			btnShareKnowledge1.setVisible(false);
 
+			Component[] components = contentPane.getComponents();
+
+			for(int i = 0; i < components.length; i++) {
+				if (components[i].getClass().getName() == "javax.swing.JButton") {
+
+					((JButton) components[i]).setEnabled(true);
+				}
+			}
+
 		} else {
 			btnDriveFerry.setVisible(false);
 			btnDirectFlight.setVisible(false);
@@ -886,7 +895,7 @@ public class GUI extends JFrame {
 		loadTargetsRS();
 //		loadGenericMessageBox();
 
-		if (gs.getCardMap().get(userRole).size() > 7) loadTooManyCardsMessage();
+
 
 
 
@@ -1045,6 +1054,25 @@ public class GUI extends JFrame {
 		}
 		if (gs.getResearchStationLocations().size() < 2) btnShuttleFlight.setEnabled(false);
 
+
+
+
+		//show discard button and disable other buttons if hand > 7
+		if (gs.getCardMap().get(userRole).size() > 7) {
+
+			Component[] components = contentPane.getComponents();
+
+			for(int i = 0; i < components.length; i++) {
+				if (components[i].getClass().getName() == "javax.swing.JButton"
+						&& !((JButton)components[i]).getText().equals("DISCARD")) {
+					System.out.println("yo");
+					((JButton) components[i]).setEnabled(false);
+				}
+			}
+			moves.put("discard",true);
+
+		}
+
 		revalidate();
 		repaint();
 	}
@@ -1061,7 +1089,7 @@ public class GUI extends JFrame {
 
 	private void initComponents() {
 
-		//Load player cards
+	/*	//Load player cards
 		for(JLabel label : mapPlayerCardLabels.values())
 		{
 			//System.out.println(entry.getKey());
@@ -1355,9 +1383,6 @@ public class GUI extends JFrame {
 
 
 
-
-		discardOptionButton.setFocusPainted(false);
-
 		playEventOptionButton.setText("PLAY EVENT CARD");
 		playEventOptionButton.setBounds(501, 530, 106, 20);
 		playEventOptionButton.setBackground(Color.cyan);
@@ -1416,13 +1441,14 @@ public class GUI extends JFrame {
 		btnInfectNextCity.setEnabled(false);
 		btnInfectNextCity.setFocusPainted(false);
 
-		discardOptionButton.setText("DISCARD");
-		discardOptionButton.setBounds(11, 570, 206, 20);
-		discardOptionButton.setBackground(Color.ORANGE);
-		discardOptionButton.setForeground(Color.WHITE);
-		contentPane.add(discardOptionButton);
-		discardOptionButton.setEnabled(false);
-		discardOptionButton.setFocusPainted(false);
+		discardButton.setText("DISCARD");
+		discardButton.setBounds(11, 570, 176, 20);
+		discardButton.setBackground(Color.GREEN);
+		discardButton.setForeground(Color.WHITE);
+		contentPane.add(discardButton);
+		discardButton.setVisible(false);
+		discardButton.setFocusPainted(false);
+
 
 
 		// Generic message box
@@ -1509,7 +1535,7 @@ public class GUI extends JFrame {
 		contentPane.add(userRoleLabel);
 		userRoleLabel.setVisible(true);
 		controlPawn = new JLabel();
-		controlPawn.setBounds(74, 595, 80, 106);
+		controlPawn.setBounds(74, 635, 30, 40);
 		contentPane.add(controlPawn);
 		controlPawn.setVisible(true);
 
@@ -1607,7 +1633,7 @@ public class GUI extends JFrame {
 					} else if (moves.get("charterFlight")) {
 						//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
 						//	new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.CHARTER_FLIGHT)));
-					} else if (moves.get("shuÅttleFlight")) {
+					} else if (moves.get("shuttleFlight")) {
 						//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
 						//	new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.SHUTTLE_FLIGHT)));
 					} else if (moves.get("buildResearch")) {
@@ -1828,12 +1854,16 @@ public class GUI extends JFrame {
 
 		});
 		//discard option add
-		discardOptionButton.addActionListener(new ActionListener() {
+		discardButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				discardOptionButton.setEnabled(false);
-				playEventOptionButton.setEnabled(false);
-				moves.put("discard",true);
+				//
+				if(playerCardToDiscard != null)
+				{
+					System.out.println(playerCardToDiscard.getCardName());
+					//send server playerCardToDisCard
+					//GameURs.send....(client, playerCardToDiscard)
+				}
 
 
 
@@ -1846,6 +1876,9 @@ public class GUI extends JFrame {
 				discardOptionButton.setEnabled(false);
 				playEventOptionButton.setEnabled(false);
 				moves.put("playEventCard",true);
+
+
+
 
 
 
@@ -2421,7 +2454,7 @@ public class GUI extends JFrame {
 		userRoleLabel.setText("Role: " + userRole.toString());
 //		//userRoleLabel.setFont(new Font("Lao MN", Font.PLAIN, 12));
 //		userRoleLabel.setForeground(Color.WHITE);
-		userRoleLabel.setBounds(74 - userRole.toString().length(), 575, 190, 16);
+		userRoleLabel.setBounds(74 - userRole.toString().length(), 600, 190, 16);
 //		contentPane.add(userRoleLabel);
 //		contentPane.setComponentZOrder(userRoleLabel, 1);
 //		userRoleLabel.setVisible(true);
@@ -2430,7 +2463,7 @@ public class GUI extends JFrame {
 //		controlPawn = new JLabel();
 		String controlPawnIconPath = mapPawnLabels.get(userRole).getText();
 //		//System.out.println(controlPawnIconPath);
-		controlPawn.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(controlPawnIconPath)).getImage().getScaledInstance(80, 106, Image.SCALE_SMOOTH)));
+		controlPawn.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(controlPawnIconPath)).getImage().getScaledInstance(30, 40, Image.SCALE_SMOOTH)));
 //		controlPawn.setBounds(74, 595, 80, 106);
 //		contentPane.add(controlPawn);
 //		contentPane.setComponentZOrder(controlPawn, 1);
@@ -2531,27 +2564,31 @@ public class GUI extends JFrame {
 							//card down => discardButtion go away
 							//set playerCardToDiscard (CityCard) = that card
 
-
-							//loadPlayerCards();
-							contentPane.add(discardButton);
+							loadPlayerCards();
 							contentPane.setComponentZOrder(discardButton,0);
-							discardButton.setVisible(true);
+
 
 							if (playerCardLabel.getY() < 585)
 							{
 								playerCardLabel.setLocation(playerCardLabel.getX(), playerCardLabel.getY() + 20);
 								playerCardToDiscard = null;
+								discardButton.setVisible(false);
+								playEventOptionButton.setVisible(false);
 							}
 							else if (playerCardLabel.getY() == 585)
 							{
 								playerCardLabel.setLocation(playerCardLabel.getX(), playerCardLabel.getY() - 20);
 								playerCardToDiscard = playerCard;
+								discardButton.setVisible(true);
+								if(playerCard.getCardType().equals(CardType.EventCard)) {
+									playEventOptionButton.setVisible(true);
+								}
 
 
 
 
 							}
-							System.out.println("Selected card to discard " + playerCardToDiscard.getCardName());
+							if(playerCardToDiscard!=null) System.out.println("Selected card to discard " + playerCardToDiscard.getCardName());
 
 							System.out.println();
 
