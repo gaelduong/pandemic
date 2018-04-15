@@ -1822,7 +1822,7 @@ public class GUI extends JFrame {
 				btnInfectNextCity.setBackground(Color.DARK_GRAY);
 
 
-				//GameURs.sendInfectNextCityRequest(client);
+				GameURs.sendInfectNextCity(client, username);
 
 			}
 

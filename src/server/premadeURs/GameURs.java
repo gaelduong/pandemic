@@ -317,4 +317,15 @@ public class GameURs {
         );
     }
 
+    public static void sendInfectNextCity(Client client, String playerUserName) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+                new UpdateRequest(
+                        new PostCondition(
+                                PostCondition.ACTION.INFECT_NEXT_CITY,
+                                playerUserName
+                        )
+                )
+        );
+    }
+
 }
