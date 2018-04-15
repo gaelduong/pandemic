@@ -96,7 +96,6 @@ public class PandemicServer extends Server {
                     break;
 
                 case SEND_UPDATE_REQUEST:
-                    //TODO russell track to game log
                     sendUpdateRequest(client, message);
                     break;
 
@@ -264,7 +263,7 @@ public class PandemicServer extends Server {
         } catch (InterruptedException ignore) {}    //we don't interrupt
 
         if (updateRequest.isRequestValid()) {
-            String updateString = updateRequest.executeRequest(game, playerUsername);
+            String updateString = updateRequest.executeRequest(this, game, playerUsername);
             if(!updateString.equals(""))
                 sendMessageToClients(ClientCommands.RECEIVE_GAME_MESSAGE.name(), MessageType.INFORMATION, updateString);
 

@@ -61,8 +61,9 @@ public class GUICommandLinker {
     /**
      * This method is called when the client receives a new chat message from a player
      */
-    public static void handleReceiveNewChatMessage(GUI gui, String playerName, String message) {
-        //TODO gael
+    public static void handleReceiveGameLogMsgMessage(GUI gui, String playerName, String message) {
+        //TODO gael / gavin implement in front end pretty display
+        System.out.println("NEW GAME LOG!");
+        System.out.println(playerName + ": " + message);
     }
-
 }
