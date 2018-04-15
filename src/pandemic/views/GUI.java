@@ -1622,12 +1622,12 @@ public class GUI extends JFrame {
 					} else if (moves.get("charterFlight")) {
 						//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
 						//	new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.CHARTER_FLIGHT)));
-					} else if (moves.get("shuÅttleFlight")) {
+					} else if (moves.get("shuttleFlight")) {
 						//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
 						//	new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.SHUTTLE_FLIGHT)));
 					} else if (moves.get("buildResearch")) {
 
-						//GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
+						GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
 					}
 
 					else if (moves.get("OEMoveToAnyCity")){
