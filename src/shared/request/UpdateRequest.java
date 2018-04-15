@@ -1,14 +1,14 @@
 package shared.request;
 
+import api.socketcomm.Server;
 import pandemic.*;
 import pandemic.eventcards.EventCard;
 import pandemic.eventcards.EventCardName;
 import pandemic.eventcards.impl.*;
+import server.ServerRequests;
 import shared.*;
 
-import java.awt.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,6 +23,7 @@ public class UpdateRequest implements Serializable {
 
     private final List<PostCondition> postConditions;
     private PreCondition preCondition = null;
+    private PostCondition currentlyProcessedAction;
     private boolean epidemicOccured = false;
     private String epidemicString;
 
@@ -52,12 +53,16 @@ public class UpdateRequest implements Serializable {
     /**
      * Executes the update request on the game.
      */
-    public String executeRequest(Game game, String playerUsername) {
+    public String executeRequest(Server server, Game game, String playerUsername) {
         postConditions.forEach(action -> {
+            currentlyProcessedAction = action;
+
             String epidemic = executeAction(game, playerUsername, action);
             if(!epidemic.equals(""))
                 setEpidemicOccured(epidemic);
 
+            if (currentlyProcessedAction.isLogValid())
+                ServerRequests.sendGameLog(server, currentlyProcessedAction);
         });
 
         if(epidemicOccured)
@@ -65,8 +70,11 @@ public class UpdateRequest implements Serializable {
         return "";
     }
 
+
+
     private String executeAction(Game game, String playerUsername, PostCondition action) {
         String status = "";
+        currentlyProcessedAction.setLog_playerUserName(playerUsername);
         final List arguments = action.getArguments();
         switch (action.getActionType()) {
             case MOVE_CARD:
@@ -99,10 +107,12 @@ public class UpdateRequest implements Serializable {
 
             case BIOT_TURN:
                 executeBioTTurn(game, playerUsername, arguments);
+                //TODO add currentlyProcessedAction.setLog_actionResult() for game log
                 break;
 
             case INFECT_NEXT_CITY:
                 executeInfectNextCity(game, playerUsername);
+                //TODO add currentlyProcessedAction.setLog_actionResult() for game log
                 break;
 
         }
@@ -159,6 +169,7 @@ public class UpdateRequest implements Serializable {
                         newPositionCityName = Utils.getEnum(CityName.class, cityName);
                         newPosition = gameManager.getCityByName(newPositionCityName);
                         gameManager.playDriveFerry(newPosition);
+                        currentlyProcessedAction.setLog_actionResult("has driven to " + cityName);
                         break;
                     case DIRECT_FLIGHT:
                         Card card = game.getCurrentPlayer().getCard(new PlayerCardSimple(CardType.MovingCard, cityName));
@@ -169,11 +180,13 @@ public class UpdateRequest implements Serializable {
                         } else {
                             game.getPlayerDiscardPile().acceptCard(card);
                         }
+                        currentlyProcessedAction.setLog_actionResult("has taken a direct flight to " + cityName);
                         break;
                     case SHUTTLE_FLIGHT:
                         newPositionCityName = Utils.getEnum(CityName.class, cityName);
                         newPosition = gameManager.getCityByName(newPositionCityName);
                         gameManager.playShuttleFlight(newPosition);
+                        currentlyProcessedAction.setLog_actionResult("has taken a shuttle flight to " + cityName);
                         break;
 
                     case CHARTER_FLIGHT:
@@ -189,6 +202,7 @@ public class UpdateRequest implements Serializable {
                         } else {
                             game.getPlayerDiscardPile().acceptCard(cardToDiscard);
                         }
+                        currentlyProcessedAction.setLog_actionResult("has taken a charter flight to " + cityName);
                         break;
 
                 }
@@ -205,10 +219,13 @@ public class UpdateRequest implements Serializable {
     @SuppressWarnings("unchecked")
     private void executeDiscoverCure(Game game, String playerUsername, List arguments) {
         final GameManager gameManager = game.getGameManager();
+        final List<CityCard> cardToDiscard = (List<CityCard>)arguments.get(0);
+
         final List<PlayerCard> cardsToDiscard = (List<PlayerCard>)arguments.get(0);
         final DiseaseType toCure = (DiseaseType)arguments.get(arguments.size());
 
         gameManager.playDiscoverCure(toCure, cardsToDiscard);
+        currentlyProcessedAction.setLog_actionResult("has discovered a cure for type " + cardToDiscard.get(0).getRegion().toString().toLowerCase() + "!");
     }
 
     private void executeTreatDisease(Game game, String playerUsername, List arguments) {
@@ -229,7 +246,7 @@ public class UpdateRequest implements Serializable {
                 gameManager.playTreatDisease(toTreat);
             }
 
-
+            currentlyProcessedAction.setLog_actionResult("has treated the " + diseaseType + " disease!");
             if (toTreat == null) {
                 System.err.println("ERROR - cant find disease flag of that type in current player city");
                 return;
@@ -243,6 +260,7 @@ public class UpdateRequest implements Serializable {
     private void executeBuildResearchStation(Game game, String playerUsername, List arguments) {
         final String cityLocationToBuild = (String)arguments.get(0);
         final String cityNameToRemove_Optional = arguments.size() == 2 ? (String)arguments.get(1) : null;
+
         if (cityNameToRemove_Optional != null){
             CityName cityNameToRemoveFrom = Utils.getEnum(CityName.class, cityNameToRemove_Optional);
             City cityToRemoveFrom = game.getCityByName(cityNameToRemoveFrom);
@@ -259,12 +277,15 @@ public class UpdateRequest implements Serializable {
         }
 
        game.getGameManager().playBuildResearchStation();
-
+        currentlyProcessedAction.setLog_actionResult("has built a research station in " + cityLocationToBuild);
     }
 
     private String executeEndTurn(Game game) {
         final GameManager gameManager = game.getGameManager();
-        return gameManager.endTurn();
+        final String endTurnStatus = gameManager.endTurn();
+        currentlyProcessedAction.setLog_playerUserName("GAME");
+        currentlyProcessedAction.setLog_actionResult(endTurnStatus);
+        return endTurnStatus;
 
 
         //if(game.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayerDiscardingCards)
@@ -433,6 +454,8 @@ public class UpdateRequest implements Serializable {
     private void executeEventCard(Game game, String playerUsername, List arguments) {
         final EventCardName name = (EventCardName) arguments.get(0);
         final List eventCardArgs = (List) arguments.get(1);
+
+        currentlyProcessedAction.setLog_actionResult("has played the " + name + " event card!");
 
         final Player eventCardPlayer = game.getGameManager().getPlayerFromUsername(playerUsername);
         final EventCard eventCard = (EventCard)eventCardPlayer.getCard(new PlayerCardSimple(CardType.EventCard, name.toString()));

@@ -156,13 +156,12 @@ public class GameURs {
      * Creates an update request that discovers the cure for a certain DiseaseType
      * and discards the inputted list of cards
      */
-    public static void sendDiscoverCureUR(Client client, List<CityCard> cityCardsToDiscard, DiseaseType diseaseType) {
+    public static void sendDiscoverCureUR(Client client, List<CityCard> cityCardsToDiscard) {
         client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
             new UpdateRequest(
                 new PostCondition(
                         PostCondition.ACTION.DISCOVER_CURE,
-                        cityCardsToDiscard,
-                        diseaseType
+                        cityCardsToDiscard
                 )
             )
         );

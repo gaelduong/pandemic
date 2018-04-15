@@ -47,7 +47,7 @@ public enum ClientCommands implements Serializable{
      * <b>Parameters:</b>
      * String playerName, String message
      */
-    RECEIVE_CHAT_MESSAGE,
+    RECEIVE_GAME_LOG_MESSAGE,
 
     /**
      * Server wants an update on our status (aka whether we are still connected).

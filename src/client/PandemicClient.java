@@ -10,7 +10,6 @@ import shared.GameState;
 import shared.MessageType;
 import shared.Utils;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -69,6 +68,12 @@ public class PandemicClient extends Client {
             case SERVER_WANTS_PINGBACK:
                 // just immediately respond
                 sendMessageToServer(ServerCommands.CLIENT_PING_RESPOND.name(), clientName);
+                break;
+
+            case RECEIVE_GAME_LOG_MESSAGE:
+                final String gameLogName = (String)message.get(1);
+                final String gameLogAction = (String)message.get(2);
+                GUICommandLinker.handleReceiveGameLogMsgMessage(gui, gameLogName, gameLogAction);
                 break;
         }
     }

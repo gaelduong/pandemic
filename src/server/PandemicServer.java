@@ -12,7 +12,6 @@ import shared.Utils;
 import shared.request.UpdateRequest;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;
@@ -91,17 +90,14 @@ public class PandemicServer extends Server {
 
             switch (command) {
                 case ANSWER_CONSENT_PROMPT:
-                    //TODO russell track to game log
                     answerConsentPrompt(client, message);
                     break;
 
                 case SEND_UPDATE_REQUEST:
-                    //TODO russell track to game log
                     sendUpdateRequest(client, message);
                     break;
 
                 case INITIATE_CONSENT_REQUIRING_MOVE:
-                    //TODO russell track to game log
                     initiateConsentReqMove(client, message);
                     break;
 
@@ -200,8 +196,13 @@ public class PandemicServer extends Server {
 
         final boolean acceptedRequest = (Boolean) message.get(1);
         if (consentRequestMap.containsKey(playerUsername)) {
+            final ConsentRequestBundle consentRequestBundle = consentRequestMap.get(playerUsername);
+            ServerRequests.sendGameLog(this, consentRequestBundle.getTargetPlayer(),
+                "has " + (acceptedRequest ? "accepted" : "declined") + " the consent request from "
+                        + consentRequestBundle.getSourcePlayer());
+
             if (acceptedRequest) {
-                executeRequestAndPropagate(consentRequestMap.get(playerUsername).getSourcePlayer(), game, consentRequestMap.get(playerUsername).getUr());
+                executeRequestAndPropagate(consentRequestBundle.getSourcePlayer(), game, consentRequestBundle.getUr());
             }
             consentRequestMap.put(playerUsername, null);
         }
@@ -233,6 +234,7 @@ public class PandemicServer extends Server {
         if (consentRequestMap.get(targetPlayerUsername) == null) {  //only one consent per person at a time
             Server.sendMessage(targetPlayerSocket, ClientCommands.RECEIVE_CONSENT_REQUEST.name(), consentPrompt);
             consentRequestMap.put(targetPlayerUsername, new ConsentRequestBundle(playerUsername, targetPlayerUsername, consentUR));
+            ServerRequests.sendGameLog(this, playerUsername, "has initiated a consent request with " + targetPlayerUsername + "!");
         }
     }
 
@@ -264,7 +266,7 @@ public class PandemicServer extends Server {
         } catch (InterruptedException ignore) {}    //we don't interrupt
 
         if (updateRequest.isRequestValid()) {
-            String updateString = updateRequest.executeRequest(game, playerUsername);
+            String updateString = updateRequest.executeRequest(this, game, playerUsername);
             if(!updateString.equals(""))
                 sendMessageToClients(ClientCommands.RECEIVE_GAME_MESSAGE.name(), MessageType.INFORMATION, updateString);
 

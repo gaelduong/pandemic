@@ -50,16 +50,6 @@ public enum ServerCommands implements Serializable {
      */
     REGISTER_USERNAME,
 
-
-    /**
-     * Clients use this command to send what they want to say to the server, so that it
-     * can be broadcasted to all clients in the chatbox.
-     *
-     * <b>Parameters:</b>
-     * String msg
-     */
-    SEND_CHAT_MESSAGE,
-
     /**
      * Client has responded to us asking for an update/ping
      */

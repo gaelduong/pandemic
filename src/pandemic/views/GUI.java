@@ -419,6 +419,13 @@ public class GUI extends JFrame {
 	private JLabel blackRemaining;
 	private JLabel purpleRemaining;
 
+	/*Cure Makers*/
+	private JLabel blueCureMarker;
+	private JLabel purpleCureMarker;
+	private JLabel redCureMarker;
+	private JLabel blackCureMarker;
+	private JLabel yellowCureMarker;
+
 	/*Player cards*/
 
 	/*Infection rate indicator*/
@@ -457,6 +464,13 @@ public class GUI extends JFrame {
 	private final String yellowCubesRemPath = "/pandemic/resources/TopBar/yellowRem.png";
 	private final String blackCubesRemPath = "/pandemic/resources/TopBar/blackRem.png";
 	private final String purpleCubesRemPath = "/pandemic/resources/TopBar/purpleRem.png";
+
+	private final String blueCureMarkerIconPath = "/pandemic/resources/CureMarkers/blueCureMarker.png";
+	private final String redCureMarkerIconPath = "/pandemic/resources/CureMarkers/redCureMarker.png";
+	private final String purpleCureMarkerIconPath = "/pandemic/resources/CureMarkers/purpleCureMarker.png";
+	private final String blackCureMarkerIconPath = "/pandemic/resources/CureMarkers/whiteCureMarker.png";
+	private final String yellowCureMarkerIconPath = "/pandemic/resources/CureMarkers/yellowCureMarker.png";
+
 
 	private JLabel orangePawnProf = new JLabel("/pandemic/resources/Pawns/orangePawn.png");
 	private JLabel greenPawnProf = new JLabel("/pandemic/resources/Pawns/greenPawn.png");
@@ -1105,6 +1119,10 @@ public class GUI extends JFrame {
 
 		}
 
+		System.out.println("Purple, you shouldnt be null : " + gs.getRemainingDiseaseCubesMap().get(DiseaseType.Purple));
+
+		System.out.println();
+
 		revalidate();
 		repaint();
 	}
@@ -1537,17 +1555,22 @@ public class GUI extends JFrame {
 		purpleRemaining.setBackground(Color.BLACK);
 		purpleRemaining.setForeground(Color.WHITE);
 		purpleRemaining.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(purpleCubesRemPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
-		purpleRemaining.setBounds(451, 6, 48, 16);
+		purpleRemaining.setBounds(500, 6, 48, 16);
 		topBar.add(purpleRemaining);
 		purpleRemaining.setOpaque(true);
 
-		;
+
+
+
+
+
+
 		//instruction
 		instruction = new JLabel("");
 		instruction.setBackground(Color.BLACK);
 		instruction.setForeground(Color.WHITE);
 		instruction.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(instructionIconPath)).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-		instruction.setBounds(616, 6, 48, 16);
+		instruction.setBounds(850, 6, 48, 16);
 		topBar.add(instruction);
 		instruction.setOpaque(true);
 
@@ -1556,7 +1579,7 @@ public class GUI extends JFrame {
 		infectionRate.setBackground(Color.BLACK);
 		infectionRate.setForeground(Color.WHITE);
 		infectionRate.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(infectionRateIconPath)).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-		infectionRate.setBounds(506, 6, 48, 16);
+		infectionRate.setBounds(530, 6, 48, 16);
 		topBar.add(infectionRate);
 		infectionRate.setOpaque(true);
 
@@ -1565,9 +1588,54 @@ public class GUI extends JFrame {
 		outbreakMeterCount.setBackground(Color.BLACK);
 		outbreakMeterCount.setForeground(Color.WHITE);
 		outbreakMeterCount.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(outbreakMeterCountIconPath)).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-		outbreakMeterCount.setBounds(561, 6, 48, 16);
+		outbreakMeterCount.setBounds(580, 6, 48, 16);
 		topBar.add(outbreakMeterCount);
 		outbreakMeterCount.setOpaque(true);
+
+
+
+
+		redCureMarker = new JLabel();
+		redCureMarker.setBackground(Color.BLACK);
+		redCureMarker.setForeground(Color.WHITE);
+		redCureMarker.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(redCureMarkerIconPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
+		redCureMarker.setBounds(640, 6, 40, 16);
+		topBar.add(redCureMarker);
+		redCureMarker.setOpaque(true);
+
+		blueCureMarker = new JLabel();
+		blueCureMarker.setBackground(Color.BLACK);
+		blueCureMarker.setForeground(Color.WHITE);
+		blueCureMarker.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(blueCureMarkerIconPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
+		blueCureMarker.setBounds(680, 6, 40, 16);
+		topBar.add(blueCureMarker);
+		blueCureMarker.setOpaque(true);
+
+		yellowCureMarker = new JLabel();
+		yellowCureMarker.setBackground(Color.BLACK);
+		yellowCureMarker.setForeground(Color.WHITE);
+		yellowCureMarker.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(yellowCureMarkerIconPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
+		yellowCureMarker.setBounds(720, 6, 40, 16);
+		topBar.add(yellowCureMarker);
+		yellowCureMarker.setOpaque(true);
+
+		blackCureMarker = new JLabel();
+		blackCureMarker.setBackground(Color.BLACK);
+		blackCureMarker.setForeground(Color.WHITE);
+		blackCureMarker.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(blackCureMarkerIconPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
+		blackCureMarker.setBounds(760 ,6, 40, 16);
+		topBar.add(blackCureMarker);
+		blackCureMarker.setOpaque(true);
+
+		purpleCureMarker = new JLabel();
+		purpleCureMarker.setBackground(Color.BLACK);
+		purpleCureMarker.setForeground(Color.WHITE);
+		purpleCureMarker.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(purpleCureMarkerIconPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
+		purpleCureMarker.setBounds(800, 6, 48, 16);
+		topBar.add(purpleCureMarker);
+		purpleCureMarker.setOpaque(true);
+
+
 
 		//Display User role
 		//System.out.println("username  in lcp: " + username);
@@ -1623,6 +1691,11 @@ public class GUI extends JFrame {
 		contentPane.setComponentZOrder(yellowRemaining, 1);
 		contentPane.setComponentZOrder(blackRemaining, 1);
 		contentPane.setComponentZOrder(purpleRemaining, 1);
+		contentPane.setComponentZOrder(redCureMarker, 1);
+		contentPane.setComponentZOrder(blueCureMarker, 1);
+		contentPane.setComponentZOrder(yellowCureMarker, 1);
+		contentPane.setComponentZOrder(blackCureMarker, 1);
+		contentPane.setComponentZOrder(purpleCureMarker, 1);
 		contentPane.setComponentZOrder(infectionRate, 1);
 		contentPane.setComponentZOrder(outbreakMeterCount, 1);
 		contentPane.setComponentZOrder(userRoleLabel, 1);
@@ -2380,9 +2453,21 @@ public class GUI extends JFrame {
 		blueRemaining.setText("" + gs.getRemainingDiseaseCubesMap().get(DiseaseType.Blue));
 		yellowRemaining.setText("" + gs.getRemainingDiseaseCubesMap().get(DiseaseType.Yellow));
 		blackRemaining.setText("" + gs.getRemainingDiseaseCubesMap().get(DiseaseType.Black));
+		if(gs.getRemainingDiseaseCubesMap().get(DiseaseType.Purple) == null) purpleRemaining.setVisible(false);
 		purpleRemaining.setText("" + gs.getRemainingDiseaseCubesMap().get(DiseaseType.Purple));
 		infectionRate.setText("" + gs.getCurrentInfectionRate());
 		outbreakMeterCount.setText("" + gs.getCurrentOutbreakMeter());
+
+		//if(gs.getCureMap().get(DiseaseType.Red))
+			redCureMarker.setVisible(true);
+		//if(gs.getCureMap().get(DiseaseType.Blue))
+			blueCureMarker.setVisible(true);
+		//if(gs.getCureMap().get(DiseaseType.Yellow))
+			yellowCureMarker.setVisible(true);
+		//if(gs.getCureMap().get(DiseaseType.Purple))
+			purpleCureMarker.setVisible(true);
+		//if(gs.getCureMap().get(DiseaseType.Black))
+			blackCureMarker.setVisible(true);
 	}
 
 	private void loadCubesOnMap()	{
@@ -2455,6 +2540,8 @@ public class GUI extends JFrame {
 		//draw a station on each list[i], i.e City
 
 		System.out.println("num of RS: " + gs.getResearchStationLocations().size());
+
+
 
 		for (City atCity : gs.getResearchStationLocations())
 		{

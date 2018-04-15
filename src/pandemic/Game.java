@@ -237,15 +237,10 @@ public class Game {
 
     public void dealCardsAndShuffleInEpidemicCards() {
 
-        // REMOVE AFTER TESTING
-        CityCard cardWash = (CityCard) myPlayerDeck.getDeck().stream()
-                .filter(c -> c.getCardType() == CardType.CityCard && c.getCardName().equals("Washington"))
-                .findAny().orElse(null);
-        myPlayerDeck.getDeck().add(0, cardWash);
-
-
-
-
+//        CityCard cardAtl = (CityCard) myPlayerDeck.getDeck().stream()
+//                .filter(c -> c.getCardType() == CardType.CityCard && c.getCardName().equals("Atlanta"))
+//                .findAny().orElse(null);
+//        myPlayerDeck.getDeck().add(0, cardAtl);
         myPlayerDeck.printDeck();
 
         for (Player p : gameManager.getActivePlayers()) {
