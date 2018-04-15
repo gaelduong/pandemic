@@ -1501,6 +1501,18 @@ public class Game {
         }
     }
 
+    public boolean allFlagsRemoved(DiseaseType d){
+        boolean noFlagsRemaining = true;
+        ArrayList<City> citiesOnBoard = myGameBoard.getCitiesOnBoard();
+        for(City c : citiesOnBoard){
+            if (c.getNumOfDiseaseFlagsPlaced(d) != 0){
+                noFlagsRemaining = false;
+                break;
+            }
+        }
+        return noFlagsRemaining;
+    }
+
     public boolean getComplexMolecularStructureActive(){
   	    return complexMolecularStructureActive;
     }

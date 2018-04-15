@@ -594,7 +594,9 @@ public class GameManager {
 
                     if (!infectStatus) {
                         currentGame.infectAndResolveOutbreaks(cityDiseaseType, cityDisease, gameStatus, Q);
-                        if(currentGame.isBioTChallengeActive()) {
+                        if(currentGame.isBioTChallengeActive()
+                                || currentGame.getChallenge() == ChallengeKind.Mutation
+                                || currentGame.getChallenge() == ChallengeKind.VirulentStrainAndMutation) {
                             boolean diseaseEradicatedPurple = currentGame.checkIfEradicated(DiseaseType.Purple);
                             if (city.containsPurpleDisease() && !diseaseEradicatedPurple) {
                                 Disease purpleDisease = currentGame.getDiseaseByDiseaseType(DiseaseType.Purple);
@@ -873,6 +875,16 @@ public class GameManager {
 
             if(cured && currentGame.checkIfEradicated(diseaseType)) {
                 disease.setEradicated(true);
+            }
+
+            // Check if all diseases in game are cured:
+            boolean allBasicDiseasesCured = false;
+            if (currentGame.getChallenge().equals(ChallengeKind.BioTerrorist) || currentGame.getChallenge().equals(ChallengeKind.Mutation) || currentGame.getChallenge().equals(ChallengeKind.VirulentStrainAndMutation)){
+                allBasicDiseasesCured = currentGame.getDiseaseByDiseaseType(DiseaseType.Black).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Blue).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Red).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Yellow).isCured();
+            }
+            if (allBasicDiseasesCured && currentGame.allFlagsRemoved(DiseaseType.Purple)){
+                currentGame.setGamePhase(GamePhase.Completed);
+                notifyAllNonBTPlayersGameWon();
             }
 
             return 0;
@@ -1291,13 +1303,19 @@ public class GameManager {
 
             // Check if all diseases in game are cured:
             boolean allDiseasesCured;
-            if (currentGame.getChallenge().equals(ChallengeKind.BioTerrorist) || currentGame.getChallenge().equals(ChallengeKind.Mutation)){
+            boolean allBasicDiseasesCured = false;
+            if (currentGame.getChallenge().equals(ChallengeKind.BioTerrorist) || currentGame.getChallenge().equals(ChallengeKind.Mutation) || currentGame.getChallenge().equals(ChallengeKind.VirulentStrainAndMutation)){
                 allDiseasesCured = currentGame.getDiseaseByDiseaseType(DiseaseType.Black).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Blue).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Red).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Yellow).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Purple).isCured();
+                allBasicDiseasesCured = currentGame.getDiseaseByDiseaseType(DiseaseType.Black).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Blue).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Red).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Yellow).isCured();
             }
             else {
                 allDiseasesCured = currentGame.getDiseaseByDiseaseType(DiseaseType.Black).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Blue).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Red).isCured() && currentGame.getDiseaseByDiseaseType(DiseaseType.Yellow).isCured();
             }
             if (allDiseasesCured){
+                currentGame.setGamePhase(GamePhase.Completed);
+                notifyAllNonBTPlayersGameWon();
+            }
+            else if (allBasicDiseasesCured && currentGame.allFlagsRemoved(DiseaseType.Purple)){
                 currentGame.setGamePhase(GamePhase.Completed);
                 notifyAllNonBTPlayersGameWon();
             }
