@@ -78,6 +78,15 @@ public class PostCondition implements Serializable {
          * This action will end the turn for the current player
          */
         END_TURN,
+
+        /**
+         * This action will play a specified event card
+         * <br><br><b>Arguments required:</b><br>
+         * EventCardName name, List arguments
+         * <br>
+         *     (the arguments are encoded by the parameters specified in {@link server.premadeURs.EventCardURs}
+         */
+        EVENT_CARD,
     }
 
     public PostCondition(ACTION action, Object... arguments) {

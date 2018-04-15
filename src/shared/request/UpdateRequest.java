@@ -1,6 +1,9 @@
 package shared.request;
 
 import pandemic.*;
+import pandemic.eventcards.EventCard;
+import pandemic.eventcards.EventCardName;
+import pandemic.eventcards.impl.*;
 import shared.PlayerCardSimple;
 import shared.CardTargetType;
 import shared.TravelType;
@@ -85,6 +88,10 @@ public class UpdateRequest implements Serializable {
 
             case END_TURN:
                 status = executeEndTurn(game);
+                break;
+
+            case EVENT_CARD:
+                executeEventCard(game, arguments);
                 break;
         }
         return status;
@@ -221,7 +228,7 @@ public class UpdateRequest implements Serializable {
                     result = game.getPlayerDiscardPile();
                     break;
                 case REMOVE_FROM_GAME:
-                    //result = game.getMyGameCardRemover();
+                    result = game.getMyGameCardRemover();
                     break;
             }
         } else {
@@ -230,6 +237,93 @@ public class UpdateRequest implements Serializable {
                                                             .findAny().orElse(null);
         }
         return result;
+    }
+
+    private void executeEventCard(Game game, List arguments) {
+        final EventCardName name = (EventCardName) arguments.get(0);
+        final List eventCardArgs = (List) arguments.get(1);
+        switch (name) {
+            case AirLift:
+                playAirLiftEC(game, eventCardArgs);
+                break;
+            case Forecast:
+                playForecastEC(game, eventCardArgs);
+                break;
+            case CommercialTravelBan:
+                playCommercialBanEC(game, eventCardArgs);
+                break;
+            case BorrowedTime:
+                playBorrowedTimeEC(game);
+                break;
+            case GovernmentGrant:
+                playGovernmentGrantEC(game, eventCardArgs);
+                break;
+            case MobileHospital:
+                playMobileHospitalEC(game);
+                break;
+            case OneQuietNight:
+                playOneQuietNightEC(game, eventCardArgs);
+                break;
+            case ResilientPopulation:
+                playResilientPopulationEC(game, eventCardArgs);
+                break;
+        }
+
+    }
+
+    private void playResilientPopulationEC(Game game, List eventCardArgs) {
+        final ResilientPopulationEventCard toPlay = new ResilientPopulationEventCard(game.getGameManager());
+        final String cardOwnerName = (String) eventCardArgs.get(0);
+        final InfectionCard cardToMove = (InfectionCard) eventCardArgs.get(1);
+        toPlay.playEventCard(game.getGameManager().getPlayerFromUsername(cardOwnerName), cardToMove);
+    }
+
+    private void playOneQuietNightEC(Game game, List eventCardArgs) {
+        final OneQuietNightEventCard toPlay = new OneQuietNightEventCard(game.getGameManager());
+        final String cardOwnerName = (String) eventCardArgs.get(0);
+        toPlay.playEventCard(game.getGameManager().getPlayerFromUsername(cardOwnerName));
+    }
+
+    private void playMobileHospitalEC(Game game) {
+        final MobileHospitalEventCard toPlay = new MobileHospitalEventCard(game.getGameManager());
+        toPlay.playEventCard();
+    }
+
+    private void playGovernmentGrantEC(Game game, List eventCardArgs) {
+        final GovernmentGrantEventCard toPlay = new GovernmentGrantEventCard(game.getGameManager());
+        final String cardOwnerName = (String) eventCardArgs.get(0);
+        final CityName targetCityName = (CityName) eventCardArgs.get(1);
+        toPlay.playEventCard(game.getGameManager().getPlayerFromUsername(cardOwnerName),
+                game.getGameManager().getCityByName(targetCityName));
+    }
+
+    private void playBorrowedTimeEC(Game game) {
+        final BorrowedTimeEventCard toPlay = new BorrowedTimeEventCard(game.getGameManager());
+        toPlay.playEventCard();
+    }
+
+    private void playCommercialBanEC(Game game, List eventCardArgs) {
+        final CommercialTravelBanEventCard toPlay = new CommercialTravelBanEventCard(game.getGameManager());
+        final String cardOwnerName = (String) eventCardArgs.get(0);
+        toPlay.playEventCard(game.getGameManager().getPlayerFromUsername(cardOwnerName));
+    }
+
+    @SuppressWarnings("unchecked")
+    private void playForecastEC(Game game, List eventCardArgs) {
+        final ForecastEventCard toPlay = new ForecastEventCard(game.getGameManager());
+        final String cardOwnerName = (String) eventCardArgs.get(0);
+        final List<InfectionCard> rearrangedCards = (List<InfectionCard>) eventCardArgs.get(1);
+        toPlay.playEventCard(game.getGameManager().getPlayerFromUsername(cardOwnerName), rearrangedCards);
+    }
+
+    private void playAirLiftEC(Game game, List eventCardArgs) {
+        final AirLiftEventCard toPlay = new AirLiftEventCard(game.getGameManager());
+        final String cardOwnerName = (String) eventCardArgs.get(0);
+        final String playerToMoveName = (String) eventCardArgs.get(1);
+        final CityName cityDestinationName = (CityName) eventCardArgs.get(2);
+        toPlay.playEventCard(game.getGameManager().getPlayerFromUsername(cardOwnerName),
+                game.getGameManager().getPlayerFromUsername(playerToMoveName).getPawn(),
+                game.getGameManager().getCityByName(cityDestinationName));
     }
 
     private void setEpidemicOccured() {

@@ -178,8 +178,8 @@ public class PandemicServer extends Server {
                     return false;
                 }
 
-                sendMessage(clientToDiscardSocket, ClientCommands.RECEIVE_GAME_MESSAGE.name(), MessageType.DISCARD_CARD,
-                                                        "You have too many cards. Please discard a card.");
+                //sendMessage(clientToDiscardSocket, ClientCommands.RECEIVE_GAME_MESSAGE.name(), MessageType.DISCARD_CARD,
+                                           //             "You have too many cards. Please discard a card.");
             }
 
         } else {
