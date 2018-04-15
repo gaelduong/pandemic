@@ -3,7 +3,7 @@ package pandemic;
 public class MutationCard implements InfectionCard{
     private CardType type = CardType.MutationCard;
     private String name = "MutationCard";
-    private GameManager gameManager;
+    private transient GameManager gameManager;
 
     public MutationCard(GameManager gm){
         gameManager = gm;

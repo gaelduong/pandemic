@@ -1679,7 +1679,6 @@ public class GUI extends JFrame {
 					} else if (moves.get("buildResearch")) {
 						GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
 
-						//GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
 					}
 
 					else if (moves.get("OEMoveToAnyCity")){
