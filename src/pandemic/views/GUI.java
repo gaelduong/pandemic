@@ -23,6 +23,7 @@ import pandemic.*;
 //import pandemic.User;
 import server.PandemicServer;
 import server.ServerCommands;
+import server.premadeURs.EventCardURs;
 import server.premadeURs.GameURs;
 import shared.*;
 import shared.request.PostCondition;
@@ -70,6 +71,12 @@ public class GUI extends JFrame {
 
 		put("discard", false);
 		put("playEventCard",false);
+		put("GovernmentGrant",false);
+		put("ResilientPopulation",false);
+		put("OneQuietNight",false);
+		put("Airlift",false);
+		put("Forecast",false);
+
 	}};
 	private CityName cityNameSelected = null;
 
@@ -303,6 +310,7 @@ public class GUI extends JFrame {
 	private JLabel optionBlueDisease = new JLabel();
 	private JLabel optionYellowDisease = new JLabel();
 	private JLabel optionBlackDisease = new JLabel();
+	private JLabel optionPurpleDisease = new JLabel();
 
 
 	private JButton buildRSButton = new JButton();
@@ -360,6 +368,8 @@ public class GUI extends JFrame {
 	private JButton discardButton = new JButton();
 
 
+
+
 	/*Discover cure button*/
 	private JLabel discoverCureButton = new JLabel();
 
@@ -407,6 +417,7 @@ public class GUI extends JFrame {
 	private JLabel blueRemaining;
 	private JLabel yellowRemaining;
 	private JLabel blackRemaining;
+	private JLabel purpleRemaining;
 
 	/*Player cards*/
 
@@ -817,6 +828,15 @@ public class GUI extends JFrame {
 			btnBuildResearch1.setVisible(false);
 			btnShareKnowledge1.setVisible(false);
 
+			Component[] components = contentPane.getComponents();
+
+			for(int i = 0; i < components.length; i++) {
+				if (components[i].getClass().getName() == "javax.swing.JButton") {
+
+					((JButton) components[i]).setEnabled(true);
+				}
+			}
+
 		} else {
 			btnDriveFerry.setVisible(false);
 			btnDirectFlight.setVisible(false);
@@ -860,6 +880,7 @@ public class GUI extends JFrame {
 		optionYellowDisease.setVisible(false);
 		optionBlackDisease.setVisible(false);
 		optionBlueDisease.setVisible(false);
+		optionPurpleDisease.setVisible(false);
 		treatDiseaseBox.setVisible(false);
 
 
@@ -901,7 +922,7 @@ public class GUI extends JFrame {
 		loadTargetsRS();
 //		loadGenericMessageBox();
 
-		if (gs.getCardMap().get(userRole).size() > 7) loadTooManyCardsMessage();
+
 
 
 
@@ -950,7 +971,6 @@ public class GUI extends JFrame {
 					mapCardColors.put(Region.Yellow, mapCardColors.get(Region.Yellow) + 1);
 				else if (((CityCard) (playerCard)).getRegion().equals(Region.Black))
 					mapCardColors.put(Region.Black, mapCardColors.get(Region.Black) + 1);
-				;
 			}
 		}
 		System.out.println("Count card colors: R:" + mapCardColors.get(Region.Red) + " B:" + mapCardColors.get(Region.Blue)
@@ -1011,13 +1031,13 @@ public class GUI extends JFrame {
 
 		btnShareKnowledge.setEnabled(false);
 
-		boolean moreThanOne = false;
+		boolean moreThanOnePerson = false;
 		boolean hasCard = false;
 
 		for (Map.Entry<RoleType, City> e : gs.getPositionMap().entrySet()) {
 			if (!e.getKey().equals(userRole)) {
 				if (e.getValue().equals(currCity)) {
-					moreThanOne = true;
+					moreThanOnePerson = true;
 					break;
 				}
 			}
@@ -1031,10 +1051,11 @@ public class GUI extends JFrame {
 				}
 			}
 		}
-		if (moreThanOne && hasCard) btnShareKnowledge.setEnabled(true);
+		//if(moreThanOnePerson) btnShareKnowledge.setEnabled(true);
+		if (moreThanOnePerson && hasCard) btnShareKnowledge.setEnabled(true);
 
 
-		//grey out buildRS if player has no card that matches the city he's in
+		//grey out buildRS if player has no card that matches the city he's in unless he's operation expert
 		//OR if a station already exists in the city he's in
 		btnBuildResearch.setEnabled(false);
 
@@ -1044,6 +1065,8 @@ public class GUI extends JFrame {
 				break;
 			}
 		}
+		//regardless of his hand, he can always build a rstation
+		if(userRole.equals(RoleType.OperationsExpert)) btnBuildResearch.setEnabled(true);
 		for (City c : gs.getResearchStationLocations()) {
 			if (c.getName().toString().equals(citName)) {
 				btnBuildResearch.setEnabled(false);
@@ -1051,14 +1074,36 @@ public class GUI extends JFrame {
 			}
 		}
 
-		//greyout shuttle flight if |RS| < 2
+		//grey out shuttle flight if |RS| < 2
 		//OR if there's no RS in the city he's in
 		btnShuttleFlight.setEnabled(false);
 
 		for (City c : gs.getResearchStationLocations()) {
 			if (c.getName().equals(currCity.getName())) btnShuttleFlight.setEnabled(true);
 		}
-		if (gs.getResearchStationLocations().size() < 2) btnShuttleFlight.setEnabled(false);
+		//if the player operation expert he can move to any other cities from a station
+		if(!userRole.equals(RoleType.Medic.OperationsExpert)) {
+			if (gs.getResearchStationLocations().size() < 2) btnShuttleFlight.setEnabled(false);
+		}
+
+
+
+
+		//show discard button and disable other buttons if hand > 7
+		if (gs.getCardMap().get(userRole).size() > 7) {
+
+			Component[] components = contentPane.getComponents();
+
+			for(int i = 0; i < components.length; i++) {
+				if (components[i].getClass().getName() == "javax.swing.JButton"
+						&& !((JButton)components[i]).getText().equals("DISCARD")) {
+					//System.out.println("yo");
+					((JButton) components[i]).setEnabled(false);
+				}
+			}
+			moves.put("discard",true);
+
+		}
 
 		revalidate();
 		repaint();
@@ -1076,7 +1121,7 @@ public class GUI extends JFrame {
 
 	private void initComponents() {
 
-		//Load player cards
+	/*	//Load player cards
 		for(JLabel label : mapPlayerCardLabels.values())
 		{
 			//System.out.println(entry.getKey());
@@ -1309,6 +1354,14 @@ public class GUI extends JFrame {
 		contentPane.add(mapLines);
 		mapLines.setVisible(true);
 
+		/*JLabel tt = new JLabel("dfsadf");
+		tt.setBounds(100,100,300,300);
+		tt.setBackground(Color.BLUE);
+		tt.setOpaque(true);
+		map.add(tt);
+		map.setComponentZOrder(tt,0);
+		tt.setVisible(true);*/
+
 		// Set up cities
 		Icon blueCityIcon = new ImageIcon((new ImageIcon(GUI.class.getResource(blueCityIconPath)))
 				.getImage().getScaledInstance(citySize, citySize, Image.SCALE_SMOOTH));
@@ -1370,32 +1423,19 @@ public class GUI extends JFrame {
 
 
 
-
-		discardOptionButton.setFocusPainted(false);
-
 		playEventOptionButton.setText("PLAY EVENT CARD");
-		playEventOptionButton.setBounds(501, 530, 106, 20);
+		playEventOptionButton.setBounds(100, 550, 106, 20);
 		playEventOptionButton.setBackground(Color.cyan);
 		playEventOptionButton.setForeground(Color.WHITE);
 
-
 		playEventOptionButton.setFocusPainted(false);
 
-		contentPane.add(discardOptionButton);
 		contentPane.add(discardButton);
 		contentPane.add(playEventOptionButton);
-
-		contentPane.setComponentZOrder(discardOptionButton,0);
-		//contentPane.setComponentZOrder(playEventOptionButton,0);
+		playEventOptionButton.setVisible(true);
 
 
-		discardOptionButton.setVisible(false);
-		playEventOptionButton.setVisible(false);
-
-
-
-
-
+		contentPane.setComponentZOrder(playEventOptionButton,0);
 
 
 
@@ -1405,6 +1445,7 @@ public class GUI extends JFrame {
 		contentPane.add(optionYellowDisease);
 		contentPane.add(optionBlueDisease);
 		contentPane.add(optionBlackDisease);
+		contentPane.add(optionPurpleDisease);
 		contentPane.add(treatDiseaseBox);
 
 
@@ -1431,13 +1472,14 @@ public class GUI extends JFrame {
 		btnInfectNextCity.setEnabled(false);
 		btnInfectNextCity.setFocusPainted(false);
 
-		discardOptionButton.setText("DISCARD");
-		discardOptionButton.setBounds(11, 570, 206, 20);
-		discardOptionButton.setBackground(Color.ORANGE);
-		discardOptionButton.setForeground(Color.WHITE);
-		contentPane.add(discardOptionButton);
-		discardOptionButton.setEnabled(false);
-		discardOptionButton.setFocusPainted(false);
+		discardButton.setText("DISCARD");
+		discardButton.setBounds(11, 570, 176, 20);
+		discardButton.setBackground(Color.GREEN);
+		discardButton.setForeground(Color.WHITE);
+		contentPane.add(discardButton);
+		discardButton.setVisible(false);
+		discardButton.setFocusPainted(false);
+
 
 
 		// Generic message box
@@ -1489,6 +1531,16 @@ public class GUI extends JFrame {
 		blackRemaining.setBounds(451, 6, 48, 16);
 		topBar.add(blackRemaining);
 		blackRemaining.setOpaque(true);
+
+		//purple cubes remaining
+		purpleRemaining = new JLabel();
+		purpleRemaining.setBackground(Color.BLACK);
+		purpleRemaining.setForeground(Color.WHITE);
+		purpleRemaining.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(purpleCubesRemPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
+		purpleRemaining.setBounds(451, 6, 48, 16);
+		topBar.add(purpleRemaining);
+		purpleRemaining.setOpaque(true);
+
 		;
 		//instruction
 		instruction = new JLabel("");
@@ -1524,7 +1576,7 @@ public class GUI extends JFrame {
 		contentPane.add(userRoleLabel);
 		userRoleLabel.setVisible(true);
 		controlPawn = new JLabel();
-		controlPawn.setBounds(74, 595, 80, 106);
+		controlPawn.setBounds(74, 635, 30, 40);
 		contentPane.add(controlPawn);
 		controlPawn.setVisible(true);
 
@@ -1570,6 +1622,7 @@ public class GUI extends JFrame {
 		contentPane.setComponentZOrder(blueRemaining, 1);
 		contentPane.setComponentZOrder(yellowRemaining, 1);
 		contentPane.setComponentZOrder(blackRemaining, 1);
+		contentPane.setComponentZOrder(purpleRemaining, 1);
 		contentPane.setComponentZOrder(infectionRate, 1);
 		contentPane.setComponentZOrder(outbreakMeterCount, 1);
 		contentPane.setComponentZOrder(userRoleLabel, 1);
@@ -1620,14 +1673,13 @@ public class GUI extends JFrame {
 						GameURs.sendDirectFlightUR(client, username, cityNameSelected.toString());
 
 					} else if (moves.get("charterFlight")) {
-						//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
-						//	new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.CHARTER_FLIGHT)));
+						GameURs.sendCharterFlightUR(client, gs.getPositionMap().get(userRole).getName().toString() ,cityNameSelected.toString(), username, userRole);
 					} else if (moves.get("shuttleFlight")) {
-						//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
-						//	new UpdateRequest(new PostCondition(PostCondition.ACTION.MOVE_PLAYER_POS, username, cityNameSelected.toString(), TravelType.SHUTTLE_FLIGHT)));
+						GameURs.sendShuttleFlightUR(client, username, cityNameSelected.toString());
 					} else if (moves.get("buildResearch")) {
-
 						GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
+
+						//GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
 					}
 
 					else if (moves.get("OEMoveToAnyCity")){
@@ -1662,8 +1714,7 @@ public class GUI extends JFrame {
 
 				buildRSButton.setVisible(false);
 
-				//send server the city user is in
-
+				//send server the city name
 				GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  null);
 
 			}
@@ -1819,6 +1870,26 @@ public class GUI extends JFrame {
 				setCursor(cursor);
 			}
 		});
+		optionPurpleDisease.addMouseListener(new MouseAdapter() {
+			public void mouseReleased(MouseEvent e) {
+				hideTreatDiseaseOptions();
+				GameURs.sendTreatDiseaseUR(client, DiseaseType.Purple);
+				//client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(), new UpdateRequest(new PostCondition(PostCondition.ACTION.TREAT_DISEASE, username, DiseaseType.Black)));
+			}
+
+			//cursor => pointer
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
+				setCursor(cursor);
+			}
+
+			/*Mouse exit, pointer to cursor*/
+			public void mouseExited(MouseEvent e) {
+				Cursor cursor = Cursor.getDefaultCursor();
+				setCursor(cursor);
+			}
+		});
 		//etadd
 		btnEndTurn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1847,12 +1918,16 @@ public class GUI extends JFrame {
 
 		});
 		//discard option add
-		discardOptionButton.addActionListener(new ActionListener() {
+		discardButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				discardOptionButton.setEnabled(false);
-				playEventOptionButton.setEnabled(false);
-				moves.put("discard",true);
+				discardButton.setVisible(false);
+				//
+				if(playerCardToDiscard != null)
+				{
+					System.out.println(playerCardToDiscard.getCardName());
+					//send server playerCardToDisCard
+					//GameURs.send....(client, playerCardToDiscard)
+				}
 
 
 
@@ -1865,6 +1940,9 @@ public class GUI extends JFrame {
 				discardOptionButton.setEnabled(false);
 				playEventOptionButton.setEnabled(false);
 				moves.put("playEventCard",true);
+
+
+
 
 
 
@@ -2035,7 +2113,7 @@ public class GUI extends JFrame {
 
 					if (gs.getResearchStationLocations().size() < 6)
 						showHideBuildRSButton();
-					else
+					else //else display RSs to remove
 						showHideTargetsRS();
 
 					//else if RS=6
@@ -2100,7 +2178,7 @@ public class GUI extends JFrame {
 					String currentPlayer = getGameState().getCurrentPlayer();
 
 					List<String> playerList = getGameState().getUserMap().entrySet().stream()
-							.filter(entry -> !entry.getValue().equals(currentPlayer))
+							.filter(entry -> !entry.getValue().equals(currentPlayer) )
 							.map(entry -> entry.getKey().toString()).collect(Collectors.toList());
 
 					final JList<String> list = new JList<>(new Vector<>(playerList));
@@ -2108,7 +2186,8 @@ public class GUI extends JFrame {
 					dialog.setOnOk(ev -> {
 						final List<String> chosenItems = dialog.getSelectedItems();
 						String sharingKnowlegeTarget = chosenItems.get(0);
-						//System.out.println("Sharing knowledge with " + sharingKnowlegeTarget);
+						System.out.println("Sharing knowledge with " + sharingKnowlegeTarget);
+
 
 						GameURs.sendShareKnowledgeConsentRequest(
 								client, /*client*/
@@ -2301,6 +2380,7 @@ public class GUI extends JFrame {
 		blueRemaining.setText("" + gs.getRemainingDiseaseCubesMap().get(DiseaseType.Blue));
 		yellowRemaining.setText("" + gs.getRemainingDiseaseCubesMap().get(DiseaseType.Yellow));
 		blackRemaining.setText("" + gs.getRemainingDiseaseCubesMap().get(DiseaseType.Black));
+		purpleRemaining.setText("" + gs.getRemainingDiseaseCubesMap().get(DiseaseType.Purple));
 		infectionRate.setText("" + gs.getCurrentInfectionRate());
 		outbreakMeterCount.setText("" + gs.getCurrentOutbreakMeter());
 	}
@@ -2374,6 +2454,8 @@ public class GUI extends JFrame {
 		//get list<City> from gs
 		//draw a station on each list[i], i.e City
 
+		System.out.println("num of RS: " + gs.getResearchStationLocations().size());
+
 		for (City atCity : gs.getResearchStationLocations())
 		{
             System.out.println();
@@ -2388,8 +2470,8 @@ public class GUI extends JFrame {
 			JLabel rsLabel = new JLabel("/pandemic/resources/researchStation1.png");
 
 
-			rsLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(rsLabel.getText())).getImage().getScaledInstance(citySize-2, citySize-2, Image.SCALE_SMOOTH)));
-			rsLabel.setBounds(rsX, rsY, citySize-2, citySize-2);
+			rsLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(rsLabel.getText())).getImage().getScaledInstance(citySize-7, citySize-7, Image.SCALE_SMOOTH)));
+			rsLabel.setBounds(rsX, rsY, citySize-7, citySize-7);
 			contentPane.add(rsLabel);
 			contentPane.setComponentZOrder(rsLabel, 1);
 			rsLabel.setVisible(true);
@@ -2469,7 +2551,7 @@ public class GUI extends JFrame {
 		userRoleLabel.setText("Role: " + userRole.toString());
 //		//userRoleLabel.setFont(new Font("Lao MN", Font.PLAIN, 12));
 //		userRoleLabel.setForeground(Color.WHITE);
-		userRoleLabel.setBounds(74 - userRole.toString().length(), 575, 190, 16);
+		userRoleLabel.setBounds(74 - userRole.toString().length(), 600, 190, 16);
 //		contentPane.add(userRoleLabel);
 //		contentPane.setComponentZOrder(userRoleLabel, 1);
 //		userRoleLabel.setVisible(true);
@@ -2478,7 +2560,7 @@ public class GUI extends JFrame {
 //		controlPawn = new JLabel();
 		String controlPawnIconPath = mapPawnLabels.get(userRole).getText();
 //		//System.out.println(controlPawnIconPath);
-		controlPawn.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(controlPawnIconPath)).getImage().getScaledInstance(80, 106, Image.SCALE_SMOOTH)));
+		controlPawn.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(controlPawnIconPath)).getImage().getScaledInstance(30, 40, Image.SCALE_SMOOTH)));
 //		controlPawn.setBounds(74, 595, 80, 106);
 //		contentPane.add(controlPawn);
 //		contentPane.setComponentZOrder(controlPawn, 1);
@@ -2548,11 +2630,13 @@ public class GUI extends JFrame {
 				for (MouseListener mouseListener : mouseListeners) {
 					playerCardLabel.removeMouseListener(mouseListener);
 				}
+				//RoleType  = userRole;
 				playerCardLabel.addMouseListener(new MouseAdapter() {
 					public void mouseReleased(MouseEvent e) {
 
 
 						System.out.println("Card clicked: " + playerCard.getCardName());
+						System.out.println(moves.get("playEventCard") + " " + moves.get("discoverCure") + " " + moves.get("discard"));
 						if (moves.get("discoverCure") == true) {
 							if (playerCard.getCardType().equals(CardType.CityCard)) {
 								if (playerCardLabel.getY() < 585) {
@@ -2579,48 +2663,107 @@ public class GUI extends JFrame {
 							//card down => discardButtion go away
 							//set playerCardToDiscard (CityCard) = that card
 
-
-							//loadPlayerCards();
-							contentPane.add(discardButton);
+							loadPlayerCards();
 							contentPane.setComponentZOrder(discardButton,0);
-							discardButton.setVisible(true);
+
 
 							if (playerCardLabel.getY() < 585)
 							{
 								playerCardLabel.setLocation(playerCardLabel.getX(), playerCardLabel.getY() + 20);
 								playerCardToDiscard = null;
+								discardButton.setVisible(false);
+								playEventOptionButton.setVisible(false);
 							}
 							else if (playerCardLabel.getY() == 585)
 							{
 								playerCardLabel.setLocation(playerCardLabel.getX(), playerCardLabel.getY() - 20);
 								playerCardToDiscard = playerCard;
+								discardButton.setVisible(true);
+								if(playerCard.getCardType().equals(CardType.EventCard)) {
+									playEventOptionButton.setVisible(true);
+								}
 
 
 
 
 							}
-							System.out.println("Selected card to discard " + playerCardToDiscard.getCardName());
+							if(playerCardToDiscard!=null) System.out.println("Selected card to discard " + playerCardToDiscard.getCardName());
 
 							System.out.println();
 
+						}
+						else if(moves.get("playEventCard")) {
 
-
-
-
-						} else if (moves.get("playEventCard")) {
+							//now if player decides to play event card...
 							//make sure it's an eventCard
 							if (playerCard.getCardType().equals(CardType.EventCard)) {
 								//once clicked, depends which event card, display corresponding gui elements
 								//for e.g if government grant is clicked => display targeted city to build station on
 								//so bunch of if else (if(mapPlayerCard.get(playerCard.getCardName().equals("GovernmentGrant")...)
+
+
+								if (mapPlayerCardLabels.get(playerCard.getCardName().toString()).equals("OneQuietNight")) {
+									//send request
+
+									EventCardURs.sendOneQuietNight(client, username);
+								}
+								else if (mapPlayerCardLabels.get(playerCard.getCardName().toString()).equals("GovernmentGrant")) {
+									//then display the targets (optional)
+									//click city
+
+									moves.put("GovernmentGrant", true);
+									//send request
+								}
+								else if (mapPlayerCardLabels.get(playerCard.getCardName().toString()).equals("ResilientPopulation")) {
+
+									//display list of infection discard cards
+									List<String> infectionDiscardList = new ArrayList<>();
+									for(InfectionCard infectionCard : gs.getInfectionDiscardPile().getCards())
+									{
+										infectionDiscardList.add(infectionCard.getCardName());
+									}
+
+									final JList<String> listToDisplay = new JList<>(new Vector<>(infectionDiscardList));
+									final ListDialog dialogRemoveInfectionCard = new ListDialog("Remove infection card", "Please remove one infection card: ", listToDisplay);
+									dialogRemoveInfectionCard.setOnOk(ev->
+									{
+										final List<String> chosenItems = dialogRemoveInfectionCard.getSelectedItems();
+										String infectionCardTarget = chosenItems.get(0);
+										System.out.println("Infection card to remove: " + infectionCardTarget);
+										int index = -1;
+										for(int i=0;i<infectionDiscardList.size();i++)
+										{
+											if(infectionDiscardList.get(i).equals(infectionCardTarget))
+											{
+												index=i;
+												break;
+											}
+										}
+										System.out.println(gs.getInfectionDiscardPile().getCards().get(index).getCardName());
+										EventCardURs.sendResilientPopulationUR(client, username, gs.getInfectionDiscardPile().getCards().get(index));
+
+									});
+									dialogRemoveInfectionCard.show();
+
+
+								}
+								else if (mapPlayerCardLabels.get(playerCard.getCardName().toString()).equals("Airlift")) {
+
+								}
+								else if (mapPlayerCardLabels.get(playerCard.getCardName().toString()).equals("Forecast")) {
+
+								}
+
 							}
 						}
+
 
 					}
 
 					private void loadDiscoverCureButton() {
 
-						if (discoverCureDiscardCards.size() < 2) {
+						int isSci = getUserRole().equals(RoleType.Scientist)? 1:0;
+						if (discoverCureDiscardCards.size() + isSci < 2) {
 							discoverCureButton.setVisible(false);
 							return;
 						}
@@ -2834,35 +2977,55 @@ public class GUI extends JFrame {
 	}
 
 	private void loadTargetsShuttleFlight() {
-		/*for(JLabel target : targetsShuttleFlight){
+		for(JLabel target : targetsShuttleFlight){
 			target.setVisible(false);
 		}
 		targetsShuttleFlight.clear();
-		//check if player is at a city which has a research station
+		//check if player is at a city which has a research station (no need)
 		//display targets on cities that have research station only
 		//but not the one where the player is at => figure out which city he's at
 		//we have in gs List<City> rsPosList
-		List<City> rsPosList = gs.getResearchStationLocations();
-		for(City c: rsPosList)
+
+		//if he is operation expert, load all cities except the one he's in (just like charter flight)
+
+		if(userRole.equals(RoleType.OperationsExpert))
 		{
-			if(!c.getName().toString().equals(gs.getPositionMap().get(userRole).getName().toString()))
-			{
-				JLabel cityLabel = mapCityLabels.get(c.getName());
+			for (JLabel cityLabel : mapCityLabels.values()) {
+				if (!mapCityLabels.get(gs.getPositionMap().get(userRole).getName()).equals(cityLabel)) {
+					//create a target label
+					JLabel target = new JLabel();
+					target.setBounds(cityLabel.getX() - 5, cityLabel.getY() - 5, 40, 40);
+					target.setIcon(iconTarget);
 
-				//create a target label
-				JLabel target = new JLabel();
-				target.setBounds(cityLabel.getX()+5,cityLabel.getY()+5,40,40);
-				target.setIcon(iconTarget);
+					contentPane.add(target);
+					target.setVisible(false);
+					//add to targetsDrive
+					targetsShuttleFlight.add(target);
+				}
+			}
+		}
+		else {
 
-				contentPane.add(target);
-				target.setVisible(false);
-				//add to targetsShuttleFlight
-				targetsShuttleFlight.add(target);
+			List<City> rsPosList = gs.getResearchStationLocations();
+			for (City c : rsPosList) {
+				if (!c.getName().toString().equals(gs.getPositionMap().get(userRole).getName().toString())) {
+					JLabel cityLabel = mapCityLabels.get(c.getName());
+
+					//create a target label
+					JLabel target = new JLabel();
+					target.setBounds(cityLabel.getX() + 5, cityLabel.getY() + 5, 40, 40);
+					target.setIcon(iconTarget);
+
+					contentPane.add(target);
+					target.setVisible(false);
+					//add to targetsShuttleFlight
+					targetsShuttleFlight.add(target);
+
+				}
 
 			}
-
 		}
-*/
+
 		//gs.getPositionMap().get(userRole).getName().toString())
 
 	}
@@ -2877,14 +3040,15 @@ public class GUI extends JFrame {
 
 	}
 
-	//then showHideTargetsRS calls loadTargetRS
+	//showHideTargetsRS calls loadTargetRS
 	private void loadTargetsRS() {
 		targetsRS.forEach(rs -> rs.setVisible(false));
 		targetsRS.clear();
-		List<CityName> rst = new ArrayList<>(Arrays.asList(CityName.Paris, CityName.Istanbul));
-		for (CityName c : rst) {
+		List<City> rst = gs.getResearchStationLocations();
+		for (City c : rst)
+		{
 			JLabel target = new JLabel();
-			target.setBounds(mapCityLabels.get(c).getX() - 5, mapCityLabels.get(c).getY() - 5, 40, 40);
+			target.setBounds(mapCityLabels.get(c.getName()).getX() - 5, mapCityLabels.get(c.getName()).getY() - 5, 40, 40);
 			target.setIcon(iconTarget);
 			contentPane.add(target);
 			contentPane.setComponentZOrder(target, 1);
@@ -2907,6 +3071,8 @@ public class GUI extends JFrame {
 		contentPane.setComponentZOrder(optionYellowDisease, 0);
 		optionBlackDisease.setBounds(586, 390, 150, 36);
 		contentPane.setComponentZOrder(optionBlackDisease, 0);
+		optionPurpleDisease.setBounds(586, 390, 150, 36);
+		contentPane.setComponentZOrder(optionPurpleDisease, 0);
 
 		//cubesTuples.forEach(p-> System.out.println("yo" + p.getKey()));
 		//  System.out.println( cubesInCity + " shalalala");
@@ -2930,6 +3096,11 @@ public class GUI extends JFrame {
 				t = optionBlackDisease;
 				optionBlackDisease.setVisible(!optionBlackDisease.isVisible());
 				System.out.println("Option black should appear");
+			}
+			else if (d.getKey().equals(DiseaseType.Purple)) {
+				t = optionPurpleDisease;
+				optionPurpleDisease.setVisible(!optionPurpleDisease.isVisible());
+				System.out.println("Option purple should appear");
 			}
 			t.setLocation(586, 130 + i * 55);
 			t.setText("" + d.getKey());
@@ -3039,6 +3210,7 @@ public class GUI extends JFrame {
 		optionRedDisease.setVisible(false);
 		optionBlackDisease.setVisible(false);
 		optionYellowDisease.setVisible(false);
+		optionPurpleDisease.setVisible(false);
 		treatDiseaseBox.setVisible(false);
 	}
 
