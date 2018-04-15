@@ -9,4 +9,8 @@ public class MutationSpreadsEventCard extends MutationEventCard{
     public void resolveMutationEvent(){
         gameManager.infectCitiesForMutationSpreads();
     }
+
+    public String getCardName(){
+        return "Mutation Spreads!";
+    }
 }

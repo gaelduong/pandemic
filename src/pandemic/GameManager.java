@@ -448,6 +448,11 @@ public class GameManager {
                 System.out.println("Epidemic resolved");
                 status = playerCard1.getCardName() + " is occurring...";
 			}
+			else if (playerCard1 instanceof MutationEventCard){
+			    System.out.println("Mutation Event occurring...");
+                ((MutationEventCard) playerCard1).resolveMutationEvent();
+                status = playerCard1.getCardName();
+            }
 			else {
 				p.addToHand(playerCard1);
 				checkHandSize(p);
@@ -458,6 +463,11 @@ public class GameManager {
                 System.out.println("Epidemic resolved");
                 status = playerCard2.getCardName() + " is occurring...";
 			}
+            else if (playerCard2 instanceof MutationEventCard){
+                System.out.println("Mutation Event occurring...");
+                ((MutationEventCard) playerCard2).resolveMutationEvent();
+                status = playerCard2.getCardName();
+            }
 			else {
 				p.addToHand(playerCard2);
 				checkHandSize(p);
