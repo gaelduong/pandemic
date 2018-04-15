@@ -74,7 +74,8 @@ public class PandemicServer extends Server {
                     break;
 
                 case SEND_CHAT_MESSAGE:
-                    //TODO russell store msgs and broadcast to clients
+                    final String chatMsg = (String) message.get(1);
+                    sendMessageToClients(ClientCommands.RECEIVE_CHAT_MESSAGE.name(), clientMap.get(client), chatMsg);
                     break;
             }
         } else {
