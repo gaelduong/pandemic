@@ -455,6 +455,8 @@ public class UpdateRequest implements Serializable {
         final EventCardName name = (EventCardName) arguments.get(0);
         final List eventCardArgs = (List) arguments.get(1);
 
+        currentlyProcessedAction.setLog_actionResult("has played the " + name + " event card!");
+
         final Player eventCardPlayer = game.getGameManager().getPlayerFromUsername(playerUsername);
         final EventCard eventCard = (EventCard)eventCardPlayer.getCard(new PlayerCardSimple(CardType.EventCard, name.toString()));
 
