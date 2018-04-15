@@ -516,18 +516,19 @@ public class GameManager {
                         System.out.println("Disease is eradicated.");
                     }
 
-                    if (!infectStatus && currentGame.isBioTChallengeActive()) {
+                    if (!infectStatus) {
                         currentGame.infectAndResolveOutbreaks(cityDiseaseType, cityDisease, gameStatus, Q);
-                        boolean diseaseEradicatedPurple = currentGame.checkIfEradicated(DiseaseType.Purple);
+                        if(currentGame.isBioTChallengeActive()) {
+                            boolean diseaseEradicatedPurple = currentGame.checkIfEradicated(DiseaseType.Purple);
+                            if (city.containsPurpleDisease() && !diseaseEradicatedPurple) {
+                                Disease purpleDisease = currentGame.getDiseaseByDiseaseType(DiseaseType.Purple);
+                                ArrayList<DiseaseFlag> diseaseFlagsPurple = currentGame.getDiseaseSupplyByDiseaseType(DiseaseType.Purple);
+                                boolean gameStatusPurple = (currentGame.getOutBreakMeterReading() < 8) && diseaseFlags.size() >= 1;
+                                LinkedList<City> QPurple = new LinkedList<City>();
+                                QPurple.addLast(city);
 
-                        if (city.containsPurpleDisease() && !diseaseEradicatedPurple) {
-                            Disease purpleDisease = currentGame.getDiseaseByDiseaseType(DiseaseType.Purple);
-                            ArrayList<DiseaseFlag> diseaseFlagsPurple = currentGame.getDiseaseSupplyByDiseaseType(DiseaseType.Purple);
-                            boolean gameStatusPurple = (currentGame.getOutBreakMeterReading() < 8) && diseaseFlags.size() >= 1;
-                            LinkedList<City> QPurple = new LinkedList<City>();
-                            QPurple.addLast(city);
-
-                            currentGame.infectAndResolveOutbreaks(DiseaseType.Purple, purpleDisease, gameStatusPurple, QPurple);
+                                currentGame.infectAndResolveOutbreaks(DiseaseType.Purple, purpleDisease, gameStatusPurple, QPurple);
+                            }
                         }
                     }
 
