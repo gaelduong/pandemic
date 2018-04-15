@@ -130,11 +130,16 @@ public class UpdateRequest implements Serializable {
         final String cardDestinationString = (String)arguments.get(2);
 
         Player currentPlayer = game.getCurrentPlayer();
+        System.out.println("Executing move card action from " + currentPlayer);
         if (currentPlayer.getPlayerUserName().equals(playerUsername)) {
             final CardSource cardSource = (CardSource) getCardSourceTarget(cardSourceString, game, currentPlayer);
             final CardTarget cardTarget = (CardTarget) getCardSourceTarget(cardDestinationString, game, currentPlayer);
 
             Card cardToMoveObj = cardSource.getCard(cardToMove);
+            if (cardToMoveObj == null) {
+                System.err.println("CARD TO MOVE IS NULL. ERROR");
+                return;
+            }
 
             cardTarget.acceptCard(cardToMoveObj);
 
