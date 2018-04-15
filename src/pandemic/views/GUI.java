@@ -1671,6 +1671,7 @@ public class GUI extends JFrame {
 
 					} else if (moves.get("directFlight")) {
 						GameURs.sendDirectFlightUR(client, username, cityNameSelected.toString());
+
 					} else if (moves.get("charterFlight")) {
 						GameURs.sendCharterFlightUR(client, gs.getPositionMap().get(userRole).getName().toString() ,cityNameSelected.toString(), username, userRole);
 					} else if (moves.get("shuttleFlight")) {
@@ -1678,10 +1679,7 @@ public class GUI extends JFrame {
 					} else if (moves.get("buildResearch")) {
 						GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
 
-					}
-
-					else if(moves.get("GovernmentGrant")){
-						EventCardURs.sendGovernmentGrantUR(client, username, cityNameSelected);
+						//GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
 					}
 
 					else if (moves.get("OEMoveToAnyCity")){
@@ -1939,6 +1937,7 @@ public class GUI extends JFrame {
 
 		playEventOptionButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				discardOptionButton.setEnabled(false);
 				playEventOptionButton.setEnabled(false);
 				moves.put("playEventCard",true);
 
@@ -2110,6 +2109,7 @@ public class GUI extends JFrame {
 
 					//resetMovesSelected(moves);
 					//if RS < 6
+					//if()
 
 					if (gs.getResearchStationLocations().size() < 6)
 						showHideBuildRSButton();
@@ -3054,6 +3054,7 @@ public class GUI extends JFrame {
 			contentPane.setComponentZOrder(target, 1);
 			target.setVisible(false);
 			targetsRS.add(target);
+
 		}
 
 	}
