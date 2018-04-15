@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.media.AudioClip;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
@@ -46,23 +47,38 @@ import static java.lang.Thread.sleep;
 import static javafx.scene.media.AudioClip.INDEFINITE;
 
 public class MenuLayout extends Parent {
+    public static MenuLayout getInstance() {
+        return instance;
+    }
+
+    public PandemicClient getPandemicClient() {
+        return pandemicClient;
+    }
+
+    public PandemicServer getPandemicServer() {
+        return pandemicServer;
+    }
+
+    private static MenuLayout instance = null;
     PandemicServer pandemicServer;
     PandemicClient pandemicClient;
     //GUI frame;
     GameManager gameManager;
     boolean backButtonNotPressed = true;
     CreateGameObjectData tracker;
+    String usernameTFText;
+    Runnable startGameCallback;
 
-    Label playerc1;
-    Label playerc2 ;
-    Label playerc3;
-    Label playerc4;
+
+    public LobbyChat lobbyChatClient;
+    public LobbyChat lobbyChatServ;
     final AudioClip menuMusic = new AudioClip(new File("src/pandemic/resources/Music/AlienSwarmSoundtrackRybergBattle.wav").toURI().toString());
     final AudioClip startGameSound = new AudioClip(new File("src/pandemic/resources/Music/416385__fredzed__flash-and-a-bang.wav").toURI().toString());
     final AudioClip selectSound = new AudioClip(new File("src/pandemic/resources/Music/50559__broumbroum__sf3-sfx-menu-select-l.wav").toURI().toString());
 
     int currentNumOfPlayerConnected = 0;
 	public MenuLayout(PandemicServer ps, PandemicClient pc) {
+	    instance = this;
         pandemicServer = ps;
         pandemicClient = pc;
         tracker = new CreateGameObjectData();
@@ -72,7 +88,7 @@ public class MenuLayout extends Parent {
         VBox createMenu = new VBox(10);
         VBox joinMenu = new VBox(10);
         VBox joinLobby = new VBox(10);
-        VBox createLobby = new VBox();
+        VBox createLobby = new VBox(10);
         int centerX = 512;
         
         mainMenu.setTranslateX(centerX-125);
@@ -357,14 +373,16 @@ public class MenuLayout extends Parent {
         btnJoinIP.setOnMouseClicked((MouseEvent event) -> {
             selectSound.play();
 
-            String usernameTFText = usernameTF.getText();
+            usernameTFText = usernameTF.getText();
+            lobbyChatClient.setUsername((usernameTFText));
             try {
-                setPandemicClient(new PandemicClient(ipAddress.getText(), usernameTFText,  1301));
+                setPandemicClient(new PandemicClient(ipAddress.getText(), usernameTF.getText(),  1301));
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
+            Runtime.getRuntime().addShutdownHook(new serverThing(null, pandemicClient));
 
             System.out.println("Pandemic client: " + pandemicClient);
 
@@ -385,6 +403,10 @@ public class MenuLayout extends Parent {
         	 * Write some error if no good, else join the game via the code below
         	 * *************************************
         	 */
+
+            // done.
+
+
         	
             getChildren().add(joinLobby);
 
@@ -401,21 +423,20 @@ public class MenuLayout extends Parent {
                 getChildren().remove(joinMenu);
             });
 
-            while(clientGUI.getGameState() == null && backButtonNotPressed)
-            {
+            startGameCallback = () -> {
+                System.out.println("hello22");
+                System.out.println("hello22");
+                System.out.println("hello22");
+                System.out.println("hello22");
+                System.out.println("hello22");
+                System.out.println(clientGUI.getGameState());
 
-//               if (clientGUI.getGameState() != null)
-                    System.out.println(clientGUI.getGameState());
+                startGameSound.play();
+                menuMusic.stop();
+                backButtonNotPressed = true;
+                System.out.println("hello22");
 
-                //wait for a gameState or the user to backout from the lobby ? might work
-            }
-            startGameSound.play();
-            menuMusic.stop();
-            backButtonNotPressed = true;
-            System.out.println("hello");
-
-            EventQueue.invokeLater(new Runnable() {
-                public void run() {
+                EventQueue.invokeLater(() -> {
                     try {
                         System.out.println(pandemicServer + "test");
                         pandemicClient.getGui().setVisible(true);
@@ -423,9 +444,9 @@ public class MenuLayout extends Parent {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-            });
-            getParent().setVisible(false);
+                });
+                getParent().setVisible(false);
+            };
         });
         
         MenuButton btnJoinBack = new MenuButton("BACK");
@@ -451,14 +472,12 @@ public class MenuLayout extends Parent {
         /********************************************************************* 
          * ************Join Lobby Stuff ************************************ *
          *********************************************************************/
-        
-        Label player1 = new Label("Player 1: The host get via network");
-        Label player2 = new Label("Player 2: You");
-        Label player3 = new Label("Player 3: The other get via network");
-        Label player4 = new Label("Player 4: The other get via network");
+
         Label waitingToStart = new Label("WAITING TO START");
         
         MenuButton btnJoinLobbyBack = new MenuButton("BACK");
+
+
         btnJoinLobbyBack.setOnMouseClicked(event -> {
             selectSound.play();
 
@@ -483,11 +502,7 @@ public class MenuLayout extends Parent {
         /********************************************************************* 
          * ************Create Lobby Stuff ********************************** *
          *********************************************************************/
-        
-        playerc1 = new Label("Player 1: You");
-        playerc2 = new Label("Player 2: waiting to connect");
-        playerc3 = new Label("Player 3: waiting to connect");
-        playerc4 = new Label("Player 4: waiting to connect");
+
         //thread here
 
         MenuButton btnCreateGameNow = new MenuButton("Start Game");
@@ -538,6 +553,12 @@ public class MenuLayout extends Parent {
             tt.setOnFinished(evt -> {
                 getChildren().remove(createLobby);
             });
+
+            pandemicServer.close();
+            pandemicClient.close();
+            pandemicServer = null;
+            pandemicClient = null;
+
         });
 
 
@@ -545,37 +566,51 @@ public class MenuLayout extends Parent {
         optionsMenu.getChildren().addAll(btnSound, btnVideo, btnOptionsBack);
         createMenu.getChildren().addAll(difficulty, difficulties, challenge, btnMutation, btnVirulent, btnBioTerrorist, btnCardShowing, btnCreateGame, btnCreateBack);
         joinMenu.getChildren().addAll(username, usernameTF, enterIP, ipAddress, btnJoinIP, btnJoinBack);
-        joinLobby.getChildren().addAll(player1, player2, player3, player4, waitingToStart, btnJoinLobbyBack);
-        createLobby.getChildren().addAll(playerc1, playerc2, playerc3, playerc4, btnCreateGameNow, btnCreateLobbyBack);
+
+        lobbyChatServ = new LobbyChat(createLobby, "host");
+        lobbyChatClient = new LobbyChat(joinLobby, usernameTFText);
+        joinLobby.getChildren().addAll(waitingToStart, btnJoinLobbyBack);
+        createLobby.getChildren().addAll(btnCreateGameNow, btnCreateLobbyBack);
 
         Rectangle bg = new Rectangle(1024, 768);
         bg.setFill(Color.GREY);
         bg.setOpacity(0.4);
 
         getChildren().addAll(bg, mainMenu);
-
-
-
     }
+
+    public static void startGame()
+    {
+        if (instance == null || instance.startGameCallback == null)
+        {
+            // error
+            System.out.println("startGame called with null instance or callback.");
+        }
+        else
+        {
+            instance.startGameCallback.run();
+        }
+    }
+
     private void setPandemicClient(PandemicClient c)
     {
         pandemicClient = c;
     }
-
-    public void updateCreateLabel(String newPlayerName) {
-        if (newPlayerName.equals("host")) return;
-
+    /*
+    public void removePlayerLabel(String playerName) {
         Platform.runLater(() -> {
-            if (playerc2.getText().toLowerCase().contains("waiting to connect"))
-                playerc2.setText("Player 2: " + newPlayerName);
-            else if (playerc3.getText().toLowerCase().contains("waiting to connect"))
-                playerc3.setText("Player 3: " + newPlayerName);
-            else if (playerc4.getText().toLowerCase().contains("waiting to connect"))
-                playerc4.setText("Player 4: " + newPlayerName);
+            Label labels[] = {playerc2, playerc3, playerc4};
+            int x = 1;
+            for (Label label : labels) {
+                if (label.getText().toLowerCase().contains(playerName)) {
+                    label.setText("Player "+x+": waiting to connect");
+                }
+                x++;
+            }
         });
-    }
+    }*/
 
-	public void setUpCreateGame(PandemicServer s, PandemicClient c)
+   	public void setUpCreateGame(PandemicServer s, PandemicClient c)
     {
         try {
             //User hostUser = new User("HOST", "kjsheofh", "127.0.0.1");

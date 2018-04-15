@@ -91,6 +91,18 @@ public class GameManager {
     public Player getHostPlayer() {
 	    return hostPlayer;
     }
+    public void leaveGameFromLobby(User user)
+    {
+        for(int i = 0; i < activePlayers.size(); ++i)
+        {
+            if(activePlayers.get(i).getPlayerUserName().equals(user.getUserName()))
+            {
+                currentGame.getGameManager().getGame().removePlayerFromBoard(activePlayers.get(i));
+                activePlayers.remove(i);
+                break;
+            }
+        }
+    }
 
     public void joinGame(User user){
 	    Player p = new Player(user);
@@ -101,8 +113,8 @@ public class GameManager {
         } else {
             playerPawn = currentGame.getRandomUnassignedPawn();
         }
-
-
+// p.getPawn().getLocation().getName()
+//
         p.setPawn(playerPawn);
         playerPawn.setPlayer(p);
         p.setRole(playerPawn.getRole());

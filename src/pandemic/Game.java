@@ -692,6 +692,13 @@ public class Game {
         myGameBoard.printGameBoard();
     }
 
+    public void removePlayerFromBoard(Player p)
+    {
+        myGameBoard.getCitiesOnBoard().forEach(
+                (city) -> city.getCityUnits().remove(p.getPawn())
+        );
+    }
+
     public CurrentPlayerTurnStatus getCurrentPlayerTurnStatus() {
         return currentPlayerTurnStatus;
     }

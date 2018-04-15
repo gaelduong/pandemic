@@ -49,5 +49,13 @@ public enum ClientCommands implements Serializable{
      */
     RECEIVE_CHAT_MESSAGE,
 
+    /**
+     * Server wants an update on our status (aka whether we are still connected).
+     */
+    SERVER_WANTS_PINGBACK,
 
+    /**
+     * Server has sent a new lobby state.
+     */
+    LOBBY_STATE_UPDATE
 }

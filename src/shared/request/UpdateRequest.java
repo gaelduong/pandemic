@@ -118,12 +118,10 @@ public class UpdateRequest implements Serializable {
         final String cardSourceString = (String)arguments.get(1);         //read the MOVE_CARD enum for the string encoding
         final String cardDestinationString = (String)arguments.get(2);
 
-
-        if (game.getCurrentPlayer().getPlayerUserName().equals(playerUsername)) {
-            Player currentPlayer = game.getCurrentPlayer();
-
-            final CardSource cardSource = (CardSource) getCardSourceTarget(cardSourceString, playerUsername, game, currentPlayer);
-            final CardTarget cardTarget = (CardTarget) getCardSourceTarget(cardDestinationString, playerUsername, game, currentPlayer);
+        Player currentPlayer = game.getCurrentPlayer();
+        if (currentPlayer.getPlayerUserName().equals(playerUsername)) {
+            final CardSource cardSource = (CardSource) getCardSourceTarget(cardSourceString, game, currentPlayer);
+            final CardTarget cardTarget = (CardTarget) getCardSourceTarget(cardDestinationString, game, currentPlayer);
 
             Card cardToMoveObj = cardSource.getCard(cardToMove);
 
@@ -255,7 +253,7 @@ public class UpdateRequest implements Serializable {
             // inform current player to discard cards
     }
 
-    private CardSourceTarget getCardSourceTarget(String sourceTarget, String playerUsername, Game game, Player currentPlayer) {
+    private CardSourceTarget getCardSourceTarget(String sourceTarget, Game game, Player currentPlayer) {
         final RoleType playerRole = Utils.getEnum(RoleType.class, sourceTarget);
         CardSourceTarget result = null;
 
@@ -263,7 +261,7 @@ public class UpdateRequest implements Serializable {
 
         if (playerRole == null) { //not a player
             final CardTargetType deckSource = Utils.getEnum(CardTargetType.class, sourceTarget);
-            switch (deckSource) {
+            switch (deckSource) {   //it won't be null don't worry
                 case DECK:
                     result = currentPlayer.isBioTerrorist() ? game.getInfectionDeck() : game.getPlayerDeck();
                     break;
@@ -289,7 +287,6 @@ public class UpdateRequest implements Serializable {
             Player currentPlayer = game.getCurrentPlayer();
 
             try {
-
                 switch (actionType) {
                     case DRAW_CARD:
                         if(currentPlayer.isBioTerrorist())
