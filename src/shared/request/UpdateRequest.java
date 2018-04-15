@@ -6,6 +6,7 @@ import pandemic.eventcards.EventCardName;
 import pandemic.eventcards.impl.*;
 import shared.*;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -93,7 +94,7 @@ public class UpdateRequest implements Serializable {
                 break;
 
             case EVENT_CARD:
-                executeEventCard(game, arguments);
+                executeEventCard(game, playerUsername, arguments);
                 break;
 
             case BIOT_TURN:
@@ -412,85 +413,89 @@ public class UpdateRequest implements Serializable {
         gameManager.endTurnBioT();
     }
 
-    private void executeEventCard(Game game, List arguments) {
+    private void executeEventCard(Game game, String playerUsername, List arguments) {
         final EventCardName name = (EventCardName) arguments.get(0);
         final List eventCardArgs = (List) arguments.get(1);
+
+        final Player eventCardPlayer = game.getGameManager().getPlayerFromUsername(playerUsername);
+        final EventCard eventCard = (EventCard)eventCardPlayer.getCard(new PlayerCardSimple(CardType.EventCard, name.toString()));
+
         switch (name) {
             case AirLift:
-                playAirLiftEC(game, eventCardArgs);
+                playAirLiftEC(game, eventCard, eventCardArgs);
                 break;
             case Forecast:
-                playForecastEC(game, eventCardArgs);
+                playForecastEC(game, eventCard, eventCardArgs);
                 break;
             case CommercialTravelBan:
-                playCommercialBanEC(game, eventCardArgs);
+                playCommercialBanEC(game, eventCard, eventCardArgs);
                 break;
             case BorrowedTime:
-                playBorrowedTimeEC(game);
+                playBorrowedTimeEC(game, eventCard);
                 break;
             case GovernmentGrant:
-                playGovernmentGrantEC(game, eventCardArgs);
+                playGovernmentGrantEC(game, eventCard, eventCardArgs);
                 break;
             case MobileHospital:
-                playMobileHospitalEC(game);
+                playMobileHospitalEC(game, eventCard);
                 break;
             case OneQuietNight:
-                playOneQuietNightEC(game, eventCardArgs);
+                playOneQuietNightEC(game, eventCard, eventCardArgs);
                 break;
             case ResilientPopulation:
-                playResilientPopulationEC(game, eventCardArgs);
+                playResilientPopulationEC(game, eventCard, eventCardArgs);
                 break;
         }
 
     }
 
-    private void playResilientPopulationEC(Game game, List eventCardArgs) {
-        final ResilientPopulationEventCard toPlay = new ResilientPopulationEventCard(game.getGameManager());
+    private void playResilientPopulationEC(Game game, EventCard eventCard, List eventCardArgs) {
+        final ResilientPopulationEventCard toPlay = (ResilientPopulationEventCard)eventCard;
         final String cardOwnerName = (String) eventCardArgs.get(0);
         final InfectionCard cardToMove = (InfectionCard) eventCardArgs.get(1);
         toPlay.playEventCard(game.getGameManager().getPlayerFromUsername(cardOwnerName), cardToMove);
     }
 
-    private void playOneQuietNightEC(Game game, List eventCardArgs) {
-        final OneQuietNightEventCard toPlay = new OneQuietNightEventCard(game.getGameManager());
+    private void playOneQuietNightEC(Game game, EventCard eventCard, List eventCardArgs) {
+        final OneQuietNightEventCard toPlay = (OneQuietNightEventCard)eventCard;
         final String cardOwnerName = (String) eventCardArgs.get(0);
         toPlay.playEventCard(game.getGameManager().getPlayerFromUsername(cardOwnerName));
     }
 
-    private void playMobileHospitalEC(Game game) {
-        final MobileHospitalEventCard toPlay = new MobileHospitalEventCard(game.getGameManager());
+    private void playMobileHospitalEC(Game game, EventCard eventCard) {
+        final MobileHospitalEventCard toPlay = (MobileHospitalEventCard)eventCard;
         toPlay.playEventCard();
     }
 
-    private void playGovernmentGrantEC(Game game, List eventCardArgs) {
-        final GovernmentGrantEventCard toPlay = new GovernmentGrantEventCard(game.getGameManager());
+    private void playGovernmentGrantEC(Game game, EventCard eventCard, List eventCardArgs) {
+        final GovernmentGrantEventCard toPlay = (GovernmentGrantEventCard)eventCard;
         final String cardOwnerName = (String) eventCardArgs.get(0);
         final CityName targetCityName = (CityName) eventCardArgs.get(1);
         toPlay.playEventCard(game.getGameManager().getPlayerFromUsername(cardOwnerName),
                 game.getGameManager().getCityByName(targetCityName));
     }
 
-    private void playBorrowedTimeEC(Game game) {
-        final BorrowedTimeEventCard toPlay = new BorrowedTimeEventCard(game.getGameManager());
+    private void playBorrowedTimeEC(Game game, EventCard eventCard) {
+        final BorrowedTimeEventCard toPlay = (BorrowedTimeEventCard)eventCard;
         toPlay.playEventCard();
     }
 
-    private void playCommercialBanEC(Game game, List eventCardArgs) {
-        final CommercialTravelBanEventCard toPlay = new CommercialTravelBanEventCard(game.getGameManager());
+    private void playCommercialBanEC(Game game, EventCard eventCard, List eventCardArgs) {
+        final CommercialTravelBanEventCard toPlay = (CommercialTravelBanEventCard)eventCard;
         final String cardOwnerName = (String) eventCardArgs.get(0);
         toPlay.playEventCard(game.getGameManager().getPlayerFromUsername(cardOwnerName));
     }
 
     @SuppressWarnings("unchecked")
-    private void playForecastEC(Game game, List eventCardArgs) {
-        final ForecastEventCard toPlay = new ForecastEventCard(game.getGameManager());
+    private void playForecastEC(Game game, EventCard eventCard, List eventCardArgs) {
+        final ForecastEventCard toPlay = (ForecastEventCard)eventCard;
         final String cardOwnerName = (String) eventCardArgs.get(0);
         final List<InfectionCard> rearrangedCards = (List<InfectionCard>) eventCardArgs.get(1);
         toPlay.playEventCard(game.getGameManager().getPlayerFromUsername(cardOwnerName), rearrangedCards);
     }
 
-    private void playAirLiftEC(Game game, List eventCardArgs) {
-        final AirLiftEventCard toPlay = new AirLiftEventCard(game.getGameManager());
+    private void playAirLiftEC(Game game, EventCard eventCard, List eventCardArgs) {
+        final AirLiftEventCard toPlay = (AirLiftEventCard)eventCard;
         final String cardOwnerName = (String) eventCardArgs.get(0);
         final String playerToMoveName = (String) eventCardArgs.get(1);
         final CityName cityDestinationName = (CityName) eventCardArgs.get(2);
@@ -502,5 +507,10 @@ public class UpdateRequest implements Serializable {
     private void setEpidemicOccured(String epidemicString) {
         epidemicOccured = true;
         this.epidemicString = epidemicString;
+    }
+
+    public List<String> getPrettyLogPrint() {
+        //TODO russell
+        return null;
     }
 }
