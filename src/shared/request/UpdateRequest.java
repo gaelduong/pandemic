@@ -393,8 +393,7 @@ public class UpdateRequest implements Serializable {
         }
 
         if(bioTPlayer.getCardsInHandBioT().size() > 7) {
-            // TODO:
-            //      must alert for discard
+            // TODO: must alert for discard
         }
 
     }
@@ -547,10 +546,5 @@ public class UpdateRequest implements Serializable {
     private void setEpidemicOccured(String epidemicString) {
         epidemicOccured = true;
         this.epidemicString = epidemicString;
-    }
-
-    public List<String> getPrettyLogPrint() {
-        //TODO russell
-        return null;
     }
 }
