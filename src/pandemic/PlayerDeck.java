@@ -23,8 +23,15 @@ public class PlayerDeck implements CardSource {
 	}
 
     public PlayerCard getCard(PlayerCardSimple card) {
+        CardType pcsCardType;
+        if(card.getCardType() == CardType.MovingCard) {
+            pcsCardType = CardType.CityCard;
+        } else {
+            pcsCardType = card.getCardType();
+        }
+
         return cardsInDeck.stream().filter(c -> c.getCardName().equals(card.getCardName()) &&
-                c.getCardType() == card.getCardType())
+                c.getCardType() == pcsCardType)
                 .findAny().orElse(null);
     }
 	

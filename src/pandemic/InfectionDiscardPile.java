@@ -5,8 +5,9 @@ import shared.request.CardTarget;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
-public class InfectionDiscardPile implements Serializable {
+public class InfectionDiscardPile implements Serializable, CardTarget {
 
 
 	private ArrayList<InfectionCard> cardsInPile;
@@ -19,6 +20,14 @@ public class InfectionDiscardPile implements Serializable {
 	public void addCard(InfectionCard ic){
 	    cardsInPile.add(0,ic);
 	}
+
+	public void addCards(List<CityInfectionCard> list) {
+	    cardsInPile.addAll(0, list);
+    }
+
+    public void acceptCard(Card card) {
+        addCard((InfectionCard) card);
+    }
 
 	public void shuffle(){
 	    Collections.shuffle(cardsInPile);

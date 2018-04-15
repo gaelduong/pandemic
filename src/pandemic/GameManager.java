@@ -17,11 +17,15 @@ public class GameManager {
 	private GameSettings gameSettings;
 	private boolean gameLost;
 
+	private Player bioTPlayer;
+    private LinkedList<Player> activePlayersNonBT;
+
 	public GameManager(int numOfPlayers, int numOfEpidemicCards, ChallengeKind challengeKind) {
         gameSettings = new GameSettings(numOfPlayers, numOfEpidemicCards, challengeKind);
 		// Setup neighborsDict and regionsDict lookups
         //this.hostPlayer = hostPlayer;
         activePlayers = new LinkedList<Player>();
+
         //activePlayers.add(hostPlayer);
         gameLost = false;
 		setRegionsDict();
@@ -79,6 +83,9 @@ public class GameManager {
                 ", role: " + p.getRoleType()));
         System.out.println("-------------------------");*/
 
+       if(currentGame.isBioTChallengeActive())
+           this.activePlayersNonBT = new LinkedList<Player>();
+
     }
 
     public Player getHostPlayer() {
@@ -87,7 +94,15 @@ public class GameManager {
 
     public void joinGame(User user){
 	    Player p = new Player(user);
-        Pawn playerPawn = currentGame.getRandomUnassignedPawn();
+	    Pawn playerPawn;
+
+	    if(currentGame.isBioTChallengeActive() && activePlayers.size() == 1) {
+	        playerPawn = currentGame.getBioTPawn();
+        } else {
+            playerPawn = currentGame.getRandomUnassignedPawn();
+        }
+
+
         p.setPawn(playerPawn);
         playerPawn.setPlayer(p);
         p.setRole(playerPawn.getRole());
@@ -95,6 +110,7 @@ public class GameManager {
         playerPawn.setAssigned(true);
         City atlCity = currentGame.getGameManager().getCityByName(CityName.Atlanta);
         atlCity.getCityUnits().add(playerPawn);
+
 
         if(activePlayers.isEmpty()) {
             hostPlayer = p;
@@ -109,6 +125,14 @@ public class GameManager {
 
         if(activePlayers.size() == gameSettings.getNumOfPlayers())
             currentGame.dealCardsAndShuffleInEpidemicCards();
+
+        if (currentGame.isBioTChallengeActive()) {
+            if(p.getRoleType() == RoleType.BioTerrorist) {
+                bioTPlayer = p;
+            } else {
+                activePlayersNonBT.add(p);
+            }
+        }
 
     }
 
@@ -321,7 +345,7 @@ public class GameManager {
 		idp.clearPile();
 	}
 
-	public int endTurn(){
+	public String endTurn(){
 	// MUST BE MODIFIED TO HANDLE OTB CHALLENGES (i.e. Mutations, Bioterrorist win/lose)
 
 
@@ -331,7 +355,7 @@ public class GameManager {
 //        setVirulentStrainIsEradicated(true);
 
 
-		int status = 0;
+		String status = "";
 		if (currentGame.getMobileHospitalActive()){
 		    currentGame.setMobileHospitalActive(false);
         }
@@ -352,7 +376,7 @@ public class GameManager {
                 System.out.println("Epidemic occurring...");
 				((EpidemicCard) playerCard1).resolveEpidemic();
                 System.out.println("Epidemic resolved");
-                status = 1;
+                status = playerCard1.getCardName() + " is occurring...";
 			}
 			else {
 				p.addToHand(playerCard1);
@@ -362,7 +386,7 @@ public class GameManager {
                 System.out.println("Epidemic occurring...");
 				((EpidemicCard) playerCard2).resolveEpidemic();
                 System.out.println("Epidemic resolved");
-                status = 1;
+                status = playerCard2.getCardName() + " is occurring...";
 			}
 			else {
 				p.addToHand(playerCard2);
@@ -427,10 +451,9 @@ public class GameManager {
             } else {
                 setEventCardsEnabled(false);
                 InfectionCard cardDrawn = currentGame.getInfectionDeck().drawCard();
-                if (cardDrawn instanceof MutationCard){
+                if (cardDrawn instanceof MutationCard) {
                     ((MutationCard) cardDrawn).resolveMutation();
-                }
-                else {
+                } else {
                     CityInfectionCard card = (CityInfectionCard) cardDrawn;
                     City city = currentGame.getCityByName(card.getCityName());
 
@@ -489,11 +512,23 @@ public class GameManager {
 
                     if (!infectStatus) {
                         currentGame.infectAndResolveOutbreaks(cityDiseaseType, cityDisease, gameStatus, Q);
+                        boolean diseaseEradicatedPurple = currentGame.checkIfEradicated(DiseaseType.Purple);
+
+                        if (currentGame.isBioTChallengeActive() && city.containsPurpleDisease() && !diseaseEradicatedPurple) {
+                            Disease purpleDisease = currentGame.getDiseaseByDiseaseType(DiseaseType.Purple);
+                            ArrayList<DiseaseFlag> diseaseFlagsPurple = currentGame.getDiseaseSupplyByDiseaseType(DiseaseType.Purple);
+                            boolean gameStatusPurple = (currentGame.getOutBreakMeterReading() < 8) && diseaseFlags.size() >= 1;
+                            LinkedList<City> QPurple = new LinkedList<City>();
+                            QPurple.addLast(city);
+
+                            currentGame.infectAndResolveOutbreaks(DiseaseType.Purple, purpleDisease, gameStatusPurple, QPurple);
+                        }
                     }
+
+                    currentGame.decrementInfectionsRemaining();
+                    currentGame.getInfectionDiscardPile().addCard(cardDrawn);
+                    setEventCardsEnabled(true);
                 }
-                currentGame.decrementInfectionsRemaining();
-                currentGame.getInfectionDiscardPile().addCard(cardDrawn);
-                setEventCardsEnabled(true);
             }
         }
         if (currentGame.getInfectionsRemaining() == 0){
@@ -506,8 +541,17 @@ public class GameManager {
             // SET NEXT PLAYER TO CURRENT PLAYER
             // MUST MAKE SURE current player is at the head of the queue
             currentGame.setGamePhase(GamePhase.TurnActions);
-            activePlayers.addLast(activePlayers.removeFirst());
-            setCurrentPlayer(activePlayers.getFirst());
+
+            if (currentGame.isBioTChallengeActive()) {
+                activePlayersNonBT.addLast(activePlayersNonBT.removeFirst());
+                setCurrentPlayer(bioTPlayer);
+            } else {
+                activePlayers.addLast(activePlayers.removeFirst());
+                setCurrentPlayer(activePlayers.getFirst());
+            }
+
+            //TODO: should setCurrentPlayerTurnStatus to PlayingActions after next player selected??
+
             if (activePlayers.getFirst().equals(currentGame.getCommercialTravelBanPlayedBy())){
                 currentGame.setCommercialTravelBanActive(false);
                 currentGame.setCommercialTravelBanPlayedBy(null);
@@ -516,7 +560,20 @@ public class GameManager {
         }
         return 0;
 	}
-	
+
+	public void endTurnBioT() {
+	    //TODO: reset biotturntracker,
+        //TODO: setCurrentPlayerTurnStatus to PlayingActions ??
+        //TODO: select correct player for next turn
+
+        Player currentPlayer = currentGame.getCurrentPlayer();
+
+        if (currentPlayer.isBioTerrorist()) {
+            currentPlayer.getBioTTurnTracker().resetTurnTracker();
+            setCurrentPlayer(activePlayersNonBT.getFirst());
+        }
+    }
+
 	// Checks if Player has too many cards in hand. Must resolve issue if Player has too many cards.
 	public void checkHandSize(Player p){
 		int numCardsInHand = p.getHandSize();
@@ -592,9 +649,15 @@ public class GameManager {
                 return 1;
             }
 
-            if ((currentPlayerCity.getConnections().stream().filter(conn -> conn.getEnd1() == city || conn.getEnd2() == city)
+            if ((currentPlayerCity.getConnections().stream()
+                    .filter(conn -> conn.getEnd1().getName().equals(city.getName())  || conn.getEnd2().getName().equals(city.getName()))
                     .collect(Collectors.toList())).isEmpty()) {
                 return 1;
+            }
+
+            if(currentPlayer.isBioTerrorist()) {
+                if(currentPlayer.getBioTTurnTracker().isType3ActionsCompleted())
+                    return 1;
             }
 
             currentPlayerCity.getCityUnits().remove(currentPlayerPawn);
@@ -609,11 +672,23 @@ public class GameManager {
                 containmentSpecialistEnterCity(city);
             }
 
+            if (currentPlayer.isBioTerrorist()) {
+                currentPlayer.getBioTTurnTracker().incrementType3ActionCounter();
+            } else {
+                currentPlayer.incrementActionTaken();
+            }
+
+            if(currentGame.isBioTChallengeActive()) {
+                if(currentPlayer.getPawn().getLocation().isBioTSpotted()) {
+                    currentGame.setBioTSpotted(true);
+                    bioTPlayer.getBioTTurnTracker().setSpotted(true);
+                }
+            }
+
             if (currentGame.getGovernmentInterferenceActive()){
                 currentGame.setGovernmentInterferenceSatisfied(false);
             }
 
-            currentPlayer.incrementActionTaken();
             return 0;
         } else {
 	        return 1;
@@ -623,21 +698,28 @@ public class GameManager {
     }
 
     //returns 0 upon success, 1 upon failure
-    public int playDirectFlight(CityCard card) {
+    public int playDirectFlight(MovingCard card) {
         Player currentPlayer = currentGame.getCurrentPlayer();
         if (currentGame.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayingActions) {
             Pawn currentPlayerPawn = currentPlayer.getPawn();
             Role currentPlayerRole = currentPlayerPawn.getRole();
             City currentPlayerCity = currentPlayerPawn.getLocation();
+            System.out.println("\t\t MovingCard getCityName = " + card.getCityName());
             City city = currentGame.getCityByName(card.getCityName());
 
-            if ((currentPlayer.getRoleType().equals(RoleType.Generalist) && currentPlayer.getActionsTaken() == 5) || (!currentPlayer.getRoleType().equals(RoleType.Generalist) && currentPlayer.getActionsTaken() == 4)) {
+            if ((currentPlayer.getRoleType().equals(RoleType.Generalist) && currentPlayer.getActionsTaken() == 5) ||
+                    (!currentPlayer.getRoleType().equals(RoleType.Generalist) && currentPlayer.getActionsTaken() == 4)) {
                 currentPlayer.setActionsTaken(0);
                 return 1;
             }
 
-            if (!currentPlayer.isInHand(card)) {
+            if (!currentPlayer.isInHandMovingCard(card)) {
                 return 1;
+            }
+
+            if(currentPlayer.isBioTerrorist()) {
+                if(currentPlayer.getBioTTurnTracker().isType2ActionsCompleted())
+                    return 1;
             }
 
             currentPlayerCity.getCityUnits().remove(currentPlayerPawn);
@@ -651,12 +733,26 @@ public class GameManager {
                 containmentSpecialistEnterCity(city);
             }
 
+            if (currentPlayer.isBioTerrorist()) {
+                currentPlayer.getBioTTurnTracker().incrementType2ActionCounter();
+            } else {
+                currentPlayer.incrementActionTaken();
+            }
+
+            if(currentGame.isBioTChallengeActive()) {
+                if(currentPlayer.getPawn().getLocation().isBioTSpotted()) {
+                    currentGame.setBioTSpotted(true);
+                    bioTPlayer.getBioTTurnTracker().setSpotted(true);
+                }
+
+                //TODO:
+                //  announce that bioT airport sighting at city above
+            }
+
             if (currentGame.getGovernmentInterferenceActive()){
                 currentGame.setGovernmentInterferenceSatisfied(false);
             }
 
-            currentPlayer.incrementActionTaken();
-            // MUST DISCARD CARD AFTER PLAY?
             return 0;
         } else {
             return 1;
@@ -1169,11 +1265,17 @@ public class GameManager {
     // Return 0 if successful, 1 if failed
     // Pre: the player has actions remaining and selected CityCard toDiscard, which is the city their pawn is currently in, from their hand and has selected
     // a destination city
-    public int playCharterFlight(CityCard toDiscard, City destination){
+
+    public int playCharterFlight(/*MovingCard toDiscard,*/ City destination){
 	    Player currentPlayer = currentGame.getCurrentPlayer();
 	    Pawn playerPawn = currentPlayer.getPawn();
 	    Role playerRole = playerPawn.getRole();
 	    City currentCity = playerPawn.getLocation();
+
+        if(currentPlayer.isBioTerrorist()) {
+            if(currentPlayer.getBioTTurnTracker().isType2ActionsCompleted())
+                return 1;
+        }
 
 	    if (currentCity.getCityUnits().contains(playerPawn)){
             currentCity.getCityUnits().remove(playerPawn);
@@ -1187,15 +1289,118 @@ public class GameManager {
                 containmentSpecialistEnterCity(destination);
             }
 
+            if (currentPlayer.isBioTerrorist()) {
+                currentPlayer.getBioTTurnTracker().incrementType2ActionCounter();
+            } else {
+                currentPlayer.incrementActionTaken();
+            }
+
+            if(currentGame.isBioTChallengeActive()) {
+                if(currentPlayer.getPawn().getLocation().isBioTSpotted()) {
+                    currentGame.setBioTSpotted(true);
+                    bioTPlayer.getBioTTurnTracker().setSpotted(true);
+                    //TODO:
+                    //  announce that bioT airport sighting at currentCity above
+                }
+            }
+
             if (currentGame.getGovernmentInterferenceActive()){
                 currentGame.setGovernmentInterferenceSatisfied(false);
             }
 
-            currentPlayer.incrementActionTaken();
-            return discardPlayerCard(currentPlayer, toDiscard);
+            return 0;
+            //return discardPlayerCard(currentPlayer, toDiscard);
         }
         else {
             return 1;
+        }
+    }
+
+    private int infectBioT(Player currentPlayer, City city) {
+        if(currentPlayer.getBioTTurnTracker().isType1ActionsCompleted())
+            return 1;
+
+        Disease purpleDisease = currentGame.getDiseaseByDiseaseType(DiseaseType.Purple);
+        ArrayList<DiseaseFlag> diseaseFlags = currentGame.getDiseaseSupplyByDiseaseType(DiseaseType.Purple);
+        boolean gameStatus = (currentGame.getOutBreakMeterReading() < 8) && diseaseFlags.size() >= 1;
+        LinkedList<City> Q = new LinkedList<City>();
+        Q.add(city);
+
+        currentGame.infectAndResolveOutbreaks(DiseaseType.Purple, purpleDisease, gameStatus, Q);
+        currentPlayer.getBioTTurnTracker().incrementType1ActionCounter();
+        return 0;
+    }
+
+    public int playInfectLocallyBioT() {
+        Player currentPlayer = currentGame.getCurrentPlayer();
+        Pawn playerPawn = currentPlayer.getPawn();
+        City currentCity = playerPawn.getLocation();
+
+        if(!currentPlayer.isBioTerrorist()) {
+            return 1;
+        } else {
+            return infectBioT(currentPlayer, currentCity);
+        }
+
+    }
+
+    public int playInfectRemotelyBioT(CityInfectionCard card) {
+        Player currentPlayer = currentGame.getCurrentPlayer();
+        Pawn playerPawn = currentPlayer.getPawn();
+        City cityToInfect = currentGame.getCityByName(card.getCityName());
+
+        if(!currentPlayer.isBioTerrorist()) {
+            return 1;
+        } else {
+            return infectBioT(currentPlayer, cityToInfect);
+        }
+
+    }
+
+    public int playSabotageBioT(CityInfectionCard card) {
+        Player currentPlayer = currentGame.getCurrentPlayer();
+        Pawn playerPawn = currentPlayer.getPawn();
+        City currentCity = playerPawn.getLocation();
+        City cityToInfect = currentGame.getCityByName(card.getCityName());
+
+        if(!currentPlayer.isBioTerrorist() || cityToInfect.getRegion() != currentCity.getRegion()) {
+            return 1;
+        } else {
+            ResearchStation removed = currentCity.removeOneResearchStation();
+            currentGame.addUnusedResearchStation(removed);
+            currentPlayer.getBioTTurnTracker().incrementType1ActionCounter();
+            return 0;
+        }
+    }
+
+    public int playEscapeBioT(CityInfectionCard card) {
+        Player currentPlayer = currentGame.getCurrentPlayer();
+        Pawn currentPlayerPawn = currentPlayer.getPawn();
+        City currentPlayerCity = currentPlayerPawn.getLocation();
+        City cityToEscapeTo = currentGame.getCityByName(card.getCityName());
+
+        if(!currentPlayer.isBioTerrorist() || !currentPlayer.getBioTTurnTracker().isCaptured()) {
+            return 1;
+        } else {
+            currentPlayerCity.getCityUnits().remove(currentPlayerPawn);
+            cityToEscapeTo.getCityUnits().add(currentPlayerPawn);
+            currentPlayerPawn.setLocation(cityToEscapeTo);
+            return 0;
+        }
+    }
+
+    public int playCaptureBioT() {
+        Player currentPlayer = currentGame.getCurrentPlayer();
+        Pawn playerPawn = currentPlayer.getPawn();
+        City currentCity = playerPawn.getLocation();
+
+        if(!bioTPlayer.getBioTTurnTracker().isSpotted()) {
+            return 1;
+        } else {
+            bioTPlayer.getBioTTurnTracker().setCaptured(true);
+            ArrayList<CityInfectionCard> cardsToDiscard = bioTPlayer.discardAllCards();
+            currentGame.getInfectionDiscardPile().addCards(cardsToDiscard);
+            return 0;
         }
     }
 

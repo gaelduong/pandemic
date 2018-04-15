@@ -6,6 +6,7 @@ import pandemic.CityCard;
 import pandemic.DiseaseType;
 import pandemic.RoleType;
 import server.ServerCommands;
+import shared.BioTActionType;
 import shared.CardTargetType;
 import shared.PlayerCardSimple;
 import shared.TravelType;
@@ -30,6 +31,19 @@ public class GameURs {
         );
     }
 
+    public static UpdateRequest getMovePlayerMPosBioTUR(String playerUserName, String cityName, BioTActionType travelActionType,
+                                                        TravelType travelType) {
+        return new UpdateRequest(
+                new PostCondition(
+                        PostCondition.ACTION.BIOT_TURN,
+                        travelActionType, // type of bioT turn action
+                        playerUserName, //source
+                        cityName,      //destination
+                        travelType
+                )
+        );
+    }
+
     /**
      * Creates a drive/ferry update request, which the player drives to the target city
      */
@@ -38,12 +52,22 @@ public class GameURs {
                 getMovePlayerMPosUR(playerUserName, cityName, TravelType.DRIVE_FERRY));
     }
 
+    public static void sendDriveFerryBioTUR(Client client, String playerUserName, String cityName) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+                getMovePlayerMPosBioTUR(playerUserName, cityName, BioTActionType.TRAVEL, TravelType.DRIVE_FERRY));
+    }
+
     /**
      * Creates a drive update request, which the player drives to the target city
      */
     public static void sendDirectFlightUR(Client client, String playerUserName, String cityName) {
         client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
                 getMovePlayerMPosUR(playerUserName, cityName, TravelType.DIRECT_FLIGHT));
+    }
+
+    public static void sendDirectFlightBioTUR(Client client, String playerUserName, String cityName) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+                getMovePlayerMPosBioTUR(playerUserName, cityName, BioTActionType.TRAVEL, TravelType.DIRECT_FLIGHT));
     }
 
     /**
@@ -62,17 +86,18 @@ public class GameURs {
     public static void sendCharterFlightUR(Client client, String cardToDiscardCityName, String cityName, String playerUserName, RoleType playerRole) {
         client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
                 new UpdateRequest(
-                        new PostCondition(
+                       /* new PostCondition(
                                 PostCondition.ACTION.MOVE_CARD,
                                 new PlayerCardSimple(CardType.CityCard, cardToDiscardCityName),
                                 playerRole.name(),                         //source
                                 CardTargetType.DISCARD_PILE         //destination
-                        ),
+                        ),*/
                         new PostCondition(
                                 PostCondition.ACTION.MOVE_PLAYER_POS,
                                 playerUserName,
                                 cityName,
-                                TravelType.CHARTER_FLIGHT
+                                TravelType.CHARTER_FLIGHT,
+                                cardToDiscardCityName
                         )
                 )
         );
@@ -204,4 +229,92 @@ public class GameURs {
                 )
         );
     }
+
+    public static void sendDrawCardBioTUR(Client client, String playerUserName) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+                new UpdateRequest(
+                        new PostCondition(
+                                PostCondition.ACTION.BIOT_TURN,
+                                BioTActionType.DRAW_CARD, // type of bioT turn action
+                                playerUserName
+                        )
+                )
+        );
+    }
+
+    public static void sendInfectLocallyBioTUR(Client client, String playerUserName) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+                new UpdateRequest(
+                        new PostCondition(
+                                PostCondition.ACTION.BIOT_TURN,
+                                BioTActionType.INFECT_LOCALLY, // type of bioT turn action
+                                playerUserName
+                        )
+                )
+        );
+    }
+
+    public static void sendInfectRemotelyBioTUR(Client client, String playerUserName, String cityName) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+                new UpdateRequest(
+                        new PostCondition(
+                                PostCondition.ACTION.BIOT_TURN,
+                                BioTActionType.INFECT_REMOTELY, // type of bioT turn action
+                                playerUserName,
+                                cityName
+                        )
+                )
+        );
+    }
+
+    public static void sendSabotageBioTUR(Client client, String playerUserName, String cityName) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+                new UpdateRequest(
+                        new PostCondition(
+                                PostCondition.ACTION.BIOT_TURN,
+                                BioTActionType.SABOTAGE, // type of bioT turn action
+                                playerUserName,
+                                cityName
+                        )
+                )
+        );
+    }
+
+    public static void sendEscapeBioTUR(Client client, String playerUserName, String cityName) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+                new UpdateRequest(
+                        new PostCondition(
+                                PostCondition.ACTION.BIOT_TURN,
+                                BioTActionType.ESCAPE, // type of bioT turn action
+                                playerUserName,
+                                cityName
+                        )
+                )
+        );
+    }
+
+    public static void sendCaptureBioTUR(Client client, String playerUserName) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+                new UpdateRequest(
+                        new PostCondition(
+                                PostCondition.ACTION.BIOT_TURN,
+                                BioTActionType.CAPTURE, // type of bioT turn action
+                                playerUserName
+                        )
+                )
+        );
+    }
+
+    public static void sendEndTurnBioTUR(Client client, String playerUserName) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+                new UpdateRequest(
+                        new PostCondition(
+                                PostCondition.ACTION.BIOT_TURN,
+                                BioTActionType.END_TURN, // type of bioT turn action
+                                playerUserName
+                        )
+                )
+        );
+    }
+
 }

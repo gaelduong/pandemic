@@ -74,6 +74,9 @@ public class Game {
     private boolean chronicEffectActive;
     private boolean chronicEffectInfection;
 
+    private boolean bioTChallengeActive;
+    private boolean bioTSpotted;
+
 
     public Game(GameSettings settings, GameManager gameManager) {
         //this.currentPlayer = currentPlayer;
@@ -106,6 +109,11 @@ public class Game {
             }
         };
 
+        if(settings.getChallenge() == ChallengeKind.BioTerrorist
+                || settings.getChallenge() == ChallengeKind.VirulentStrainAndBioTerrorist) {
+            bioTChallengeActive = true;
+            bioTSpotted = false;
+        }
 
     }
 
@@ -521,6 +529,13 @@ public class Game {
         return p;
     }
 
+    public Pawn getBioTPawn() {
+        Pawn bioTPawn = inGamePawns.stream().filter(pawn -> pawn.getRole().getRoleType() == RoleType.BioTerrorist)
+                                            .findAny().orElse(null);
+
+        return bioTPawn;
+    }
+
     private Role getRandomUnassignedRole() {
         int index = randomRoleGenerator.nextInt(unusedRoles.size());
         return unusedRoles.remove(index);
@@ -711,6 +726,8 @@ public class Game {
 
     public void infectAndResolveOutbreaks(DiseaseType cityDiseaseType, Disease cityDisease,
                                           boolean gameStatus, LinkedList<City> Q) {
+
+        List<City> completedCities = new ArrayList<City>();
         while (gameStatus && !Q.isEmpty()) {
             City c = Q.removeFirst();
             int numberOfDiseaseFlagsPlaced = c.getNumOfDiseaseFlagsPlaced(cityDiseaseType);
@@ -723,6 +740,10 @@ public class Game {
                     incrementOutbreakMeter();
                 }
 
+                if(bioTChallengeActive && cityDiseaseType == DiseaseType.Purple) {
+                    c.removeOneDiseaseFlag(DiseaseType.Purple);
+                    c.removeOneDiseaseFlag(DiseaseType.Purple);
+                }
                 // FOR TESTING:
                 System.out.println(c.getName() + " is outbreaking");
                 System.out.println("Incrementing Outbreak Meter");
@@ -912,6 +933,13 @@ public class Game {
                 setGamePhase(GamePhase.Completed);
                 System.out.println("Ran out of disease cubes or Outbreak meter maxed out");
             }
+
+           completedCities.add(c);
+        }
+
+        for(City compCity : completedCities) {
+            ArrayList<Connection> connections = compCity.getConnections();
+            connections.forEach(compConn -> compConn.setConnectionStatus(null));
         }
 
     }
@@ -1171,7 +1199,7 @@ public class Game {
 
     public ResearchStation getUnusedResearchStation() {
         if (!unusedResearchStations.isEmpty()) {
-            return unusedResearchStations.get(0);
+            return unusedResearchStations.remove(0);
         } else {
             return null;
         }
@@ -1253,6 +1281,15 @@ public class Game {
     public ArrayList<DiseaseFlag> getFieldOperativeSamples() {
         return fieldOperativeSamples;
     }
+
+    public boolean isBioTChallengeActive() {
+        return bioTChallengeActive;
+    }
+
+    public void setBioTSpotted(boolean spotted) {
+        bioTSpotted = spotted;
+    }
+
 
     public void addSample(DiseaseFlag sample) {
         sample.setLocation(null);

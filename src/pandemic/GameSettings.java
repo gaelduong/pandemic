@@ -20,9 +20,9 @@ public class GameSettings {
     return numOfEpidemicCards;
   }
 
-  public ChallengeKind getGameChallenge() {
-    return gameChallenge;
-  }
+  //public ChallengeKind getGameChallenge() {
+  //  return gameChallenge;
+  //}
 
   public ChallengeKind getChallenge() {
     return gameChallenge;

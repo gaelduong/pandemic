@@ -10,14 +10,16 @@ public class Player implements CardTarget, CardSource {
 
 	private int actionsTaken;
 	private boolean oncePerTurnActionTaken;
-	private ArrayList<PlayerCard> cardsInHand;
+	private ArrayList<Card> cardsInHand;
 	private User user;
 	private Pawn pawn;
 	private Role role;
 
+	private BioTTurnTracker bioTTurnTracker;
+
 	public Player(User user) {
 	    this.user = user;
-	    cardsInHand = new ArrayList<PlayerCard>();
+	    cardsInHand = new ArrayList<Card>();
     }
 
     public String getPlayerUserName() {
@@ -44,17 +46,28 @@ public class Player implements CardTarget, CardSource {
 	    return cardsInHand.size();
     }
     
-    public void addToHand(PlayerCard pc){
+    public void addToHand(Card pc){
 	    cardsInHand.add(pc);
 	}
 
-    public void acceptCard(PlayerCard card) {
+    public void acceptCard(Card card) {
         addToHand(card);
     }
 
-    public PlayerCard getCard(PlayerCardSimple card) {
+
+    public Card getCard(PlayerCardSimple card) {
+
+	    CardType pcsCardType;
+	    if(card.getCardType() == CardType.MovingCard) {
+	        if(isBioTerrorist())
+	            pcsCardType = CardType.CityInfectionCard;
+	        else
+	            pcsCardType = CardType.CityCard;
+        } else {
+	        pcsCardType = card.getCardType();
+        }
 	    return cardsInHand.stream().filter(c -> c.getCardName().equals(card.getCardName()) &&
-                                    c.getCardType() == card.getCardType())
+                                    c.getCardType() == pcsCardType)
                             .findAny().orElse(null);
     }
 
@@ -63,11 +76,27 @@ public class Player implements CardTarget, CardSource {
 	public boolean isInHand(PlayerCard pc) {
 	    return cardsInHand.stream().anyMatch(pc::equals);
     }
+
+    public boolean isInHandMovingCard(MovingCard mc) {
+        return cardsInHand.stream().anyMatch(mc::equals);
+    }
 	
 	// Note: Does not add card too any discard pile
-	public boolean discardCard(PlayerCard card){
-		return cardsInHand.remove(card);
+	public boolean discardCard(Card card){
+	    return cardsInHand.remove(card);
 	}
+
+	public ArrayList<CityInfectionCard> discardAllCards() {
+	    if(!isBioTerrorist()) {
+            return null;
+        } else {
+	        ArrayList<CityInfectionCard> cardsToDiscard = new ArrayList<CityInfectionCard>();
+	        cardsInHand.forEach(card -> cardsToDiscard.add((CityInfectionCard) card));
+	        cardsInHand.clear();
+	        return cardsToDiscard;
+        }
+
+    }
 
 	public int getActionsTaken() {
 	    return actionsTaken;
@@ -83,9 +112,34 @@ public class Player implements CardTarget, CardSource {
 
     public void setRole(Role role) {
 	    this.role = role;
+
+	    if(isBioTerrorist()) {
+	        bioTTurnTracker = new BioTTurnTracker(this);
+        }
+
     }
 
-	public ArrayList<PlayerCard> getCardsInHand() {
-		return cardsInHand;
+    public boolean isBioTerrorist() {
+	    return this.role.getRoleType() == RoleType.BioTerrorist;
+    }
+
+    public BioTTurnTracker getBioTTurnTracker() {
+        return bioTTurnTracker;
+    }
+
+    public ArrayList<PlayerCard> getCardsInHand() {
+	    if(isBioTerrorist()) {
+	        return null;
+        } else {
+            return (ArrayList<PlayerCard>) (ArrayList<?>) cardsInHand;
+        }
 	}
+
+	public ArrayList<Card> getCardsInHandBioT() {
+	    if(isBioTerrorist()) {
+	        return cardsInHand;
+        } else {
+	        return null;
+        }
+    }
 }

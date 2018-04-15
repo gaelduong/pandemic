@@ -19,8 +19,8 @@ public class PlayerDiscardPile implements Serializable, CardTarget {
 	    cardsInPile.add(0, pc);
 	}
 
-    public void acceptCard(PlayerCard card) {
-        addCard(card);
+    public void acceptCard(Card card) {
+        addCard((PlayerCard) card);
     }
 
     public int getPileSize() {

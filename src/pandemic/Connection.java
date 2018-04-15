@@ -27,21 +27,25 @@ public class Connection implements Serializable {
     }
 
     public void setConnectionStatus(DiseaseType d) {
-        switch (d) {
-            case Blue:
-                status = ConnectionStatus.BlueDiseaseOutbreak;
-                break;
-            case Black:
-                status = ConnectionStatus.BlackDiseaseOutbreak;
-                break;
-            case Red:
-                status = ConnectionStatus.RedDiseaseOutbreak;
-                break;
-            case Yellow:
-                status = ConnectionStatus.YellowDiseaseOutbreak;
-                break;
-            default:
-                break;
+        if (d != null) {
+            switch (d) {
+                case Blue:
+                    status = ConnectionStatus.BlueDiseaseOutbreak;
+                    break;
+                case Black:
+                    status = ConnectionStatus.BlackDiseaseOutbreak;
+                    break;
+                case Red:
+                    status = ConnectionStatus.RedDiseaseOutbreak;
+                    break;
+                case Yellow:
+                    status = ConnectionStatus.YellowDiseaseOutbreak;
+                    break;
+                default:
+                    break;
+            }
+        } else {
+            status = ConnectionStatus.NoOutbreaks;
         }
     }
 

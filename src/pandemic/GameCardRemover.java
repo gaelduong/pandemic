@@ -7,7 +7,7 @@ import java.util.List;
 
 public class GameCardRemover implements CardTarget {
 
-    private final List<PlayerCard> cardsRemovedFromGame;
+    private final List<Card> cardsRemovedFromGame;
     private final Game game;
 
     public GameCardRemover(Game game) {
@@ -16,7 +16,7 @@ public class GameCardRemover implements CardTarget {
     }
 
     @Override
-    public void acceptCard(PlayerCard card) {
+    public void acceptCard(Card card) {
         cardsRemovedFromGame.add(card);
         //TODO omer call corresponding back-end game method to remove that card from the game
     }

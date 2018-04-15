@@ -87,6 +87,8 @@ public class PostCondition implements Serializable {
          *     (the arguments are encoded by the parameters specified in {@link server.premadeURs.EventCardURs}
          */
         EVENT_CARD,
+
+        BIOT_TURN
     }
 
     public PostCondition(ACTION action, Object... arguments) {

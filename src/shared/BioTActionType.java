@@ -1,0 +1,6 @@
+package shared;
+
+public enum BioTActionType {
+    DRAW_CARD, TRAVEL, INFECT_LOCALLY, INFECT_REMOTELY, SABOTAGE, ESCAPE,
+    CAPTURE, END_TURN
+}

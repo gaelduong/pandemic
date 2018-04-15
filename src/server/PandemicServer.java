@@ -157,9 +157,9 @@ public class PandemicServer extends Server {
         } catch (InterruptedException ignore) {}    //we don't interrupt
 
         if (updateRequest.isRequestValid()) {
-
-            if(updateRequest.executeRequest(game, playerUsername) == 1)
-                sendMessageToClients(ClientCommands.RECEIVE_GAME_MESSAGE.name(), MessageType.INFORMATION, "An epidemic has occured.");
+            String updateString = updateRequest.executeRequest(game, playerUsername);
+            if(!updateString.equals(""))
+                sendMessageToClients(ClientCommands.RECEIVE_GAME_MESSAGE.name(), MessageType.INFORMATION, updateString);
 
             sendMessageToClients(ClientCommands.RECEIVE_UPDATED_GAMESTATE.name(), g.generateCondensedGameState());
             ret = true;
@@ -179,7 +179,7 @@ public class PandemicServer extends Server {
                 }
 
                 //sendMessage(clientToDiscardSocket, ClientCommands.RECEIVE_GAME_MESSAGE.name(), MessageType.DISCARD_CARD,
-                                           //             "You have too many cards. Please discard a card.");
+                //                                        "You have too many cards. Please discard a card.");
             }
 
         } else {

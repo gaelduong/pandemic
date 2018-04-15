@@ -1,10 +1,13 @@
 package pandemic;
 
+import shared.PlayerCardSimple;
+import shared.request.CardSource;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class InfectionDeck {
+public class InfectionDeck implements CardSource {
 
 	
 	private ArrayList<InfectionCard> cardsInDeck;
@@ -45,5 +48,18 @@ public class InfectionDeck {
                 "    card type : " + card.getCardType() +
                 ", card name: " + card.getCardName()));
         System.out.println("INFECTION DECK PRINTED.");
+    }
+
+    public InfectionCard getCard(PlayerCardSimple card) {
+        CardType pcsCardType;
+        if(card.getCardType() == CardType.MovingCard) {
+            pcsCardType = CardType.CityInfectionCard;
+        } else {
+            pcsCardType = card.getCardType();
+        }
+
+        return cardsInDeck.stream().filter(c -> c.getCardName().equals(card.getCardName()) &&
+                c.getCardType() == pcsCardType)
+                .findAny().orElse(null);
     }
 }

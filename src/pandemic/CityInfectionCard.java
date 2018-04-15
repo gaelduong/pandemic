@@ -1,6 +1,6 @@
 package pandemic;
 
-public class CityInfectionCard implements InfectionCard{
+public class CityInfectionCard implements InfectionCard, MovingCard {
 
 	private CityName name;
 	private Region region;

@@ -1,5 +1,6 @@
 package shared.request;
 
+import pandemic.Card;
 import pandemic.PlayerCard;
 
 import java.io.Serializable;
@@ -9,6 +10,6 @@ import java.io.Serializable;
  */
 public interface CardTarget extends CardSourceTarget, Serializable {
 
-    void acceptCard(PlayerCard card);
+    void acceptCard(Card card);
 
 }

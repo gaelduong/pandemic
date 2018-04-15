@@ -67,6 +67,41 @@ public class City implements Serializable {
         return toRemove;
     }
 
+    public boolean containsPurpleDisease() {
+        DiseaseFlag purpleDiseaseFlag = (DiseaseFlag) cityUnits.stream().filter(unit -> unit.getUnitType() == UnitType.DiseaseFlag
+                                                                        && ((DiseaseFlag) unit).getDiseaseType() == DiseaseType.Purple)
+                                                               .findAny().orElse(null);
+
+        return purpleDiseaseFlag != null;
+    }
+
+    public ResearchStation removeOneResearchStation() {
+	    ResearchStation toRemove = (ResearchStation) cityUnits.stream().filter(unit -> unit.getUnitType() == UnitType.ResearchStation)
+                .findAny().orElse(null);
+	    cityUnits.remove(toRemove);
+	    toRemove.setLocation(null);
+	    return toRemove;
+    }
+
+    public boolean isBioTSpotted() {
+        List<Unit> cityPawns = cityUnits.stream().filter(unit -> unit.getUnitType() == UnitType.Pawn)
+                .collect(Collectors.toList());
+
+        if(cityPawns.size() > 0) {
+            Pawn bioT = (Pawn) cityPawns.stream().filter(pawn -> ((Pawn) pawn).getRole().getRoleType() == RoleType.BioTerrorist)
+                    .findAny().orElse(null);
+
+            if(bioT != null && cityPawns.size() > 1) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+
+    }
+
     public List<Pair<DiseaseType, Integer>> getDiseaseFlags() {
 	    List<Pair<DiseaseType, Integer>> result = new ArrayList<Pair<DiseaseType, Integer>>();
 

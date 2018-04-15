@@ -1054,7 +1054,7 @@ public class GUI extends JFrame {
 
 	private void initComponents() {
 
-	/*	//Load player cards
+		//Load player cards
 		for(JLabel label : mapPlayerCardLabels.values())
 		{
 			//System.out.println(entry.getKey());
