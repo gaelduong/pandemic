@@ -93,7 +93,9 @@ public class PostCondition implements Serializable {
 
         BIOT_TURN,
 
-        INFECT_NEXT_CITY
+        INFECT_NEXT_CITY,
+
+        IMPOSE_QUARANTINE_MARKER
     }
 
     public PostCondition(ACTION action, Object... arguments) {

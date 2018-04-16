@@ -83,8 +83,11 @@ public class GameManager {
                 ", role: " + p.getRoleType()));
         System.out.println("-------------------------");*/
 
-       if(currentGame.isBioTChallengeActive())
+       if(currentGame.isBioTChallengeActive()) {
            this.activePlayersNonBT = new LinkedList<Player>();
+       } else {
+           currentGame.setQuarantinesActive(true);
+       }
 
     }
 
@@ -120,8 +123,16 @@ public class GameManager {
         p.setRole(playerPawn.getRole());
         playerPawn.getRole().setAssigned(true);
         playerPawn.setAssigned(true);
-        City atlCity = currentGame.getGameManager().getCityByName(CityName.Atlanta);
-        atlCity.getCityUnits().add(playerPawn);
+
+        if(playerPawn.getRole().getRoleType() == RoleType.Colonel
+                && !currentGame.isBioTChallengeActive()) {
+            currentGame.addPlusTwoQuarantineMarkers();
+        }
+
+        if (playerPawn.getRole().getRoleType() != RoleType.BioTerrorist) {
+            City atlCity = currentGame.getGameManager().getCityByName(CityName.Atlanta);
+            atlCity.getCityUnits().add(playerPawn);
+        }
 
 
         if(activePlayers.isEmpty()) {
@@ -145,6 +156,8 @@ public class GameManager {
                 activePlayersNonBT.add(p);
             }
         }
+
+
 
     }
 
@@ -443,7 +456,6 @@ public class GameManager {
         }
         currentGame.setGamePhase(GamePhase.TurnPlayerCards);
 		Player p = currentGame.getCurrentPlayer();
-		p.setActionsTaken(0);
 		p.setOncePerTurnActionTaken(false);
 		PlayerDeck pd = currentGame.getPlayerDeck();
 		int numCardsRemaining = pd.getDeckSize();
@@ -638,6 +650,8 @@ public class GameManager {
             // SET NEXT PLAYER TO CURRENT PLAYER
             // MUST MAKE SURE current player is at the head of the queue
             currentGame.setGamePhase(GamePhase.TurnActions);
+            Player p = currentGame.getCurrentPlayer();
+            p.setActionsTaken(0);
 
             if (currentGame.isBioTChallengeActive()) {
                 activePlayersNonBT.addLast(activePlayersNonBT.removeFirst());
@@ -657,6 +671,10 @@ public class GameManager {
         }
         return 0;
 	}
+
+	public Player getBioTPlayer() {
+	    return bioTPlayer;
+    }
 
 	public void endTurnBioT() {
 	    //TODO: reset biotturntracker,
@@ -701,6 +719,7 @@ public class GameManager {
 
     public int discardPlayerCard(Player p, PlayerCard c){
 		// Must take a player as a parameter for when a non-current player has too many cards and must discard one
+        System.out.println("Discarding Player Card");
 		if (p.isInHand(c)){
 			p.discardCard(c);
 			PlayerDiscardPile pile = currentGame.getPlayerDiscardPile();
@@ -769,6 +788,10 @@ public class GameManager {
                 containmentSpecialistEnterCity(city);
             }
 
+            if(currentPlayer.getRoleType().equals(RoleType.Colonel)) {
+                colonelEnterCity(city);
+            }
+
             if (currentPlayer.isBioTerrorist()) {
                 currentPlayer.getBioTTurnTracker().incrementType3ActionCounter();
             } else {
@@ -830,6 +853,10 @@ public class GameManager {
                 containmentSpecialistEnterCity(city);
             }
 
+            if(currentPlayer.getRoleType().equals(RoleType.Colonel)) {
+                colonelEnterCity(city);
+            }
+
             if (currentPlayer.isBioTerrorist()) {
                 currentPlayer.getBioTTurnTracker().incrementType2ActionCounter();
             } else {
@@ -881,7 +908,9 @@ public class GameManager {
                 currentPlayer.incrementActionTaken();
             }
 
-            if (currentGame.getGovernmentInterferenceActive() && diseaseType.equals(currentGame.getVirulentStrain())){
+            if (currentGame.getGovernmentInterferenceActive()
+                    && diseaseType.equals(currentGame.getVirulentStrain())
+                    && !city.containsQuarantineMarker()){
                 currentGame.setGovernmentInterferenceSatisfied(true);
             }
 
@@ -938,6 +967,20 @@ public class GameManager {
         }
         if(destination.getNumOfDiseaseFlagsPlaced(DiseaseType.Purple) >= 2){
             destination.removeOneDiseaseFlag(DiseaseType.Purple);
+        }
+    }
+
+    public void colonelEnterCity(City city) {
+	    if(city.containsQuarantineMarker()) {
+	        QuarantineMarker cityQM = city.getQuarantineMarker();
+	        if(cityQM == null) {
+                System.err.println("ERROR -- city contains quarantine marker but" +
+                        " can not get marker!");
+                return;
+            } else {
+	            if(cityQM.getUpFace() == QuarantineMarkerFaceValue.ONE)
+	                cityQM.flipMarker();
+            }
         }
     }
     
@@ -1302,14 +1345,16 @@ public class GameManager {
     // (or 4 if currentPlayer has Scientist role) cards of the color of toCure, and toCure is not already cured
     public int playDiscoverCure(DiseaseType toCure, List<PlayerCard> toDiscard){
         Player currentPlayer = currentGame.getCurrentPlayer();
-        if (currentGame.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayingActions) {
+       // if (currentGame.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayingActions) {
             PlayerDiscardPile dp = currentGame.getPlayerDiscardPile();
             for (PlayerCard c : toDiscard) {
-                currentPlayer.discardCard(c);
-                dp.addCard(c);
+               discardPlayerCard(currentPlayer, c);
             }
             Disease d = currentGame.getDiseaseByDiseaseType(toCure);
             d.setCured(true);
+
+            System.out.println(d.getDiseaseType() + " IS CURED: " + d.isCured());
+
             currentGame.checkIfEradicated(toCure);
             currentPlayer.incrementActionTaken();
 
@@ -1332,10 +1377,10 @@ public class GameManager {
                 notifyAllNonBTPlayersGameWon();
             }
             return 0;
-        }
-        else {
-            return 1;
-        }
+//        }
+//        else {
+//            return 1;
+//        }
     }
 
     private void notifyAllNonBTPlayersGameWon() {
@@ -1361,6 +1406,10 @@ public class GameManager {
             }
             if (playerRole.getRoleType().equals(RoleType.ContainmentSpecialist)){
                 containmentSpecialistEnterCity(destination);
+            }
+
+            if(currentPlayer.getRoleType().equals(RoleType.Colonel)) {
+                colonelEnterCity(destination);
             }
 
             if (currentGame.getGovernmentInterferenceActive()){
@@ -1400,6 +1449,10 @@ public class GameManager {
             }
             if (playerRole.getRoleType().equals(RoleType.ContainmentSpecialist)){
                 containmentSpecialistEnterCity(destination);
+            }
+
+            if(currentPlayer.getRoleType().equals(RoleType.Colonel)) {
+                colonelEnterCity(destination);
             }
 
             if (currentPlayer.isBioTerrorist()) {
@@ -1562,6 +1615,48 @@ public class GameManager {
         }
         else {
             return 1;
+        }
+    }
+
+    public int placeQuaratineMarker(City city, Player currentPlayer) {
+        QuarantineMarker newMarker = currentGame.getUnusedQuarantineMarker();
+        if(newMarker != null) {
+            if (!city.containsQuarantineMarker()) {
+                city.getCityUnits().add(newMarker);
+                newMarker.setLocation(city);
+
+                if (currentPlayer != null)
+                    currentPlayer.incrementActionTaken();
+
+                return 0;
+            } else {
+                return 1;
+            }
+        } else {
+            return 1;
+        }
+    }
+
+    public int playImposeAQuarantine() {
+        Player currentPlayer = currentGame.getCurrentPlayer();
+        Pawn playerPawn = currentPlayer.getPawn();
+        RoleType playerRole = playerPawn.getRole().getRoleType();
+        City currentCity = playerPawn.getLocation();
+
+        return placeQuaratineMarker(currentCity, currentPlayer);
+
+    }
+
+    public int removeQuarantineMarker(QuarantineMarker toRemove) {
+	    City source = toRemove.getLocation();
+	    if(source.getCityUnits().contains(toRemove)) {
+	        source.getCityUnits().remove(toRemove);
+	        currentGame.addUnusedQuarantineMarker(toRemove);
+	        toRemove.setLocation(null);
+	        toRemove.resetMarkerFace();
+	        return 0;
+        } else {
+	        return 1;
         }
     }
 
@@ -1854,6 +1949,20 @@ public class GameManager {
         } else {
             return 1;
         }
+    }
+
+    public int playColonelPlaceQuarantineMarker(/*MovingCard toDiscard,*/ City destination){
+        Player currentPlayer = currentGame.getCurrentPlayer();
+        Pawn playerPawn = currentPlayer.getPawn();
+        Role playerRole = playerPawn.getRole();
+        City currentCity = playerPawn.getLocation();
+
+        if(playerRole.getRoleType() != RoleType.Colonel) {
+            return 1;
+        }
+
+        return placeQuaratineMarker(destination, currentPlayer);
+
     }
 
     public void setCommercialTravelBanActive(boolean b){

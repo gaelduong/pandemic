@@ -15,7 +15,6 @@ import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;
@@ -23,22 +22,10 @@ import java.util.stream.Collectors;
 
 import static java.lang.Thread.sleep;
 
-import api.gui.ListDialog;
-import api.socketcomm.Client;
-import client.ClientCommands;
-import client.PandemicClient;
-import javafx.util.Pair;
-import pandemic.*;
 //import pandemic.GameManager;
 //import pandemic.Player;
 //import pandemic.User;
-import server.PandemicServer;
-import server.ServerCommands;
 import server.premadeURs.EventCardURs;
-import server.premadeURs.GameURs;
-import shared.*;
-import shared.request.PostCondition;
-import shared.request.UpdateRequest;
 
 import static java.lang.Thread.sleep;
 
@@ -331,6 +318,8 @@ public class GUI extends JFrame {
 
 	private JButton btnInfectNextCity = new JButton("INFECT NEXT");
 
+
+
 	private JButton discardOptionButton = new JButton();
 
 	private JButton playEventOptionButton = new JButton();
@@ -404,7 +393,7 @@ public class GUI extends JFrame {
 	private JButton btnShareKnowledge = new JButton("<html>Share<br> Knowledge</html>");
 	private JButton btnDiscoverCure = new JButton("<html>Discover <br> a Cure</html>");
 
-	private JButton btnDriveFerry1 = new JButton();
+	private JButton btnContingencyPlanner = new JButton("<html>Take <br> event card</html>");
 	;
 	private JButton btnDirectFlight1 = new JButton();
 	;
@@ -843,8 +832,12 @@ public class GUI extends JFrame {
 //
 //			//Share Knowledge
 			btnShareKnowledge.setVisible(true);
+
+
+			if(userRole==RoleType.ContingencyPlanner) btnContingencyPlanner.setVisible(true);
+
 //=====================
-			btnDriveFerry1.setVisible(false);
+			btnContingencyPlanner.setVisible(false);
 			btnDirectFlight1.setVisible(false);
 			btnCharterFlight1.setVisible(false);
 			btnShuttleFlight1.setVisible(false);
@@ -854,12 +847,15 @@ public class GUI extends JFrame {
 			btnShareKnowledge1.setVisible(false);
 
 			Component[] components = contentPane.getComponents();
+			try {
+				for (int i = 0; i < components.length; i++) {
+					if (components[i].getClass().getName().equals("javax.swing.JButton")) {
 
-			for(int i = 0; i < components.length; i++) {
-				if (components[i].getClass().getName() == "javax.swing.JButton") {
-
-					((JButton) components[i]).setEnabled(true);
+						((JButton) components[i]).setEnabled(true);
+					}
 				}
+			} catch (ArrayIndexOutOfBoundsException e){
+				System.out.println("Caught the thing");
 			}
 
 		} else {
@@ -873,10 +869,12 @@ public class GUI extends JFrame {
 			btnShareKnowledge.setVisible(false);
 			btnDiscoverCure.setVisible(false);
 
+			if(userRole==RoleType.ContingencyPlanner) btnContingencyPlanner.setVisible(false);
+
 			//=====================
 			moreButton.setVisible(false);
 
-			btnDriveFerry1.setVisible(false);
+			btnContingencyPlanner.setVisible(false);
 			btnDirectFlight1.setVisible(false);
 			btnCharterFlight1.setVisible(false);
 			btnShuttleFlight1.setVisible(false);
@@ -1129,7 +1127,7 @@ public class GUI extends JFrame {
 			Component[] components = contentPane.getComponents();
 
 			for(int i = 0; i < components.length; i++) {
-				if (components[i].getClass().getName() == "javax.swing.JButton"
+				if (components[i].getClass().getName().equals("javax.swing.JButton")
 						&& !((JButton)components[i]).getText().equals("DISCARD")
 						&& !((JButton)components[i]).getText().equals("PLAY EVENT CARD")) {
 					//System.out.println("yo");
@@ -1163,7 +1161,7 @@ public class GUI extends JFrame {
 
 	private void initComponents() {
 
-	/*	//Load player cards
+		//Load player cards
 		for(JLabel label : mapPlayerCardLabels.values())
 		{
 			//System.out.println(entry.getKey());
@@ -1265,16 +1263,19 @@ public class GUI extends JFrame {
 		btnShareKnowledge.setVisible(false);
 		btnShareKnowledge.setFocusPainted(false);
 
+
+
+
 		//==========EMPTY BUTTONS=====
 		//Drive Ferry
-		//btnDriveFerry1.setIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/icon.png")));
-		btnDriveFerry1.setBounds(11, 370, 90, 40);
-		btnDriveFerry1.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		btnDriveFerry1.setBackground(new Color(173, 188, 204));
-		contentPane.add(btnDriveFerry1);
-		btnDriveFerry1.setVisible(false);
-		btnDriveFerry1.setFocusPainted(false);
-		//btnDriveFerry1.setFont(new Font("Tahoma", Font.BOLD, 12));
+		//btnContingencyPlanner.setIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/icon.png")));
+		btnContingencyPlanner.setBounds(11, 370, 90, 40);
+		btnContingencyPlanner.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		btnContingencyPlanner.setBackground(new Color(173, 188, 204));
+		contentPane.add(btnContingencyPlanner);
+		btnContingencyPlanner.setVisible(false);
+		btnContingencyPlanner.setFocusPainted(false);
+		//btnContingencyPlanner.setFont(new Font("Tahoma", Font.BOLD, 12));
 
 		//Direct Flight
 		//btnDirectFlight1.setIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/icon.png")));
@@ -1568,10 +1569,10 @@ public class GUI extends JFrame {
 
 		//purple cubes remaining
 		purpleRemaining = new JLabel();
-		purpleRemaining.setBackground(Color.MAGENTA);
+		purpleRemaining.setBackground(Color.BLACK);
 		purpleRemaining.setForeground(Color.WHITE);
 		purpleRemaining.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(purpleCubesRemPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
-		purpleRemaining.setBounds(500, 6, 48, 16);
+		purpleRemaining.setBounds(495, 6, 48, 16);
 		topBar.add(purpleRemaining);
 		purpleRemaining.setOpaque(true);
 
@@ -1614,6 +1615,7 @@ public class GUI extends JFrame {
 		redCureMarker.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(redCureMarkerIconPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
 		redCureMarker.setBounds(640, 6, 40, 16);
 		topBar.add(redCureMarker);
+		redCureMarker.setVisible(false);
 		redCureMarker.setOpaque(true);
 
 		blueCureMarker = new JLabel();
@@ -1622,6 +1624,7 @@ public class GUI extends JFrame {
 		blueCureMarker.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(blueCureMarkerIconPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
 		blueCureMarker.setBounds(680, 6, 40, 16);
 		topBar.add(blueCureMarker);
+		blueCureMarker.setVisible(false);
 		blueCureMarker.setOpaque(true);
 
 		yellowCureMarker = new JLabel();
@@ -1630,6 +1633,7 @@ public class GUI extends JFrame {
 		yellowCureMarker.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(yellowCureMarkerIconPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
 		yellowCureMarker.setBounds(720, 6, 40, 16);
 		topBar.add(yellowCureMarker);
+		yellowCureMarker.setVisible(false);
 		yellowCureMarker.setOpaque(true);
 
 		blackCureMarker = new JLabel();
@@ -1638,6 +1642,7 @@ public class GUI extends JFrame {
 		blackCureMarker.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(blackCureMarkerIconPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
 		blackCureMarker.setBounds(760 ,6, 40, 16);
 		topBar.add(blackCureMarker);
+		blackCureMarker.setVisible(false);
 		blackCureMarker.setOpaque(true);
 
 		purpleCureMarker = new JLabel();
@@ -1646,6 +1651,7 @@ public class GUI extends JFrame {
 		purpleCureMarker.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(purpleCureMarkerIconPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
 		purpleCureMarker.setBounds(800, 6, 48, 16);
 		topBar.add(purpleCureMarker);
+		purpleCureMarker.setVisible(false);
 		purpleCureMarker.setOpaque(true);
 
 
@@ -1672,7 +1678,7 @@ public class GUI extends JFrame {
 		contentPane.setComponentZOrder(btnShareKnowledge, 1);
 
 		//=====
-		contentPane.setComponentZOrder(btnDriveFerry1, 0);
+		contentPane.setComponentZOrder(btnContingencyPlanner, 0);
 		contentPane.setComponentZOrder(btnDirectFlight1, 0);
 		contentPane.setComponentZOrder(btnCharterFlight1, 0);
 		contentPane.setComponentZOrder(btnShuttleFlight1, 0);
@@ -1765,7 +1771,6 @@ public class GUI extends JFrame {
 					} else if (moves.get("buildResearch")) {
 						GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
 
-						//GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
 					}
 
 					else if (moves.get("OEMoveToAnyCity")){
@@ -1788,7 +1793,7 @@ public class GUI extends JFrame {
 				//(and probably the color? probably not necessary since you can get the color from the card)
 				//(and probably role? i.e userRole)
 
-				//GameURs.sendDiscoverCureUR(client, discoverCureDiscardCards, discoverCureDiseaseType);
+				GameURs.sendDiscoverCureUR(client, discoverCureDiscardCards);
 
 
 			}
@@ -2036,7 +2041,7 @@ public class GUI extends JFrame {
 
 		moreButton.addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent e) {
-				btnDriveFerry1.setVisible(!btnDriveFerry1.isVisible());
+				btnContingencyPlanner.setVisible(!btnContingencyPlanner.isVisible());
 				btnDirectFlight1.setVisible(!btnDirectFlight1.isVisible());
 				btnCharterFlight1.setVisible(!btnCharterFlight1.isVisible());
 				btnShuttleFlight1.setVisible(!btnShuttleFlight1.isVisible());
@@ -2045,13 +2050,13 @@ public class GUI extends JFrame {
 				btnBuildResearch1.setVisible(!btnBuildResearch1.isVisible());
 				btnShareKnowledge1.setVisible(!btnShareKnowledge1.isVisible());
 
-				if (userRole == RoleType.OperationsExpert) {
-					btnDriveFerry1.setText("Role Action: Move to Any City");
-					btnDriveFerry1.addActionListener(new ActionListener() {
+				/*if (userRole == RoleType.OperationsExpert) {
+					btnContingencyPlanner.setText("Role Action: Move to Any City");
+					btnContingencyPlanner.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent e) {
 
-							if (btnDriveFerry1.getForeground().equals(Color.BLACK)) {
-								showHideOtherActionButtons(actionBtns, btnDriveFerry1);
+							if (btnContingencyPlanner.getForeground().equals(Color.BLACK)) {
+								showHideOtherActionButtons(actionBtns, btnContingencyPlanner);
 								moves.put("OEMoveToAnyCity", !moves.get("OEMoveToAnyCity"));
 								showHideTargetsMoveToAnyCity();
 								//System.out.println("Drive ferry pressed");
@@ -2073,8 +2078,9 @@ public class GUI extends JFrame {
 						}
 					});
 				}
-
+				*/
 			}
+
 		});
 
 		//Drive Ferry button
@@ -2268,6 +2274,17 @@ public class GUI extends JFrame {
 					dialog.setOnOk(ev -> {
 						final List<String> chosenItems = dialog.getSelectedItems();
 						String sharingKnowlegeTarget = chosenItems.get(0);
+						RoleType givingPlayerRole = userRole;
+						RoleType receivingPlayerRole = RoleType.valueOf(sharingKnowlegeTarget);
+						for(PlayerCard pc : gs.getCardMap().get(RoleType.valueOf(sharingKnowlegeTarget)))
+						{
+							if(pc.getCardName().equals(gs.getPositionMap().get(userRole).getName().toString()))
+							{
+								receivingPlayerRole = userRole;
+								givingPlayerRole = RoleType.valueOf(sharingKnowlegeTarget);
+								break;
+							}
+						}
 						System.out.println("Sharing knowledge with " + sharingKnowlegeTarget);
 
 
@@ -2276,9 +2293,8 @@ public class GUI extends JFrame {
 								"Player " + currentPlayer + " wants to share knowlegdge with you.", /*consentPrompt*/
 								getGameState().getUserMap().get(Utils.getEnum(RoleType.class, sharingKnowlegeTarget)), /*receivingPlayerName*/
 								getGameState().getPositionMap().get(userRole).getName().toString(), /*receivingCityName*/
-								getGameState().getUserMap().entrySet().stream().filter(entry -> entry.getValue().equals(currentPlayer))
-										.map(Map.Entry::getKey).findFirst().orElse(null), /*givingPlayerRole*/
-								RoleType.valueOf(sharingKnowlegeTarget)); /*receivingPlayerRole*/
+								givingPlayerRole, /*givingPlayerRole*/
+								receivingPlayerRole); /*receivingPlayerRole*/
 
 						//old
 						/*client.sendMessageToServer(ServerCommands.INITIATE_CONSENT_REQUIRING_MOVE.name(),
@@ -2296,13 +2312,47 @@ public class GUI extends JFrame {
 			}
 		});
 
+
+
+
 		//=========EVENT LISTENERS FOR EMPTY BUTTONS
-		//Drive Ferry button
-		btnDriveFerry1.addActionListener(new ActionListener() {
+
+		btnContingencyPlanner.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+
+				//display list of infection discard cards
+				List<String> playerDiscardList = new ArrayList<>();
+				for(PlayerCard playerCard : gs.getPlayerDiscardPile().getCardsInPile())
+				{
+					if(!playerCard.getCardType().equals(CardType.EventCard))
+						playerDiscardList.add(playerCard.getCardName());
+				}
+
+				final JList<String> listToDisplay = new JList<>(new Vector<>(playerDiscardList));
+				final ListDialog dialogRemoveplayerCard = new ListDialog("Take event card", "Please take one card: ", listToDisplay);
+				dialogRemoveplayerCard.setOnOk(ev->
+				{
+					final List<String> chosenItems = dialogRemoveplayerCard.getSelectedItems();
+					String playerCardTarget = chosenItems.get(0);
+					System.out.println("player card to remove: " + playerCardTarget);
+					int index = -1;
+					for(int i=0;i<playerDiscardList.size();i++)
+					{
+						if(playerDiscardList.get(i).equals(playerCardTarget))
+						{
+							index=i;
+							break;
+						}
+					}
+					System.out.println(gs.getPlayerDiscardPile().getCardsInPile().get(index).getCardName());
+					//EventCardURs.sendResilientPopulationUR(client, username, gs.getPlayerDiscardPile().getCardsInPile().get(index));
+
+				});
+				dialogRemoveplayerCard.show();
 
 			}
 		});
+
 
 		//Direct Flight button
 		btnDirectFlight1.addActionListener(new ActionListener() {
@@ -2467,16 +2517,24 @@ public class GUI extends JFrame {
 		infectionRate.setText("" + gs.getCurrentInfectionRate());
 		outbreakMeterCount.setText("" + gs.getCurrentOutbreakMeter());
 
-		//if(gs.getCureMap().get(DiseaseType.Red))
-		redCureMarker.setVisible(true);
-		//if(gs.getCureMap().get(DiseaseType.Blue))
-		blueCureMarker.setVisible(true);
-		//if(gs.getCureMap().get(DiseaseType.Yellow))
-		yellowCureMarker.setVisible(true);
-		//if(gs.getCureMap().get(DiseaseType.Purple))
-		purpleCureMarker.setVisible(true);
-		//if(gs.getCureMap().get(DiseaseType.Black))
-		blackCureMarker.setVisible(true);
+		if(gs.getCureMap().get(DiseaseType.Red)) {
+			redCureMarker.setVisible(true);
+		}
+		if(gs.getCureMap().get(DiseaseType.Blue)) {
+			blueCureMarker.setVisible(true);
+		}
+		if(gs.getCureMap().get(DiseaseType.Yellow)) {
+			yellowCureMarker.setVisible(true);
+		}
+		if(gs.getCureMap().get(DiseaseType.Black)) {
+			blackCureMarker.setVisible(true);
+		}
+		if (gs.getPurpleInPlay()) {
+			if (gs.getCureMap().get(DiseaseType.Purple)) {
+				purpleCureMarker.setVisible(true);
+			}
+		}
+
 	}
 
 	private void loadCubesOnMap()	{
@@ -2550,7 +2608,12 @@ public class GUI extends JFrame {
 
 		System.out.println("num of RS: " + gs.getResearchStationLocations().size());
 
-		listOfRS.forEach(j->j.setVisible(false));
+		//listOfRS.forEach(j->j.setVisible(false));
+
+		for(int i = 0; i < listOfRS.size(); i++) {
+			listOfRS.get(i).setVisible(false);
+		}
+
 		listOfRS.clear();
 		for (City atCity : gs.getResearchStationLocations())
 		{
@@ -2702,7 +2765,11 @@ public class GUI extends JFrame {
 
 		// System.out.println("username: " +username);
 		// System.out.println("userRole: " + userRole);
+		System.out.println("Player card map: " + gs.getCardMap());
+		System.out.println("USER ROLE : " + userRole);
+		System.out.println("Player cards: " + gs.getCardMap().get(userRole));
 		for (PlayerCard playerCard : gs.getCardMap().get(userRole)) {
+			System.out.println("PlayerCard : " + playerCard.getCardName());
 
 			JLabel playerCardLabel = mapPlayerCardLabels.get(playerCard.getCardName());
 			if (playerCardLabel != null) {
@@ -2876,6 +2943,12 @@ public class GUI extends JFrame {
 						}
 
 						//every card in the list must have the same color(region)
+
+						//boolean curePurple = gs.getDiseaseCubesMap().c
+
+
+
+
 						//otherwise return, i.e won't display cureButton
 						Region region = discoverCureDiscardCards.get(0).getRegion();
 						boolean containsPurpleDisease;
@@ -3468,23 +3541,50 @@ public class GUI extends JFrame {
 		genericBox.setBounds(486,200,400,100);
 		genericBox.setOpaque(true);
 
-		acceptButton.setText("Accept");
-		acceptButton.setHorizontalAlignment(SwingConstants.CENTER);
-		acceptButton.setVerticalAlignment(SwingConstants.CENTER);
-		acceptButton.setBackground(Color.GREEN);
-		acceptButton.setBounds(586,300,50,30);
-		acceptButton.setOpaque(true);
-		//contentPane.add(acceptButton);
-		contentPane.setComponentZOrder(acceptButton,0);
+		JLabel acceptButton1 = new JLabel("Accept");
+		JLabel declineButton1 = new JLabel("Decline");
 
-		declineButton.setText("Decline");
-		declineButton.setHorizontalAlignment(SwingConstants.CENTER);
-		declineButton.setVerticalAlignment(SwingConstants.CENTER);
-		declineButton.setBackground(Color.RED);
-		declineButton.setBounds(650,300,50,30);
-		declineButton.setOpaque(true);
-		//contentPane.add(declineButton);
-		contentPane.setComponentZOrder(declineButton,0);
+		acceptButton1.setText("Accept");
+		acceptButton1.setHorizontalAlignment(SwingConstants.CENTER);
+		acceptButton1.setVerticalAlignment(SwingConstants.CENTER);
+		acceptButton1.setBackground(Color.GREEN);
+		acceptButton1.setBounds(586,300,50,30);
+		acceptButton1.setOpaque(true);
+		contentPane.add(acceptButton1);
+		contentPane.setComponentZOrder(acceptButton1,0);
+		acceptButton1.setVisible(true);
+		acceptButton1.addMouseListener(new MouseAdapter() {
+										  public void mouseReleased(MouseEvent e) {
+											  GameURs.sendAnswerToShareKnowledge(client, true);
+											  //client.sendMessageToServer(ServerCommands.ANSWER_CONSENT_PROMPT.name(), true);
+											  genericBox.setVisible(false);
+											  acceptButton1.setVisible(false);
+											  declineButton1.setVisible(false);
+
+										  }
+									  });
+
+
+		declineButton1.setText("Decline");
+		declineButton1.setHorizontalAlignment(SwingConstants.CENTER);
+		declineButton1.setVerticalAlignment(SwingConstants.CENTER);
+		declineButton1.setBackground(Color.RED);
+		declineButton1.setBounds(650,300,50,30);
+		declineButton1.setOpaque(true);
+		contentPane.add(declineButton1);
+		contentPane.setComponentZOrder(declineButton1,0);
+		declineButton1.setVisible(true);
+		declineButton1.addMouseListener(new MouseAdapter() {
+			public void mouseReleased(MouseEvent e) {
+				genericBox.setVisible(false);
+				acceptButton1.setVisible(false);
+				declineButton1.setVisible(false);
+				GameURs.sendAnswerToShareKnowledge(client, false);
+
+			}
+		});
+
+		System.out.println("visible?: " + acceptButton1.isVisible() + " " + declineButton1.isVisible() );
 
 	}
 	public void drawReceiveMessage(String message, MessageType type)

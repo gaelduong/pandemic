@@ -1,5 +1,7 @@
 package pandemic;
 
+import java.util.Objects;
+
 public class CityCard implements PlayerCard, MovingCard{
 
 	private CardType type;
@@ -29,4 +31,19 @@ public class CityCard implements PlayerCard, MovingCard{
     public String getCardName() {
         return name.toString();
     }
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		CityCard cityCard = (CityCard) o;
+		return name == cityCard.name &&
+				cardType == cityCard.cardType;
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(name, cardType);
+	}
 }

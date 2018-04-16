@@ -115,8 +115,41 @@ public class UpdateRequest implements Serializable {
                 //TODO add currentlyProcessedAction.setLog_actionResult() for game log
                 break;
 
+            case IMPOSE_QUARANTINE_MARKER:
+                executeImposeQuarantine(game, playerUsername, arguments);
+                break;
         }
         return status;
+    }
+
+    private void executeImposeQuarantine(Game game, String playerUsername, List arguments) {
+        final GameManager gameManager = game.getGameManager();
+        final String playerUserName = (String) arguments.get(0);
+        final String cityLocationToPlace = (String) arguments.get(1);
+        final String cityNameToRemove_Optional = (String) arguments.get(2);
+
+        if (game.getCurrentPlayer().getPlayerUserName().equals(playerUserName)) {
+            Player currentPlayer = game.getCurrentPlayer();
+
+            if(cityNameToRemove_Optional != null) {
+                CityName cityNameToRemoveFrom = Utils.getEnum(CityName.class, cityNameToRemove_Optional);
+                City cityToRemoveFrom = game.getCityByName(cityNameToRemoveFrom);
+
+                QuarantineMarker toRemove = (QuarantineMarker) cityToRemoveFrom.getCityUnits().stream()
+                                                                           .filter(unit -> unit.getUnitType() == UnitType.QuarantineMarker)
+                                                                           .findAny().orElse(null);
+                if(toRemove != null) {
+                    gameManager.removeQuarantineMarker(toRemove);
+                }
+            }
+
+            gameManager.playImposeAQuarantine();
+
+        } else {
+            System.err.println("ERROR - passed player user name does not correspond to current player");
+        }
+
+
     }
 
     private void executeInfectNextCity(Game game, String playerUsername) {
@@ -128,13 +161,20 @@ public class UpdateRequest implements Serializable {
         final PlayerCardSimple cardToMove = (PlayerCardSimple)arguments.get(0);
         final String cardSourceString = (String)arguments.get(1);         //read the MOVE_CARD enum for the string encoding
         final String cardDestinationString = (String)arguments.get(2);
+        final boolean isShareKnowledge = arguments.size() == 4 ? (boolean) arguments.get(3) : false;
 
         Player currentPlayer = game.getCurrentPlayer();
+        System.out.println("Executing move card action from " + currentPlayer);
+
         if (currentPlayer.getPlayerUserName().equals(playerUsername)) {
             final CardSource cardSource = (CardSource) getCardSourceTarget(cardSourceString, game, currentPlayer);
             final CardTarget cardTarget = (CardTarget) getCardSourceTarget(cardDestinationString, game, currentPlayer);
 
             Card cardToMoveObj = cardSource.getCard(cardToMove);
+            if (cardToMoveObj == null) {
+                System.err.println("CARD TO MOVE IS NULL. ERROR");
+                return;
+            }
 
             cardTarget.acceptCard(cardToMoveObj);
 
@@ -146,6 +186,10 @@ public class UpdateRequest implements Serializable {
 
             if(cardSource instanceof Player)
                 ((Player) cardSource).discardCard(cardToMoveObj);
+
+            if(isShareKnowledge)
+                currentPlayer.incrementActionTaken();
+
         }
     }
 
@@ -222,8 +266,19 @@ public class UpdateRequest implements Serializable {
         final List<CityCard> cardToDiscard = (List<CityCard>)arguments.get(0);
 
         final List<PlayerCard> cardsToDiscard = (List<PlayerCard>)arguments.get(0);
-        final DiseaseType toCure = (DiseaseType)arguments.get(arguments.size());
 
+        System.out.println("Discovering cure...");
+        DiseaseType toCure = gameManager.getDiseaseTypeByRegion(gameManager.getCityByName(Utils.getEnum(CityName.class, cardsToDiscard.get(0).getCardName())).getRegion());
+        for (PlayerCard c : cardsToDiscard){
+            System.out.println("PlayerCard for cure: " + c.getCardName());
+            DiseaseType cDiseaseType = gameManager.getDiseaseTypeByRegion(gameManager.getCityByName(Utils.getEnum(CityName.class, c.getCardName())).getRegion());
+            if (cDiseaseType != toCure){
+                toCure = DiseaseType.Purple;
+                break;
+            }
+        }
+
+        System.out.println("Disease to cure: " + toCure);
         gameManager.playDiscoverCure(toCure, cardsToDiscard);
         currentlyProcessedAction.setLog_actionResult("has discovered a cure for type " + cardToDiscard.get(0).getRegion().toString().toLowerCase() + "!");
     }
