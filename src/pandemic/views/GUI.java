@@ -804,6 +804,8 @@ public class GUI extends JFrame {
 
 	public void draw() {
 
+		genericBox.setText("");
+
 		if (gs == null)
 			return;
 		String currentPlayer = gs.getCurrentPlayer();
@@ -1154,8 +1156,7 @@ public class GUI extends JFrame {
 					((JButton) components[i]).setEnabled(false);
 				}
 			}
-			genericBox.setText("Too many card! Please press Discard then select a card to discard");
-			genericBox.setBounds(600, 520, 500, 50);
+			displayMessage("Choose city to move to",600, 520);
 			discardButton.setVisible(true);
 
 			System.out.println(discardButton.isVisible() + " " + playEventOptionButton.isVisible());
@@ -1531,7 +1532,7 @@ public class GUI extends JFrame {
 
 		discardButton.setText("DISCARD");
 		discardButton.setBounds(11, 570, 176, 20);
-		discardButton.setBackground(Color.GREEN);
+		discardButton.setBackground(Color.ORANGE);
 		discardButton.setForeground(Color.WHITE);
 		contentPane.add(discardButton);
 		discardButton.setVisible(false);
@@ -1784,14 +1785,28 @@ public class GUI extends JFrame {
 
 
 					} else if (moves.get("directFlight")) {
-						GameURs.sendDirectFlightUR(client, username, cityNameSelected.toString());
+						for(PlayerCard pc : gs.getCardMap().get(userRole))
+						{
+							if(pc.getCardName().equals(cityNameSelected.toString()))
+								GameURs.sendDirectFlightUR(client, username, cityNameSelected.toString());
+						}
+
 
 					} else if (moves.get("charterFlight")) {
 						GameURs.sendCharterFlightUR(client, gs.getPositionMap().get(userRole).getName().toString() ,cityNameSelected.toString(), username, userRole);
 					} else if (moves.get("shuttleFlight")) {
-						GameURs.sendShuttleFlightUR(client, username, cityNameSelected.toString());
+						for(City c : gs.getResearchStationLocations())
+						{
+							if(c.getName().equals(cityNameSelected) && !cityNameSelected.equals(gs.getPositionMap().get(userRole).getName()))
+								GameURs.sendShuttleFlightUR(client, username, cityNameSelected.toString());
+						}
 					} else if (moves.get("buildResearch")) {
-						GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
+						for(City c : gs.getResearchStationLocations())
+						{
+							if(c.getName().equals(cityNameSelected))
+								GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
+						}
+
 
 					}
 
@@ -2111,10 +2126,15 @@ public class GUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 
 				if (btnDriveFerry.getForeground().equals(Color.BLACK)) {
+
+
+
 					showHideOtherActionButtons(actionBtns, btnDriveFerry);
 					resetMovesExcept("drive");
 					moves.put("drive", !moves.get("drive"));
+
 					showHideTargetsDrive();
+
 					//System.out.println("Drive ferry pressed");
 					//resetMovesSelected(moves);
 					//resetDisplayOptions(displayOptions);
@@ -2138,9 +2158,12 @@ public class GUI extends JFrame {
 		btnDirectFlight.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (btnDirectFlight.getForeground().equals(Color.BLACK)) {
+
+
 					showHideOtherActionButtons(actionBtns, btnDirectFlight);
 					resetMovesExcept("directFlight");
 					moves.put("directFlight", !moves.get("directFlight"));
+
 					showHideTargetsDirectFlight();
 
 					//resetMovesSelected(moves);
@@ -2164,6 +2187,7 @@ public class GUI extends JFrame {
 		btnCharterFlight.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (btnCharterFlight.getForeground().equals(Color.BLACK)) {
+
 					showHideOtherActionButtons(actionBtns, btnCharterFlight);
 					resetMovesExcept("charterFlight");
 					moves.put("charterFlight", !moves.get("charterFlight"));
@@ -2192,6 +2216,9 @@ public class GUI extends JFrame {
 		btnShuttleFlight.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (btnShuttleFlight.getForeground().equals(Color.BLACK)) {
+
+
+
 					showHideOtherActionButtons(actionBtns, btnShuttleFlight);
 					resetMovesExcept("shuttleFlight");
 					moves.put("shuttleFlight", !moves.get("shuttleFlight"));
@@ -2229,8 +2256,10 @@ public class GUI extends JFrame {
 
 					if (gs.getResearchStationLocations().size() < 6)
 						showHideBuildRSButton();
-					else //else display RSs to remove
+					else {//else display RSs to remove
+						displayMessage("Too many stations! Select one to remove and build",600, 520);
 						showHideTargetsRS();
+					}
 
 					//else if RS=6
 
@@ -2531,6 +2560,16 @@ public class GUI extends JFrame {
 		return new int[]{Integer.parseInt(X), Integer.parseInt(Y)};
 	}
 
+	private void displayMessage(String mess,int x, int y)
+	{
+		genericBox.setText(mess);
+		genericBox.setLocation(x,y);
+		genericBox.setVisible(true);
+
+		revalidate();
+		repaint();
+	}
+
 	private void setShadow(JLabel label, Color c, int thickness) {
 
 		Border border = BorderFactory.createLineBorder(c, thickness);
@@ -2742,7 +2781,7 @@ public class GUI extends JFrame {
 		userRoleLabel.setText("Role: " + userRole.toString());
 //		//userRoleLabel.setFont(new Font("Lao MN", Font.PLAIN, 12));
 //		userRoleLabel.setForeground(Color.WHITE);
-		userRoleLabel.setBounds(74 - userRole.toString().length(), 600, 190, 16);
+		userRoleLabel.setBounds(74 - userRole.toString().length(), 630, 190, 16);
 //		contentPane.add(userRoleLabel);
 //		contentPane.setComponentZOrder(userRoleLabel, 1);
 //		userRoleLabel.setVisible(true);
