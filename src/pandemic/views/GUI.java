@@ -1790,7 +1790,7 @@ public class GUI extends JFrame {
 				//(and probably the color? probably not necessary since you can get the color from the card)
 				//(and probably role? i.e userRole)
 
-				//GameURs.sendDiscoverCureUR(client, discoverCureDiscardCards, discoverCureDiseaseType);
+				GameURs.sendDiscoverCureUR(client, discoverCureDiscardCards);
 
 
 			}
