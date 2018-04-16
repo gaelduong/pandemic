@@ -2273,7 +2273,7 @@ public class GUI extends JFrame {
 						RoleType receivingPlayerRole = RoleType.valueOf(sharingKnowlegeTarget);
 						for(PlayerCard pc : gs.getCardMap().get(RoleType.valueOf(sharingKnowlegeTarget)))
 						{
-							if(pc.getCardName().equals(gs.getPositionMap().get(userRole).getName()))
+							if(pc.getCardName().equals(gs.getPositionMap().get(userRole).getName().toString()))
 							{
 								receivingPlayerRole = userRole;
 								givingPlayerRole = RoleType.valueOf(sharingKnowlegeTarget);
@@ -2925,6 +2925,12 @@ public class GUI extends JFrame {
 						}
 
 						//every card in the list must have the same color(region)
+
+						//boolean curePurple = gs.getDiseaseCubesMap().c
+
+
+
+
 						//otherwise return, i.e won't display cureButton
 						Region region = discoverCureDiscardCards.get(0).getRegion();
 						boolean containsPurpleDisease;
@@ -3518,6 +3524,8 @@ public class GUI extends JFrame {
 		genericBox.setOpaque(true);
 
 		JLabel acceptButton1 = new JLabel("Accept");
+		JLabel declineButton1 = new JLabel("Decline");
+
 		acceptButton1.setText("Accept");
 		acceptButton1.setHorizontalAlignment(SwingConstants.CENTER);
 		acceptButton1.setVerticalAlignment(SwingConstants.CENTER);
@@ -3533,11 +3541,12 @@ public class GUI extends JFrame {
 											  //client.sendMessageToServer(ServerCommands.ANSWER_CONSENT_PROMPT.name(), true);
 											  genericBox.setVisible(false);
 											  acceptButton1.setVisible(false);
-											  //declineButton.setVisible(false);
+											  declineButton1.setVisible(false);
+
 										  }
 									  });
 
-		JLabel declineButton1 = new JLabel("Decline");
+
 		declineButton1.setText("Decline");
 		declineButton1.setHorizontalAlignment(SwingConstants.CENTER);
 		declineButton1.setVerticalAlignment(SwingConstants.CENTER);
@@ -3556,6 +3565,8 @@ public class GUI extends JFrame {
 
 			}
 		});
+
+		System.out.println("visible?: " + acceptButton1.isVisible() + " " + declineButton1.isVisible() );
 
 	}
 	public void drawReceiveMessage(String message, MessageType type)
