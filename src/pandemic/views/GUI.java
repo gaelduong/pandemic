@@ -83,6 +83,7 @@ public class GUI extends JFrame {
 		put("Airlift",false);
 		put("LocalInitiative", false);
 		put("Forecast",false);
+		put("LocalInitiative", false);
 
 	}};
 	private CityName cityNameSelected = null;
@@ -200,6 +201,7 @@ public class GUI extends JFrame {
 	private JLabel ReexaminedResearchLabel = new JLabel("/pandemic/resources/PlayerCards/ReexaminedResearchEventCard.png");
 	private JLabel RemoteTreatmentLabel = new JLabel("/pandemic/resources/PlayerCards/RemoteTreatmentEventCard.png");
 	private JLabel SpecialOrdersLabel = new JLabel("/pandemic/resources/PlayerCards/SpecialOrdersEventCard.png");
+	private JLabel LocalInitiativeLabel = new JLabel("/pandemic/resources/PlayerCards/LocalInitiativeEventCard.png");
 
 	/*City Cards*/
 	private JLabel SanFranciscoCardLabel = new JLabel("/pandemic/resources/CityCards/SanFrancisco.png");
@@ -698,6 +700,7 @@ public class GUI extends JFrame {
 		put("ReexaminedResearch", ReexaminedResearchLabel);
 		put("RemoteTreatment", RemoteTreatmentLabel);
 		put("SpecialOrders", SpecialOrdersLabel);
+		put("LocalInitiative", LocalInitiativeLabel);
 	}};
 
 	private Map<String, JLabel> mapInfectionCardLabels = new HashMap<String, JLabel>() {{
@@ -818,20 +821,20 @@ public class GUI extends JFrame {
 			return;
 		String currentPlayer = gs.getCurrentPlayer();
 		if (currentPlayer != null && username.equals(currentPlayer) && gs.getCurrentPlayerActionsRemaining() > 0 && gs.getInfectionsRemaining() == 0) {
-//			//Drive Ferry
-
-			moreButton.setVisible(true);
-			btnDriveFerry.setVisible(true);
+//			if (!gs.getGovernmentInterferenceActive() || (gs.getGovernmentInterferenceActive() && gs.getIsGovernmentInterferenceSatisfied())) {
+// 			Drive Ferry
+				moreButton.setVisible(true);
+				btnDriveFerry.setVisible(true);
 //
 //			//Direct Flight
-			btnDirectFlight.setVisible(true);
+				btnDirectFlight.setVisible(true);
 //
 //			//Charter Flight
-			btnCharterFlight.setVisible(true);
+				btnCharterFlight.setVisible(true);
 //
 //			//Shuttle Flight
-			btnShuttleFlight.setVisible(true);
-//
+				btnShuttleFlight.setVisible(true);
+//			}
 //			//Treat Disease
 			btnTreatDisease.setVisible(true);
 //
@@ -1028,27 +1031,48 @@ public class GUI extends JFrame {
 
 
 
+		boolean virulentStrainInCity = false;
+		if (gs.getVirulentStrainSet()){
+			System.out.println("CUBES IN CITY : " + cubesInCity);
+			for(Pair<DiseaseType, Integer> pair : this.cubesInCity = gs.getDiseaseCubesMap().get(gs.getPositionMap().get(userRole).getName())) {
+				System.out.println("PAIR : " + pair);
+				System.out.println("key : " + pair.getKey());
+				System.out.println("value : " + pair.getValue());
+				if (pair.getKey().equals(gs.getVirulentStrain()) && pair.getValue().intValue() > 0) {
+					virulentStrainInCity = true;
+				}
+			}
+		}
 
 
+		// grey out drive/ferry if GovernmentIntereference applies
+        btnDriveFerry.setEnabled(false);
+        if (!virulentStrainInCity || (!gs.getGovernmentInterferenceActive() || (gs.getGovernmentInterferenceActive() && gs.getIsGovernmentInterferenceSatisfied()))) {
+            btnDriveFerry.setEnabled(true);
+        }
 
 		//grey out directFlight if player has no city card
 		//or if he has exactly one city card which matches his current position
 		btnDirectFlight.setEnabled(false);
-		for (PlayerCard pc : gs.getCardMap().get(userRole)) {
-			if (pc.getCardType().equals(CardType.CityCard)) {
-				if (!pc.getCardName().equals(citName)) {
-					btnDirectFlight.setEnabled(true);
-					break;
-				} else continue;
+		if (!virulentStrainInCity || (!gs.getGovernmentInterferenceActive() || (gs.getGovernmentInterferenceActive() && gs.getIsGovernmentInterferenceSatisfied()))) {
+			for (PlayerCard pc : gs.getCardMap().get(userRole)) {
+				if (pc.getCardType().equals(CardType.CityCard)) {
+					if (!pc.getCardName().equals(citName)) {
+						btnDirectFlight.setEnabled(true);
+						break;
+					} else continue;
+				}
 			}
 		}
 
 		//grey out charterFlight if the player doesn't have the card that matches the city he's in
 		btnCharterFlight.setEnabled(false);
-		for (PlayerCard pc : gs.getCardMap().get(userRole)) {
-			if (pc.getCardName().equals(citName)) {
-				btnCharterFlight.setEnabled(true);
-				break;
+		if (!virulentStrainInCity || (!gs.getGovernmentInterferenceActive() || (gs.getGovernmentInterferenceActive() && gs.getIsGovernmentInterferenceSatisfied()))) {
+			for (PlayerCard pc : gs.getCardMap().get(userRole)) {
+				if (pc.getCardName().equals(citName)) {
+					btnCharterFlight.setEnabled(true);
+					break;
+				}
 			}
 		}
 
@@ -1112,20 +1136,22 @@ public class GUI extends JFrame {
 		//grey out shuttle flight if |RS| < 2
 		//OR if there's no RS in the city he's in
 		btnShuttleFlight.setEnabled(false);
+		if (!virulentStrainInCity || (!gs.getGovernmentInterferenceActive() || (gs.getGovernmentInterferenceActive() && gs.getIsGovernmentInterferenceSatisfied()))) {
+			for (City c : gs.getResearchStationLocations()) {
+				if (c.getName().equals(currCity.getName())) btnShuttleFlight.setEnabled(true);
+			}
 
-		for (City c : gs.getResearchStationLocations()) {
-			if (c.getName().equals(currCity.getName())) btnShuttleFlight.setEnabled(true);
-		}
-		//if the player operation expert he can move to any other cities from a station
-		if(!userRole.equals(RoleType.Medic.OperationsExpert)) {
-			if (gs.getResearchStationLocations().size() < 2) btnShuttleFlight.setEnabled(false);
+			//if the player operation expert he can move to any other cities from a station
+			if (!userRole.equals(RoleType.Medic.OperationsExpert)) {
+				if (gs.getResearchStationLocations().size() < 2) btnShuttleFlight.setEnabled(false);
+			}
 		}
 
 		//Grey out playeventbutton if player has no event card
 		playEventOptionButton.setVisible(false);
 		for(PlayerCard pc : gs.getCardMap().get(userRole))
 		{
-			if(pc.getCardType().equals(CardType.EventCard)) playEventOptionButton.setVisible(true);
+			if(pc.getCardType().equals(CardType.EventCard) && gs.getEventCardsEnabled()) playEventOptionButton.setVisible(true);
 		}
 
 
@@ -2587,6 +2613,17 @@ public class GUI extends JFrame {
 			}
 		}
 
+		if (gs.getVirulentStrainSet()) {
+			if (gs.getVirulentStrain().equals(DiseaseType.Red)) {
+				redRemaining.setBackground(Color.magenta);
+			} else if (gs.getVirulentStrain().equals(DiseaseType.Blue)) {
+				blueRemaining.setBackground(Color.magenta);
+			} else if (gs.getVirulentStrain().equals(DiseaseType.Black)) {
+				blackRemaining.setBackground(Color.magenta);
+			} else if (gs.getVirulentStrain().equals(DiseaseType.Yellow)) {
+				yellowRemaining.setBackground(Color.magenta);
+			}
+		}
 	}
 
 	private void loadCubesOnMap()	{
@@ -2843,8 +2880,9 @@ public class GUI extends JFrame {
 
 				//remove & add mouselisteners to each cityCardLabel after each draw
 				MouseListener[] mouseListeners = playerCardLabel.getMouseListeners();
-				for (MouseListener mouseListener : mouseListeners) {
-					playerCardLabel.removeMouseListener(mouseListener);
+//				for (MouseListener mouseListener : mouseListeners) {
+				for (int j = 0; j < mouseListeners.length; j++){
+					playerCardLabel.removeMouseListener(mouseListeners[j]);
 				}
 				//RoleType  = userRole;
 				playerCardLabel.addMouseListener(new MouseAdapter() {
