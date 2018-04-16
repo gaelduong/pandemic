@@ -312,6 +312,8 @@ public class GUI extends JFrame {
 	private ArrayList<JLabel> targetsShuttleFlight = new ArrayList<JLabel>();
 	private ArrayList<JLabel> targetsRS = new ArrayList<JLabel>();
 	private ArrayList<JLabel> listOfRS = new ArrayList<JLabel>();
+	private ArrayList<JLabel> listOfQM1 = new ArrayList<JLabel>();
+	private ArrayList<JLabel> listOfQM2 = new ArrayList<JLabel>();
 	/*TreatdiseaseOptions container*/
 	private JLabel genericBox;
 
@@ -950,6 +952,8 @@ public class GUI extends JFrame {
 
 		//------Display research stations------
 		loadResearchStations();
+		//------Display quarantine markers------
+		loadQuarantineMarkers();
 
 
 		loadTargetsDrive();
@@ -2726,9 +2730,62 @@ public class GUI extends JFrame {
 			listOfRS.add(rsLabel);
 
 		}
+	}
+
+	private void loadQuarantineMarkers(){
+		for(int i = 0; i < listOfQM1.size(); i++) {
+			listOfQM1.get(i).setVisible(false);
+		}
+
+		listOfQM1.clear();
+		for (City atCity : gs.getQuarantineMarkerOneLocations())
+		{
+			System.out.println();
+			JLabel cityLabel = mapCityLabels.get(atCity.getName());
+
+			//System.out.println(entry.getKey() + "/" + entry.getValue());
 
 
+			int rsX =  getCityPosition(cityLabel.getText())[0];
+			int rsY =  getCityPosition(cityLabel.getText())[1];
 
+			JLabel qm1Label = new JLabel("/pandemic/resources/quarantineMarker1.png");
+
+
+			qm1Label.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(qm1Label.getText())).getImage().getScaledInstance(citySize+15, citySize+10, Image.SCALE_SMOOTH)));
+			qm1Label.setBounds(rsX, rsY, citySize-7, citySize-7);
+			contentPane.add(qm1Label);
+			contentPane.setComponentZOrder(qm1Label, 1);
+			qm1Label.setVisible(true);
+			listOfQM1.add(qm1Label);
+		}
+
+		for(int i = 0; i < listOfQM2.size(); i++) {
+			listOfQM2.get(i).setVisible(false);
+		}
+
+		listOfQM2.clear();
+		for (City atCity : gs.getQuarantineMarkerTwoLocations())
+		{
+			System.out.println();
+			JLabel cityLabel = mapCityLabels.get(atCity.getName());
+
+			//System.out.println(entry.getKey() + "/" + entry.getValue());
+
+
+			int rsX =  getCityPosition(cityLabel.getText())[0];
+			int rsY =  getCityPosition(cityLabel.getText())[1];
+
+			JLabel qm2Label = new JLabel("/pandemic/resources/quarantineMarker2.png");
+
+
+			qm2Label.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(qm2Label.getText())).getImage().getScaledInstance(citySize+15, citySize+10, Image.SCALE_SMOOTH)));
+			qm2Label.setBounds(rsX, rsY, citySize-7, citySize-7);
+			contentPane.add(qm2Label);
+			contentPane.setComponentZOrder(qm2Label, 1);
+			qm2Label.setVisible(true);
+			listOfQM2.add(qm2Label);
+		}
 	}
 
 	private void loadAllPlayerCards() {
@@ -2887,7 +2944,7 @@ public class GUI extends JFrame {
 				//RoleType  = userRole;
 				playerCardLabel.addMouseListener(new MouseAdapter() {
 					public void mouseReleased(MouseEvent e) {
-
+					System.out.println("Setting Mouse Listener");
 
 						System.out.println("Card clicked: " + playerCard.getCardName());
 						//System.out.println(moves.get("playEventCard") + " " + moves.get("discoverCure") + " " + moves.get("discard"));
