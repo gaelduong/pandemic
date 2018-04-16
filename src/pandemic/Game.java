@@ -245,10 +245,11 @@ public class Game {
 
     public void dealCardsAndShuffleInEpidemicCards() {
 
-//        CityCard cardAtl = (CityCard) myPlayerDeck.getDeck().stream()
-//                .filter(c -> c.getCardType() == CardType.CityCard && c.getCardName().equals("Atlanta"))
-//                .findAny().orElse(null);
-//        myPlayerDeck.getDeck().add(0, cardAtl);
+        // REMOVE AFTER TESTING: FORCES A PLAYER TO START WITH ATLANTA CARD
+        CityCard cardAtl = (CityCard) myPlayerDeck.getDeck().stream()
+                .filter(c -> c.getCardType() == CardType.CityCard && c.getCardName().equals("Atlanta"))
+                .findAny().orElse(null);
+        myPlayerDeck.getDeck().add(0, cardAtl);
         myPlayerDeck.printDeck();
 
         for (Player p : gameManager.getActivePlayers()) {
@@ -511,6 +512,13 @@ public class Game {
             diseaseTypeToSupplyDict.put(purpleDisease.getDiseaseType(), purpleUnusedDiseaseFlags);
             diseaseTypeToDiseaseDict.put(purpleDisease.getDiseaseType(), purpleDisease);
         }
+
+//        // REMOVE AFTER TESTING: FORCES GAME TO START WITH PURPLE FLAG
+//        City atl = getCityByName(CityName.Atlanta);
+//        DiseaseFlag purpleFlag = purpleUnusedDiseaseFlags.get(0);
+//        purpleFlag.setLocation(atl);
+//        purpleFlag.setUsed(true);
+//        atl.getCityUnits().add(purpleFlag);
 
     }
 
@@ -1255,9 +1263,10 @@ public class Game {
         final Map<RoleType, City> positionMap
                 = gameManager.getActivePlayers().stream().collect(Collectors.toMap(Player::getRoleType, p -> myGameBoard.getCityByName(p.getPawn().getLocation().getName())));
 
-        final Map<BioTTurnStats, Boolean> bioTMap =
-                gameManager.getBioTPlayer().getBioTTurnTracker().getBioTStatMap();
-
+        Map<BioTTurnStats, Boolean> bioTMap = null;
+        if (settings.getChallenge().equals(ChallengeKind.BioTerrorist) || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndBioTerrorist)) {
+            bioTMap = gameManager.getBioTPlayer().getBioTTurnTracker().getBioTStatMap();
+        }
 
         final Map<CityName, List<Pair<DiseaseType, Integer>>> diseaseCubesMap
                 = myGameBoard.getCitiesOnBoard().stream().collect(Collectors.toMap(City::getName, City::getDiseaseFlags));

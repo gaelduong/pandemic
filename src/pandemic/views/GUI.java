@@ -2605,7 +2605,12 @@ public class GUI extends JFrame {
 
 		System.out.println("num of RS: " + gs.getResearchStationLocations().size());
 
-		listOfRS.forEach(j->j.setVisible(false));
+		//listOfRS.forEach(j->j.setVisible(false));
+
+		for(int i = 0; i < listOfRS.size(); i++) {
+			listOfRS.get(i).setVisible(false);
+		}
+
 		listOfRS.clear();
 		for (City atCity : gs.getResearchStationLocations())
 		{
