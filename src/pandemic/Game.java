@@ -511,15 +511,16 @@ public class Game {
             }
             diseaseTypeToSupplyDict.put(purpleDisease.getDiseaseType(), purpleUnusedDiseaseFlags);
             diseaseTypeToDiseaseDict.put(purpleDisease.getDiseaseType(), purpleDisease);
+
+
+            // REMOVE AFTER TESTING: FORCES GAME TO START WITH PURPLE FLAG
+            City atl = getCityByName(CityName.Atlanta);
+            DiseaseFlag purpleFlag = purpleUnusedDiseaseFlags.get(0);
+            purpleFlag.setLocation(atl);
+            purpleFlag.setUsed(true);
+            atl.getCityUnits().add(purpleFlag);
+
         }
-
-//        // REMOVE AFTER TESTING: FORCES GAME TO START WITH PURPLE FLAG
-//        City atl = getCityByName(CityName.Atlanta);
-//        DiseaseFlag purpleFlag = purpleUnusedDiseaseFlags.get(0);
-//        purpleFlag.setLocation(atl);
-//        purpleFlag.setUsed(true);
-//        atl.getCityUnits().add(purpleFlag);
-
     }
 
     public void initializePlayerPawns() {
