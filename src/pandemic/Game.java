@@ -208,19 +208,19 @@ public class Game implements Serializable {
 
 
         // -----------FOR TESTING--------------------
-        if(settings.getChallenge().equals(ChallengeKind.Mutation) || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndMutation)
-                || settings.getChallenge().equals(ChallengeKind.BioTerrorist) || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndBioTerrorist)) {
-            // REMOVE AFTER TESTING
-            City atl = getCityByName(CityName.Atlanta);
-            ArrayList<DiseaseFlag> diseaseFlagsSupply = diseaseTypeToSupplyDict.get(DiseaseType.Purple);
-            DiseaseFlag flag = diseaseFlagsSupply.remove(0);
-            atl.getCityUnits().add(flag);
-            flag.setLocation(atl);
-            flag.setUsed(true);
+//        if(settings.getChallenge().equals(ChallengeKind.Mutation) || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndMutation)
+//        || settings.getChallenge().equals(ChallengeKind.BioTerrorist) || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndBioTerrorist)) {
+//            // REMOVE AFTER TESTING
+//            City atl = getCityByName(CityName.Atlanta);
+//            ArrayList<DiseaseFlag> diseaseFlagsSupply = diseaseTypeToSupplyDict.get(DiseaseType.Purple);
+//            DiseaseFlag flag = diseaseFlagsSupply.remove(0);
+//            atl.getCityUnits().add(flag);
+//            flag.setLocation(atl);
+//            flag.setUsed(true);
 //                myInfectionDeck.addCardToTop(new MutationCard(gameManager));
 //                myInfectionDeck.addCardToTop(new MutationCard(gameManager));
 //
-        }
+//        }
 
     }
 
@@ -319,10 +319,10 @@ public class Game implements Serializable {
                 break;
             case VirulentStrain:
                 // REMOVE AFTER TESTING VIRULENT STRAIN EPIDEMIC CARDS:
-                allVirulentStrainEpidemicCards.add(new GovernmentInterferenceEpidemicCard(gameManager));
-                allVirulentStrainEpidemicCards.add(new GovernmentInterferenceEpidemicCard(gameManager));
-                allVirulentStrainEpidemicCards.add(new GovernmentInterferenceEpidemicCard(gameManager));
-                allVirulentStrainEpidemicCards.add(new GovernmentInterferenceEpidemicCard(gameManager));
+//                allVirulentStrainEpidemicCards.add(new GovernmentInterferenceEpidemicCard(gameManager));
+//                allVirulentStrainEpidemicCards.add(new GovernmentInterferenceEpidemicCard(gameManager));
+//                allVirulentStrainEpidemicCards.add(new GovernmentInterferenceEpidemicCard(gameManager));
+//                allVirulentStrainEpidemicCards.add(new GovernmentInterferenceEpidemicCard(gameManager));
 
 
 
@@ -390,7 +390,7 @@ public class Game implements Serializable {
         /*System.out.println("......PlayerDeck before Epidemic Cards inserted (size: " + myPlayerDeck.getDeckSize()+ ")....");
         myPlayerDeck.printDeck();*/
 
-        myPlayerDeck.insertAndShuffleEpidemicCards(epidemicCards, 1);
+        myPlayerDeck.insertAndShuffleEpidemicCards(epidemicCards, 0);
         myPlayerDeck.printDeck();
 
 
@@ -483,18 +483,26 @@ public class Game implements Serializable {
 
 
 
-        // - initialize quarantine markers if bioT chanlenge is not active
+        // - initialize quarantine markers if bioT challenge is not active
         if(!bioTChallengeActive) {
             unusedQuarantineMarkers = new ArrayList<QuarantineMarker>();
             allQuarantineMarkers = new ArrayList<QuarantineMarker>();
 
-            for(int i = 0; i < 4; i++) {
+            for(int i = 0; i < 6; i++) {
                 QuarantineMarker qm = new QuarantineMarker();
                 allQuarantineMarkers.add(qm);
                 unusedQuarantineMarkers.add(qm);
             }
 
         }
+
+        // REMOVE AFTER TESTING: INITIALIZES GAME WITH QUARANTINE MARKER IN OSAKA
+//        QuarantineMarker osakaQM = unusedQuarantineMarkers.remove(0);
+//        City osakaCity = myGameBoard.getCityByName(CityName.Osaka);
+//        osakaQM.setLocation(osakaCity);
+//        osakaCity.getCityUnits().add(osakaQM);
+
+
 
         //    - initialize Diseases & DiseaseFlags
         blueDisease = new Disease(DiseaseType.Blue);
@@ -1365,18 +1373,25 @@ public class Game implements Serializable {
             cures.put(DiseaseType.Purple, getDiseaseByDiseaseType(DiseaseType.Purple).isCured());
         }
 
-        final ArrayList<City> quarantineMarkerLocations;
+        final ArrayList<City> quarantineMarkerOneLocations;
+        final ArrayList<City> quarantineMarkerTwoLocations;
 
         if(!bioTChallengeActive) {
-            quarantineMarkerLocations = new ArrayList<City>();
+            quarantineMarkerOneLocations = new ArrayList<City>();
+            quarantineMarkerTwoLocations = new ArrayList<City>();
             for(QuarantineMarker qm : allQuarantineMarkers) {
                 if(qm.getLocation() != null) {
-                    quarantineMarkerLocations.add(qm.getLocation());
+                    if (qm.getUpFace().equals(QuarantineMarkerFaceValue.ONE)) {
+                        quarantineMarkerOneLocations.add(qm.getLocation());
+                    } else if (qm.getUpFace().equals(QuarantineMarkerFaceValue.TWO)){
+                        quarantineMarkerTwoLocations.add(qm.getLocation());
+                    }
                 }
             }
 
         } else {
-            quarantineMarkerLocations = null;
+            quarantineMarkerOneLocations = null;
+            quarantineMarkerTwoLocations = null;
         }
 
         boolean virulentStrainSet = false;
@@ -1393,7 +1408,7 @@ public class Game implements Serializable {
                 currentPlayer.getPlayerUserName(), researchStationLocations, eventCardsEnabled, currentPlayerTurnStatus, archivistActionUsed,
                 epidemiologistActionUsed, fieldOperativeActionUsed, fieldOperativeSamples, complexMolecularStructureActive,
                 governmentInterferenceActive, governmentInterferenceSatisfied, infectionsRemaining, cures,
-                bioTMap, quarantineMarkerLocations, purpleInPlay, vStrain, virulentStrainSet);
+                bioTMap, quarantineMarkerOneLocations, quarantineMarkerTwoLocations, purpleInPlay, vStrain, virulentStrainSet);
     }
 
     public GameManager getGameManager() {
@@ -1567,11 +1582,11 @@ public class Game implements Serializable {
     }
 
     public void setSlipperySlopeActive(boolean b){
-        slipperySlopeActive = b;
+  	    slipperySlopeActive = b;
     }
 
     public DiseaseType getVirulentStrain(){
-        return virulentStrain;
+  	    return virulentStrain;
     }
 
     // Should only be called at most once per game, when first Virulent Strain Epidemic Card is drawn
