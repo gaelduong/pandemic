@@ -196,6 +196,8 @@ public class Game {
 
         }
 
+
+        // -----------FOR TESTING--------------------
         if(settings.getChallenge().equals(ChallengeKind.Mutation) || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndMutation)
         || settings.getChallenge().equals(ChallengeKind.BioTerrorist) || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndBioTerrorist)) {
             // REMOVE AFTER TESTING
@@ -205,6 +207,9 @@ public class Game {
             atl.getCityUnits().add(flag);
             flag.setLocation(atl);
             flag.setUsed(true);
+//                myInfectionDeck.addCardToTop(new MutationCard(gameManager));
+//                myInfectionDeck.addCardToTop(new MutationCard(gameManager));
+//
         }
 
     }
