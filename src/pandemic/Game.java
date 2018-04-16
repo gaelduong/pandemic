@@ -308,14 +308,24 @@ public class Game {
                 }
                 break;
             case VirulentStrain:
-                allVirulentStrainEpidemicCards.add(new SlipperySlopeEpidemicCard(gameManager));
+                // REMOVE AFTER TESTING VIRULENT STRAIN EPIDEMIC CARDS:
                 allVirulentStrainEpidemicCards.add(new RateEffectEpidemicCard(gameManager));
-                allVirulentStrainEpidemicCards.add(new HiddenPocketEpidemicCard(gameManager));
-                allVirulentStrainEpidemicCards.add(new UncountedPopulationsEpidemicCard(gameManager));
-                allVirulentStrainEpidemicCards.add(new UnacceptableLossEpidemicCard(gameManager));
-                allVirulentStrainEpidemicCards.add(new ChronicEffectEpidemicCard(gameManager));
-                allVirulentStrainEpidemicCards.add(new ComplexMolecularStructureEpidemicCard(gameManager));
-                allVirulentStrainEpidemicCards.add(new GovernmentInterferenceEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new RateEffectEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new RateEffectEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new RateEffectEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new RateEffectEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new RateEffectEpidemicCard(gameManager));
+
+
+
+//                allVirulentStrainEpidemicCards.add(new SlipperySlopeEpidemicCard(gameManager));
+//                allVirulentStrainEpidemicCards.add(new RateEffectEpidemicCard(gameManager));
+//                allVirulentStrainEpidemicCards.add(new HiddenPocketEpidemicCard(gameManager));
+//                allVirulentStrainEpidemicCards.add(new UncountedPopulationsEpidemicCard(gameManager));
+//                allVirulentStrainEpidemicCards.add(new UnacceptableLossEpidemicCard(gameManager));
+//                allVirulentStrainEpidemicCards.add(new ChronicEffectEpidemicCard(gameManager));
+//                allVirulentStrainEpidemicCards.add(new ComplexMolecularStructureEpidemicCard(gameManager));
+//                allVirulentStrainEpidemicCards.add(new GovernmentInterferenceEpidemicCard(gameManager));
 
                 Collections.shuffle(allVirulentStrainEpidemicCards);
                 for (int i = 0; i < numOfEpidemicCards; i++) {
@@ -386,6 +396,7 @@ public class Game {
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // UNCOMMENT AFTER TESTING//////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
     }
