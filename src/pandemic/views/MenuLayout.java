@@ -3,6 +3,8 @@ package pandemic.views;
 import api.socketcomm.Server;
 import client.ClientCommands;
 import client.PandemicClient;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
@@ -12,7 +14,9 @@ import javafx.scene.media.AudioClip;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.control.Button;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
@@ -34,6 +38,8 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import pandemic.*;
 import server.PandemicServer;
@@ -75,12 +81,17 @@ public class MenuLayout extends Parent {
     final AudioClip menuMusic = new AudioClip(new File("src/pandemic/resources/Music/AlienSwarmSoundtrackRybergBattle.wav").toURI().toString());
     final AudioClip startGameSound = new AudioClip(new File("src/pandemic/resources/Music/416385__fredzed__flash-and-a-bang.wav").toURI().toString());
     final AudioClip selectSound = new AudioClip(new File("src/pandemic/resources/Music/50559__broumbroum__sf3-sfx-menu-select-l.wav").toURI().toString());
+    private Text actionStatus;
+    private Stage savedStage;
+    private static final String titleTxt = "JavaFX File Chooser";
+
 
     int currentNumOfPlayerConnected = 0;
-	public MenuLayout(PandemicServer ps, PandemicClient pc) {
+	public MenuLayout(PandemicServer ps, PandemicClient pc, Stage s) {
 	    instance = this;
         pandemicServer = ps;
         pandemicClient = pc;
+        savedStage = s;
         tracker = new CreateGameObjectData();
 
         VBox mainMenu = new VBox(10);
@@ -273,6 +284,8 @@ public class MenuLayout extends Parent {
         	}
           
         });
+
+
         MenuButton btnCreateGame = new MenuButton("Ready: Create Game Lobby!");
         btnCreateGame.setOnMouseClicked(event -> {
             selectSound.play();
@@ -315,7 +328,11 @@ public class MenuLayout extends Parent {
             });
         	
         });
-        
+
+        Button btnCreateLoad = new Button("Choose a file to load");
+        btnCreateLoad.setOnAction(new SingleFcButtonListener());
+
+
         MenuButton btnCreateBack = new MenuButton("BACK");
         btnCreateBack.setOnMouseClicked(event -> {
             selectSound.play();
@@ -448,7 +465,10 @@ public class MenuLayout extends Parent {
                 getParent().setVisible(false);
             };
         });
-        
+        actionStatus = new Text();
+        actionStatus.setFont(Font.font("Calibri", FontWeight.NORMAL, 20));
+        actionStatus.setFill(Color.WHITE);
+
         MenuButton btnJoinBack = new MenuButton("BACK");
         btnJoinBack.setOnMouseClicked(event -> {
             selectSound.play();
@@ -564,7 +584,7 @@ public class MenuLayout extends Parent {
 
         mainMenu.getChildren().addAll(btnCreate, btnJoin, btnOptions, btnExit);
         optionsMenu.getChildren().addAll(btnSound, btnVideo, btnOptionsBack);
-        createMenu.getChildren().addAll(difficulty, difficulties, challenge, btnMutation, btnVirulent, btnBioTerrorist, btnCardShowing, btnCreateGame, btnCreateBack);
+        createMenu.getChildren().addAll(difficulty, difficulties, challenge, btnMutation, btnVirulent, btnBioTerrorist, btnCardShowing, btnCreateGame, btnCreateLoad, actionStatus, btnCreateBack);
         joinMenu.getChildren().addAll(username, usernameTF, enterIP, ipAddress, btnJoinIP, btnJoinBack);
 
         lobbyChatServ = new LobbyChat(createLobby, "host");
@@ -611,7 +631,8 @@ public class MenuLayout extends Parent {
     }*/
 
    	public void setUpCreateGame(PandemicServer s, PandemicClient c)
-    {
+    {   //a file was loaded
+
         try {
             //User hostUser = new User("HOST", "kjsheofh", "127.0.0.1");
             //Player hostPlayer = new Player(hostUser);
@@ -686,6 +707,29 @@ public class MenuLayout extends Parent {
         }
     }
 }
+
+    private class SingleFcButtonListener implements EventHandler<ActionEvent> {
+
+        @Override
+        public void handle(ActionEvent e) {
+
+            showSingleFileChooser();
+        }
+    }
+
+    private void showSingleFileChooser() {
+
+        FileChooser fileChooser = new FileChooser();
+        File selectedFile = fileChooser.showOpenDialog(null);
+
+        if (selectedFile != null) {
+
+            actionStatus.setText("File selected: " + selectedFile.getName());
+        }
+        else {
+            actionStatus.setText("File selection cancelled.");
+        }
+    }
 
 private class serverThing extends Thread {
 	    PandemicServer server;

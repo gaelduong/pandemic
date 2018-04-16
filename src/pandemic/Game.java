@@ -195,6 +195,23 @@ public class Game {
             myInfectionDiscardPile.addCard(card);
 
         }
+
+
+        // -----------FOR TESTING--------------------
+        if(settings.getChallenge().equals(ChallengeKind.Mutation) || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndMutation)
+        || settings.getChallenge().equals(ChallengeKind.BioTerrorist) || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndBioTerrorist)) {
+            // REMOVE AFTER TESTING
+            City atl = getCityByName(CityName.Atlanta);
+            ArrayList<DiseaseFlag> diseaseFlagsSupply = diseaseTypeToSupplyDict.get(DiseaseType.Purple);
+            DiseaseFlag flag = diseaseFlagsSupply.remove(0);
+            atl.getCityUnits().add(flag);
+            flag.setLocation(atl);
+            flag.setUsed(true);
+//                myInfectionDeck.addCardToTop(new MutationCard(gameManager));
+//                myInfectionDeck.addCardToTop(new MutationCard(gameManager));
+//
+        }
+
     }
 
     private void printDecksAndDiscardPiles() {
@@ -511,15 +528,16 @@ public class Game {
             }
             diseaseTypeToSupplyDict.put(purpleDisease.getDiseaseType(), purpleUnusedDiseaseFlags);
             diseaseTypeToDiseaseDict.put(purpleDisease.getDiseaseType(), purpleDisease);
+
+
+            // REMOVE AFTER TESTING: FORCES GAME TO START WITH PURPLE FLAG
+//            City atl = getCityByName(CityName.Atlanta);
+//            DiseaseFlag purpleFlag = purpleUnusedDiseaseFlags.get(0);
+//            purpleFlag.setLocation(atl);
+//            purpleFlag.setUsed(true);
+//            atl.getCityUnits().add(purpleFlag);
+
         }
-
-//        // REMOVE AFTER TESTING: FORCES GAME TO START WITH PURPLE FLAG
-//        City atl = getCityByName(CityName.Atlanta);
-//        DiseaseFlag purpleFlag = purpleUnusedDiseaseFlags.get(0);
-//        purpleFlag.setLocation(atl);
-//        purpleFlag.setUsed(true);
-//        atl.getCityUnits().add(purpleFlag);
-
     }
 
     public void initializePlayerPawns() {
@@ -1312,6 +1330,12 @@ public class Game {
             }
         }
 
+        boolean purpleInPlay = false;
+        if (settings.getChallenge() == ChallengeKind.Mutation || settings.getChallenge() == ChallengeKind.VirulentStrainAndMutation
+                || settings.getChallenge() == ChallengeKind.BioTerrorist || settings.getChallenge() == ChallengeKind.VirulentStrainAndBioTerrorist) {
+            purpleInPlay = true;
+        }
+
         final Map<DiseaseType, Boolean> cures = new HashMap<DiseaseType, Boolean>();
         cures.put(DiseaseType.Blue, getDiseaseByDiseaseType(DiseaseType.Blue).isCured());
         cures.put(DiseaseType.Black, getDiseaseByDiseaseType(DiseaseType.Black).isCured());
@@ -1341,7 +1365,7 @@ public class Game {
                 currentPlayer.getPlayerUserName(), researchStationLocations, eventCardsEnabled, currentPlayerTurnStatus, archivistActionUsed,
                 epidemiologistActionUsed, fieldOperativeActionUsed, fieldOperativeSamples, complexMolecularStructureActive,
                 governmentInterferenceActive, governmentInterferenceSatisfied, infectionsRemaining, cures,
-                bioTMap, quarantineMarkerLocations);
+                bioTMap, quarantineMarkerLocations, purpleInPlay);
     }
 
     public GameManager getGameManager() {

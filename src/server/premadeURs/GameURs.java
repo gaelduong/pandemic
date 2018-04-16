@@ -7,6 +7,7 @@ import pandemic.DiseaseType;
 import pandemic.RoleType;
 import server.ServerCommands;
 import shared.BioTActionType;
+import shared.CardTargetType;
 import shared.PlayerCardSimple;
 import shared.TravelType;
 import shared.request.PostCondition;
@@ -203,7 +204,8 @@ public class GameURs {
                                             PostCondition.ACTION.MOVE_CARD,
                                             new PlayerCardSimple(CardType.CityCard, cityCardName),
                                             givingPlayerRole.name(),
-                                            receivingPlayerRole.name()
+                                            receivingPlayerRole.name(),
+                                            true
                                     )
                             )
                  );
@@ -334,7 +336,7 @@ public class GameURs {
         );
     }
 
-    public static void sendDiscardCard(Client client, String playerUserName, String cityCardName, boolean isBioT) {
+    public static void sendDiscardCard(Client client, RoleType discardingPlayer, String cityCardName, boolean isBioT) {
         PlayerCardSimple cardToDiscard = isBioT ? new PlayerCardSimple(CardType.CityInfectionCard, cityCardName) :
                 new PlayerCardSimple(CardType.CityCard, cityCardName);
 
@@ -343,11 +345,14 @@ public class GameURs {
                         new PostCondition(
                                 PostCondition.ACTION.MOVE_CARD,
                                 cardToDiscard,
-                                playerUserName,
-                                "DISCARD_PILE"
+                                discardingPlayer.name(),
+                                CardTargetType.DISCARD_PILE.name()
                         )
                 )
         );
+
+
+
     }
 
 

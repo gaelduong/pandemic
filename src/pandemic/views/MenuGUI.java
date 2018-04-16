@@ -43,7 +43,7 @@ public class MenuGUI extends Application {
 		imageView.setFitHeight(768);
 
 
-		MenuLayout MenuLayout = new MenuLayout(pandemicServer, pandemicClient);
+		MenuLayout MenuLayout = new MenuLayout(pandemicServer, pandemicClient, primaryStage);
 		MenuLayout.setVisible(false);
 		main.getChildren().addAll(imageView, MenuLayout);
 

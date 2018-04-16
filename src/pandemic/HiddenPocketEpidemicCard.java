@@ -10,10 +10,7 @@ public class HiddenPocketEpidemicCard extends EpidemicCard{
     public void resolveEpidemic() {
         myGameManager.setEventCardsEnabled(false);
         // Increase:
-        int currentInfectionRate = myGameManager.getInfectionRate();
-        if (currentInfectionRate < 4) {
-            myGameManager.increaseInfectionRate();
-        }
+        myGameManager.increaseInfectionRate();
 
         // Infect:
         // --> MUST CHANGE THIS TO HANDLE MUTATION CARDS <--
