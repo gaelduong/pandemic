@@ -6,10 +6,9 @@ import javafx.util.Pair;
 import pandemic.*;
 import pandemic.eventcards.EventCardName;
 import server.PandemicServer;
+import server.ServerCommands;
 import server.premadeURs.GameURs;
-import shared.GameState;
-import shared.MessageType;
-import shared.Utils;
+import shared.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -19,6 +18,7 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.lang.Thread.sleep;
@@ -27,6 +27,8 @@ import static java.lang.Thread.sleep;
 //import pandemic.Player;
 //import pandemic.User;
 import server.premadeURs.EventCardURs;
+import shared.request.PostCondition;
+import shared.request.UpdateRequest;
 
 import static java.lang.Thread.sleep;
 
@@ -44,6 +46,11 @@ import static java.lang.Thread.sleep;
 //only click on ok city-directflight
 public class GUI extends JFrame {
 
+	private static GUI thisConxtext;
+
+	public static GUI getInstance() {
+		return thisConxtext;
+	}
 
 	private GameState gs;
 	private String username;
@@ -74,6 +81,7 @@ public class GUI extends JFrame {
 		put("ResilientPopulation",false);
 		put("OneQuietNight",false);
 		put("Airlift",false);
+		put("LocalInitiative", false);
 		put("Forecast",false);
 
 	}};
@@ -784,6 +792,7 @@ public class GUI extends JFrame {
 		this.gs = gameStateTest;
 		this.username = username;
 		this.userRole = getUserRole();
+		thisConxtext = this;
 
 	}
 
@@ -794,6 +803,7 @@ public class GUI extends JFrame {
 		this.client = client;
 
 		initComponents();
+		thisConxtext = this;
 
 	}
 
@@ -1752,9 +1762,9 @@ public class GUI extends JFrame {
 							break; //breaking because its one to one map
 						}
 					}
+
 					// System.out.println("City Clicked: " + cityNameSelected);
 					//System.out.println("mouse event: " + e.getClickCount());
-
 					if (moves.get("drive") &&
 							gs.getPositionMap().get(userRole).getNeighbors().stream().anyMatch(city -> city.getName().equals(cityNameSelected))) {
 						//System.out.println("yey" + moves.get("drive"));
@@ -1771,6 +1781,47 @@ public class GUI extends JFrame {
 						GameURs.sendShuttleFlightUR(client, username, cityNameSelected.toString());
 					} else if (moves.get("buildResearch")) {
 						GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
+
+					} else if (moves.get("GovernmentGrant")) {
+						EventCardURs.sendGovernmentGrantUR(client, username, cityNameSelected);
+						temporaryComponentsToRemove.forEach(contentPane::remove);
+						moves.put("GovernmentGrant",false);
+
+					} else if (moves.get("AirLift")) {
+						List<String> playerList = getGameState().getUserMap().entrySet().stream()
+								.filter(entry -> !entry.getValue().equals(username) )
+								.map(entry -> entry.getKey().toString()).collect(Collectors.toList());
+						final JList<String> list = new JList<>(new Vector<>(playerList));
+						final ListDialog dialog = new ListDialog("Air Lift Request", "Please select another player: ", list);
+						dialog.setOnOk(ev -> {
+							final List<String> chosenItems = dialog.getSelectedItems();
+							String airtLiftReqTarget = chosenItems.get(0);
+							final String targetPlayerUserName = getGameState().getUserMap().get(Utils.getEnum(RoleType.class, airtLiftReqTarget));
+							client.sendMessageToServer(
+									ServerCommands.INITIATE_CONSENT_REQUIRING_MOVE.name(),
+									targetPlayerUserName,
+									"Player " + username + " would like to air lift you to " + cityNameSelected + "!",
+									new UpdateRequest(
+											new PostCondition(
+													PostCondition.ACTION.EVENT_CARD,
+													EventCardName.AirLift,
+													Arrays.asList(username,
+													targetPlayerUserName,
+													cityNameSelected)
+											)
+									)
+							);
+						});
+						dialog.show();
+						moves.put("Airlift", false);
+						moves.put("playEventCard", false);
+					} else if (moves.get("LocalInitiative")) {
+						localInitSelections.add(cityNameSelected);
+						if (localInitSelections.size() == 2) {
+							EventCardURs.sendLocalInitiateUR(client, localInitSelections.get(0), localInitSelections.get(1));
+							moves.put("LocalInitiative", false);
+							moves.put("playEventCard", false);
+						}
 
 					}
 
@@ -3528,7 +3579,8 @@ public class GUI extends JFrame {
 
 			}
 		});
-
+		revalidate();
+		repaint();
 		System.out.println("visible?: " + acceptButton1.isVisible() + " " + declineButton1.isVisible() );
 
 	}
@@ -3590,14 +3642,22 @@ public class GUI extends JFrame {
 				switch (EventCardName.valueOf(playerCard.getCardName())) {
 					case OneQuietNight:
 						EventCardURs.sendOneQuietNight(client, username);
+						moves.put("playEventCard", false);
 						break;
 
 					case GovernmentGrant:
-						//then display the targets (optional)
-						//click city
+						if (gs.getResearchStationLocations().size() == 6) {
+							JOptionPane.showConfirmDialog(null, "There are already 6 research stations built!",
+									"Error!", JOptionPane.DEFAULT_OPTION);
+							return;
+						}
+
+						GUIHelperUtils.setComponentVisibilty(true,
+								getValidCityTargets(cityName ->
+										gs.getResearchStationLocations().stream().map(City::getName).noneMatch(cityName::equals)
+								));
 
 						moves.put("GovernmentGrant", true);
-						//send request
 						break;
 
 					case ResilientPopulation:
@@ -3623,37 +3683,74 @@ public class GUI extends JFrame {
 							}
 							System.out.println(gs.getInfectionDiscardPile().getCards().get(index).getCardName());
 							EventCardURs.sendResilientPopulationUR(client, username, gs.getInfectionDiscardPile().getCards().get(index));
+							moves.put("playEventCard", false);
 
 						});
 						dialogRemoveInfectionCard.show();
 						break;
 
 					case AirLift:
-
+						JOptionPane.showConfirmDialog(null, "Please select a city on the map to air lift your target.",
+								"Airlift prompt", JOptionPane.DEFAULT_OPTION);
+						moves.put("AirLift", true);
 						break;
 
 					case Forecast:
-
+						//TODO
+						//EventCardURs.sendForecastUR(client, username, null);
+						moves.put("playEventCard", false);
 						break;
 
 					case BorrowedTime:
-
+						if (gs.getCurrentPlayer().equals(username)) {
+							EventCardURs.sendBorrowedTimeUR(client);
+							moves.put("playEventCard", false);
+						}
 						break;
 
 					case CommercialTravelBan:
-
+						EventCardURs.sendCommericalTravelBanUR(client, username);
+						moves.put("playEventCard", false);
 						break;
 
 					case MobileHospital:
-
+						if (gs.getCurrentPlayer().equals(username)) {
+							EventCardURs.sendMobileHospitalUR(client);
+							moves.put("playEventCard", false);
+						}
 						break;
 
 					case LocalInitiative:
-
+						localInitSelections.clear();
+						moves.put("LocalInitiative", true);
 						break;
 				}
             }
 		}
+	}
+
+	private List<JComponent> temporaryComponentsToRemove = new ArrayList<>();
+	private List<CityName> localInitSelections = new ArrayList<>();	//for the local init event card
+
+	/**
+	 * Gets a list of cities to click on, filtered by test
+	 */
+	public JLabel[] getValidCityTargets(Predicate<CityName> tester) {
+		final List<JLabel> targets = new ArrayList<>();
+		for (Map.Entry<CityName, JLabel> entry : mapCityLabels.entrySet()) {
+			if (tester.test(entry.getKey())) {
+				JLabel cityLabel = entry.getValue();
+				JLabel targetLabel = new JLabel();
+				targetLabel.setBounds(cityLabel.getX() - 5, cityLabel.getY() - 5, 40, 40);
+				targetLabel.setIcon(iconTarget);
+
+				contentPane.add(targetLabel);
+				temporaryComponentsToRemove.add(targetLabel);
+				targetLabel.setVisible(false);
+				targets.add(targetLabel);
+			}
+		}
+		return targets.toArray(new JLabel[targets.size()]);
 	}
 }
 
