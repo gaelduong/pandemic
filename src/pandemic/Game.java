@@ -1312,6 +1312,12 @@ public class Game {
             }
         }
 
+        boolean purpleInPlay = false;
+        if (settings.getChallenge() == ChallengeKind.Mutation || settings.getChallenge() == ChallengeKind.VirulentStrainAndMutation
+                || settings.getChallenge() == ChallengeKind.BioTerrorist || settings.getChallenge() == ChallengeKind.VirulentStrainAndBioTerrorist) {
+            purpleInPlay = true;
+        }
+
         final Map<DiseaseType, Boolean> cures = new HashMap<DiseaseType, Boolean>();
         cures.put(DiseaseType.Blue, getDiseaseByDiseaseType(DiseaseType.Blue).isCured());
         cures.put(DiseaseType.Black, getDiseaseByDiseaseType(DiseaseType.Black).isCured());
@@ -1341,7 +1347,7 @@ public class Game {
                 currentPlayer.getPlayerUserName(), researchStationLocations, eventCardsEnabled, currentPlayerTurnStatus, archivistActionUsed,
                 epidemiologistActionUsed, fieldOperativeActionUsed, fieldOperativeSamples, complexMolecularStructureActive,
                 governmentInterferenceActive, governmentInterferenceSatisfied, infectionsRemaining, cures,
-                bioTMap, quarantineMarkerLocations);
+                bioTMap, quarantineMarkerLocations, purpleInPlay);
     }
 
     public GameManager getGameManager() {

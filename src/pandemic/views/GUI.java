@@ -2526,12 +2526,15 @@ public class GUI extends JFrame {
 		if(gs.getCureMap().get(DiseaseType.Yellow)) {
 			yellowCureMarker.setVisible(true);
 		}
-		if(gs.getCureMap().get(DiseaseType.Purple)) {
-			purpleCureMarker.setVisible(true);
-		}
 		if(gs.getCureMap().get(DiseaseType.Black)) {
 			blackCureMarker.setVisible(true);
 		}
+		if (gs.getPurpleInPlay()) {
+			if (gs.getCureMap().get(DiseaseType.Purple)) {
+				purpleCureMarker.setVisible(true);
+			}
+		}
+
 	}
 
 	private void loadCubesOnMap()	{
