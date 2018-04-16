@@ -77,12 +77,12 @@ public class Player implements CardTarget, CardSource {
 	public boolean isInHand(PlayerCard pc) {
 		System.out.println("Checking if card is in hand...");
 		System.out.println(cardsInHand.stream().anyMatch(pc::equals));
-	    //return cardsInHand.stream().anyMatch(pc::equals);
-		for(Card c : cardsInHand){
-			if (c.getCardName().equals(pc.getCardName()));
-			return true;
-		}
-		return false;
+	    return cardsInHand.stream().anyMatch(pc::equals);
+//		for(Card c : cardsInHand){
+//			if (c.getCardName().equals(pc.getCardName()));
+//			return true;
+//		}
+//		return false;
 
     }
 
