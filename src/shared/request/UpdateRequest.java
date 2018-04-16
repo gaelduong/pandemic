@@ -227,8 +227,11 @@ public class UpdateRequest implements Serializable {
         final List<CityCard> cardToDiscard = (List<CityCard>)arguments.get(0);
 
         final List<PlayerCard> cardsToDiscard = (List<PlayerCard>)arguments.get(0);
+
+        System.out.println("Discovering cure...");
         DiseaseType toCure = gameManager.getDiseaseTypeByRegion(gameManager.getCityByName(Utils.getEnum(CityName.class, cardsToDiscard.get(0).getCardName())).getRegion());
         for (PlayerCard c : cardsToDiscard){
+            System.out.println("PlayerCard for cure: " + c.getCardName());
             DiseaseType cDiseaseType = gameManager.getDiseaseTypeByRegion(gameManager.getCityByName(Utils.getEnum(CityName.class, c.getCardName())).getRegion());
             if (cDiseaseType != toCure){
                 toCure = DiseaseType.Purple;
@@ -236,6 +239,7 @@ public class UpdateRequest implements Serializable {
             }
         }
 
+        System.out.println("Disease to cure: " + toCure);
         gameManager.playDiscoverCure(toCure, cardsToDiscard);
         currentlyProcessedAction.setLog_actionResult("has discovered a cure for type " + cardToDiscard.get(0).getRegion().toString().toLowerCase() + "!");
     }

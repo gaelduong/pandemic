@@ -1569,10 +1569,10 @@ public class GUI extends JFrame {
 
 		//purple cubes remaining
 		purpleRemaining = new JLabel();
-		purpleRemaining.setBackground(Color.MAGENTA);
+		purpleRemaining.setBackground(Color.BLACK);
 		purpleRemaining.setForeground(Color.WHITE);
 		purpleRemaining.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(purpleCubesRemPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
-		purpleRemaining.setBounds(500, 6, 48, 16);
+		purpleRemaining.setBounds(495, 6, 48, 16);
 		topBar.add(purpleRemaining);
 		purpleRemaining.setOpaque(true);
 
@@ -1615,6 +1615,7 @@ public class GUI extends JFrame {
 		redCureMarker.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(redCureMarkerIconPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
 		redCureMarker.setBounds(640, 6, 40, 16);
 		topBar.add(redCureMarker);
+		redCureMarker.setVisible(false);
 		redCureMarker.setOpaque(true);
 
 		blueCureMarker = new JLabel();
@@ -1623,6 +1624,7 @@ public class GUI extends JFrame {
 		blueCureMarker.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(blueCureMarkerIconPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
 		blueCureMarker.setBounds(680, 6, 40, 16);
 		topBar.add(blueCureMarker);
+		blueCureMarker.setVisible(false);
 		blueCureMarker.setOpaque(true);
 
 		yellowCureMarker = new JLabel();
@@ -1631,6 +1633,7 @@ public class GUI extends JFrame {
 		yellowCureMarker.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(yellowCureMarkerIconPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
 		yellowCureMarker.setBounds(720, 6, 40, 16);
 		topBar.add(yellowCureMarker);
+		yellowCureMarker.setVisible(false);
 		yellowCureMarker.setOpaque(true);
 
 		blackCureMarker = new JLabel();
@@ -1639,6 +1642,7 @@ public class GUI extends JFrame {
 		blackCureMarker.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(blackCureMarkerIconPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
 		blackCureMarker.setBounds(760 ,6, 40, 16);
 		topBar.add(blackCureMarker);
+		blackCureMarker.setVisible(false);
 		blackCureMarker.setOpaque(true);
 
 		purpleCureMarker = new JLabel();
@@ -1647,6 +1651,7 @@ public class GUI extends JFrame {
 		purpleCureMarker.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(purpleCureMarkerIconPath)).getImage().getScaledInstance(15, 15, Image.SCALE_SMOOTH)));
 		purpleCureMarker.setBounds(800, 6, 48, 16);
 		topBar.add(purpleCureMarker);
+		purpleCureMarker.setVisible(false);
 		purpleCureMarker.setOpaque(true);
 
 
@@ -1788,7 +1793,7 @@ public class GUI extends JFrame {
 				//(and probably the color? probably not necessary since you can get the color from the card)
 				//(and probably role? i.e userRole)
 
-				//GameURs.sendDiscoverCureUR(client, discoverCureDiscardCards, discoverCureDiseaseType);
+				GameURs.sendDiscoverCureUR(client, discoverCureDiscardCards);
 
 
 			}
@@ -2512,16 +2517,21 @@ public class GUI extends JFrame {
 		infectionRate.setText("" + gs.getCurrentInfectionRate());
 		outbreakMeterCount.setText("" + gs.getCurrentOutbreakMeter());
 
-		//if(gs.getCureMap().get(DiseaseType.Red))
-		redCureMarker.setVisible(true);
-		//if(gs.getCureMap().get(DiseaseType.Blue))
-		blueCureMarker.setVisible(true);
-		//if(gs.getCureMap().get(DiseaseType.Yellow))
-		yellowCureMarker.setVisible(true);
-		//if(gs.getCureMap().get(DiseaseType.Purple))
-		purpleCureMarker.setVisible(true);
-		//if(gs.getCureMap().get(DiseaseType.Black))
-		blackCureMarker.setVisible(true);
+		if(gs.getCureMap().get(DiseaseType.Red)) {
+			redCureMarker.setVisible(true);
+		}
+		if(gs.getCureMap().get(DiseaseType.Blue)) {
+			blueCureMarker.setVisible(true);
+		}
+		if(gs.getCureMap().get(DiseaseType.Yellow)) {
+			yellowCureMarker.setVisible(true);
+		}
+		if(gs.getCureMap().get(DiseaseType.Purple)) {
+			purpleCureMarker.setVisible(true);
+		}
+		if(gs.getCureMap().get(DiseaseType.Black)) {
+			blackCureMarker.setVisible(true);
+		}
 	}
 
 	private void loadCubesOnMap()	{

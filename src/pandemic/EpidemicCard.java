@@ -1,5 +1,7 @@
 package pandemic;
 
+import java.util.Objects;
+
 abstract class EpidemicCard implements PlayerCard{
 
 	protected CardType type;
@@ -49,4 +51,19 @@ abstract class EpidemicCard implements PlayerCard{
 	}
 	
 	public abstract void resolveEpidemic();
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		EpidemicCard that = (EpidemicCard) o;
+		return type == that.type &&
+				name == that.name;
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(type, name);
+	}
 }
