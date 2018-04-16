@@ -115,6 +115,7 @@ public class Player implements CardTarget, CardSource {
 	    actionsTaken++;
     }
 
+
     public RoleType getRoleType(){
     	return role.getRoleType();
     }
