@@ -465,7 +465,7 @@ public class MenuLayout extends Parent {
                         e.printStackTrace();
                     }
                 });
-                getParent().setVisible(false);
+                //getParent().setVisible(false);
             };
         });
         actionStatus = new Text();
@@ -531,7 +531,7 @@ public class MenuLayout extends Parent {
 
         MenuButton btnCreateGameNow = new MenuButton("Start Game");
         btnCreateGameNow.setOnMouseClicked(event -> {
-        this.setVisible(false);
+        //this.setVisible(false);
         	// Actually start the game
             startGameSound.play();
             menuMusic.stop();
@@ -552,7 +552,7 @@ public class MenuLayout extends Parent {
                 }
             });
 
-            getParent().setVisible(false);
+            //getParent().setVisible(false);
 
             pandemicServer.sendMessageToClients(ClientCommands.RECEIVE_UPDATED_GAMESTATE.name(), gameManager.getGame().generateCondensedGameState());
         });

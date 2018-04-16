@@ -196,8 +196,9 @@ public class PandemicServer extends Server {
                     break;
                 }
                 case CLIENT_UPDATE_LOBBBY:
-                    if (message.size() > 15)
-                        message.remove(0);
+                    LobbyState ls = (LobbyState) message.get(1);
+                    if (ls.chatMessages.size() > 15)
+                        ls.chatMessages.remove(0);
                     sendUpdatedLobbyState((LobbyState) message.get(1));
                     break;
             }

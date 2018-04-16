@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class LobbyState implements Serializable {
     public ArrayList<String> playerList = new ArrayList<>();
-    ArrayList<String> chatMessages = new ArrayList<>();
+    public ArrayList<String> chatMessages = new ArrayList<>();
 
     public void addMessage(String s)
     {
