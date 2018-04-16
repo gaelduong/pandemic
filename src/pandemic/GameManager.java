@@ -702,6 +702,7 @@ public class GameManager {
 
     public int discardPlayerCard(Player p, PlayerCard c){
 		// Must take a player as a parameter for when a non-current player has too many cards and must discard one
+        System.out.println("Discarding Player Card");
 		if (p.isInHand(c)){
 			p.discardCard(c);
 			PlayerDiscardPile pile = currentGame.getPlayerDiscardPile();
@@ -1303,14 +1304,16 @@ public class GameManager {
     // (or 4 if currentPlayer has Scientist role) cards of the color of toCure, and toCure is not already cured
     public int playDiscoverCure(DiseaseType toCure, List<PlayerCard> toDiscard){
         Player currentPlayer = currentGame.getCurrentPlayer();
-        if (currentGame.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayingActions) {
+       // if (currentGame.getCurrentPlayerTurnStatus() == CurrentPlayerTurnStatus.PlayingActions) {
             PlayerDiscardPile dp = currentGame.getPlayerDiscardPile();
             for (PlayerCard c : toDiscard) {
-                currentPlayer.discardCard(c);
-                dp.addCard(c);
+               discardPlayerCard(currentPlayer, c);
             }
             Disease d = currentGame.getDiseaseByDiseaseType(toCure);
             d.setCured(true);
+
+            System.out.println(d.getDiseaseType() + " IS CURED: " + d.isCured());
+
             currentGame.checkIfEradicated(toCure);
             currentPlayer.incrementActionTaken();
 
@@ -1333,10 +1336,10 @@ public class GameManager {
                 notifyAllNonBTPlayersGameWon();
             }
             return 0;
-        }
-        else {
-            return 1;
-        }
+//        }
+//        else {
+//            return 1;
+//        }
     }
 
     private void notifyAllNonBTPlayersGameWon() {
