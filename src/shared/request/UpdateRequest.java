@@ -161,11 +161,9 @@ public class UpdateRequest implements Serializable {
         final PlayerCardSimple cardToMove = (PlayerCardSimple)arguments.get(0);
         final String cardSourceString = (String)arguments.get(1);         //read the MOVE_CARD enum for the string encoding
         final String cardDestinationString = (String)arguments.get(2);
-        final boolean isShareKnowledge = arguments.size() == 4 ? (boolean) arguments.get(3) : false;
 
         Player currentPlayer = game.getCurrentPlayer();
         System.out.println("Executing move card action from " + currentPlayer);
-
         if (currentPlayer.getPlayerUserName().equals(playerUsername)) {
             final CardSource cardSource = (CardSource) getCardSourceTarget(cardSourceString, game, currentPlayer);
             final CardTarget cardTarget = (CardTarget) getCardSourceTarget(cardDestinationString, game, currentPlayer);
@@ -186,10 +184,6 @@ public class UpdateRequest implements Serializable {
 
             if(cardSource instanceof Player)
                 ((Player) cardSource).discardCard(cardToMoveObj);
-
-            if(isShareKnowledge)
-                currentPlayer.incrementActionTaken();
-
         }
     }
 
