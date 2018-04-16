@@ -406,7 +406,7 @@ public class GUI extends JFrame {
 
 	private JButton btnContingencyPlanner = new JButton("<html>Take <br> event card</html>");
 	;
-	private JButton btnDirectFlight1 = new JButton();
+	private JButton btnDirectFlight1 = new JButton("<html>Impose <br> Quarantine </html>");
 	;
 	private JButton btnCharterFlight1 = new JButton();
 	private JButton btnShuttleFlight1 = new JButton();
@@ -901,6 +901,7 @@ public class GUI extends JFrame {
 			btnInfectNextCity.setBackground(Color.DARK_GRAY);
 			btnEndTurn.setEnabled(false);
 			btnEndTurn.setBackground(Color.DARK_GRAY);
+			discardButton.setEnabled(true);
 
 
 		}
@@ -2129,6 +2130,8 @@ public class GUI extends JFrame {
 				resetMovesExcept("discard");
 				moves.put("discard",true);
 				//
+				discardButton.setEnabled(false);
+				playEventOptionButton.setEnabled(false);
 
 
 
@@ -2176,6 +2179,17 @@ public class GUI extends JFrame {
 				btnDiscoverCure.setVisible(!btnDiscoverCure.isVisible());
 				btnBuildResearch.setVisible(!btnBuildResearch.isVisible());
 				btnShareKnowledge.setVisible(!btnShareKnowledge.isVisible());
+
+				btnContingencyPlanner.setVisible(!btnDriveFerry.isVisible());
+				btnDirectFlight1.setVisible(!btnDriveFerry.isVisible());
+				btnCharterFlight1.setVisible(!btnDriveFerry.isVisible());
+				btnShuttleFlight1.setVisible(!btnDriveFerry.isVisible());
+				btnTreatDisease1.setVisible(!btnDriveFerry.isVisible());
+				btnDiscoverCure1.setVisible(!btnDriveFerry.isVisible());
+				btnBuildResearch1.setVisible(!btnDriveFerry.isVisible());
+				btnShareKnowledge1.setVisible(!btnDriveFerry.isVisible());
+
+
 
 				revalidate();
 				repaint();
@@ -2512,7 +2526,7 @@ public class GUI extends JFrame {
 		//Direct Flight button
 		btnDirectFlight1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+			    //GameURs.sendImposeQuarantineMarker(client, username, );
 			}
 		});
 
@@ -2868,6 +2882,7 @@ public class GUI extends JFrame {
 
 			int pawnX = getCityPosition(cityLabel.getText())[0];
 			int pawnY = getCityPosition(cityLabel.getText())[1] - 23;
+
 
 			pawnLabel.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource(pawnLabel.getText())).getImage().getScaledInstance(pawnDims[0], pawnDims[1], Image.SCALE_SMOOTH)));
 			pawnLabel.setBounds(pawnX, pawnY, pawnDims[0], pawnDims[1]);
