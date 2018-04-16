@@ -1,6 +1,8 @@
 package pandemic;
 
-public class Disease {
+import java.io.Serializable;
+
+public class Disease implements Serializable {
 
     private DiseaseType diseaseType;
     private boolean cured;

@@ -4,6 +4,7 @@ import api.gui.ListDialog;
 import client.PandemicClient;
 import javafx.util.Pair;
 import pandemic.*;
+import pandemic.eventcards.EventCardName;
 import server.PandemicServer;
 import server.premadeURs.GameURs;
 import shared.GameState;
@@ -1006,6 +1007,25 @@ public class GUI extends JFrame {
 				break;
 			}
 		}
+
+		//if it fails first condition ( doesn't have 5 (or 4) cards of the same color)
+		// then check if (1) num of hand + isci >= 2 AND (2) theres a purple cube in the city
+		boolean purpleIn = false;
+		List<Pair<DiseaseType,Integer>>  listCubes = gs.getDiseaseCubesMap().get(gs.getPositionMap().get(getUserRole()).getName());
+		for(Pair<DiseaseType,Integer> p : listCubes)
+		{
+			if(p.getKey().equals(DiseaseType.Purple))
+			{
+				if(p.getValue() > 0) {purpleIn = true;}
+				else purpleIn = false;
+				break;
+
+			}
+		}
+
+		if(gs.getCardMap().get(userRole).size() + isSci >= 2 && purpleIn) btnDiscoverCure.setEnabled(true);
+
+
 		boolean hasStationInCity = false;
 		for (City c : gs.getResearchStationLocations()) {
 			if (c.getName().toString().equals(citName)) {
@@ -1134,6 +1154,8 @@ public class GUI extends JFrame {
 					((JButton) components[i]).setEnabled(false);
 				}
 			}
+			genericBox.setText("Too many card! Please press Discard then select a card to discard");
+			genericBox.setBounds(600, 520, 500, 50);
 			discardButton.setVisible(true);
 
 			System.out.println(discardButton.isVisible() + " " + playEventOptionButton.isVisible());
@@ -1773,9 +1795,9 @@ public class GUI extends JFrame {
 
 					}
 
-					else if (moves.get("OEMoveToAnyCity")){
+					//else if (moves.get("OEMoveToAnyCity")){
 						// TO DO: must pick a CityCard to discard, then call playMoveAsOperationsExpert(CityCard, destination)
-					}
+					//}
 
 
 					//mapPawnLabels.get(userRole).setLocation(city.getX(),city.getY()-20);
@@ -2011,7 +2033,7 @@ public class GUI extends JFrame {
 		//discard option add
 		discardButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				resetMovesExcept("discard");
 				moves.put("discard",true);
 				//
 
@@ -2026,6 +2048,7 @@ public class GUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				discardOptionButton.setEnabled(false);
 				playEventOptionButton.setEnabled(false);
+				resetMovesExcept("playEventCard");
 				moves.put("playEventCard",true);
 
 
@@ -2089,6 +2112,7 @@ public class GUI extends JFrame {
 
 				if (btnDriveFerry.getForeground().equals(Color.BLACK)) {
 					showHideOtherActionButtons(actionBtns, btnDriveFerry);
+					resetMovesExcept("drive");
 					moves.put("drive", !moves.get("drive"));
 					showHideTargetsDrive();
 					//System.out.println("Drive ferry pressed");
@@ -2115,6 +2139,7 @@ public class GUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (btnDirectFlight.getForeground().equals(Color.BLACK)) {
 					showHideOtherActionButtons(actionBtns, btnDirectFlight);
+					resetMovesExcept("directFlight");
 					moves.put("directFlight", !moves.get("directFlight"));
 					showHideTargetsDirectFlight();
 
@@ -2140,6 +2165,7 @@ public class GUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (btnCharterFlight.getForeground().equals(Color.BLACK)) {
 					showHideOtherActionButtons(actionBtns, btnCharterFlight);
+					resetMovesExcept("charterFlight");
 					moves.put("charterFlight", !moves.get("charterFlight"));
 					showHideTargetsCharterFlight();
 
@@ -2167,6 +2193,7 @@ public class GUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (btnShuttleFlight.getForeground().equals(Color.BLACK)) {
 					showHideOtherActionButtons(actionBtns, btnShuttleFlight);
+					resetMovesExcept("shuttleFlight");
 					moves.put("shuttleFlight", !moves.get("shuttleFlight"));
 
 					//resetMovesSelected(moves);
@@ -2193,6 +2220,7 @@ public class GUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (btnBuildResearch.getForeground().equals(Color.BLACK)) {
 					showHideOtherActionButtons(actionBtns, btnBuildResearch);
+					resetMovesExcept("buildResearch");
 					moves.put("buildResearch", !moves.get("buildResearch"));
 
 					//resetMovesSelected(moves);
@@ -2225,6 +2253,7 @@ public class GUI extends JFrame {
 				if (btnTreatDisease.getForeground().equals(Color.BLACK)) {
 					showHideOtherActionButtons(actionBtns, btnTreatDisease);
 					//resetMovesSelected(moves);
+					resetMovesExcept("treatDisease");
 					moves.put("treatDisease", !moves.get("treatDisease"));
 
 					//showHideTreatDiseaseBox()
@@ -2243,6 +2272,7 @@ public class GUI extends JFrame {
 				if (btnDiscoverCure.getForeground().equals(Color.BLACK)) {
 					showHideOtherActionButtons(actionBtns, btnDiscoverCure);
 					//resetMovesSelected(moves);
+					resetMovesExcept("discoverCure");
 					moves.put("discoverCure", !moves.get("discoverCure"));
 
 					//reset cards positions
@@ -2260,6 +2290,7 @@ public class GUI extends JFrame {
 				if (btnShareKnowledge.getForeground().equals(Color.BLACK)) {
 					//resetMovesSelected(moves);
 					//showHideOtherActionButtons(actionBtns, btnShareKnowledge);
+					resetMovesExcept("shareKnowledge");
 					moves.put("shareKnowledge", !moves.get("shareKnowledge"));
 
 					//Russel's code
@@ -2872,68 +2903,7 @@ public class GUI extends JFrame {
 
 						}
 						else if(moves.get("playEventCard")) {
-
-							//now if player decides to play event card...
-							//make sure it's an eventCard
-							if (playerCard.getCardType().equals(CardType.EventCard)) {
-								//once clicked, depends which event card, display corresponding gui elements
-								//for e.g if government grant is clicked => display targeted city to build station on
-								//so bunch of if else (if(mapPlayerCard.get(playerCard.getCardName().equals("GovernmentGrant")...)
-
-
-								if (mapPlayerCardLabels.get(playerCard.getCardName().toString()).equals("OneQuietNight")) {
-									//send request
-
-									EventCardURs.sendOneQuietNight(client, username);
-								}
-								else if (mapPlayerCardLabels.get(playerCard.getCardName().toString()).equals("GovernmentGrant")) {
-									//then display the targets (optional)
-									//click city
-
-									moves.put("GovernmentGrant", true);
-									//send request
-								}
-								else if (mapPlayerCardLabels.get(playerCard.getCardName().toString()).equals("ResilientPopulation")) {
-
-									//display list of infection discard cards
-									List<String> infectionDiscardList = new ArrayList<>();
-									for(InfectionCard infectionCard : gs.getInfectionDiscardPile().getCards())
-									{
-										infectionDiscardList.add(infectionCard.getCardName());
-									}
-
-									final JList<String> listToDisplay = new JList<>(new Vector<>(infectionDiscardList));
-									final ListDialog dialogRemoveInfectionCard = new ListDialog("Remove infection card", "Please remove one infection card: ", listToDisplay);
-									dialogRemoveInfectionCard.setOnOk(ev->
-									{
-										final List<String> chosenItems = dialogRemoveInfectionCard.getSelectedItems();
-										String infectionCardTarget = chosenItems.get(0);
-										System.out.println("Infection card to remove: " + infectionCardTarget);
-										int index = -1;
-										for(int i=0;i<infectionDiscardList.size();i++)
-										{
-											if(infectionDiscardList.get(i).equals(infectionCardTarget))
-											{
-												index=i;
-												break;
-											}
-										}
-										System.out.println(gs.getInfectionDiscardPile().getCards().get(index).getCardName());
-										EventCardURs.sendResilientPopulationUR(client, username, gs.getInfectionDiscardPile().getCards().get(index));
-
-									});
-									dialogRemoveInfectionCard.show();
-
-
-								}
-								else if (mapPlayerCardLabels.get(playerCard.getCardName().toString()).equals("Airlift")) {
-
-								}
-								else if (mapPlayerCardLabels.get(playerCard.getCardName().toString()).equals("Forecast")) {
-
-								}
-
-							}
+							new EventCardGUIHandler(playerCard).invoke();
 						}
 
 
@@ -2941,32 +2911,50 @@ public class GUI extends JFrame {
 
 					private void loadDiscoverCureButton() {
 
+						int isComplex = gs.getComplexMolecularStructureActive() ? 1 : 0;
+
 						int isSci = getUserRole().equals(RoleType.Scientist)? 1:0;
-						if (discoverCureDiscardCards.size() + isSci < 2) {
+						if (discoverCureDiscardCards.size() + isSci - isComplex < 2) {
 							discoverCureButton.setVisible(false);
 							return;
 						}
 
-						//every card in the list must have the same color(region)
-
-						//boolean curePurple = gs.getDiseaseCubesMap().c
 
 
 
+						boolean curePurple = false;
+						List<Pair<DiseaseType,Integer>>  listCubes = gs.getDiseaseCubesMap().get(gs.getPositionMap().get(getUserRole()).getName());
+						for(Pair<DiseaseType,Integer> p : listCubes)
+						{
+							if(p.getKey().equals(DiseaseType.Purple))
+							{
+								if(p.getValue() > 0) {curePurple = true;}
+								else curePurple = false;
+								break;
 
-						//otherwise return, i.e won't display cureButton
-						Region region = discoverCureDiscardCards.get(0).getRegion();
-						boolean containsPurpleDisease;
-						for (CityCard c : discoverCureDiscardCards) {
-							if (!c.getRegion().equals(region)) {
-								//if
-								discoverCureButton.setVisible(false);
-								return;
 							}
 						}
 
+						System.out.println(curePurple);
+
+						Region region = discoverCureDiscardCards.get(0).getRegion();
+
+						boolean hasCardsOfSameColor = true;
+
+						for (CityCard c : discoverCureDiscardCards) {
+							if (!c.getRegion().equals(region)) {
+								//if
+								hasCardsOfSameColor = false;
+								break;
+							}
+						}
+
+
+
+
 						System.out.println("DiscoverCure button should appear");
-						discoverCureButton.setText("Cure " + region + " disease");
+						if (hasCardsOfSameColor) discoverCureButton.setText("Cure " + region + " disease");
+						else  discoverCureButton.setText("Cure Purple disease");
 						discoverCureButton.setHorizontalAlignment(SwingConstants.CENTER);
 						discoverCureButton.setVerticalAlignment(SwingConstants.CENTER);
 						discoverCureButton.setForeground(Color.WHITE);
@@ -2976,6 +2964,7 @@ public class GUI extends JFrame {
 						discoverCureButton.setVisible(true);
 						contentPane.add(discoverCureButton);
 						contentPane.setComponentZOrder(discoverCureButton, 0);
+
 
 					}
 
@@ -3480,6 +3469,15 @@ public class GUI extends JFrame {
 
 	}
 
+	private void resetMovesExcept(String m)
+	{
+		for(String s : moves.keySet())
+		{
+			if(!s.equals(m)) moves.put(s,false);
+
+		}
+	}
+
 	private void resetProfPawnSelected(Map<JLabel, Boolean> profPawnOptions, JLabel jSelected)
 	{
 		for(JLabel j : profPawnOptions.keySet())
@@ -3538,13 +3536,24 @@ public class GUI extends JFrame {
 
 	public void drawAcceptDeclineMessageBox(String consentPrompt)
 	{
-		genericBox.setText(consentPrompt);
+		/*genericBox.setText(consentPrompt);
 		genericBox.setHorizontalAlignment(SwingConstants.CENTER);
 		genericBox.setVerticalAlignment(SwingConstants.CENTER);
 		genericBox.setForeground(Color.WHITE);
 		genericBox.setBackground(Color.BLACK);
 		genericBox.setBounds(486,200,400,100);
-		genericBox.setOpaque(true);
+		genericBox.setOpaque(true);*/
+
+		JLabel genericBox1 = new JLabel();
+
+		genericBox1.setText(consentPrompt);
+		genericBox1.setHorizontalAlignment(SwingConstants.CENTER);
+		genericBox1.setVerticalAlignment(SwingConstants.CENTER);
+		genericBox1.setForeground(Color.WHITE);
+		genericBox1.setBackground(Color.BLACK);
+		genericBox1.setBounds(486,200,400,100);
+		genericBox1.setOpaque(true);
+
 
 		JLabel acceptButton1 = new JLabel("Accept");
 		JLabel declineButton1 = new JLabel("Decline");
@@ -3562,7 +3571,7 @@ public class GUI extends JFrame {
 										  public void mouseReleased(MouseEvent e) {
 											  GameURs.sendAnswerToShareKnowledge(client, true);
 											  //client.sendMessageToServer(ServerCommands.ANSWER_CONSENT_PROMPT.name(), true);
-											  genericBox.setVisible(false);
+											  genericBox1.setVisible(false);
 											  acceptButton1.setVisible(false);
 											  declineButton1.setVisible(false);
 
@@ -3581,7 +3590,7 @@ public class GUI extends JFrame {
 		declineButton1.setVisible(true);
 		declineButton1.addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent e) {
-				genericBox.setVisible(false);
+				genericBox1.setVisible(false);
 				acceptButton1.setVisible(false);
 				declineButton1.setVisible(false);
 				GameURs.sendAnswerToShareKnowledge(client, false);
@@ -3632,7 +3641,89 @@ public class GUI extends JFrame {
 	}
 
 
+	public class EventCardGUIHandler {
+		private PlayerCard playerCard;	//the selected card
 
+		public EventCardGUIHandler(PlayerCard playerCard) {
+			this.playerCard = playerCard;
+		}
+
+		public void invoke() {
+			//now if player decides to play event card...
+			//make sure it's an eventCard
+			if (playerCard.getCardType().equals(CardType.EventCard)) {
+                //once clicked, depends which event card, display corresponding gui elements
+                //for e.g if government grant is clicked => display targeted city to build station on
+                //so bunch of if else (if(mapPlayerCard.get(playerCard.getCardName().equals("GovernmentGrant")...)
+
+				switch (EventCardName.valueOf(playerCard.getCardName())) {
+					case OneQuietNight:
+						EventCardURs.sendOneQuietNight(client, username);
+						break;
+
+					case GovernmentGrant:
+						//then display the targets (optional)
+						//click city
+
+						moves.put("GovernmentGrant", true);
+						//send request
+						break;
+
+					case ResilientPopulation:
+						//display list of infection discard cards
+						List<String> infectionDiscardList = new ArrayList<>();
+						for (InfectionCard infectionCard : gs.getInfectionDiscardPile().getCards()) {
+							infectionDiscardList.add(infectionCard.getCardName());
+						}
+
+						final JList<String> listToDisplay = new JList<>(new Vector<>(infectionDiscardList));
+						final ListDialog dialogRemoveInfectionCard = new ListDialog("Remove infection card", "Please remove one infection card: ", listToDisplay);
+						dialogRemoveInfectionCard.setOnOk(ev ->
+						{
+							final List<String> chosenItems = dialogRemoveInfectionCard.getSelectedItems();
+							String infectionCardTarget = chosenItems.get(0);
+							System.out.println("Infection card to remove: " + infectionCardTarget);
+							int index = -1;
+							for (int i = 0; i < infectionDiscardList.size(); i++) {
+								if (infectionDiscardList.get(i).equals(infectionCardTarget)) {
+									index = i;
+									break;
+								}
+							}
+							System.out.println(gs.getInfectionDiscardPile().getCards().get(index).getCardName());
+							EventCardURs.sendResilientPopulationUR(client, username, gs.getInfectionDiscardPile().getCards().get(index));
+
+						});
+						dialogRemoveInfectionCard.show();
+						break;
+
+					case AirLift:
+
+						break;
+
+					case Forecast:
+
+						break;
+
+					case BorrowedTime:
+
+						break;
+
+					case CommercialTravelBan:
+
+						break;
+
+					case MobileHospital:
+
+						break;
+
+					case LocalInitiative:
+
+						break;
+				}
+            }
+		}
+	}
 }
 
 

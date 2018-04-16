@@ -4,13 +4,19 @@ import shared.PlayerCardSimple;
 import shared.request.CardSource;
 import shared.request.CardTarget;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Player implements CardTarget, CardSource {
+public class Player implements CardTarget, CardSource, Serializable {
 
 	private int actionsTaken;
 	private boolean oncePerTurnActionTaken;
 	private ArrayList<Card> cardsInHand;
+
+	public User getUser() {
+		return user;
+	}
+
 	private User user;
 	private Pawn pawn;
 	private Role role;
@@ -114,7 +120,6 @@ public class Player implements CardTarget, CardSource {
     public void incrementActionTaken() {
 	    actionsTaken++;
     }
-
 
     public RoleType getRoleType(){
     	return role.getRoleType();

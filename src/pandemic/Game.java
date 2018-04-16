@@ -5,11 +5,12 @@ import pandemic.eventcards.*;
 import pandemic.eventcards.impl.*;
 import shared.GameState;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class Game {
+public class Game implements Serializable {
 
     private GameManager gameManager;
     private GameBoard myGameBoard;
@@ -81,6 +82,15 @@ public class Game {
     private ArrayList<QuarantineMarker> allQuarantineMarkers;
     private boolean quarantineMarkersInPlay;
 
+    public boolean isLoadedFlag() {
+        return loadedFlag;
+    }
+
+    public void setLoadedFlag(boolean loadedFlag) {
+        this.loadedFlag = loadedFlag;
+    }
+
+    private boolean loadedFlag = false;
 
     public Game(GameSettings settings, GameManager gameManager) {
         //this.currentPlayer = currentPlayer;
@@ -199,7 +209,7 @@ public class Game {
 
         // -----------FOR TESTING--------------------
         if(settings.getChallenge().equals(ChallengeKind.Mutation) || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndMutation)
-        || settings.getChallenge().equals(ChallengeKind.BioTerrorist) || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndBioTerrorist)) {
+                || settings.getChallenge().equals(ChallengeKind.BioTerrorist) || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndBioTerrorist)) {
             // REMOVE AFTER TESTING
             City atl = getCityByName(CityName.Atlanta);
             ArrayList<DiseaseFlag> diseaseFlagsSupply = diseaseTypeToSupplyDict.get(DiseaseType.Purple);
@@ -618,8 +628,8 @@ public class Game {
     }
 
     public Pawn getBioTPawn() {
-      //  Pawn bioTPawn = inGamePawns.stream().filter(pawn -> pawn.getRole().getRoleType() == RoleType.BioTerrorist)
-                                           // .findAny().orElse(null);
+        //  Pawn bioTPawn = inGamePawns.stream().filter(pawn -> pawn.getRole().getRoleType() == RoleType.BioTerrorist)
+        // .findAny().orElse(null);
 
 
         Pawn bioTPawn = new Pawn(new Role(RoleType.BioTerrorist));
@@ -1069,7 +1079,7 @@ public class Game {
                 System.out.println("Ran out of disease cubes or Outbreak meter maxed out");
             }
 
-           completedCities.add(c);
+            completedCities.add(c);
         }
 
         for(City compCity : completedCities) {
@@ -1081,7 +1091,7 @@ public class Game {
 
     // For HiddenPocketEpidemicCard. This method infects cities with the Virulent Strain when it is eradicated.
     public void infectAndResolveOutbreaksForHiddenPocket(DiseaseType cityDiseaseType, Disease cityDisease,
-                                                        boolean gameStatus, LinkedList<City> Q){
+                                                         boolean gameStatus, LinkedList<City> Q){
         while(gameStatus && !Q.isEmpty() ) {
             City c = Q.removeFirst();
             int numberOfDiseaseFlagsPlaced = c.getNumOfDiseaseFlagsPlaced(cityDiseaseType);
@@ -1539,11 +1549,11 @@ public class Game {
     }
 
     public void setSlipperySlopeActive(boolean b){
-  	    slipperySlopeActive = b;
+        slipperySlopeActive = b;
     }
 
     public DiseaseType getVirulentStrain(){
-  	    return virulentStrain;
+        return virulentStrain;
     }
 
     // Should only be called at most once per game, when first Virulent Strain Epidemic Card is drawn
@@ -1557,7 +1567,7 @@ public class Game {
         for (City c : myGameBoard.getCitiesOnBoard()){
             numBlueFlags = numBlueFlags + c.getNumOfDiseaseFlagsPlaced(DiseaseType.Blue);
             if (numBlueFlags > maxNumFlags) {
-               maxNumFlags = numBlueFlags;
+                maxNumFlags = numBlueFlags;
             }
             numBlackFlags = numBlackFlags + c.getNumOfDiseaseFlagsPlaced(DiseaseType.Black);
             if (numBlackFlags > maxNumFlags){
@@ -1585,19 +1595,19 @@ public class Game {
     }
 
     public boolean getRateEffectActive(){
-  	    return rateEffectActive;
+        return rateEffectActive;
     }
 
     public void setRateEffectActive(boolean b){
-  	    rateEffectActive = b;
+        rateEffectActive = b;
     }
 
     public boolean getRateEffectAffectedInfection(){
-  	    return rateEffectAffectedInfection;
+        return rateEffectAffectedInfection;
     }
 
     public void setRateEffectAffectedInfection(boolean b){
-  	    rateEffectAffectedInfection = b;
+        rateEffectAffectedInfection = b;
     }
 
     public GameCardRemover getMyGameCardRemover() {
@@ -1606,8 +1616,8 @@ public class Game {
 
     public void infectUncountedPopulations(){
         ArrayList<DiseaseFlag> freshFlags = diseaseTypeToSupplyDict.get(virulentStrain);
-  	    for (City c : myGameBoard.getCitiesOnBoard()){
-  	        if (c.getNumOfDiseaseFlagsPlaced(virulentStrain) == 1){
+        for (City c : myGameBoard.getCitiesOnBoard()){
+            if (c.getNumOfDiseaseFlagsPlaced(virulentStrain) == 1){
                 boolean qsOrMedicPreventingInfectionInCity = isQuarantineSpecialistInCity(c) || (isMedicInCity(c) && getDiseaseByDiseaseType(virulentStrain).isCured());
                 boolean qsPresentInNeighbor = false;
                 ArrayList<City> cityNeighbors = c.getNeighbors();
@@ -1699,11 +1709,11 @@ public class Game {
     }
 
     public boolean getComplexMolecularStructureActive(){
-  	    return complexMolecularStructureActive;
+        return complexMolecularStructureActive;
     }
 
     public void setComplexMolecularStructureActive(boolean b){
-  	    complexMolecularStructureActive = b;
+        complexMolecularStructureActive = b;
     }
 
     public boolean getGovernmentInterferenceActive(){
