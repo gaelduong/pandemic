@@ -676,20 +676,20 @@ public class GUI extends JFrame {
 		put("HoChiMinhCity", HoChiMinhCityCardLabel);//
 		put("Sydney", SydneyCardLabel);//
 
-		put("AirLift", AirLiftCardLabel);
-		put("Forecast", ForecastCardLabel);
-		put("OneQuietNight", OneQuietNightCardLabel);
-		put("GovernmentGrant", GovernmentGrantCardLabel);
-		put("ResilientPopulation", ResilientPopulationCardLabel);
+		put(EventCardName.AirLift.name(), AirLiftCardLabel);
+		put(EventCardName.Forecast.name(), ForecastCardLabel);
+		put(EventCardName.OneQuietNight.name(), OneQuietNightCardLabel);
+		put(EventCardName.GovernmentGrant.name(), GovernmentGrantCardLabel);
+		put(EventCardName.ResilientPopulation.name(), ResilientPopulationCardLabel);
+		put(EventCardName.BorrowedTime.name(), BorrowedTimeLabel);
+		put(EventCardName.MobileHospital.name(), MobileHospitalLabel);
+		put(EventCardName.CommercialTravelBan.name(), CommercialTravelBanLabel);
+
 		put("BasicEpidemicCard", BasicEpidemicCardLabel);
-		put("CommercialTravelBan", CommercialTravelBanLabel);
 		put("NewAssignment", NewAssignmentLabel);
 		put("ReexaminedResearch", ReexaminedResearchLabel);
 		put("RemoteTreatment", RemoteTreatmentLabel);
 		put("SpecialOrders", SpecialOrdersLabel);
-		put("MobileHospital", MobileHospitalLabel);
-
-
 	}};
 
 	private Map<String, JLabel> mapInfectionCardLabels = new HashMap<String, JLabel>() {{
@@ -2919,7 +2919,9 @@ public class GUI extends JFrame {
 							return;
 						}
 
+						//every card in the list must have the same color(region)
 
+						//boolean curePurple = gs.getDiseaseCubesMap().c
 
 
 						boolean curePurple = false;
