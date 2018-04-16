@@ -409,30 +409,30 @@ public class Game {
 
 
         // REMOVE AFTER TESTING
-        ResearchStation parisResearchStation = unusedResearchStations.remove(0);
-        City parisCity = myGameBoard.getCityByName(CityName.Paris);
-        parisResearchStation.setLocation(parisCity);
-        parisCity.getCityUnits().add(parisResearchStation);
-
-        ResearchStation tokyoResearchStation = unusedResearchStations.remove(0);
-        City tokyoCity = myGameBoard.getCityByName(CityName.Tokyo);
-        tokyoResearchStation.setLocation(tokyoCity);
-        tokyoCity.getCityUnits().add(tokyoResearchStation);
-
-        ResearchStation chennaiResearchStation = unusedResearchStations.remove(0);
-        City chennaiCity = myGameBoard.getCityByName(CityName.Chennai);
-        chennaiResearchStation.setLocation(chennaiCity);
-        chennaiCity.getCityUnits().add(chennaiResearchStation);
-
-        ResearchStation moscowResearchStation = unusedResearchStations.remove(0);
-        City moscowCity = myGameBoard.getCityByName(CityName.Moscow);
-        moscowResearchStation.setLocation(moscowCity);
-        moscowCity.getCityUnits().add(moscowResearchStation);
-
-        ResearchStation osakaResearchStation = unusedResearchStations.remove(0);
-        City osakaCity = myGameBoard.getCityByName(CityName.Osaka);
-        osakaResearchStation.setLocation(osakaCity);
-        osakaCity.getCityUnits().add(osakaResearchStation);
+//        ResearchStation parisResearchStation = unusedResearchStations.remove(0);
+//        City parisCity = myGameBoard.getCityByName(CityName.Paris);
+//        parisResearchStation.setLocation(parisCity);
+//        parisCity.getCityUnits().add(parisResearchStation);
+//
+//        ResearchStation tokyoResearchStation = unusedResearchStations.remove(0);
+//        City tokyoCity = myGameBoard.getCityByName(CityName.Tokyo);
+//        tokyoResearchStation.setLocation(tokyoCity);
+//        tokyoCity.getCityUnits().add(tokyoResearchStation);
+//
+//        ResearchStation chennaiResearchStation = unusedResearchStations.remove(0);
+//        City chennaiCity = myGameBoard.getCityByName(CityName.Chennai);
+//        chennaiResearchStation.setLocation(chennaiCity);
+//        chennaiCity.getCityUnits().add(chennaiResearchStation);
+//
+//        ResearchStation moscowResearchStation = unusedResearchStations.remove(0);
+//        City moscowCity = myGameBoard.getCityByName(CityName.Moscow);
+//        moscowResearchStation.setLocation(moscowCity);
+//        moscowCity.getCityUnits().add(moscowResearchStation);
+//
+//        ResearchStation osakaResearchStation = unusedResearchStations.remove(0);
+//        City osakaCity = myGameBoard.getCityByName(CityName.Osaka);
+//        osakaResearchStation.setLocation(osakaCity);
+//        osakaCity.getCityUnits().add(osakaResearchStation);
 
 
 
