@@ -5,7 +5,7 @@ import java.util.Objects;
 abstract class EpidemicCard implements PlayerCard{
 
 	protected CardType type;
-	protected transient GameManager myGameManager;
+	protected GameManager myGameManager;
 	protected EpidemicCardName name;
 	
 	public EpidemicCard(CardType t, GameManager gm, EpidemicCardName n){

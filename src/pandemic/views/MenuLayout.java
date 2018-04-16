@@ -32,9 +32,7 @@ import javafx.scene.control.Accordion;
 import javafx.application.Platform;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
@@ -82,7 +80,9 @@ public class MenuLayout extends Parent {
     final AudioClip startGameSound = new AudioClip(new File("src/pandemic/resources/Music/416385__fredzed__flash-and-a-bang.wav").toURI().toString());
     final AudioClip selectSound = new AudioClip(new File("src/pandemic/resources/Music/50559__broumbroum__sf3-sfx-menu-select-l.wav").toURI().toString());
     private Text actionStatus;
+    private File loadedFile;
     private Stage savedStage;
+    private Game loadedGame;
     private static final String titleTxt = "JavaFX File Chooser";
 
 
@@ -308,9 +308,12 @@ public class MenuLayout extends Parent {
         	}	
         	// print tracker for good measure
         	//magicalPrintingFunction(tracker);
-
-            setUpCreateGame(pandemicServer, pandemicClient);
-
+            if(actionStatus.getText() == null || actionStatus.getText().equals("")) {
+                setUpCreateGame(pandemicServer, pandemicClient);
+            }
+            else {
+                setUpLoadGame(pandemicServer, pandemicClient);
+            }
             // transition time
         	getChildren().add(createLobby);
 
@@ -468,6 +471,7 @@ public class MenuLayout extends Parent {
         actionStatus = new Text();
         actionStatus.setFont(Font.font("Calibri", FontWeight.NORMAL, 20));
         actionStatus.setFill(Color.WHITE);
+        actionStatus.setText("");
 
         MenuButton btnJoinBack = new MenuButton("BACK");
         btnJoinBack.setOnMouseClicked(event -> {
@@ -629,6 +633,44 @@ public class MenuLayout extends Parent {
             }
         });
     }*/
+    public void setUpLoadGame(PandemicServer s, PandemicClient c)
+    {
+        try {
+            FileInputStream fileIn = new FileInputStream(loadedFile.getPath());
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            loadedGame = (Game) in.readObject();
+            loadedGame.setLoadedFlag(true);
+            in.close();
+            fileIn.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+            return;
+        } catch (ClassNotFoundException c1) {
+            System.out.println("Game class not found");
+            c1.printStackTrace();
+            return;
+        }
+        gameManager = loadedGame.getGameManager();
+
+        try {
+            pandemicServer = new PandemicServer(this, loadedGame, 1301);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            pandemicClient = new PandemicClient("127.0.0.1", "host", 1301);
+            GUI pandemicHostClientGUI = new GUI("host", pandemicClient);
+            pandemicClient.setGUI(pandemicHostClientGUI);
+
+            pandemicClient.sendMessageToServer(ServerCommands.REGISTER_USERNAME.name(), "host");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        serverThing serverT = new serverThing(pandemicServer, pandemicClient);
+        Runtime.getRuntime().addShutdownHook(serverT);
+    }
 
    	public void setUpCreateGame(PandemicServer s, PandemicClient c)
     {   //a file was loaded
@@ -662,7 +704,7 @@ public class MenuLayout extends Parent {
 
             gameManager.createNewGame();
             pandemicServer = new PandemicServer(this, gameManager.getGame(), 1301);
-            System.out.println("in try");
+           // System.out.println("in try");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -676,7 +718,7 @@ public class MenuLayout extends Parent {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        serverThing serverT = new serverThing(s, c);
+        serverThing serverT = new serverThing(pandemicServer, pandemicClient);
         Runtime.getRuntime().addShutdownHook(serverT);
     }
 
@@ -721,7 +763,7 @@ public class MenuLayout extends Parent {
 
         FileChooser fileChooser = new FileChooser();
         File selectedFile = fileChooser.showOpenDialog(null);
-
+        loadedFile = selectedFile;
         if (selectedFile != null) {
 
             actionStatus.setText("File selected: " + selectedFile.getName());
@@ -744,8 +786,9 @@ private class serverThing extends Thread {
             System.out.println("HELLO");
             System.out.println("HELLO");
             System.out.println("HELLO");
+            System.out.println("1221");
             System.out.println("HELLO");
-            System.out.println("HELLO");
+            System.out.println(server);
             if(server != null)
                 server.close();
             if(client != null)

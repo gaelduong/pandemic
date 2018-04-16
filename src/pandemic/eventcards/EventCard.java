@@ -4,11 +4,12 @@ import pandemic.CardType;
 import pandemic.GameManager;
 import pandemic.PlayerCard;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class EventCard implements PlayerCard {
+public abstract class EventCard implements PlayerCard, Serializable {
 	
-	protected transient GameManager gameManager = null;
+	protected GameManager gameManager = null;
 	protected EventCardName name;
 	protected CardType cardType;
 	

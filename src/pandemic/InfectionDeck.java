@@ -3,11 +3,12 @@ package pandemic;
 import shared.PlayerCardSimple;
 import shared.request.CardSource;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class InfectionDeck implements CardSource {
+public class InfectionDeck implements CardSource, Serializable {
 
 	
 	private ArrayList<InfectionCard> cardsInDeck;

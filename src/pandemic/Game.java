@@ -5,11 +5,12 @@ import pandemic.eventcards.*;
 import pandemic.eventcards.impl.*;
 import shared.GameState;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
 
-public class Game {
+public class Game implements Serializable {
 
     private GameManager gameManager;
     private GameBoard myGameBoard;
@@ -81,6 +82,15 @@ public class Game {
     private ArrayList<QuarantineMarker> allQuarantineMarkers;
     private boolean quarantineMarkersInPlay;
 
+    public boolean isLoadedFlag() {
+        return loadedFlag;
+    }
+
+    public void setLoadedFlag(boolean loadedFlag) {
+        this.loadedFlag = loadedFlag;
+    }
+
+    private boolean loadedFlag = false;
 
     public Game(GameSettings settings, GameManager gameManager) {
         //this.currentPlayer = currentPlayer;

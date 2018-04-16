@@ -2,10 +2,11 @@ package pandemic;
 
 import shared.request.CardTarget;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameCardRemover implements CardTarget {
+public class GameCardRemover implements CardTarget, Serializable {
 
     private final List<Card> cardsRemovedFromGame;
     private final Game game;

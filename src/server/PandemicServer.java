@@ -11,7 +11,9 @@ import shared.MessageType;
 import shared.Utils;
 import shared.request.UpdateRequest;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;
@@ -81,11 +83,26 @@ public class PandemicServer extends Server {
 
     @Override
     public void close() {
+        System.out.println("magic");
+        serializeGame(getGame());
         this.connectionCheckTimer.purge();
         this.connectionCheckTimer.cancel();
         super.close();
     }
-
+    void serializeGame(Game g)
+    {
+        try {
+            FileOutputStream fileOut =
+                    new FileOutputStream("game.txt");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(g);
+            out.close();
+            fileOut.close();
+            System.out.printf("Serialized data is saved in /tmp/employee.ser");
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+    }
     @Override
     protected void handleReceivedMessage(SocketBundle client, List<Object> message) {
         Game game = getGame();
@@ -116,15 +133,52 @@ public class PandemicServer extends Server {
 
                     System.out.println("game phase is : " + game.getGamePhase());
                     if (game.getGamePhase() == GamePhase.ReadyToJoin) {
+
+                        if(game.isLoadedFlag() && !isInActivePlayers(client.getSocket().getRemoteSocketAddress().toString(), playerUserName, game))
+                        {
+                            System.out.println("They are trying to join a load game with the wrong name");
+                            return;
+                        }
                         clientMap.put(client, playerUserName);
                         clientLastResponse.put(playerUserName, (long) 0);
 
                         User clientUser = new User(playerUserName, "lol",
                                 client.getSocket().getRemoteSocketAddress().toString());
-                        game.getGameManager().joinGame(clientUser);
+                        if(game.isLoadedFlag())
+                        {
+                            game.getGameManager().loadGame(clientUser);
+                        }
+                        else
+                        {
+                            game.getGameManager().joinGame(clientUser);
+                        }
                         sendUpdatedLobbyState(null);
                     } else {
+                        if(game.isLoadedFlag() == false)
+                        {
+                            return;
+                        }
                         System.out.println("This game has already started!");
+
+                        if(game.isLoadedFlag() && !isInActivePlayers(client.getSocket().getRemoteSocketAddress().toString(), playerUserName, game))
+                        {
+                            System.out.println("They are trying to join a load game with the wrong name");
+                            return;
+                        }
+                        clientMap.put(client, playerUserName);
+                        clientLastResponse.put(playerUserName, (long) 0);
+
+                        User clientUser = new User(playerUserName, "lol",
+                                client.getSocket().getRemoteSocketAddress().toString());
+                        if(game.isLoadedFlag())
+                        {
+                            game.getGameManager().loadGame(clientUser);
+                        }
+                        else
+                        {
+                            game.getGameManager().joinGame(clientUser);
+                        }
+                        sendUpdatedLobbyState(null);
                     }
                     break;
                 }
@@ -157,7 +211,17 @@ public class PandemicServer extends Server {
             //STOP THE SERVER THREAD HERE?
         }
     }
-
+    private boolean isInActivePlayers(String IP, String username, Game game)
+    {
+        for(Player p : game.getGameManager().getActivePlayers()){
+            if(p.getPlayerUserName().equals(username))
+            {
+                p.getUser().setUserIPAddress(IP);
+                return true;
+            }
+        }
+        return false;
+    }
     private void userTimedOut(SocketBundle client, String playerUserName) {
         Game game = getGame();
         System.out.printf("Player %s isn't responding (from %s)!\n", playerUserName,
@@ -200,7 +264,7 @@ public class PandemicServer extends Server {
         Game game = getGame();
         final String playerUsername = clientMap.get(client);
         if (playerUsername == null) {
-            System.err.printf("No player registered from %s! ERROR!\n", client.getSocket().getRemoteSocketAddress().toString());
+            System.err.printf("No player registered from %s! ERROR1!\n", client.getSocket().getRemoteSocketAddress().toString());
             return;
         }
 
@@ -236,7 +300,7 @@ public class PandemicServer extends Server {
 
         final String playerUsername = clientMap.get(client);
         if (playerUsername == null) {
-            System.err.printf("No player registered from %s! ERROR!\n", client.getSocket().getRemoteSocketAddress().toString());
+            System.err.printf("No player registered from %s! ERROR2!\n", client.getSocket().getRemoteSocketAddress().toString());
             System.out.println("client map (in sendUpdateRequest): " + clientMap);
             return;
         }
@@ -252,7 +316,8 @@ public class PandemicServer extends Server {
         Game game = getGame();
         final String playerUsername = clientMap.get(client);
         if (playerUsername == null) {
-            System.err.printf("No player registered from %s! ERROR!\n", client.getSocket().getRemoteSocketAddress().toString());
+            System.out.println(clientMap.size());
+            System.err.printf("No player registered from %s! ERROR3!\n", client.getSocket().getRemoteSocketAddress().toString());
             System.out.println("client map (in sendUpdateRequest): " + clientMap);
             return;
         }

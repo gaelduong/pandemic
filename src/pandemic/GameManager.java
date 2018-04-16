@@ -2,10 +2,11 @@ package pandemic;
 
 import pandemic.eventcards.EventCard;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class GameManager {
+public class GameManager implements Serializable {
 
 	private HashMap<CityName, ArrayList<CityName>> neighborsDict;
 	private HashMap<Region, ArrayList<CityName>> regionsDict;
@@ -105,6 +106,16 @@ public class GameManager {
                 break;
             }
         }
+    }
+
+    public void loadGame(User user)
+    {
+        activePlayers.forEach(player -> {
+            if(player.getPlayerUserName().equals(user.getUserName()))
+            {
+                player.getUser().setUserIPAddress(user.getUserIPAddress());
+            }
+        });
     }
 
     public void joinGame(User user){
