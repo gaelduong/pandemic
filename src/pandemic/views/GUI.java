@@ -850,17 +850,17 @@ public class GUI extends JFrame {
 			btnShareKnowledge.setVisible(true);
 
 
-			if(userRole==RoleType.ContingencyPlanner) btnContingencyPlanner.setVisible(true);
+			//if(userRole==RoleType.ContingencyPlanner) btnContingencyPlanner.setVisible(true);
 
 //=====================
-			btnContingencyPlanner.setVisible(false);
-			btnDirectFlight1.setVisible(false);
-			btnCharterFlight1.setVisible(false);
-			btnShuttleFlight1.setVisible(false);
-			btnTreatDisease1.setVisible(false);
-			btnDiscoverCure1.setVisible(false);
-			btnBuildResearch1.setVisible(false);
-			btnShareKnowledge1.setVisible(false);
+			btnContingencyPlanner.setVisible(true);
+			btnDirectFlight1.setVisible(true);
+			btnCharterFlight1.setVisible(true);
+			btnShuttleFlight1.setVisible(true);
+			btnTreatDisease1.setVisible(true);
+			btnDiscoverCure1.setVisible(true);
+			btnBuildResearch1.setVisible(true);
+			btnShareKnowledge1.setVisible(true);
 
 			Component[] components = contentPane.getComponents();
 			try {
@@ -884,8 +884,6 @@ public class GUI extends JFrame {
 			btnBuildResearch.setVisible(false);
 			btnShareKnowledge.setVisible(false);
 			btnDiscoverCure.setVisible(false);
-
-			if(userRole==RoleType.ContingencyPlanner) btnContingencyPlanner.setVisible(false);
 
 			//=====================
 			moreButton.setVisible(false);
@@ -1017,7 +1015,7 @@ public class GUI extends JFrame {
 				+ " Y:" + mapCardColors.get(Region.Yellow) + " BL:" + mapCardColors.get(Region.Black));
 		btnDiscoverCure.setEnabled(false);
 		for (Integer n : mapCardColors.values()) {
-			if (n + isSci >= 2) {
+			if (n + isSci >= 5) {
 				btnDiscoverCure.setEnabled(true);
 				break;
 			}
@@ -1038,7 +1036,7 @@ public class GUI extends JFrame {
 			}
 		}
 
-		if(gs.getCardMap().get(userRole).size() + isSci >= 2 && purpleIn) btnDiscoverCure.setEnabled(true);
+		if(gs.getCardMap().get(userRole).size() + isSci >= 5 && purpleIn) btnDiscoverCure.setEnabled(true);
 
 
 		boolean hasStationInCity = false;
@@ -1192,7 +1190,7 @@ public class GUI extends JFrame {
 					((JButton) components[i]).setEnabled(false);
 				}
 			}
-			displayMessage("Choose city to move to",600, 520);
+			//displayMessage("Choose city to move to",600, 520);
 			discardButton.setVisible(true);
 
 			System.out.println(discardButton.isVisible() + " " + playEventOptionButton.isVisible());
@@ -1430,8 +1428,8 @@ public class GUI extends JFrame {
 		infectionDiscard.setVisible(true);
 
 		// ------------- Set up Player Card Container---------
-		cardsContainer.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/cardsContainer.png")).getImage().getScaledInstance(850, 191, Image.SCALE_SMOOTH)));
-		cardsContainer.setBounds(270, 560, 850, 191);
+		cardsContainer.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/cardsContainer.png")).getImage().getScaledInstance(970, 191, Image.SCALE_SMOOTH)));
+		cardsContainer.setBounds(270, 560, 970, 191);
 		contentPane.add(cardsContainer);
 		cardsContainer.setVisible(true);
 
@@ -1727,14 +1725,6 @@ public class GUI extends JFrame {
 		controlPawn.setVisible(true);
 
 
-		contentPane.setComponentZOrder(btnDriveFerry, 1);
-		contentPane.setComponentZOrder(btnDirectFlight, 1);
-		contentPane.setComponentZOrder(btnCharterFlight, 1);
-		contentPane.setComponentZOrder(btnShuttleFlight, 1);
-		contentPane.setComponentZOrder(btnTreatDisease, 1);
-		contentPane.setComponentZOrder(btnDiscoverCure, 1);
-		contentPane.setComponentZOrder(btnBuildResearch, 1);
-		contentPane.setComponentZOrder(btnShareKnowledge, 1);
 
 		//=====
 		contentPane.setComponentZOrder(btnContingencyPlanner, 0);
@@ -1745,6 +1735,17 @@ public class GUI extends JFrame {
 		contentPane.setComponentZOrder(btnDiscoverCure1, 0);
 		contentPane.setComponentZOrder(btnBuildResearch1, 0);
 		contentPane.setComponentZOrder(btnShareKnowledge1, 0);
+
+		contentPane.setComponentZOrder(btnDriveFerry, 1);
+		contentPane.setComponentZOrder(btnDirectFlight, 1);
+		contentPane.setComponentZOrder(btnCharterFlight, 1);
+		contentPane.setComponentZOrder(btnShuttleFlight, 1);
+		contentPane.setComponentZOrder(btnTreatDisease, 1);
+		contentPane.setComponentZOrder(btnDiscoverCure, 1);
+		contentPane.setComponentZOrder(btnBuildResearch, 1);
+		contentPane.setComponentZOrder(btnShareKnowledge, 1);
+
+
 		//=======
 
 		contentPane.setComponentZOrder(actionsRemaining, 1);
@@ -2156,14 +2157,31 @@ public class GUI extends JFrame {
 
 		moreButton.addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent e) {
-				btnContingencyPlanner.setVisible(!btnContingencyPlanner.isVisible());
-				btnDirectFlight1.setVisible(!btnDirectFlight1.isVisible());
-				btnCharterFlight1.setVisible(!btnCharterFlight1.isVisible());
-				btnShuttleFlight1.setVisible(!btnShuttleFlight1.isVisible());
-				btnTreatDisease1.setVisible(!btnTreatDisease1.isVisible());
-				btnDiscoverCure1.setVisible(!btnDiscoverCure1.isVisible());
-				btnBuildResearch1.setVisible(!btnBuildResearch1.isVisible());
-				btnShareKnowledge1.setVisible(!btnShareKnowledge1.isVisible());
+				if(userRole==RoleType.ContingencyPlanner) btnContingencyPlanner.setEnabled(true);
+				else btnContingencyPlanner.setEnabled(false);
+				btnDirectFlight1.setEnabled(true);
+				btnCharterFlight1.setEnabled(true);
+				btnShuttleFlight1.setEnabled(true);
+				btnTreatDisease1.setEnabled(true);
+				btnDiscoverCure1.setEnabled(true);
+				btnBuildResearch1.setEnabled(true);
+				btnShareKnowledge1.setEnabled(true);
+
+
+				btnDriveFerry.setVisible(!btnDriveFerry.isVisible());
+				btnDirectFlight.setVisible(!btnDirectFlight.isVisible());
+				btnCharterFlight.setVisible(!btnCharterFlight.isVisible());
+				btnShuttleFlight.setVisible(!btnShuttleFlight.isVisible());
+				btnTreatDisease.setVisible(!btnTreatDisease.isVisible());
+				btnDiscoverCure.setVisible(!btnDiscoverCure.isVisible());
+				btnBuildResearch.setVisible(!btnBuildResearch.isVisible());
+				btnShareKnowledge.setVisible(!btnShareKnowledge.isVisible());
+
+				revalidate();
+				repaint();
+
+
+
 
 				/*if (userRole == RoleType.OperationsExpert) {
 					btnContingencyPlanner.setText("Role Action: Move to Any City");
@@ -3042,7 +3060,7 @@ public class GUI extends JFrame {
 						int isComplex = gs.getComplexMolecularStructureActive() ? 1 : 0;
 
 						int isSci = getUserRole().equals(RoleType.Scientist)? 1:0;
-						if (discoverCureDiscardCards.size() + isSci - isComplex < 2) {
+						if (discoverCureDiscardCards.size() + isSci - isComplex < 5) {
 							discoverCureButton.setVisible(false);
 							return;
 						}
@@ -3084,7 +3102,7 @@ public class GUI extends JFrame {
 
 						System.out.println("DiscoverCure button should appear");
 						if (hasCardsOfSameColor) discoverCureButton.setText("Cure " + region + " disease");
-						else  discoverCureButton.setText("Cure Purple disease");
+						else if (curePurple)  discoverCureButton.setText("Cure Purple disease");
 						discoverCureButton.setHorizontalAlignment(SwingConstants.CENTER);
 						discoverCureButton.setVerticalAlignment(SwingConstants.CENTER);
 						discoverCureButton.setForeground(Color.WHITE);
@@ -3337,7 +3355,7 @@ public class GUI extends JFrame {
 	private void loadDriveAndFlightMessage() {
 		genericBox.setForeground(Color.WHITE);
 		genericBox.setOpaque(false);
-		genericBox.setText("Choose city to move to");
+		//genericBox.setText("Choose city to move to");
 		genericBox.setBounds(600, 520, 200, 50);
 		contentPane.setComponentZOrder(genericBox, 0);
 		genericBox.setVisible(true);
