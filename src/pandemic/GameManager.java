@@ -443,7 +443,6 @@ public class GameManager {
         }
         currentGame.setGamePhase(GamePhase.TurnPlayerCards);
 		Player p = currentGame.getCurrentPlayer();
-		p.setActionsTaken(0);
 		p.setOncePerTurnActionTaken(false);
 		PlayerDeck pd = currentGame.getPlayerDeck();
 		int numCardsRemaining = pd.getDeckSize();
@@ -638,6 +637,8 @@ public class GameManager {
             // SET NEXT PLAYER TO CURRENT PLAYER
             // MUST MAKE SURE current player is at the head of the queue
             currentGame.setGamePhase(GamePhase.TurnActions);
+            Player p = currentGame.getCurrentPlayer();
+            p.setActionsTaken(0);
 
             if (currentGame.isBioTChallengeActive()) {
                 activePlayersNonBT.addLast(activePlayersNonBT.removeFirst());

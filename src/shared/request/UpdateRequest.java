@@ -130,11 +130,16 @@ public class UpdateRequest implements Serializable {
         final String cardDestinationString = (String)arguments.get(2);
 
         Player currentPlayer = game.getCurrentPlayer();
+        System.out.println("Executing move card action from " + currentPlayer);
         if (currentPlayer.getPlayerUserName().equals(playerUsername)) {
             final CardSource cardSource = (CardSource) getCardSourceTarget(cardSourceString, game, currentPlayer);
             final CardTarget cardTarget = (CardTarget) getCardSourceTarget(cardDestinationString, game, currentPlayer);
 
             Card cardToMoveObj = cardSource.getCard(cardToMove);
+            if (cardToMoveObj == null) {
+                System.err.println("CARD TO MOVE IS NULL. ERROR");
+                return;
+            }
 
             cardTarget.acceptCard(cardToMoveObj);
 
@@ -222,7 +227,14 @@ public class UpdateRequest implements Serializable {
         final List<CityCard> cardToDiscard = (List<CityCard>)arguments.get(0);
 
         final List<PlayerCard> cardsToDiscard = (List<PlayerCard>)arguments.get(0);
-        final DiseaseType toCure = (DiseaseType)arguments.get(arguments.size());
+        DiseaseType toCure = gameManager.getDiseaseTypeByRegion(gameManager.getCityByName(Utils.getEnum(CityName.class, cardsToDiscard.get(0).getCardName())).getRegion());
+        for (PlayerCard c : cardsToDiscard){
+            DiseaseType cDiseaseType = gameManager.getDiseaseTypeByRegion(gameManager.getCityByName(Utils.getEnum(CityName.class, c.getCardName())).getRegion());
+            if (cDiseaseType != toCure){
+                toCure = DiseaseType.Purple;
+                break;
+            }
+        }
 
         gameManager.playDiscoverCure(toCure, cardsToDiscard);
         currentlyProcessedAction.setLog_actionResult("has discovered a cure for type " + cardToDiscard.get(0).getRegion().toString().toLowerCase() + "!");
