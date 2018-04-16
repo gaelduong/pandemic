@@ -66,12 +66,21 @@ public class PlayerDeck implements CardSource, Serializable {
 	            break;
             if (mode == 1) {
                 sublist.add(3, epidemicCards.remove(0));
+                //REMOVE AFTER TESTING
+//                sublist.add(5, epidemicCards.remove(0));
+//                sublist.add(7, epidemicCards.remove(0));
             } else {
                 sublist.add(3, epidemicCards.remove(0));
                 Collections.shuffle(sublist);
             }
             newCardDeck.addAll(sublist);
         }
+
+        // REMOVE AFTER TESTING:
+//        newCardDeck.add(3, epidemicCards.remove(0));
+//        newCardDeck.add(5, epidemicCards.remove(0));
+//        newCardDeck.add(7, epidemicCards.remove(0));
+
 
         cardsInDeck.clear();
 	    cardsInDeck.addAll(newCardDeck);

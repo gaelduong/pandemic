@@ -25,11 +25,9 @@ abstract class EpidemicCard implements PlayerCard{
 	protected void increaseInfectIntensify(){
 		myGameManager.setEventCardsEnabled(false);
 		// Increase:
-		int currentInfectionRate = myGameManager.getInfectionRate();
-		if (currentInfectionRate < 4) {
-			myGameManager.increaseInfectionRate();
-		}
-		
+		System.out.println("INFECTION RATE BEFORE EPIDEMIC INCREASE: " + myGameManager.getInfectionRate());
+		myGameManager.increaseInfectionRate();
+		System.out.println("INFECTION RATE AFTER EPIDEMIC INCREASE: " + myGameManager.getInfectionRate());
 		// Infect:
 		// --> MUST CHANGE THIS TO HANDLE MUTATION CARDS <--
 		CityInfectionCard bottomInfectionCard = (CityInfectionCard) myGameManager.drawLastInfectionCard();

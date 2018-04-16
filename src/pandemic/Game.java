@@ -205,6 +205,23 @@ public class Game implements Serializable {
             myInfectionDiscardPile.addCard(card);
 
         }
+
+
+        // -----------FOR TESTING--------------------
+        if(settings.getChallenge().equals(ChallengeKind.Mutation) || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndMutation)
+        || settings.getChallenge().equals(ChallengeKind.BioTerrorist) || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndBioTerrorist)) {
+            // REMOVE AFTER TESTING
+            City atl = getCityByName(CityName.Atlanta);
+            ArrayList<DiseaseFlag> diseaseFlagsSupply = diseaseTypeToSupplyDict.get(DiseaseType.Purple);
+            DiseaseFlag flag = diseaseFlagsSupply.remove(0);
+            atl.getCityUnits().add(flag);
+            flag.setLocation(atl);
+            flag.setUsed(true);
+//                myInfectionDeck.addCardToTop(new MutationCard(gameManager));
+//                myInfectionDeck.addCardToTop(new MutationCard(gameManager));
+//
+        }
+
     }
 
     private void printDecksAndDiscardPiles() {
@@ -524,11 +541,11 @@ public class Game implements Serializable {
 
 
             // REMOVE AFTER TESTING: FORCES GAME TO START WITH PURPLE FLAG
-            City atl = getCityByName(CityName.Atlanta);
-            DiseaseFlag purpleFlag = purpleUnusedDiseaseFlags.get(0);
-            purpleFlag.setLocation(atl);
-            purpleFlag.setUsed(true);
-            atl.getCityUnits().add(purpleFlag);
+//            City atl = getCityByName(CityName.Atlanta);
+//            DiseaseFlag purpleFlag = purpleUnusedDiseaseFlags.get(0);
+//            purpleFlag.setLocation(atl);
+//            purpleFlag.setUsed(true);
+//            atl.getCityUnits().add(purpleFlag);
 
         }
     }

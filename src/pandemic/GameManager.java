@@ -143,6 +143,9 @@ public class GameManager implements Serializable {
         if (playerPawn.getRole().getRoleType() != RoleType.BioTerrorist) {
             City atlCity = currentGame.getGameManager().getCityByName(CityName.Atlanta);
             atlCity.getCityUnits().add(playerPawn);
+        } else {
+            City miamiCity = currentGame.getGameManager().getCityByName(CityName.Miami);
+            miamiCity.getCityUnits().add(playerPawn);
         }
 
 
@@ -559,7 +562,7 @@ public class GameManager implements Serializable {
 	}
 
 
-    public int infectNextCity(){
+    public String infectNextCity(){
         System.out.println("IN INFECT NEXT CITY!!!!");
         if (currentGame.getInfectionsRemaining() > 0) {
             if (currentGame.getOneQuietNight()) {
@@ -569,7 +572,9 @@ public class GameManager implements Serializable {
                 setEventCardsEnabled(false);
                 InfectionCard cardDrawn = currentGame.getInfectionDeck().drawCard();
                 if (cardDrawn instanceof MutationCard) {
+                    System.out.println("Mutation Card Drawn");
                     ((MutationCard) cardDrawn).resolveMutation();
+                    return "Mutation Card drawn...";
                 } else {
                     CityInfectionCard card = (CityInfectionCard) cardDrawn;
                     City city = currentGame.getCityByName(card.getCityName());
@@ -588,14 +593,14 @@ public class GameManager implements Serializable {
                     if (!gameStatus) {
                         //NOTIFY ALL PLAYERS LOST
                         currentGame.setGamePhase(GamePhase.Completed);
-                        return 0;
+                        return "";
                     }
 
                     // If Virulent Strain Challenge active and ChronicEffectEpidemicCard has been drawn, must check its effect:
                     if (currentGame.getChronicEffectActive() && cityDiseaseType == getVirulentStrain() && city.getNumOfDiseaseFlagsPlaced(getVirulentStrain()) == 0 && diseaseFlags.size() < 2) {
                         //NOTIFY ALL PLAYERS LOST
                         currentGame.setGamePhase(GamePhase.Completed);
-                        return 0;
+                        return "";
                     }
 
                     if (currentGame.getChronicEffectActive() && cityDiseaseType == getVirulentStrain() && city.getNumOfDiseaseFlagsPlaced(getVirulentStrain()) == 0 && diseaseFlags.size() >= 2) {
@@ -678,9 +683,9 @@ public class GameManager implements Serializable {
                 currentGame.setCommercialTravelBanActive(false);
                 currentGame.setCommercialTravelBanPlayedBy(null);
             }
-            return 0;
+            return "";
         }
-        return 0;
+        return "";
 	}
 
 	public Player getBioTPlayer() {

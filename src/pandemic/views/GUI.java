@@ -4,6 +4,7 @@ import api.gui.ListDialog;
 import client.PandemicClient;
 import javafx.util.Pair;
 import pandemic.*;
+import pandemic.eventcards.EventCardName;
 import server.PandemicServer;
 import server.premadeURs.GameURs;
 import shared.GameState;
@@ -675,20 +676,20 @@ public class GUI extends JFrame {
 		put("HoChiMinhCity", HoChiMinhCityCardLabel);//
 		put("Sydney", SydneyCardLabel);//
 
-		put("AirLift", AirLiftCardLabel);
-		put("Forecast", ForecastCardLabel);
-		put("OneQuietNight", OneQuietNightCardLabel);
-		put("GovernmentGrant", GovernmentGrantCardLabel);
-		put("ResilientPopulation", ResilientPopulationCardLabel);
+		put(EventCardName.AirLift.name(), AirLiftCardLabel);
+		put(EventCardName.Forecast.name(), ForecastCardLabel);
+		put(EventCardName.OneQuietNight.name(), OneQuietNightCardLabel);
+		put(EventCardName.GovernmentGrant.name(), GovernmentGrantCardLabel);
+		put(EventCardName.ResilientPopulation.name(), ResilientPopulationCardLabel);
+		put(EventCardName.BorrowedTime.name(), BorrowedTimeLabel);
+		put(EventCardName.MobileHospital.name(), MobileHospitalLabel);
+		put(EventCardName.CommercialTravelBan.name(), CommercialTravelBanLabel);
+
 		put("BasicEpidemicCard", BasicEpidemicCardLabel);
-		put("CommercialTravelBan", CommercialTravelBanLabel);
 		put("NewAssignment", NewAssignmentLabel);
 		put("ReexaminedResearch", ReexaminedResearchLabel);
 		put("RemoteTreatment", RemoteTreatmentLabel);
 		put("SpecialOrders", SpecialOrdersLabel);
-		put("MobileHospital", MobileHospitalLabel);
-
-
 	}};
 
 	private Map<String, JLabel> mapInfectionCardLabels = new HashMap<String, JLabel>() {{
@@ -2827,12 +2828,17 @@ public class GUI extends JFrame {
 							//card down => discardButtion go away
 							//set playerCardToDiscard (CityCard) = that card
 
-							System.out.println("Card to discard when got too many card: " + playerCard.getCardName());
+							System.out.println("Card to discard when got too many card: "); //+ playerCard.getCardName());
 							discardButton.setVisible(false);
 
 							//send server playerCardToDisCard
 							//GameURs.send....(client, playerCard) <------ SEND COMMANDS HERE
+                            boolean isBioT = false;
+                            if(getUserRole() == RoleType.BioTerrorist) {
+                                isBioT = true;
+                            }
 
+                            GameURs.sendDiscardCard(client, getUserRole(), playerCard.getCardName(), isBioT);
 
 							//System.out.println(playerCardToDiscard.getCardName());
 							/*
@@ -2867,68 +2873,7 @@ public class GUI extends JFrame {
 
 						}
 						else if(moves.get("playEventCard")) {
-
-							//now if player decides to play event card...
-							//make sure it's an eventCard
-							if (playerCard.getCardType().equals(CardType.EventCard)) {
-								//once clicked, depends which event card, display corresponding gui elements
-								//for e.g if government grant is clicked => display targeted city to build station on
-								//so bunch of if else (if(mapPlayerCard.get(playerCard.getCardName().equals("GovernmentGrant")...)
-
-
-								if (mapPlayerCardLabels.get(playerCard.getCardName().toString()).equals("OneQuietNight")) {
-									//send request
-
-									EventCardURs.sendOneQuietNight(client, username);
-								}
-								else if (mapPlayerCardLabels.get(playerCard.getCardName().toString()).equals("GovernmentGrant")) {
-									//then display the targets (optional)
-									//click city
-
-									moves.put("GovernmentGrant", true);
-									//send request
-								}
-								else if (mapPlayerCardLabels.get(playerCard.getCardName().toString()).equals("ResilientPopulation")) {
-
-									//display list of infection discard cards
-									List<String> infectionDiscardList = new ArrayList<>();
-									for(InfectionCard infectionCard : gs.getInfectionDiscardPile().getCards())
-									{
-										infectionDiscardList.add(infectionCard.getCardName());
-									}
-
-									final JList<String> listToDisplay = new JList<>(new Vector<>(infectionDiscardList));
-									final ListDialog dialogRemoveInfectionCard = new ListDialog("Remove infection card", "Please remove one infection card: ", listToDisplay);
-									dialogRemoveInfectionCard.setOnOk(ev->
-									{
-										final List<String> chosenItems = dialogRemoveInfectionCard.getSelectedItems();
-										String infectionCardTarget = chosenItems.get(0);
-										System.out.println("Infection card to remove: " + infectionCardTarget);
-										int index = -1;
-										for(int i=0;i<infectionDiscardList.size();i++)
-										{
-											if(infectionDiscardList.get(i).equals(infectionCardTarget))
-											{
-												index=i;
-												break;
-											}
-										}
-										System.out.println(gs.getInfectionDiscardPile().getCards().get(index).getCardName());
-										EventCardURs.sendResilientPopulationUR(client, username, gs.getInfectionDiscardPile().getCards().get(index));
-
-									});
-									dialogRemoveInfectionCard.show();
-
-
-								}
-								else if (mapPlayerCardLabels.get(playerCard.getCardName().toString()).equals("Airlift")) {
-
-								}
-								else if (mapPlayerCardLabels.get(playerCard.getCardName().toString()).equals("Forecast")) {
-
-								}
-
-							}
+							new EventCardGUIHandler(playerCard).invoke();
 						}
 
 
@@ -3627,7 +3572,89 @@ public class GUI extends JFrame {
 	}
 
 
+	public class EventCardGUIHandler {
+		private PlayerCard playerCard;	//the selected card
 
+		public EventCardGUIHandler(PlayerCard playerCard) {
+			this.playerCard = playerCard;
+		}
+
+		public void invoke() {
+			//now if player decides to play event card...
+			//make sure it's an eventCard
+			if (playerCard.getCardType().equals(CardType.EventCard)) {
+                //once clicked, depends which event card, display corresponding gui elements
+                //for e.g if government grant is clicked => display targeted city to build station on
+                //so bunch of if else (if(mapPlayerCard.get(playerCard.getCardName().equals("GovernmentGrant")...)
+
+				switch (EventCardName.valueOf(playerCard.getCardName())) {
+					case OneQuietNight:
+						EventCardURs.sendOneQuietNight(client, username);
+						break;
+
+					case GovernmentGrant:
+						//then display the targets (optional)
+						//click city
+
+						moves.put("GovernmentGrant", true);
+						//send request
+						break;
+
+					case ResilientPopulation:
+						//display list of infection discard cards
+						List<String> infectionDiscardList = new ArrayList<>();
+						for (InfectionCard infectionCard : gs.getInfectionDiscardPile().getCards()) {
+							infectionDiscardList.add(infectionCard.getCardName());
+						}
+
+						final JList<String> listToDisplay = new JList<>(new Vector<>(infectionDiscardList));
+						final ListDialog dialogRemoveInfectionCard = new ListDialog("Remove infection card", "Please remove one infection card: ", listToDisplay);
+						dialogRemoveInfectionCard.setOnOk(ev ->
+						{
+							final List<String> chosenItems = dialogRemoveInfectionCard.getSelectedItems();
+							String infectionCardTarget = chosenItems.get(0);
+							System.out.println("Infection card to remove: " + infectionCardTarget);
+							int index = -1;
+							for (int i = 0; i < infectionDiscardList.size(); i++) {
+								if (infectionDiscardList.get(i).equals(infectionCardTarget)) {
+									index = i;
+									break;
+								}
+							}
+							System.out.println(gs.getInfectionDiscardPile().getCards().get(index).getCardName());
+							EventCardURs.sendResilientPopulationUR(client, username, gs.getInfectionDiscardPile().getCards().get(index));
+
+						});
+						dialogRemoveInfectionCard.show();
+						break;
+
+					case AirLift:
+
+						break;
+
+					case Forecast:
+
+						break;
+
+					case BorrowedTime:
+
+						break;
+
+					case CommercialTravelBan:
+
+						break;
+
+					case MobileHospital:
+
+						break;
+
+					case LocalInitiative:
+
+						break;
+				}
+            }
+		}
+	}
 }
 
 

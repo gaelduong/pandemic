@@ -21,6 +21,7 @@ public class MutationCard implements InfectionCard{
 
     public void resolveMutation(){
         gameManager.infectCityForMutationCard();
+        System.out.println("Mutation Card Resolved");
     }
 
     @Override
