@@ -263,10 +263,10 @@ public class Game {
     public void dealCardsAndShuffleInEpidemicCards() {
 
         // REMOVE AFTER TESTING: FORCES A PLAYER TO START WITH ATLANTA CARD
-        CityCard cardAtl = (CityCard) myPlayerDeck.getDeck().stream()
-                .filter(c -> c.getCardType() == CardType.CityCard && c.getCardName().equals("Atlanta"))
-                .findAny().orElse(null);
-        myPlayerDeck.getDeck().add(0, cardAtl);
+//        CityCard cardAtl = (CityCard) myPlayerDeck.getDeck().stream()
+//                .filter(c -> c.getCardType() == CardType.CityCard && c.getCardName().equals("Atlanta"))
+//                .findAny().orElse(null);
+//        myPlayerDeck.getDeck().add(0, cardAtl);
         myPlayerDeck.printDeck();
 
         for (Player p : gameManager.getActivePlayers()) {
@@ -309,12 +309,10 @@ public class Game {
                 break;
             case VirulentStrain:
                 // REMOVE AFTER TESTING VIRULENT STRAIN EPIDEMIC CARDS:
-                allVirulentStrainEpidemicCards.add(new RateEffectEpidemicCard(gameManager));
-                allVirulentStrainEpidemicCards.add(new RateEffectEpidemicCard(gameManager));
-                allVirulentStrainEpidemicCards.add(new RateEffectEpidemicCard(gameManager));
-                allVirulentStrainEpidemicCards.add(new RateEffectEpidemicCard(gameManager));
-                allVirulentStrainEpidemicCards.add(new RateEffectEpidemicCard(gameManager));
-                allVirulentStrainEpidemicCards.add(new RateEffectEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new GovernmentInterferenceEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new GovernmentInterferenceEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new GovernmentInterferenceEpidemicCard(gameManager));
+                allVirulentStrainEpidemicCards.add(new GovernmentInterferenceEpidemicCard(gameManager));
 
 
 
@@ -1371,12 +1369,21 @@ public class Game {
             quarantineMarkerLocations = null;
         }
 
+        boolean virulentStrainSet = false;
+        DiseaseType vStrain = null;
+        if (settings.getChallenge().equals(ChallengeKind.VirulentStrain) || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndMutation)
+                || settings.getChallenge().equals(ChallengeKind.VirulentStrainAndBioTerrorist)){
+            vStrain = virulentStrain;
+            if (virulentStrain != null){
+                virulentStrainSet = true;
+            }
+        }
         return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, remainingDiseaseCubesMap,
                 myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases,
                 currentPlayer.getPlayerUserName(), researchStationLocations, eventCardsEnabled, currentPlayerTurnStatus, archivistActionUsed,
                 epidemiologistActionUsed, fieldOperativeActionUsed, fieldOperativeSamples, complexMolecularStructureActive,
                 governmentInterferenceActive, governmentInterferenceSatisfied, infectionsRemaining, cures,
-                bioTMap, quarantineMarkerLocations, purpleInPlay);
+                bioTMap, quarantineMarkerLocations, purpleInPlay, vStrain, virulentStrainSet);
     }
 
     public GameManager getGameManager() {
