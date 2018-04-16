@@ -33,7 +33,8 @@ public class GameState implements Serializable {
 
     private final ArrayList<City> researchStationLocations;
 
-    private final ArrayList<City> quarantineMarkerLocations;
+    private final ArrayList<City> quarantineMarkerOneLocations;
+    private final ArrayList<City> quarantineMarkerTwoLocations;
 
     private final boolean eventCardsEnabled;
     private final CurrentPlayerTurnStatus turnStatus;
@@ -59,7 +60,7 @@ public class GameState implements Serializable {
                      InfectionDiscardPile infectionDiscardPile, PlayerDiscardPile playerDiscardPile, int currentInfectionRate, int currentOutbreakMeter, int actionsRemaining, ArrayList<DiseaseType> diseases,
                      String currentPlayerName, ArrayList<City> researchStations, boolean eventCardsEnabled, CurrentPlayerTurnStatus status, boolean aActionUsed, boolean eActionUsed, boolean fOActionUsed,
                      ArrayList<DiseaseFlag> fOSamples, boolean cMSActive, boolean gIActive, boolean gISatisfied, int iRemaining, Map<DiseaseType, Boolean> cures,
-                     Map<BioTTurnStats, Boolean> bioTMap, ArrayList<City> quarantineMarkerLocations, boolean pInPlay, DiseaseType vStrain, boolean vStrainSet) {
+                     Map<BioTTurnStats, Boolean> bioTMap, ArrayList<City> quarantineMarkerOneLocations, ArrayList<City> quarantineMarkerTwoLocations, boolean pInPlay, DiseaseType vStrain, boolean vStrainSet) {
         this.userMap = userMap;
         this.cardMap = cardMap;
         this.positionMap = positionMap;
@@ -85,7 +86,8 @@ public class GameState implements Serializable {
         this.infectionsRemaining = iRemaining;
 
         this.bioTMap = bioTMap;
-        this.quarantineMarkerLocations = quarantineMarkerLocations;
+        this.quarantineMarkerOneLocations = quarantineMarkerOneLocations;
+        this.quarantineMarkerTwoLocations = quarantineMarkerTwoLocations;
         this.cureMap = cures;
         this.purpleInPlay = pInPlay;
         this.virulentStrain = vStrain;
@@ -209,5 +211,13 @@ public class GameState implements Serializable {
 
     public boolean getIsGovernmentInterferenceSatisfied(){
         return isGovernmentInterferenceSatisfied;
+    }
+
+    public ArrayList<City> getQuarantineMarkerOneLocations(){
+        return quarantineMarkerOneLocations;
+    }
+
+    public ArrayList<City> getQuarantineMarkerTwoLocations(){
+        return quarantineMarkerTwoLocations;
     }
 }

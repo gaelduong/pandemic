@@ -98,7 +98,16 @@ public class Player implements CardTarget, CardSource, Serializable {
 	
 	// Note: Does not add card too any discard pile
 	public boolean discardCard(Card card){
-	    return cardsInHand.remove(card);
+//		for (Card c : cardsInHand){
+//			if (c.equals(card)){
+//				cardsInHand.remove(c);
+//				System.out.println("REMOVED CARD FROM HAND : " + c.getCardName());
+//			}
+//		}
+//	    return true;
+		System.out.println("Discarded card : " + card.getCardName());
+		return cardsInHand.remove(card);
+
 	}
 
 	public ArrayList<CityInfectionCard> discardAllCards() {

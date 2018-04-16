@@ -135,10 +135,10 @@ public class GameManager implements Serializable {
         playerPawn.getRole().setAssigned(true);
         playerPawn.setAssigned(true);
 
-        if(playerPawn.getRole().getRoleType() == RoleType.Colonel
-                && !currentGame.isBioTChallengeActive()) {
-            currentGame.addPlusTwoQuarantineMarkers();
-        }
+//        if(playerPawn.getRole().getRoleType() == RoleType.Colonel
+//                && !currentGame.isBioTChallengeActive()) {
+//            currentGame.addPlusTwoQuarantineMarkers();
+//        }
 
         if (playerPawn.getRole().getRoleType() != RoleType.BioTerrorist) {
             City atlCity = currentGame.getGameManager().getCityByName(CityName.Atlanta);
@@ -513,6 +513,36 @@ public class GameManager implements Serializable {
 			currentGame.setGamePhase(GamePhase.TurnInfection);
 			currentGame.setInfectionsRemaining(currentGame.getInfectionRate());
 
+			if(currentGame.getOneQuietNight()){
+			    currentGame.setOneQuietNight(false);
+			    status = "One Quiet Night...";
+			    currentGame.setInfectionsRemaining(0);
+                // Reset once-per-turn action flags
+                currentGame.setArchivistActionUsed(false);
+                currentGame.setEpidemiologistActionUsed(false);
+                currentGame.setFieldOperativeActionUsed(false);
+
+                currentGame.setRateEffectAffectedInfection(false);
+                // SET NEXT PLAYER TO CURRENT PLAYER
+                // MUST MAKE SURE current player is at the head of the queue
+                currentGame.setGamePhase(GamePhase.TurnActions);
+                p.setActionsTaken(0);
+
+                if (currentGame.isBioTChallengeActive()) {
+                    activePlayersNonBT.addLast(activePlayersNonBT.removeFirst());
+                    setCurrentPlayer(bioTPlayer);
+                } else {
+                    activePlayers.addLast(activePlayers.removeFirst());
+                    setCurrentPlayer(activePlayers.getFirst());
+                }
+
+                //TODO: should setCurrentPlayerTurnStatus to PlayingActions after next player selected??
+
+                if (activePlayers.getFirst().equals(currentGame.getCommercialTravelBanPlayedBy())){
+                    currentGame.setCommercialTravelBanActive(false);
+                    currentGame.setCommercialTravelBanPlayedBy(null);
+                }
+            }
 		}
 
 //		if (currentGame.getOneQuietNight()){
@@ -1615,14 +1645,19 @@ public class GameManager implements Serializable {
         if (newStation != null) {
             currentCity.getCityUnits().add(newStation);
             newStation.setLocation(currentCity);
+            System.out.println("Built new research station");
             if (!playerRole.equals(RoleType.OperationsExpert)) {
+                System.out.println("Discarding card for building research station");
                 ArrayList<PlayerCard> cardsInHand = currentPlayer.getCardsInHand();
                 for (PlayerCard c : cardsInHand) {
-                    if (c.getCardName().equals(currentCity.getName().toString())) {
-                        discardPlayerCard(currentPlayer, c);
-                        break;
-                    } else {
-                        return 1;
+                    System.out.println("Searching for card in hand...");
+             //       if (c.getCardName().equals(currentCity.getName().toString())) {
+                    if (c instanceof CityCard) {
+                        if (((CityCard) c).getCityName().equals(currentCity.getName())) {
+                            System.out.println("Found card in hand");
+                            discardPlayerCard(currentPlayer, c);
+                            break;
+                        }
                     }
                 }
             }
