@@ -132,6 +132,9 @@ public class GameManager {
         if (playerPawn.getRole().getRoleType() != RoleType.BioTerrorist) {
             City atlCity = currentGame.getGameManager().getCityByName(CityName.Atlanta);
             atlCity.getCityUnits().add(playerPawn);
+        } else {
+            City miamiCity = currentGame.getGameManager().getCityByName(CityName.Miami);
+            miamiCity.getCityUnits().add(playerPawn);
         }
 
 

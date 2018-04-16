@@ -2827,12 +2827,17 @@ public class GUI extends JFrame {
 							//card down => discardButtion go away
 							//set playerCardToDiscard (CityCard) = that card
 
-							System.out.println("Card to discard when got too many card: " + playerCard.getCardName());
+							System.out.println("Card to discard when got too many card: "); //+ playerCard.getCardName());
 							discardButton.setVisible(false);
 
 							//send server playerCardToDisCard
 							//GameURs.send....(client, playerCard) <------ SEND COMMANDS HERE
+                            boolean isBioT = false;
+                            if(getUserRole() == RoleType.BioTerrorist) {
+                                isBioT = true;
+                            }
 
+                            GameURs.sendDiscardCard(client, getUserRole(), playerCard.getCardName(), isBioT);
 
 							//System.out.println(playerCardToDiscard.getCardName());
 							/*
