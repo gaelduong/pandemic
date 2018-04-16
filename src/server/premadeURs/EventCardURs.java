@@ -84,6 +84,13 @@ public class EventCardURs {
     }
 
     /**
+     * place quarantine marker on any 2 cities on the boar
+     */
+    public static void sendLocalInitiateUR(Client client, CityName city1, CityName city2) {
+        sendEventCardUR(client, EventCardName.LocalInitiative, city1, city2);
+    }
+
+    /**
      * take 2 extra actions this turn
      * Pre: the currentPlayer has selected to play this card, endTurn has not yet begun
      */

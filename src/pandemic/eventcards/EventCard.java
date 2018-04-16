@@ -14,7 +14,7 @@ public abstract class EventCard implements PlayerCard, Serializable {
 	protected CardType cardType;
 	
 	public EventCard(GameManager gm, EventCardName pName){
-	    //gameManager = gm;
+	    gameManager = gm;
 		name = pName;
 	    cardType = CardType.EventCard;
 	}
