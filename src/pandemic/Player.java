@@ -130,7 +130,6 @@ public class Player implements CardTarget, CardSource, Serializable {
 	    actionsTaken++;
     }
 
-
     public RoleType getRoleType(){
     	return role.getRoleType();
     }

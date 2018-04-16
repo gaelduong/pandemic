@@ -204,8 +204,7 @@ public class GameURs {
                                             PostCondition.ACTION.MOVE_CARD,
                                             new PlayerCardSimple(CardType.CityCard, cityCardName),
                                             givingPlayerRole.name(),
-                                            receivingPlayerRole.name(),
-                                            true
+                                            receivingPlayerRole.name()
                                     )
                             )
                  );

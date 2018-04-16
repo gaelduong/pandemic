@@ -493,6 +493,7 @@ public class Game implements Serializable {
                 allQuarantineMarkers.add(qm);
                 unusedQuarantineMarkers.add(qm);
             }
+
         }
 
         // REMOVE AFTER TESTING: INITIALIZES GAME WITH QUARANTINE MARKER IN OSAKA
@@ -644,8 +645,8 @@ public class Game implements Serializable {
     }
 
     public Pawn getBioTPawn() {
-      //  Pawn bioTPawn = inGamePawns.stream().filter(pawn -> pawn.getRole().getRoleType() == RoleType.BioTerrorist)
-                                           // .findAny().orElse(null);
+        //  Pawn bioTPawn = inGamePawns.stream().filter(pawn -> pawn.getRole().getRoleType() == RoleType.BioTerrorist)
+        // .findAny().orElse(null);
 
 
         Pawn bioTPawn = new Pawn(new Role(RoleType.BioTerrorist));
@@ -1095,7 +1096,7 @@ public class Game implements Serializable {
                 System.out.println("Ran out of disease cubes or Outbreak meter maxed out");
             }
 
-           completedCities.add(c);
+            completedCities.add(c);
         }
 
         for(City compCity : completedCities) {
@@ -1107,7 +1108,7 @@ public class Game implements Serializable {
 
     // For HiddenPocketEpidemicCard. This method infects cities with the Virulent Strain when it is eradicated.
     public void infectAndResolveOutbreaksForHiddenPocket(DiseaseType cityDiseaseType, Disease cityDisease,
-                                                        boolean gameStatus, LinkedList<City> Q){
+                                                         boolean gameStatus, LinkedList<City> Q){
         while(gameStatus && !Q.isEmpty() ) {
             City c = Q.removeFirst();
             int numberOfDiseaseFlagsPlaced = c.getNumOfDiseaseFlagsPlaced(cityDiseaseType);
@@ -1599,7 +1600,7 @@ public class Game implements Serializable {
         for (City c : myGameBoard.getCitiesOnBoard()){
             numBlueFlags = numBlueFlags + c.getNumOfDiseaseFlagsPlaced(DiseaseType.Blue);
             if (numBlueFlags > maxNumFlags) {
-               maxNumFlags = numBlueFlags;
+                maxNumFlags = numBlueFlags;
             }
             numBlackFlags = numBlackFlags + c.getNumOfDiseaseFlagsPlaced(DiseaseType.Black);
             if (numBlackFlags > maxNumFlags){
@@ -1627,19 +1628,19 @@ public class Game implements Serializable {
     }
 
     public boolean getRateEffectActive(){
-  	    return rateEffectActive;
+        return rateEffectActive;
     }
 
     public void setRateEffectActive(boolean b){
-  	    rateEffectActive = b;
+        rateEffectActive = b;
     }
 
     public boolean getRateEffectAffectedInfection(){
-  	    return rateEffectAffectedInfection;
+        return rateEffectAffectedInfection;
     }
 
     public void setRateEffectAffectedInfection(boolean b){
-  	    rateEffectAffectedInfection = b;
+        rateEffectAffectedInfection = b;
     }
 
     public GameCardRemover getMyGameCardRemover() {
@@ -1648,8 +1649,8 @@ public class Game implements Serializable {
 
     public void infectUncountedPopulations(){
         ArrayList<DiseaseFlag> freshFlags = diseaseTypeToSupplyDict.get(virulentStrain);
-  	    for (City c : myGameBoard.getCitiesOnBoard()){
-  	        if (c.getNumOfDiseaseFlagsPlaced(virulentStrain) == 1){
+        for (City c : myGameBoard.getCitiesOnBoard()){
+            if (c.getNumOfDiseaseFlagsPlaced(virulentStrain) == 1){
                 boolean qsOrMedicPreventingInfectionInCity = isQuarantineSpecialistInCity(c) || (isMedicInCity(c) && getDiseaseByDiseaseType(virulentStrain).isCured());
                 boolean qsPresentInNeighbor = false;
                 ArrayList<City> cityNeighbors = c.getNeighbors();
@@ -1741,11 +1742,11 @@ public class Game implements Serializable {
     }
 
     public boolean getComplexMolecularStructureActive(){
-  	    return complexMolecularStructureActive;
+        return complexMolecularStructureActive;
     }
 
     public void setComplexMolecularStructureActive(boolean b){
-  	    complexMolecularStructureActive = b;
+        complexMolecularStructureActive = b;
     }
 
     public boolean getGovernmentInterferenceActive(){

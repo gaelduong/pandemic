@@ -819,6 +819,8 @@ public class GUI extends JFrame {
 
 	public void draw() {
 
+		genericBox.setText("");
+
 		if (gs == null)
 			return;
 		String currentPlayer = gs.getCurrentPlayer();
@@ -850,17 +852,17 @@ public class GUI extends JFrame {
 			btnShareKnowledge.setVisible(true);
 
 
-			if(userRole==RoleType.ContingencyPlanner) btnContingencyPlanner.setVisible(true);
+			//if(userRole==RoleType.ContingencyPlanner) btnContingencyPlanner.setVisible(true);
 
 //=====================
-			btnContingencyPlanner.setVisible(false);
-			btnDirectFlight1.setVisible(false);
-			btnCharterFlight1.setVisible(false);
-			btnShuttleFlight1.setVisible(false);
-			btnTreatDisease1.setVisible(false);
-			btnDiscoverCure1.setVisible(false);
-			btnBuildResearch1.setVisible(false);
-			btnShareKnowledge1.setVisible(false);
+			btnContingencyPlanner.setVisible(true);
+			btnDirectFlight1.setVisible(true);
+			btnCharterFlight1.setVisible(true);
+			btnShuttleFlight1.setVisible(true);
+			btnTreatDisease1.setVisible(true);
+			btnDiscoverCure1.setVisible(true);
+			btnBuildResearch1.setVisible(true);
+			btnShareKnowledge1.setVisible(true);
 
 			Component[] components = contentPane.getComponents();
 			try {
@@ -884,8 +886,6 @@ public class GUI extends JFrame {
 			btnBuildResearch.setVisible(false);
 			btnShareKnowledge.setVisible(false);
 			btnDiscoverCure.setVisible(false);
-
-			if(userRole==RoleType.ContingencyPlanner) btnContingencyPlanner.setVisible(false);
 
 			//=====================
 			moreButton.setVisible(false);
@@ -1019,11 +1019,30 @@ public class GUI extends JFrame {
 				+ " Y:" + mapCardColors.get(Region.Yellow) + " BL:" + mapCardColors.get(Region.Black));
 		btnDiscoverCure.setEnabled(false);
 		for (Integer n : mapCardColors.values()) {
-			if (n + isSci >= 2) {
+			if (n + isSci >= 5) {
 				btnDiscoverCure.setEnabled(true);
 				break;
 			}
 		}
+
+		//if it fails first condition ( doesn't have 5 (or 4) cards of the same color)
+		// then check if (1) num of hand + isci >= 2 AND (2) theres a purple cube in the city
+		boolean purpleIn = false;
+		List<Pair<DiseaseType,Integer>>  listCubes = gs.getDiseaseCubesMap().get(gs.getPositionMap().get(getUserRole()).getName());
+		for(Pair<DiseaseType,Integer> p : listCubes)
+		{
+			if(p.getKey().equals(DiseaseType.Purple))
+			{
+				if(p.getValue() > 0) {purpleIn = true;}
+				else purpleIn = false;
+				break;
+
+			}
+		}
+
+		if(gs.getCardMap().get(userRole).size() + isSci >= 5 && purpleIn) btnDiscoverCure.setEnabled(true);
+
+
 		boolean hasStationInCity = false;
 		for (City c : gs.getResearchStationLocations()) {
 			if (c.getName().toString().equals(citName)) {
@@ -1175,6 +1194,7 @@ public class GUI extends JFrame {
 					((JButton) components[i]).setEnabled(false);
 				}
 			}
+			//displayMessage("Choose city to move to",600, 520);
 			discardButton.setVisible(true);
 
 			System.out.println(discardButton.isVisible() + " " + playEventOptionButton.isVisible());
@@ -1412,8 +1432,8 @@ public class GUI extends JFrame {
 		infectionDiscard.setVisible(true);
 
 		// ------------- Set up Player Card Container---------
-		cardsContainer.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/cardsContainer.png")).getImage().getScaledInstance(850, 191, Image.SCALE_SMOOTH)));
-		cardsContainer.setBounds(270, 560, 850, 191);
+		cardsContainer.setIcon(new ImageIcon(new ImageIcon(GUI.class.getResource("/pandemic/resources/cardsContainer.png")).getImage().getScaledInstance(970, 191, Image.SCALE_SMOOTH)));
+		cardsContainer.setBounds(270, 560, 970, 191);
 		contentPane.add(cardsContainer);
 		cardsContainer.setVisible(true);
 
@@ -1550,7 +1570,7 @@ public class GUI extends JFrame {
 
 		discardButton.setText("DISCARD");
 		discardButton.setBounds(11, 570, 176, 20);
-		discardButton.setBackground(Color.GREEN);
+		discardButton.setBackground(Color.ORANGE);
 		discardButton.setForeground(Color.WHITE);
 		contentPane.add(discardButton);
 		discardButton.setVisible(false);
@@ -1709,14 +1729,6 @@ public class GUI extends JFrame {
 		controlPawn.setVisible(true);
 
 
-		contentPane.setComponentZOrder(btnDriveFerry, 1);
-		contentPane.setComponentZOrder(btnDirectFlight, 1);
-		contentPane.setComponentZOrder(btnCharterFlight, 1);
-		contentPane.setComponentZOrder(btnShuttleFlight, 1);
-		contentPane.setComponentZOrder(btnTreatDisease, 1);
-		contentPane.setComponentZOrder(btnDiscoverCure, 1);
-		contentPane.setComponentZOrder(btnBuildResearch, 1);
-		contentPane.setComponentZOrder(btnShareKnowledge, 1);
 
 		//=====
 		contentPane.setComponentZOrder(btnContingencyPlanner, 0);
@@ -1727,6 +1739,17 @@ public class GUI extends JFrame {
 		contentPane.setComponentZOrder(btnDiscoverCure1, 0);
 		contentPane.setComponentZOrder(btnBuildResearch1, 0);
 		contentPane.setComponentZOrder(btnShareKnowledge1, 0);
+
+		contentPane.setComponentZOrder(btnDriveFerry, 1);
+		contentPane.setComponentZOrder(btnDirectFlight, 1);
+		contentPane.setComponentZOrder(btnCharterFlight, 1);
+		contentPane.setComponentZOrder(btnShuttleFlight, 1);
+		contentPane.setComponentZOrder(btnTreatDisease, 1);
+		contentPane.setComponentZOrder(btnDiscoverCure, 1);
+		contentPane.setComponentZOrder(btnBuildResearch, 1);
+		contentPane.setComponentZOrder(btnShareKnowledge, 1);
+
+
 		//=======
 
 		contentPane.setComponentZOrder(actionsRemaining, 1);
@@ -1803,14 +1826,28 @@ public class GUI extends JFrame {
 
 
 					} else if (moves.get("directFlight")) {
-						GameURs.sendDirectFlightUR(client, username, cityNameSelected.toString());
+						for(PlayerCard pc : gs.getCardMap().get(userRole))
+						{
+							if(pc.getCardName().equals(cityNameSelected.toString()))
+								GameURs.sendDirectFlightUR(client, username, cityNameSelected.toString());
+						}
+
 
 					} else if (moves.get("charterFlight")) {
 						GameURs.sendCharterFlightUR(client, gs.getPositionMap().get(userRole).getName().toString() ,cityNameSelected.toString(), username, userRole);
 					} else if (moves.get("shuttleFlight")) {
-						GameURs.sendShuttleFlightUR(client, username, cityNameSelected.toString());
+						for(City c : gs.getResearchStationLocations())
+						{
+							if(c.getName().equals(cityNameSelected) && !cityNameSelected.equals(gs.getPositionMap().get(userRole).getName()))
+								GameURs.sendShuttleFlightUR(client, username, cityNameSelected.toString());
+						}
 					} else if (moves.get("buildResearch")) {
-						GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
+						for(City c : gs.getResearchStationLocations())
+						{
+							if(c.getName().equals(cityNameSelected))
+								GameURs.sendBuildResearchStation(client, gs.getPositionMap().get(userRole).getName().toString(),  cityNameSelected.toString());
+						}
+
 
 					} else if (moves.get("GovernmentGrant")) {
 						EventCardURs.sendGovernmentGrantUR(client, username, cityNameSelected);
@@ -1855,9 +1892,9 @@ public class GUI extends JFrame {
 
 					}
 
-					else if (moves.get("OEMoveToAnyCity")){
+					//else if (moves.get("OEMoveToAnyCity")){
 						// TO DO: must pick a CityCard to discard, then call playMoveAsOperationsExpert(CityCard, destination)
-					}
+					//}
 
 
 					//mapPawnLabels.get(userRole).setLocation(city.getX(),city.getY()-20);
@@ -2093,7 +2130,7 @@ public class GUI extends JFrame {
 		//discard option add
 		discardButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
+				resetMovesExcept("discard");
 				moves.put("discard",true);
 				//
 
@@ -2108,6 +2145,7 @@ public class GUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				discardOptionButton.setEnabled(false);
 				playEventOptionButton.setEnabled(false);
+				resetMovesExcept("playEventCard");
 				moves.put("playEventCard",true);
 
 
@@ -2123,14 +2161,31 @@ public class GUI extends JFrame {
 
 		moreButton.addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent e) {
-				btnContingencyPlanner.setVisible(!btnContingencyPlanner.isVisible());
-				btnDirectFlight1.setVisible(!btnDirectFlight1.isVisible());
-				btnCharterFlight1.setVisible(!btnCharterFlight1.isVisible());
-				btnShuttleFlight1.setVisible(!btnShuttleFlight1.isVisible());
-				btnTreatDisease1.setVisible(!btnTreatDisease1.isVisible());
-				btnDiscoverCure1.setVisible(!btnDiscoverCure1.isVisible());
-				btnBuildResearch1.setVisible(!btnBuildResearch1.isVisible());
-				btnShareKnowledge1.setVisible(!btnShareKnowledge1.isVisible());
+				if(userRole==RoleType.ContingencyPlanner) btnContingencyPlanner.setEnabled(true);
+				else btnContingencyPlanner.setEnabled(false);
+				btnDirectFlight1.setEnabled(true);
+				btnCharterFlight1.setEnabled(true);
+				btnShuttleFlight1.setEnabled(true);
+				btnTreatDisease1.setEnabled(true);
+				btnDiscoverCure1.setEnabled(true);
+				btnBuildResearch1.setEnabled(true);
+				btnShareKnowledge1.setEnabled(true);
+
+
+				btnDriveFerry.setVisible(!btnDriveFerry.isVisible());
+				btnDirectFlight.setVisible(!btnDirectFlight.isVisible());
+				btnCharterFlight.setVisible(!btnCharterFlight.isVisible());
+				btnShuttleFlight.setVisible(!btnShuttleFlight.isVisible());
+				btnTreatDisease.setVisible(!btnTreatDisease.isVisible());
+				btnDiscoverCure.setVisible(!btnDiscoverCure.isVisible());
+				btnBuildResearch.setVisible(!btnBuildResearch.isVisible());
+				btnShareKnowledge.setVisible(!btnShareKnowledge.isVisible());
+
+				revalidate();
+				repaint();
+
+
+
 
 				/*if (userRole == RoleType.OperationsExpert) {
 					btnContingencyPlanner.setText("Role Action: Move to Any City");
@@ -2170,9 +2225,15 @@ public class GUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 
 				if (btnDriveFerry.getForeground().equals(Color.BLACK)) {
+
+
+
 					showHideOtherActionButtons(actionBtns, btnDriveFerry);
+					resetMovesExcept("drive");
 					moves.put("drive", !moves.get("drive"));
+
 					showHideTargetsDrive();
+
 					//System.out.println("Drive ferry pressed");
 					//resetMovesSelected(moves);
 					//resetDisplayOptions(displayOptions);
@@ -2196,8 +2257,12 @@ public class GUI extends JFrame {
 		btnDirectFlight.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (btnDirectFlight.getForeground().equals(Color.BLACK)) {
+
+
 					showHideOtherActionButtons(actionBtns, btnDirectFlight);
+					resetMovesExcept("directFlight");
 					moves.put("directFlight", !moves.get("directFlight"));
+
 					showHideTargetsDirectFlight();
 
 					//resetMovesSelected(moves);
@@ -2221,7 +2286,9 @@ public class GUI extends JFrame {
 		btnCharterFlight.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (btnCharterFlight.getForeground().equals(Color.BLACK)) {
+
 					showHideOtherActionButtons(actionBtns, btnCharterFlight);
+					resetMovesExcept("charterFlight");
 					moves.put("charterFlight", !moves.get("charterFlight"));
 					showHideTargetsCharterFlight();
 
@@ -2248,7 +2315,11 @@ public class GUI extends JFrame {
 		btnShuttleFlight.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (btnShuttleFlight.getForeground().equals(Color.BLACK)) {
+
+
+
 					showHideOtherActionButtons(actionBtns, btnShuttleFlight);
+					resetMovesExcept("shuttleFlight");
 					moves.put("shuttleFlight", !moves.get("shuttleFlight"));
 
 					//resetMovesSelected(moves);
@@ -2275,6 +2346,7 @@ public class GUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if (btnBuildResearch.getForeground().equals(Color.BLACK)) {
 					showHideOtherActionButtons(actionBtns, btnBuildResearch);
+					resetMovesExcept("buildResearch");
 					moves.put("buildResearch", !moves.get("buildResearch"));
 
 					//resetMovesSelected(moves);
@@ -2283,8 +2355,10 @@ public class GUI extends JFrame {
 
 					if (gs.getResearchStationLocations().size() < 6)
 						showHideBuildRSButton();
-					else //else display RSs to remove
+					else {//else display RSs to remove
+						displayMessage("Too many stations! Select one to remove and build",600, 520);
 						showHideTargetsRS();
+					}
 
 					//else if RS=6
 
@@ -2307,6 +2381,7 @@ public class GUI extends JFrame {
 				if (btnTreatDisease.getForeground().equals(Color.BLACK)) {
 					showHideOtherActionButtons(actionBtns, btnTreatDisease);
 					//resetMovesSelected(moves);
+					resetMovesExcept("treatDisease");
 					moves.put("treatDisease", !moves.get("treatDisease"));
 
 					//showHideTreatDiseaseBox()
@@ -2325,6 +2400,7 @@ public class GUI extends JFrame {
 				if (btnDiscoverCure.getForeground().equals(Color.BLACK)) {
 					showHideOtherActionButtons(actionBtns, btnDiscoverCure);
 					//resetMovesSelected(moves);
+					resetMovesExcept("discoverCure");
 					moves.put("discoverCure", !moves.get("discoverCure"));
 
 					//reset cards positions
@@ -2342,6 +2418,7 @@ public class GUI extends JFrame {
 				if (btnShareKnowledge.getForeground().equals(Color.BLACK)) {
 					//resetMovesSelected(moves);
 					//showHideOtherActionButtons(actionBtns, btnShareKnowledge);
+					resetMovesExcept("shareKnowledge");
 					moves.put("shareKnowledge", !moves.get("shareKnowledge"));
 
 					//Russel's code
@@ -2580,6 +2657,16 @@ public class GUI extends JFrame {
 		}
 		for (int j = i; j < labelText.length(); j++) Y += labelText.charAt(j);
 		return new int[]{Integer.parseInt(X), Integer.parseInt(Y)};
+	}
+
+	private void displayMessage(String mess,int x, int y)
+	{
+		genericBox.setText(mess);
+		genericBox.setLocation(x,y);
+		genericBox.setVisible(true);
+
+		revalidate();
+		repaint();
 	}
 
 	private void setShadow(JLabel label, Color c, int thickness) {
@@ -2857,7 +2944,7 @@ public class GUI extends JFrame {
 		userRoleLabel.setText("Role: " + userRole.toString());
 //		//userRoleLabel.setFont(new Font("Lao MN", Font.PLAIN, 12));
 //		userRoleLabel.setForeground(Color.WHITE);
-		userRoleLabel.setBounds(74 - userRole.toString().length(), 600, 190, 16);
+		userRoleLabel.setBounds(74 - userRole.toString().length(), 630, 190, 16);
 //		contentPane.add(userRoleLabel);
 //		contentPane.setComponentZOrder(userRoleLabel, 1);
 //		userRoleLabel.setVisible(true);
@@ -3027,8 +3114,10 @@ public class GUI extends JFrame {
 
 					private void loadDiscoverCureButton() {
 
+						int isComplex = gs.getComplexMolecularStructureActive() ? 1 : 0;
+
 						int isSci = getUserRole().equals(RoleType.Scientist)? 1:0;
-						if (discoverCureDiscardCards.size() + isSci < 2) {
+						if (discoverCureDiscardCards.size() + isSci - isComplex < 5) {
 							discoverCureButton.setVisible(false);
 							return;
 						}
@@ -3038,21 +3127,39 @@ public class GUI extends JFrame {
 						//boolean curePurple = gs.getDiseaseCubesMap().c
 
 
+						boolean curePurple = false;
+						List<Pair<DiseaseType,Integer>>  listCubes = gs.getDiseaseCubesMap().get(gs.getPositionMap().get(getUserRole()).getName());
+						for(Pair<DiseaseType,Integer> p : listCubes)
+						{
+							if(p.getKey().equals(DiseaseType.Purple))
+							{
+								if(p.getValue() > 0) {curePurple = true;}
+								else curePurple = false;
+								break;
 
-
-						//otherwise return, i.e won't display cureButton
-						Region region = discoverCureDiscardCards.get(0).getRegion();
-						boolean containsPurpleDisease;
-						for (CityCard c : discoverCureDiscardCards) {
-							if (!c.getRegion().equals(region)) {
-								//if
-								discoverCureButton.setVisible(false);
-								return;
 							}
 						}
 
+						System.out.println(curePurple);
+
+						Region region = discoverCureDiscardCards.get(0).getRegion();
+
+						boolean hasCardsOfSameColor = true;
+
+						for (CityCard c : discoverCureDiscardCards) {
+							if (!c.getRegion().equals(region)) {
+								//if
+								hasCardsOfSameColor = false;
+								break;
+							}
+						}
+
+
+
+
 						System.out.println("DiscoverCure button should appear");
-						discoverCureButton.setText("Cure " + region + " disease");
+						if (hasCardsOfSameColor) discoverCureButton.setText("Cure " + region + " disease");
+						else if (curePurple)  discoverCureButton.setText("Cure Purple disease");
 						discoverCureButton.setHorizontalAlignment(SwingConstants.CENTER);
 						discoverCureButton.setVerticalAlignment(SwingConstants.CENTER);
 						discoverCureButton.setForeground(Color.WHITE);
@@ -3062,6 +3169,7 @@ public class GUI extends JFrame {
 						discoverCureButton.setVisible(true);
 						contentPane.add(discoverCureButton);
 						contentPane.setComponentZOrder(discoverCureButton, 0);
+
 
 					}
 
@@ -3304,7 +3412,7 @@ public class GUI extends JFrame {
 	private void loadDriveAndFlightMessage() {
 		genericBox.setForeground(Color.WHITE);
 		genericBox.setOpaque(false);
-		genericBox.setText("Choose city to move to");
+		//genericBox.setText("Choose city to move to");
 		genericBox.setBounds(600, 520, 200, 50);
 		contentPane.setComponentZOrder(genericBox, 0);
 		genericBox.setVisible(true);
@@ -3566,6 +3674,15 @@ public class GUI extends JFrame {
 
 	}
 
+	private void resetMovesExcept(String m)
+	{
+		for(String s : moves.keySet())
+		{
+			if(!s.equals(m)) moves.put(s,false);
+
+		}
+	}
+
 	private void resetProfPawnSelected(Map<JLabel, Boolean> profPawnOptions, JLabel jSelected)
 	{
 		for(JLabel j : profPawnOptions.keySet())
@@ -3624,13 +3741,24 @@ public class GUI extends JFrame {
 
 	public void drawAcceptDeclineMessageBox(String consentPrompt)
 	{
-		genericBox.setText(consentPrompt);
+		/*genericBox.setText(consentPrompt);
 		genericBox.setHorizontalAlignment(SwingConstants.CENTER);
 		genericBox.setVerticalAlignment(SwingConstants.CENTER);
 		genericBox.setForeground(Color.WHITE);
 		genericBox.setBackground(Color.BLACK);
 		genericBox.setBounds(486,200,400,100);
-		genericBox.setOpaque(true);
+		genericBox.setOpaque(true);*/
+
+		JLabel genericBox1 = new JLabel();
+
+		genericBox1.setText(consentPrompt);
+		genericBox1.setHorizontalAlignment(SwingConstants.CENTER);
+		genericBox1.setVerticalAlignment(SwingConstants.CENTER);
+		genericBox1.setForeground(Color.WHITE);
+		genericBox1.setBackground(Color.BLACK);
+		genericBox1.setBounds(486,200,400,100);
+		genericBox1.setOpaque(true);
+
 
 		JLabel acceptButton1 = new JLabel("Accept");
 		JLabel declineButton1 = new JLabel("Decline");
@@ -3648,7 +3776,7 @@ public class GUI extends JFrame {
 										  public void mouseReleased(MouseEvent e) {
 											  GameURs.sendAnswerToShareKnowledge(client, true);
 											  //client.sendMessageToServer(ServerCommands.ANSWER_CONSENT_PROMPT.name(), true);
-											  genericBox.setVisible(false);
+											  genericBox1.setVisible(false);
 											  acceptButton1.setVisible(false);
 											  declineButton1.setVisible(false);
 
@@ -3667,7 +3795,7 @@ public class GUI extends JFrame {
 		declineButton1.setVisible(true);
 		declineButton1.addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent e) {
-				genericBox.setVisible(false);
+				genericBox1.setVisible(false);
 				acceptButton1.setVisible(false);
 				declineButton1.setVisible(false);
 				GameURs.sendAnswerToShareKnowledge(client, false);

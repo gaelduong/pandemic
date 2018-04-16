@@ -116,4 +116,8 @@ public class PlayerDeck implements CardSource, Serializable {
     public ArrayList<PlayerCard> getDeck() {
 	    return cardsInDeck;
     }
+
+    public void addCardToTop(PlayerCard c){
+	    cardsInDeck.add(0, c);
+    }
 }
