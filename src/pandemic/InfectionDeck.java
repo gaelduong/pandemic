@@ -20,7 +20,10 @@ public class InfectionDeck implements CardSource {
 	public void addCard(InfectionCard pCard){
 	    cardsInDeck.add(pCard);
 	}
-	
+
+	public void addCardToTop(InfectionCard pCard){
+		cardsInDeck.add(0,pCard);
+	}
 	public void shuffleDeck(){
 	    Collections.shuffle(cardsInDeck);
 	}

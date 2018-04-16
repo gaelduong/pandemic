@@ -111,7 +111,7 @@ public class UpdateRequest implements Serializable {
                 break;
 
             case INFECT_NEXT_CITY:
-                executeInfectNextCity(game, playerUsername);
+                status = executeInfectNextCity(game, playerUsername);
                 //TODO add currentlyProcessedAction.setLog_actionResult() for game log
                 break;
 
@@ -152,9 +152,9 @@ public class UpdateRequest implements Serializable {
 
     }
 
-    private void executeInfectNextCity(Game game, String playerUsername) {
+    private String executeInfectNextCity(Game game, String playerUsername) {
         final GameManager gameManager = game.getGameManager();
-        gameManager.infectNextCity();
+        return gameManager.infectNextCity();
     }
 
     private void executeMoveCard(Game game, String playerUsername, List arguments) {
