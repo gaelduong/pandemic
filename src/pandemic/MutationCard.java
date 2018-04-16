@@ -5,7 +5,7 @@ import java.util.Objects;
 public class MutationCard implements InfectionCard{
     private CardType type = CardType.MutationCard;
     private String name = "MutationCard";
-    private transient GameManager gameManager;
+    private GameManager gameManager;
 
     public MutationCard(GameManager gm){
         gameManager = gm;

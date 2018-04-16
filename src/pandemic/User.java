@@ -5,6 +5,11 @@ import java.io.Serializable;
 public class User implements Serializable  {
     private String userName;
     private String userPassword;
+
+    public void setUserIPAddress(String userIPAddress) {
+        this.userIPAddress = userIPAddress;
+    }
+
     private String userIPAddress;
 
     public User(String userName, String userPassword, String userIPAddress) {
