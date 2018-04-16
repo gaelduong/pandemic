@@ -13,7 +13,7 @@ public abstract class EventCard implements PlayerCard {
 	protected CardType cardType;
 	
 	public EventCard(GameManager gm, EventCardName pName){
-	    //gameManager = gm;
+	    gameManager = gm;
 		name = pName;
 	    cardType = CardType.EventCard;
 	}
