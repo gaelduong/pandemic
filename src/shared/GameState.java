@@ -17,6 +17,9 @@ public class GameState implements Serializable {
     private final Map<RoleType, String> userMap;
     private final Map<RoleType, List<PlayerCard>> cardMap;
 //    private final Map<RoleType, CityName> positionMap;
+
+    private final Map<BioTTurnStats, Boolean> bioTMap;
+
     private final Map<RoleType, City> positionMap;
     private final Map<CityName, List<Pair<DiseaseType,Integer>>> diseaseCubesMap;
     private final Map<DiseaseType, Integer> remainingDiseaseCubesMap;
@@ -27,7 +30,11 @@ public class GameState implements Serializable {
     private final int currentPlayerActionsRemaining;
     private final ArrayList<DiseaseType> curedDiseases;
     private final String currentPlayerName;
+
     private final ArrayList<City> researchStationLocations;
+
+    private final ArrayList<City> quarantineMarkerLocations;
+
     private final boolean eventCardsEnabled;
     private final CurrentPlayerTurnStatus turnStatus;
     private final boolean archivistActionUsed;
@@ -48,7 +55,8 @@ public class GameState implements Serializable {
                      Map<CityName, List<Pair<DiseaseType, Integer>>> diseaseCubesMap, Map<DiseaseType, Integer> remainingDiseaseCubesMap,
                      InfectionDiscardPile infectionDiscardPile, PlayerDiscardPile playerDiscardPile, int currentInfectionRate, int currentOutbreakMeter, int actionsRemaining, ArrayList<DiseaseType> diseases,
                      String currentPlayerName, ArrayList<City> researchStations, boolean eventCardsEnabled, CurrentPlayerTurnStatus status, boolean aActionUsed, boolean eActionUsed, boolean fOActionUsed,
-                     ArrayList<DiseaseFlag> fOSamples, boolean cMSActive, boolean gIActive, boolean gISatisfied, int iRemaining, Map<DiseaseType, Boolean> cures) {
+                     ArrayList<DiseaseFlag> fOSamples, boolean cMSActive, boolean gIActive, boolean gISatisfied, int iRemaining, Map<DiseaseType, Boolean> cures,
+                     Map<BioTTurnStats, Boolean> bioTMap, ArrayList<City> quarantineMarkerLocations) {
         this.userMap = userMap;
         this.cardMap = cardMap;
         this.positionMap = positionMap;
@@ -72,6 +80,9 @@ public class GameState implements Serializable {
         this.governmentInterferenceActive = gIActive;
         this.isGovernmentInterferenceSatisfied = gISatisfied;
         this.infectionsRemaining = iRemaining;
+
+        this.bioTMap = bioTMap;
+        this.quarantineMarkerLocations = quarantineMarkerLocations;
         this.cureMap = cures;
     }
 

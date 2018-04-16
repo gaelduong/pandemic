@@ -115,8 +115,41 @@ public class UpdateRequest implements Serializable {
                 //TODO add currentlyProcessedAction.setLog_actionResult() for game log
                 break;
 
+            case IMPOSE_QUARANTINE_MARKER:
+                executeImposeQuarantine(game, playerUsername, arguments);
+                break;
         }
         return status;
+    }
+
+    private void executeImposeQuarantine(Game game, String playerUsername, List arguments) {
+        final GameManager gameManager = game.getGameManager();
+        final String playerUserName = (String) arguments.get(0);
+        final String cityLocationToPlace = (String) arguments.get(1);
+        final String cityNameToRemove_Optional = (String) arguments.get(2);
+
+        if (game.getCurrentPlayer().getPlayerUserName().equals(playerUserName)) {
+            Player currentPlayer = game.getCurrentPlayer();
+
+            if(cityNameToRemove_Optional != null) {
+                CityName cityNameToRemoveFrom = Utils.getEnum(CityName.class, cityNameToRemove_Optional);
+                City cityToRemoveFrom = game.getCityByName(cityNameToRemoveFrom);
+
+                QuarantineMarker toRemove = (QuarantineMarker) cityToRemoveFrom.getCityUnits().stream()
+                                                                           .filter(unit -> unit.getUnitType() == UnitType.QuarantineMarker)
+                                                                           .findAny().orElse(null);
+                if(toRemove != null) {
+                    gameManager.removeQuarantineMarker(toRemove);
+                }
+            }
+
+            gameManager.playImposeAQuarantine();
+
+        } else {
+            System.err.println("ERROR - passed player user name does not correspond to current player");
+        }
+
+
     }
 
     private void executeInfectNextCity(Game game, String playerUsername) {

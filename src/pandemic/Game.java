@@ -77,6 +77,10 @@ public class Game {
     private boolean bioTChallengeActive;
     private boolean bioTSpotted;
 
+    private ArrayList<QuarantineMarker> unusedQuarantineMarkers;
+    private ArrayList<QuarantineMarker> allQuarantineMarkers;
+    private boolean quarantineMarkersInPlay;
+
 
     public Game(GameSettings settings, GameManager gameManager) {
         //this.currentPlayer = currentPlayer;
@@ -220,6 +224,10 @@ public class Game {
         myPlayerDeck.addCard(new GovernmentGrantEventCard(gameManager));
         myPlayerDeck.addCard(new OneQuietNightEventCard(gameManager));
         myPlayerDeck.addCard(new ResilientPopulationEventCard(gameManager));
+
+        if(!bioTChallengeActive)
+            myPlayerDeck.addCard(new LocalInitiativeEventCard(gameManager));
+
         myPlayerDeck.shuffleDeck();
         myInfectionDeck.shuffleDeck();
 
@@ -438,6 +446,19 @@ public class Game {
 
 
 
+        // - initialize quarantine markers if bioT chanlenge is not active
+        if(!bioTChallengeActive) {
+            unusedQuarantineMarkers = new ArrayList<QuarantineMarker>();
+            allQuarantineMarkers = new ArrayList<QuarantineMarker>();
+
+            for(int i = 0; i < 4; i++) {
+                QuarantineMarker qm = new QuarantineMarker();
+                allQuarantineMarkers.add(qm);
+                unusedQuarantineMarkers.add(qm);
+            }
+
+        }
+
         //    - initialize Diseases & DiseaseFlags
         blueDisease = new Disease(DiseaseType.Blue);
         blackDisease = new Disease(DiseaseType.Black);
@@ -504,11 +525,15 @@ public class Game {
                     add(new Role(RoleType.Researcher));
                     add(new Role(RoleType.Medic));
                     add(new Role(RoleType.Scientist));
+                    add(new Role(RoleType.Colonel));
                 } else {
                     for (RoleType r : RoleType.values()) {
                         if (!r.equals(RoleType.BioTerrorist)) {
                             add(new Role(r));
+                        } else if(bioTChallengeActive && !r.equals(RoleType.Colonel)) {
+                            add(new Role(r));
                         }
+
                     }
                 }
             }
@@ -567,15 +592,25 @@ public class Game {
     }
 
     public Pawn getBioTPawn() {
-        Pawn bioTPawn = inGamePawns.stream().filter(pawn -> pawn.getRole().getRoleType() == RoleType.BioTerrorist)
-                                            .findAny().orElse(null);
+      //  Pawn bioTPawn = inGamePawns.stream().filter(pawn -> pawn.getRole().getRoleType() == RoleType.BioTerrorist)
+                                           // .findAny().orElse(null);
 
+
+        Pawn bioTPawn = new Pawn(new Role(RoleType.BioTerrorist));
         return bioTPawn;
     }
 
     private Role getRandomUnassignedRole() {
         int index = randomRoleGenerator.nextInt(unusedRoles.size());
         return unusedRoles.remove(index);
+    }
+
+    public void addPlusTwoQuarantineMarkers() {
+        for(int i = 0; i < 2; i++) {
+            QuarantineMarker qm = new QuarantineMarker();
+            allQuarantineMarkers.add(qm);
+            unusedQuarantineMarkers.add(qm);
+        }
     }
 
     private void checkAndCreateNeighbors(ArrayList<City> createdCities, City c) {
@@ -768,17 +803,41 @@ public class Game {
         outBreakMeterReading++;
     }
 
+    private void checkForQuarantineMarker(City c) {
+        if(c.containsQuarantineMarker()) {
+            QuarantineMarker cityQM = c.getQuarantineMarker();
+            if(cityQM == null) {
+                System.err.println("ERROR -- city contains quarantine marker but" +
+                        " can not get marker!");
+                return;
+            } else {
+                if(!cityQM.flipMarker()) {
+                    gameManager.removeQuarantineMarker(cityQM);
+                    return;
+                }
+            }
+        }
+    }
+
     public void infectAndResolveOutbreaks(DiseaseType cityDiseaseType, Disease cityDisease,
                                           boolean gameStatus, LinkedList<City> Q) {
 
         List<City> completedCities = new ArrayList<City>();
         while (gameStatus && !Q.isEmpty()) {
             City c = Q.removeFirst();
+
+
             int numberOfDiseaseFlagsPlaced = c.getNumOfDiseaseFlagsPlaced(cityDiseaseType);
             ArrayList<DiseaseFlag> freshFlags = diseaseTypeToSupplyDict.get(cityDiseaseType);
 
             if (numberOfDiseaseFlagsPlaced == 3) {
                 //OUTBREAK
+
+                if(c.containsQuarantineMarker()) {
+                    checkForQuarantineMarker(c);
+                    return;
+                }
+
                 incrementOutbreakMeter();
                 if (slipperySlopeActive && cityDiseaseType.equals(virulentStrain)) {
                     incrementOutbreakMeter();
@@ -819,6 +878,12 @@ public class Game {
                             if (dFlagCount == 3
                                     && !alreadyAffectedByOutbreak) {
                                 // Chain reaction outbreak is occurring.
+
+                                if(connCity.containsQuarantineMarker()) {
+                                    checkForQuarantineMarker(connCity);
+                                    return;
+                                }
+
                                 Q.addLast(connCity);
                                 conn.setConnectionStatus(cityDiseaseType);
 
@@ -1190,6 +1255,9 @@ public class Game {
         final Map<RoleType, City> positionMap
                 = gameManager.getActivePlayers().stream().collect(Collectors.toMap(Player::getRoleType, p -> myGameBoard.getCityByName(p.getPawn().getLocation().getName())));
 
+        final Map<BioTTurnStats, Boolean> bioTMap =
+                gameManager.getBioTPlayer().getBioTTurnTracker().getBioTStatMap();
+
 
         final Map<CityName, List<Pair<DiseaseType, Integer>>> diseaseCubesMap
                 = myGameBoard.getCitiesOnBoard().stream().collect(Collectors.toMap(City::getName, City::getDiseaseFlags));
@@ -1245,11 +1313,26 @@ public class Game {
             cures.put(DiseaseType.Purple, getDiseaseByDiseaseType(DiseaseType.Purple).isCured());
         }
 
+        final ArrayList<City> quarantineMarkerLocations;
+
+        if(!bioTChallengeActive) {
+            quarantineMarkerLocations = new ArrayList<City>();
+            for(QuarantineMarker qm : allQuarantineMarkers) {
+                if(qm.getLocation() != null) {
+                    quarantineMarkerLocations.add(qm.getLocation());
+                }
+            }
+
+        } else {
+            quarantineMarkerLocations = null;
+        }
+
         return new GameState(userMap, cardMap, positionMap, diseaseCubesMap, remainingDiseaseCubesMap,
                 myInfectionDiscardPile, myPlayerDiscardPile, currentInfectionRate, outBreakMeterReading, actionsRemaining, curedDiseases,
                 currentPlayer.getPlayerUserName(), researchStationLocations, eventCardsEnabled, currentPlayerTurnStatus, archivistActionUsed,
                 epidemiologistActionUsed, fieldOperativeActionUsed, fieldOperativeSamples, complexMolecularStructureActive,
-                governmentInterferenceActive, governmentInterferenceSatisfied, infectionsRemaining, cures);
+                governmentInterferenceActive, governmentInterferenceSatisfied, infectionsRemaining, cures,
+                bioTMap, quarantineMarkerLocations);
     }
 
     public GameManager getGameManager() {
@@ -1272,8 +1355,20 @@ public class Game {
         }
     }
 
+    public QuarantineMarker getUnusedQuarantineMarker() {
+        if(!unusedQuarantineMarkers.isEmpty()) {
+            return unusedQuarantineMarkers.remove(0);
+        } else {
+            return null;
+        }
+    }
+
     public void addUnusedResearchStation(ResearchStation rs) {
         unusedResearchStations.add(rs);
+    }
+
+    public void addUnusedQuarantineMarker(QuarantineMarker qm) {
+        unusedQuarantineMarkers.add(qm);
     }
 
     public EventCard getContingencyPlannerEventCard() {
@@ -1351,6 +1446,10 @@ public class Game {
 
     public boolean isBioTChallengeActive() {
         return bioTChallengeActive;
+    }
+
+    public boolean isQuarantineMarkersInPlay() {
+        return quarantineMarkersInPlay;
     }
 
     public void setBioTSpotted(boolean spotted) {
@@ -1600,6 +1699,10 @@ public class Game {
 
     public void setChronicEffectInfection(boolean b){
         chronicEffectInfection = b;
+    }
+
+    public void setQuarantinesActive(boolean b) {
+        quarantineMarkersInPlay = b;
     }
 }
 

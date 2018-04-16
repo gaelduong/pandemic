@@ -138,6 +138,20 @@ public class GameURs {
         );
     }
 
+    public static void sendImposeQuarantineMarker(Client client, String playerUserName, String cityLocationToPlace,
+                                                  String cityNameToRemove_Optional) {
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+                new UpdateRequest(
+                        new PostCondition(
+                                PostCondition.ACTION.IMPOSE_QUARANTINE_MARKER,
+                                playerUserName,
+                                cityLocationToPlace,
+                                cityNameToRemove_Optional
+                        )
+                )
+        );
+    }
+
     /**
      * Creates an update request to treat a disease in the player's current city
      */
@@ -319,5 +333,22 @@ public class GameURs {
                 )
         );
     }
+
+    public static void sendDiscardCard(Client client, String playerUserName, String cityCardName, boolean isBioT) {
+        PlayerCardSimple cardToDiscard = isBioT ? new PlayerCardSimple(CardType.CityInfectionCard, cityCardName) :
+                new PlayerCardSimple(CardType.CityCard, cityCardName);
+
+        client.sendMessageToServer(ServerCommands.SEND_UPDATE_REQUEST.name(),
+                new UpdateRequest(
+                        new PostCondition(
+                                PostCondition.ACTION.MOVE_CARD,
+                                cardToDiscard,
+                                playerUserName,
+                                "DISCARD_PILE"
+                        )
+                )
+        );
+    }
+
 
 }

@@ -13,6 +13,8 @@ public class City implements Serializable {
 	private ArrayList<City> neighbors;
 	private ArrayList<Connection> connections;
 	private ArrayList<Unit> cityUnits;
+
+	private QuarantineMarker cityQuarantineMarker;
 	
 	public City(CityName cn, Region r){
 		name = cn;
@@ -75,6 +77,21 @@ public class City implements Serializable {
         return purpleDiseaseFlag != null;
     }
 
+    public boolean containsQuarantineMarker() {
+	    QuarantineMarker qm = (QuarantineMarker) cityUnits.stream().filter(unit -> unit.getUnitType() == UnitType.QuarantineMarker)
+                                                         .findAny().orElse(null);
+
+	    cityQuarantineMarker = qm != null ? qm : null;
+	    return qm != null;
+    }
+
+    public QuarantineMarker getQuarantineMarker() {
+	    if(cityQuarantineMarker == null) {
+	        containsQuarantineMarker();
+        }
+        return cityQuarantineMarker;
+    }
+
     public ResearchStation removeOneResearchStation() {
 	    ResearchStation toRemove = (ResearchStation) cityUnits.stream().filter(unit -> unit.getUnitType() == UnitType.ResearchStation)
                 .findAny().orElse(null);
@@ -119,5 +136,6 @@ public class City implements Serializable {
 
 	    return result;
     }
+
 
 }
