@@ -1,2 +1,4 @@
-"# f2017-group7" 
-"# f2017-group7" 
+
+<br>
+<img src="pandemic.jpg" align='left'>
+<br>
