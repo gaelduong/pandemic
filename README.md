@@ -1,4 +1,4 @@
 
 <br>
-<img src="pandemic.jpg" align='left'>
+<img src="pandemic.png" align='left'>
 <br>
